@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CukurHemat – Gaya Premium, Harga Teman</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        heading: ['"Playfair Display"', 'serif'],
+                        sans: ['"Open Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        noir: '#050505', // Almost pure black
+                        noirLight: '#111111', // Slightly lighter black for cards
+                        gold: '#D4AF37', // Metallic Gold
+                        goldHover: '#C49F27', // Darker Gold for interaction
+                        bone: '#E5E5E5' // Off-white for text
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom UI Interactivity */
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 150px;
+        }
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+        /* Soft image hover */
+        .img-hover:hover img {
+            transform: scale(1.05);
+            filter: grayscale(0%);
+        }
+        /* Distinct Gold Line */
+        .gold-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+        }
+    </style>
+</head>
+<body class="font-sans text-bone bg-noir antialiased overflow-x-hidden">
+
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-transparent py-5" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <a href="#" class="font-heading italic text-3xl text-gold flex items-center gap-1">
+                cukur<span class="font-bold text-bone not-italic">hemat.</span>
+            </a>
+            
+            <div class="hidden md:flex items-center space-x-8 text-xs uppercase tracking-widest font-semibold">
+                <a href="#beranda" class="text-bone hover:text-gold transition">Beranda</a>
+                <a href="#layanan" class="text-bone hover:text-gold transition">Layanan</a>
+                <a href="#paket" class="text-bone hover:text-gold transition">Harga</a>
+                <a href="#galeri" class="text-bone hover:text-gold transition">Galeri</a>
+                <a href="#booking" class="bg-gold text-noir px-6 py-2 rounded-full hover:bg-white hover:text-noir transition duration-300">Booking</a>
+            </div>
+
+            <button class="md:hidden text-2xl text-gold" onclick="toggleMenu()">
+                <i class="fa-solid fa-ghost"></i> </button>
+        </div>
+    </nav>
+
+    <section id="beranda" class="relative h-screen flex items-center bg-noirLight border-b-2 border-noir">
+        <div class="absolute inset-0 z-0 grid md:grid-cols-2">
+            <div class="bg-noir"></div>
+            <div class="relative overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1593726891090-b14144d15652?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Barber" class="w-full h-full object-cover opacity-60 filter grayscale">
+                <div class="absolute inset-0 bg-noir/50 md:bg-transparent md:bg-gradient-to-r md:from-noirLight md:to-transparent"></div>
+            </div>
+        </div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-6 grid md:grid-cols-2 items-center h-full">
+            <div class="max-w-lg mt-20 md:mt-0 text-center md:text-left">
+                <span class="text-gold font-semibold uppercase tracking-widest text-xs block mb-3 border-l-2 md:border-l-0 border-gold pl-3 md:pl-0">Gaya Premium, Harga Teman</span>
+                <h1 class="font-heading text-5xl md:text-7xl text-bone mb-6 leading-tight">
+                    Tampil <span class="italic text-gold">Stylish</span> Tanpa <span class="font-bold text-white">Bikin Bolong</span> Kantong
+                </h1>
+                <p class="text-gray-400 text-sm md:text-base font-light mb-10 leading-relaxed max-w-md mx-auto md:mx-0">
+                    CukurHemat memberikan layanan potong rambut profesional dengan sentuhan gaya modern dan pelayanan terbaik. Kami buktikan gaya keren tidak harus mahal.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                    <a href="#booking" class="bg-bone text-noir font-bold px-10 py-3.5 rounded-full uppercase tracking-wider text-sm hover:bg-gold transition duration-300 shadow-xl">Booking</a>
+                    <a href="#layanan" class="text-gold font-bold px-10 py-3.5 rounded-full uppercase tracking-wider text-sm hover:text-white flex items-center justify-center gap-2 transition">
+                        Lihat Menu <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tentang" class="py-28 bg-noir">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <i class="fa-solid fa-scissors text-5xl text-gold/30 mb-8"></i>
+            <h2 class="font-heading text-4xl md:text-5xl text-bone mb-8 leading-snug">
+                Definisi <span class="italic text-gold">Hemat</span> yang Sesungguhnya
+            </h2>
+            <div class="gold-line w-1/3 mx-auto mb-10"></div>
+            <p class="text-gray-400 font-light leading-relaxed max-w-3xl mx-auto mb-12 text-lg">
+                CukurHemat adalah tempat potong rambut modern yang menghadirkan layanan grooming berkualitas untuk pria yang menghargai penampilan namun tetap cerdas dalam pengeluaran. Setiap layanan kami dilakukan oleh barber profesional yang berpengalaman dengan harga yang sangat bersahabat.
+            </p>
+            <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="About" class="w-full h-80 object-cover rounded-3xl shadow-2xl border-4 border-noirLight">
+        </div>
+    </section>
+
+    <section id="layanan" class="py-24 bg-noirLight border-y border-noir">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-heading text-4xl md:text-5xl text-bone tracking-wide mb-4">Layanan Menu</h2>
+                <p class="text-gray-500 font-light text-sm">Grooming taktis untuk pria modern.</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center">
+                <div class="bg-noir p-6 rounded-3xl border border-gray-900 group hover:border-gold transition">
+                    <div class="w-16 h-16 bg-noirLight rounded-full flex items-center justify-center mx-auto mb-5 text-gold border border-gold group-hover:bg-gold group-hover:text-noir transition duration-300">
+                        <i class="fa-solid fa-cut text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-bone text-sm mb-1 uppercase tracking-wider">Haircut</h3>
+                    <p class="text-gray-600 text-xs font-light">Gaya Modern</p>
+                </div>
+                <div class="bg-noir p-6 rounded-3xl border border-gray-900 group hover:border-gold transition">
+                    <div class="w-16 h-16 bg-noirLight rounded-full flex items-center justify-center mx-auto mb-5 text-gold border border-gold group-hover:bg-gold group-hover:text-noir transition duration-300">
+                        <i class="fa-solid fa-wind text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-bone text-sm mb-1 uppercase tracking-wider">Styling</h3>
+                    <p class="text-gray-600 text-xs font-light">Pomade/Clay</p>
+                </div>
+                <div class="bg-noir p-6 rounded-3xl border border-gray-900 group hover:border-gold transition">
+                    <div class="w-16 h-16 bg-noirLight rounded-full flex items-center justify-center mx-auto mb-5 text-gold border border-gold group-hover:bg-gold group-hover:text-noir transition duration-300">
+                        <i class="fa-solid fa-leaf text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-bone text-sm mb-1 uppercase tracking-wider">Beard</h3>
+                    <p class="text-gray-600 text-xs font-light">Trim & Shave</p>
+                </div>
+                <div class="bg-noir p-6 rounded-3xl border border-gray-900 group hover:border-gold transition">
+                    <div class="w-16 h-16 bg-noirLight rounded-full flex items-center justify-center mx-auto mb-5 text-gold border border-gold group-hover:bg-gold group-hover:text-noir transition duration-300">
+                        <i class="fa-solid fa-shower text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-bone text-sm mb-1 uppercase tracking-wider">Hair Wash</h3>
+                    <p class="text-gray-600 text-xs font-light">Relaksasi</p>
+                </div>
+                <div class="bg-noir p-6 rounded-3xl border border-gray-900 group hover:border-gold transition">
+                    <div class="w-16 h-16 bg-noirLight rounded-full flex items-center justify-center mx-auto mb-5 text-gold border border-gold group-hover:bg-gold group-hover:text-noir transition duration-300">
+                        <i class="fa-solid fa-palette text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-bone text-sm mb-1 uppercase tracking-wider">Coloring</h3>
+                    <p class="text-gray-600 text-xs font-light">Fashion Color</p>
+                </div>
+                <div class="bg-noir p-6 rounded-3xl border border-gray-900 group hover:border-gold transition">
+                    <div class="w-16 h-16 bg-noirLight rounded-full flex items-center justify-center mx-auto mb-5 text-gold border border-gold group-hover:bg-gold group-hover:text-noir transition duration-300">
+                        <i class="fa-solid fa-baby text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-bone text-sm mb-1 uppercase tracking-wider">Kids</h3>
+                    <p class="text-gray-600 text-xs font-light">Di bawah 10 Thn</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="paket" class="py-24 bg-noir">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
+                <div class="lg:col-span-1 text-center lg:text-left">
+                    <h2 class="font-heading text-5xl text-bone tracking-wide mb-6leading-tight">Harga <br><span class="text-gold italic">Transparan</span></h2>
+                    <p class="text-gray-400 font-light mb-8 max-w-sm mx-auto lg:mx-0">Pilih paket taktis kami. Jaminan harga hemat dengan hasil premium.</p>
+                </div>
+                
+                <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-noirLight p-8 rounded-2xl border-t-2 border-gold flex items-center justify-between shadow-lg">
+                        <div>
+                            <h4 class="font-heading text-2xl text-bone mb-1">PAKET HEMAT</h4>
+                            <p class="text-gray-500 text-xs uppercase tracking-widest mb-4">Haircut + Wash</p>
+                            <a href="#booking" class="text-gold font-bold text-sm flex items-center gap-1 hover:text-white transition">Booking <i class="fa-solid fa-chevron-right text-xs"></i></a>
+                        </div>
+                        <p class="text-5xl font-light text-bone tracking-tighter">Rp <span class="font-bold">40K</span></p>
+                    </div>
+                    <div class="bg-noirLight p-8 rounded-2xl border-t-2 border-gold flex items-center justify-between shadow-lg">
+                        <div>
+                            <h4 class="font-heading text-2xl text-bone mb-1">PAKET GANTENG</h4>
+                            <p class="text-gray-500 text-xs uppercase tracking-widest mb-4">Haircut + Styling</p>
+                            <a href="#booking" class="text-gold font-bold text-sm flex items-center gap-1 hover:text-white transition">Booking <i class="fa-solid fa-chevron-right text-xs"></i></a>
+                        </div>
+                        <p class="text-5xl font-light text-bone tracking-tighter">Rp <span class="font-bold">55K</span></p>
+                    </div>
+                    <div class="bg-noirLight p-8 rounded-2xl border-t-2 border-gold flex items-center justify-between shadow-lg">
+                        <div>
+                            <h4 class="font-heading text-2xl text-bone mb-1">PAKET LENGKAP</h4>
+                            <p class="text-gray-500 text-xs uppercase tracking-widest mb-4">Haircut + Wash + Beard</p>
+                            <a href="#booking" class="text-gold font-bold text-sm flex items-center gap-1 hover:text-white transition">Booking <i class="fa-solid fa-chevron-right text-xs"></i></a>
+                        </div>
+                        <p class="text-5xl font-light text-bone tracking-tighter">Rp <span class="font-bold">70K</span></p>
+                    </div>
+                    <div class="bg-noirLight p-8 rounded-2xl border-t-2 border-bone flex items-center justify-between shadow-lg">
+                        <div>
+                            <h4 class="font-heading text-2xl text-bone mb-1">KIDS HEMAT</h4>
+                            <p class="text-gray-500 text-xs uppercase tracking-widest mb-4">Potong Rambut Anak</p>
+                            <a href="#booking" class="text-gold font-bold text-sm flex items-center gap-1 hover:text-white transition">Booking <i class="fa-solid fa-chevron-right text-xs"></i></a>
+                        </div>
+                        <p class="text-5xl font-light text-bone tracking-tighter">Rp <span class="font-bold">35K</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="galeri" class="py-24 bg-noirLight border-y border-noir">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="font-heading text-4xl md:text-5xl text-bone tracking-wide text-center mb-16">Galeri Gaya</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="aspect-square rounded-3xl overflow-hidden img-hover border border-gray-800">
+                    <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Gaya 1" class="w-full h-full object-cover transition duration-500 grayscale filter">
+                </div>
+                <div class="aspect-square rounded-3xl overflow-hidden img-hover border border-gray-800">
+                    <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Gaya 2" class="w-full h-full object-cover transition duration-500 grayscale filter">
+                </div>
+                <div class="aspect-square rounded-3xl overflow-hidden img-hover border border-gray-800 md:translate-y-6">
+                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Gaya 3" class="w-full h-full object-cover transition duration-500 grayscale filter">
+                </div>
+                <div class="aspect-square rounded-3xl overflow-hidden img-hover border border-gray-800 md:translate-y-6">
+                    <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Gaya 4" class="w-full h-full object-cover transition duration-500 grayscale filter">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 bg-noir border-b border-noirLight">
+        <div class="max-w-3xl mx-auto px-6 text-center">
+            <i class="fa-solid fa-quote-left text-3xl text-gold mb-8 block"></i>
+            <p class="text-2xl text-gray-300 font-light italic leading-relaxed mb-8">"Gak nyangka harganya segini dapet pelayanan & potongan serapi ini. Tempatnya juga nyaman. Bakal jadi langganan."</p>
+            <h5 class="text-bone font-bold tracking-widest uppercase text-xs">— Andi, Bandung</h5>
+        </div>
+    </section>
+
+    <section class="py-24 bg-noirLight border-b border-noir">
+        <div class="max-w-3xl mx-auto px-6 flex flex-col items-center">
+            <h2 class="font-heading text-4xl text-bone tracking-wide mb-12">FAQ</h2>
+            <div class="space-y-4 w-full">
+                <div class="faq-item bg-noir border border-gray-900 rounded-xl cursor-pointer hover:border-gold transition">
+                    <div class="px-6 py-5 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <h4 class="font-semibold text-bone text-xs uppercase tracking-widest">Apakah harus booking?</h4>
+                        <i class="fa-solid fa-plus text-gold faq-icon transition-transform duration-300 text-sm"></i>
+                    </div>
+                    <div class="faq-answer px-6 text-gray-500 text-sm font-light">
+                        <p class="pb-5">Bisa walk-in, tapi disarankan booking WhatsApp dulu biar gak antre kelamaan. Cek jadwal di menu Booking.</p>
+                    </div>
+                </div>
+                <div class="faq-item bg-noir border border-gray-900 rounded-xl cursor-pointer hover:border-gold transition">
+                    <div class="px-6 py-5 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <h4 class="font-semibold text-bone text-xs uppercase tracking-widest">Harganya beneran hemat?</h4>
+                        <i class="fa-solid fa-plus text-gold faq-icon transition-transform duration-300 text-sm"></i>
+                    </div>
+                    <div class="faq-answer px-6 text-gray-500 text-sm font-light">
+                        <p class="pb-5">Seratus persen! Cek menu harga kami. Gak ada biaya tersembunyi. Gaya premium, harga temen.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="booking" class="bg-noir pt-24 pb-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-16">
+                <div class="text-center lg:text-left">
+                    <h2 class="font-heading text-5xl md:text-6xl text-bone mb-6">Amankan Slot <span class="italic text-gold">Gantengmu</span></h2>
+                    <p class="text-gray-500 font-light mb-10 max-w-sm mx-auto lg:mx-0">Hubungi kami via WhatsApp untuk booking taktis. Cepat, gampang, langsung ganteng.</p>
+                    <a href="https://wa.me/6281234567890" target="_blank" class="inline-flex items-center gap-3 bg-gold text-noir font-bold px-12 py-4 rounded-full uppercase tracking-wider text-sm hover:bg-white transition duration-300 shadow-xl">
+                        <i class="fa-brands fa-whatsapp text-xl"></i> WhatsApp Booking
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-8 text-sm text-center lg:text-left">
+                    <div>
+                        <h5 class="text-gold font-bold uppercase tracking-widest text-xs mb-4">Lokasi Taktis</h5>
+                        <p class="text-gray-500 font-light">Jl. Pasteur No. 123, Bandung<br>Jawa Barat (Depan BTC)</p>
+                    </div>
+                    <div>
+                        <h5 class="text-gold font-bold uppercase tracking-widest text-xs mb-4">Operasional</h5>
+                        <p class="text-gray-500 font-light">Senin – Minggu<br>10.00 – 21.00 WIB</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-900 pt-8 text-center text-xs text-gray-700 uppercase tracking-widest">
+                © 2026 CukurHemat Taktis. Semua Hak Ganteng Dilindungi.
+            </div>
+        </div>
+    </footer>
+
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-noir/95 backdrop-blur-sm flex items-center justify-center">
+        <button class="absolute top-6 right-6 text-3xl text-gold" onclick="toggleMenu()"><i class="fa-solid fa-times"></i></button>
+        <div class="text-center space-y-8 uppercase text-sm font-semibold tracking-widest">
+            <a href="#beranda" class="block text-bone hover:text-gold" onclick="toggleMenu()">Beranda</a>
+            <a href="#layanan" class="block text-bone hover:text-gold" onclick="toggleMenu()">Layanan</a>
+            <a href="#paket" class="block text-bone hover:text-gold" onclick="toggleMenu()">Harga</a>
+            <a href="#booking" class="block text-noir bg-gold px-8 py-3 rounded-full" onclick="toggleMenu()">Booking</a>
+        </div>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Navbar Scroll Effect (Slight darken)
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-noir/90', 'backdrop-blur-sm', 'border-b', 'border-gray-900', 'py-3');
+                navbar.classList.remove('bg-transparent', 'py-5');
+            } else {
+                navbar.classList.add('bg-transparent', 'py-5');
+                navbar.classList.remove('bg-noir/90', 'backdrop-blur-sm', 'border-b', 'border-gray-900', 'py-3');
+            }
+        });
+
+        // FAQ Accordion
+        function toggleFaq(element) {
+            const item = element.parentElement;
+            const icon = element.querySelector('.faq-icon');
+            
+            // Close others
+            document.querySelectorAll('.faq-item').forEach(faq => {
+                if(faq !== item) {
+                    faq.classList.remove('active');
+                    faq.querySelector('.faq-icon').classList.replace('fa-minus', 'fa-plus');
+                }
+            });
+            
+            // Toggle current
+            item.classList.toggle('active');
+            if(item.classList.contains('active')) {
+                icon.classList.replace('fa-plus', 'fa-minus');
+            } else {
+                icon.classList.replace('fa-minus', 'fa-plus');
+            }
+        }
+    </script>
+</body>
+</html>

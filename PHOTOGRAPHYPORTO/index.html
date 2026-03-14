@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photography Portfolio - Abadikan Setiap Cerita</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        cream: '#FDFCF5',
+                        creamDark: '#F7F4E9',
+                        gold: '#C9A44C',
+                        goldHover: '#B08D4A',
+                        textDark: '#2C3E50',
+                        textGray: '#7F8C8D',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans text-textDark bg-cream">
+
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-white" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="font-bold text-2xl text-textDark tracking-tight flex items-center gap-2">
+                <i class="fa-solid fa-camera-retro text-gold"></i>
+                <span class="font-extrabold text-gold">D'GA<span class="text-textDark">NTENG</span> PORTFOLIO</span>
+            </a>
+            
+            <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
+                <a href="#beranda" class="text-textGray hover:text-gold transition">Beranda</a>
+                <a href="#tentang" class="text-textGray hover:text-gold transition">Tentang</a>
+                <a href="#portfolio" class="text-textGray hover:text-gold transition">Portfolio</a>
+                <a href="#layanan" class="text-textGray hover:text-gold transition">Layanan</a>
+                <a href="#paket" class="text-textGray hover:text-gold transition">Paket</a>
+                <a href="#kontak" class="text-textGray hover:text-gold transition">Kontak</a>
+                <a href="#kontak" class="bg-gold text-white px-5 py-2.5 rounded-full hover:bg-goldHover transition font-semibold text-sm">Booking Now</a>
+            </div>
+
+            <button class="md:hidden text-2xl text-gold" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+        
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t p-6 text-center">
+            <a href="#beranda" class="block py-3 text-textGray hover:text-gold" onclick="toggleMenu()">Beranda</a>
+            <a href="#tentang" class="block py-3 text-textGray hover:text-gold" onclick="toggleMenu()">Tentang</a>
+            <a href="#portfolio" class="block py-3 text-textGray hover:text-gold" onclick="toggleMenu()">Portfolio</a>
+            <a href="#layanan" class="block py-3 text-textGray hover:text-gold" onclick="toggleMenu()">Layanan</a>
+            <a href="#paket" class="block py-3 text-textGray hover:text-gold" onclick="toggleMenu()">Paket</a>
+            <a href="#kontak" class="block py-3 text-textGray hover:text-gold" onclick="toggleMenu()">Kontak</a>
+        </div>
+    </nav>
+
+    <section id="beranda" class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 min-h-screen flex items-center bg-[url('https://images.unsplash.com/photo-1542038784456-1ea8e935640e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center">
+        <div class="absolute inset-0 bg-black/50"></div> <div class="relative z-10 max-w-7xl mx-auto px-6 text-center text-white">
+            <span class="text-gold font-semibold uppercase tracking-widest text-sm block mb-4">PROFESSIONAL PHOTOGRAPHY</span>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-8 max-w-4xl mx-auto">
+                Mengabadikan Cerita dalam Setiap Bidikan
+            </h1>
+            <p class="text-lg text-gray-200 mb-12 max-w-2xl mx-auto leading-relaxed">
+                Kami menghadirkan layanan fotografi profesional untuk mengabadikan momen penting dalam hidup Anda dengan hasil visual yang artistik dan berkualitas tinggi. Setiap foto bukan hanya gambar, tetapi cerita yang dapat dikenang selamanya.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-5 justify-center">
+                <a href="#portfolio" class="bg-gold text-white font-semibold px-10 py-4 rounded-full hover:bg-goldHover transition">Lihat Portfolio</a>
+                <a href="#kontak" class="border-2 border-white text-white font-semibold px-10 py-4 rounded-full hover:bg-white hover:text-gold transition">Booking Photoshoot</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="tentang" class="py-24 bg-cream">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1554048612-b6a482bc67e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Fotografer" class="w-full h-auto object-cover rounded-2xl shadow-xl">
+                    <div class="absolute -bottom-10 -right-10 w-48 h-48 border-4 border-gold rounded-full opacity-30"></div>
+                </div>
+                <div>
+                    <span class="text-gold font-semibold uppercase tracking-wider text-sm block mb-2">Tentang Kami</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-textDark mb-6">Momen Spesial Anda, Cerita Kami</h2>
+                    <p class="text-textGray mb-6 leading-relaxed text-justify">
+                        Kami adalah studio fotografi yang berfokus pada penciptaan visual yang elegan, natural, dan penuh cerita. Dengan pengalaman dalam berbagai jenis fotografi, kami berkomitmen menghasilkan foto yang tidak hanya indah secara visual, tetapi juga memiliki nilai emosional yang kuat.
+                    </p>
+                    <p class="text-textGray mb-8 leading-relaxed text-justify">
+                        Setiap sesi fotografi dirancang dengan pendekatan kreatif dan profesional untuk memberikan pengalaman terbaik bagi setiap klien, dari konsultasi awal hingga pengiriman hasil akhir.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6 text-center">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <h4 class="text-4xl font-extrabold text-gold mb-1">500+</h4>
+                            <p class="text-sm text-textGray font-medium">Photoshoots</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <h4 class="text-4xl font-extrabold text-gold mb-1">100+</h4>
+                            <p class="text-sm text-textGray font-medium">Happy Clients</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="portfolio" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-gold font-semibold uppercase tracking-wider text-sm block mb-2">Karya Kami</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-textDark mb-4">Momen dalam Lensa</h2>
+                <div class="w-20 h-1 bg-gold mx-auto"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="group block overflow-hidden rounded-2xl shadow-lg aspect-[3/4]">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Wedding" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-end p-8">
+                        <div class="text-white">
+                            <h4 class="font-bold text-xl mb-1">Wedding Photography</h4>
+                            <p class="text-sm text-gray-200">Dokumentasi momen pernikahan yang penuh emosi.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="group block overflow-hidden rounded-2xl shadow-lg aspect-[3/4]">
+                    <img src="https://images.unsplash.com/photo-1522673607200-12ce830df050?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Pre-Wedding" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-end p-8">
+                        <div class="text-white">
+                            <h4 class="font-bold text-xl mb-1">Pre Wedding</h4>
+                            <p class="text-sm text-gray-200">Foto romantis dengan konsep artistik.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="group block overflow-hidden rounded-2xl shadow-lg aspect-[3/4]">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Portrait" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-end p-8">
+                        <div class="text-white">
+                            <h4 class="font-bold text-xl mb-1">Portrait Photography</h4>
+                            <p class="text-sm text-gray-200">Foto portrait personal dengan konsep profesional.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="group block overflow-hidden rounded-2xl shadow-lg aspect-[3/4]">
+                    <img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Family" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-end p-8">
+                        <div class="text-white">
+                            <h4 class="font-bold text-xl mb-1">Family Photography</h4>
+                            <p class="text-sm text-gray-200">Mengabadikan kebersamaan keluarga hangat.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="group block overflow-hidden rounded-2xl shadow-lg aspect-[3/4]">
+                    <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Event" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-end p-8">
+                        <div class="text-white">
+                            <h4 class="font-bold text-xl mb-1">Event Photography</h4>
+                            <p class="text-sm text-gray-200">Dokumentasi acara gathering, corporate event, dll.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="group block overflow-hidden rounded-2xl shadow-lg aspect-[3/4]">
+                    <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Product" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-end p-8">
+                        <div class="text-white">
+                            <h4 class="font-bold text-xl mb-1">Product Photography</h4>
+                            <p class="text-sm text-gray-200">Foto produk berkualitas tinggi untuk kebutuhan bisnis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-16">
+                <a href="#portfolio" class="border-2 border-gold text-gold hover:bg-gold hover:text-white font-semibold px-10 py-3.5 rounded-full transition">Lihat Selengkapnya</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="layanan" class="py-24 bg-cream">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-gold font-semibold uppercase tracking-wider text-sm block mb-2">Layanan Kami</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-textDark mb-4">Abadikan Setiap Langkah</h2>
+                <div class="w-20 h-1 bg-gold mx-auto"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-gold transition duration-300">
+                    <i class="fa-solid fa-gem text-4xl text-gold mb-6 block"></i>
+                    <h3 class="font-bold text-xl text-textDark mb-3">Pernikahan</h3>
+                    <p class="text-textGray text-sm">Dokumentasi pernikahan penuh emosi & keindahan abadi.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-gold transition duration-300">
+                    <i class="fa-solid fa-heart text-4xl text-gold mb-6 block"></i>
+                    <h3 class="font-bold text-xl text-textDark mb-3">Pre-Wedding</h3>
+                    <p class="text-textGray text-sm">Sesi foto romantis dengan konsep yang personal & artistik.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-gold transition duration-300">
+                    <i class="fa-solid fa-briefcase text-4xl text-gold mb-6 block"></i>
+                    <h3 class="font-bold text-xl text-textDark mb-3">Komersial</h3>
+                    <p class="text-textGray text-sm">Foto produk & *corporate* profesional untuk *branding* bisnis.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-gold transition duration-300">
+                    <i class="fa-solid fa-face-smile text-4xl text-gold mb-6 block"></i>
+                    <h3 class="font-bold text-xl text-textDark mb-3">Personal/Keluarga</h3>
+                    <p class="text-textGray text-sm">Abadikan portrait diri, keluarga, atau acara spesial lainnya.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="paket" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-gold font-semibold uppercase tracking-wider text-sm block mb-2">Penawaran Spesial</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-textDark mb-4">Paket Fotografi</h2>
+                <div class="w-20 h-1 bg-gold mx-auto mb-6"></div>
+                <p class="text-textGray">Pilih paket terbaik yang sesuai dengan kebutuhan dan momen spesial Anda.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+                <div class="bg-cream p-10 rounded-3xl border border-gray-200">
+                    <h4 class="font-bold text-2xl text-textDark mb-3">Paket Basic</h4>
+                    <p class="text-4xl font-extrabold text-gold mb-8">Rp 1.5Jt</p>
+                    <ul class="space-y-4 mb-10 text-textGray text-sm">
+                        <li><i class="fa-solid fa-check text-gold mr-3"></i> Durasi 2 jam</li>
+                        <li><i class="fa-solid fa-check text-gold mr-3"></i> 1 Fotografer</li>
+                        <li><i class="fa-solid fa-check text-gold mr-3"></i> 20 Foto Edit</li>
+                        <li><i class="fa-solid fa-check text-gold mr-3"></i> Google Drive Delivery</li>
+                        <li class="line-through text-gray-400"><i class="fa-solid fa-times text-gray-300 mr-3"></i> Flashdisk File</li>
+                    </ul>
+                    <a href="#kontak" class="block text-center border-2 border-gold text-gold hover:bg-gold hover:text-white font-semibold px-8 py-3 rounded-full transition">Pilih Paket</a>
+                </div>
+                <div class="bg-gold p-10 rounded-3xl border border-gray-200 text-white relative shadow-2xl scale-105">
+                    <span class="absolute top-6 right-6 bg-white text-gold px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">POPULAR</span>
+                    <h4 class="font-bold text-2xl mb-3">Paket Standard</h4>
+                    <p class="text-4xl font-extrabold mb-8">Rp 2.5Jt</p>
+                    <ul class="space-y-4 mb-10 text-sm">
+                        <li><i class="fa-solid fa-check mr-3"></i> Durasi 4 jam</li>
+                        <li><i class="fa-solid fa-check mr-3"></i> 1 Fotografer</li>
+                        <li><i class="fa-solid fa-check mr-3"></i> 40 Foto Edit</li>
+                        <li><i class="fa-solid fa-check mr-3"></i> Google Drive Delivery</li>
+                        <li><i class="fa-solid fa-check mr-3"></i> Flashdisk File</li>
+                    </ul>
+                    <a href="#kontak" class="block text-center bg-white text-gold font-semibold px-8 py-3 rounded-full hover:bg-cream transition">Pilih Paket</a>
+                </div>
+                <div class="bg-cream p-10 rounded-3xl border border-gray-200">
+                    <h4 class="font-bold text-2xl text-textDark mb-3">Paket Premium</h4>
+                    <p class="text-4xl font-extrabold text-gold mb-8">Rp 4.0Jt</p>
+                    <ul class="space-y-4 mb-10 text-textGray text-sm">
+                        <li><i class="fa-solid fa-check text-gold mr-3"></i> Durasi Full Day</li>
+                        <li><i class="fa-solid fa-check text-gold mr-3"></i> 2 Fotografer</li>
+                        <li><i class="fa-solid fa-check text-gold mr-3"></i> 100 Foto Edit</li>
+                        <li><i class="fa-solid fa-check text-gold mr-3"></i> Google Drive Delivery</li>
+                        <li><i class="fa-solid fa-check text-gold mr-3"></i> Flashdisk File</li>
+                    </ul>
+                    <a href="#kontak" class="block text-center border-2 border-gold text-gold hover:bg-gold hover:text-white font-semibold px-8 py-3 rounded-full transition">Pilih Paket</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="proses" class="py-24 bg-cream">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-gold font-semibold uppercase tracking-wider text-sm block mb-2">Langkah Kami</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-textDark mb-4">Bagaimana Kami Bekerja</h2>
+                <div class="w-20 h-1 bg-gold mx-auto"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
+                <div class="text-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="w-16 h-16 bg-creamDark rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold text-gold">1</div>
+                    <h4 class="font-bold mb-3">Konsultasi</h4>
+                    <p class="text-textGray text-sm">Diskusi konsep foto & kebutuhan Anda.</p>
+                </div>
+                <div class="text-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="w-16 h-16 bg-creamDark rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold text-gold">2</div>
+                    <h4 class="font-bold mb-3">Persiapan</h4>
+                    <p class="text-textGray text-sm">Menentukan lokasi, tema, & jadwal.</p>
+                </div>
+                <div class="text-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="w-16 h-16 bg-creamDark rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold text-gold">3</div>
+                    <h4 class="font-bold mb-3">Photoshoot</h4>
+                    <p class="text-textGray text-sm">Proses pengambilan gambar profesional.</p>
+                </div>
+                <div class="text-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="w-16 h-16 bg-creamDark rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold text-gold">4</div>
+                    <h4 class="font-bold mb-3">Editing</h4>
+                    <p class="text-textGray text-sm">Seleksi & pengolahan foto estetik.</p>
+                </div>
+                <div class="text-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="w-16 h-16 bg-creamDark rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold text-gold">5</div>
+                    <h4 class="font-bold mb-3">Delivery</h4>
+                    <p class="text-textGray text-sm">Pengiriman hasil foto kualitas tinggi.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimoni" class="py-24 bg-white border-y border-gray-100">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-center text-textDark mb-12">Apa Kata Klien</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-cream p-8 rounded-2xl shadow-sm border border-gray-200">
+                    <p class="text-gray-600 italic mb-6">"Hasil fotonya sangat bagus, natural, & detail. Sangat suka dengan komposisinya! Terima kasih banyak!"</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Rina" class="w-12 h-12 rounded-full shadow-sm">
+                        <div class="text-sm">
+                            <h5 class="font-bold text-textDark">Rina P.</h5>
+                            <p class="text-textGray">Klien Keluarga</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-cream p-8 rounded-2xl shadow-sm border border-gray-200">
+                    <p class="text-gray-600 italic mb-6">"Proses photoshoot sangat menyenangkan! Kru ramah & kreatif, hasilnya luar biasa!"</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Andi" class="w-12 h-12 rounded-full shadow-sm">
+                        <div class="text-sm">
+                            <h5 class="font-bold text-textDark">Andi K.</h5>
+                            <p class="text-textGray">Klien Portrait</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-cream p-8 rounded-2xl shadow-sm border border-gray-200">
+                    <p class="text-gray-600 italic mb-6">"Foto wedding kami terlihat sangat elegan & penuh emosi. Hasil yang luar biasa!"</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Dita" class="w-12 h-12 rounded-full shadow-sm">
+                        <div class="text-sm">
+                            <h5 class="font-bold text-textDark">Dita & Fajar</h5>
+                            <p class="text-textGray">Klien Pernikahan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="blog" class="py-24 bg-cream">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-gold font-semibold uppercase tracking-wider text-sm block mb-2">Insight & Tips</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-textDark mb-4">Artikel Fotografi</h2>
+                <div class="w-20 h-1 bg-gold mx-auto"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 group">
+                    <img src="https://images.unsplash.com/photo-1540321289133-1463e2715b5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blog" class="w-full h-56 object-cover group-hover:scale-105 transition duration-500">
+                    <div class="p-8">
+                        <span class="text-gold text-xs font-bold uppercase tracking-wider mb-2 block">Pernikahan</span>
+                        <h4 class="font-bold text-lg mb-3">Tips Memilih Fotografer Pernikahan Terbaik</h4>
+                        <p class="text-textGray text-sm mb-6">Cara mendapatkan dokumentasi pernikahan yang Anda impikan.</p>
+                        <a href="#blog" class="text-gold font-semibold hover:text-goldHover text-sm">Baca Selengkapnya <i class="fa-solid fa-angle-right ml-1"></i></a>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 group">
+                    <img src="https://images.unsplash.com/photo-1522673607200-12ce830df050?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blog" class="w-full h-56 object-cover group-hover:scale-105 transition duration-500">
+                    <div class="p-8">
+                        <span class="text-gold text-xs font-bold uppercase tracking-wider mb-2 block">Pre-Wedding</span>
+                        <h4 class="font-bold text-lg mb-3">Ide Konsep Foto Pre-Wedding Artistik</h4>
+                        <p class="text-textGray text-sm mb-6">Inspirasi konsep romantis & personal untuk pre-wedding Anda.</p>
+                        <a href="#blog" class="text-gold font-semibold hover:text-goldHover text-sm">Baca Selengkapnya <i class="fa-solid fa-angle-right ml-1"></i></a>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 group">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blog" class="w-full h-56 object-cover group-hover:scale-105 transition duration-500">
+                    <div class="p-8">
+                        <span class="text-gold text-xs font-bold uppercase tracking-wider mb-2 block">Portrait</span>
+                        <h4 class="font-bold text-lg mb-3">Cara Mendapatkan Foto Portrait Terbaik</h4>
+                        <p class="text-textGray text-sm mb-6">Tips rahasia untuk pose & ekspresi natural saat photoshoot.</p>
+                        <a href="#blog" class="text-gold font-semibold hover:text-goldHover text-sm">Baca Selengkapnya <i class="fa-solid fa-angle-right ml-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-24 bg-white border-y border-gray-100">
+        <div class="max-w-3xl mx-auto px-6 flex flex-col items-center">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-textDark mb-12">Pertanyaan Umum (FAQ)</h2>
+            <div class="space-y-6 w-full">
+                <div class="bg-cream border border-gray-200 rounded-2xl p-6">
+                    <h4 class="font-bold text-textDark mb-3">Bagaimana cara booking photoshoot?</h4>
+                    <p class="text-textGray text-sm">Anda dapat menghubungi kami melalui WhatsApp atau mengisi formulir booking di website.</p>
+                </div>
+                <div class="bg-cream border border-gray-200 rounded-2xl p-6">
+                    <h4 class="font-bold text-textDark mb-3">Berapa lama proses editing foto?</h4>
+                    <p class="text-textGray text-sm">Biasanya proses editing memerlukan waktu sekitar 3–7 hari kerja, tergantung jenis paket.</p>
+                </div>
+                <div class="bg-cream border border-gray-200 rounded-2xl p-6">
+                    <h4 class="font-bold text-textDark mb-3">Apakah bisa request konsep foto?</h4>
+                    <p class="text-textGray text-sm">Ya, kami terbuka untuk konsep yang diinginkan klien dan akan menyesuaikannya dengan arahan profesional kami.</p>
+                </div>
+                <div class="bg-cream border border-gray-200 rounded-2xl p-6">
+                    <h4 class="font-bold text-textDark mb-3">Apakah tersedia paket custom?</h4>
+                    <p class="text-textGray text-sm">Ya, paket dapat disesuaikan dengan kebutuhan dan preferensi klien.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="kontak" class="bg-textDark text-gray-300 pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12 border-b border-gray-700 pb-16">
+            <div>
+                <a href="#" class="font-bold text-2xl tracking-tight flex items-center gap-2 mb-6">
+                    <i class="fa-solid fa-camera-retro text-gold"></i>
+                    <span class="font-extrabold text-gold">D'GA<span class="text-white">NTENG</span> PORTFOLIO</span>
+                </a>
+                <p class="text-sm leading-relaxed mb-8">Setiap sesi fotografi dirancang dengan pendekatan kreatif & profesional untuk memberikan pengalaman terbaik bagi setiap klien.</p>
+                <div class="flex space-x-5 text-xl">
+                    <a href="#" class="hover:text-gold transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-gold transition"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="#" class="hover:text-gold transition"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="hover:text-gold transition"><i class="fa-solid fa-envelope"></i></a>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <h5 class="font-bold text-white mb-6 text-lg">Hubungi Kami</h5>
+                <p class="text-sm flex items-start gap-4"><i class="fa-solid fa-location-dot text-gold text-lg shrink-0 mt-1"></i> Jl. Asia Afrika No. 123, Bandung, Jawa Barat</p>
+                <p class="text-sm flex items-center gap-4"><i class="fa-brands fa-whatsapp text-gold text-lg shrink-0"></i> +62 811-2233-4455</p>
+                <p class="text-sm flex items-center gap-4"><i class="fa-solid fa-envelope text-gold shrink-0"></i> dadanganentg@photography.com</p>
+                <p class="text-sm flex items-center gap-4"><i class="fa-solid fa-clock text-gold shrink-0"></i> 09.00 – 20.00 (Setiap Hari)</p>
+            </div>
+            
+            <div>
+                <h5 class="font-bold text-white mb-6 text-lg">Booking Now!</h5>
+                <form class="space-y-4">
+                    <input type="text" placeholder="Nama Lengkap" class="w-full p-3 rounded bg-white text-textDark text-sm">
+                    <input type="email" placeholder="Email Anda" class="w-full p-3 rounded bg-white text-textDark text-sm">
+                    <textarea placeholder="Pesan Anda" class="w-full p-3 rounded bg-white text-textDark text-sm" rows="3"></textarea>
+                    <button class="w-full bg-gold hover:bg-goldHover text-white font-semibold p-3 rounded-full transition text-sm">Kirim Pesan</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="text-center mt-10 text-sm text-gray-500">
+            © 2026 Photography Portfolio. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-lg', 'bg-white/95', 'backdrop-blur-sm');
+                navbar.classList.remove('bg-white');
+            } else {
+                navbar.classList.remove('shadow-lg', 'bg-white/95', 'backdrop-blur-sm');
+                navbar.classList.add('bg-white');
+            }
+        });
+    </script>
+</body>
+</html>

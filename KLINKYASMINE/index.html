@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klinik Yasmine – Layanan Kesehatan Profesional</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#1E40AF', // Blue-800
+                        secondary: '#3B82F6', // Blue-500
+                        light: '#EFF6FF', // Blue-50
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles for Interactive Elements */
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+        }
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 bg-white">
+
+    <nav class="fixed w-full bg-white shadow-md z-50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <div class="flex items-center">
+                    <a href="#" class="text-2xl font-bold text-primary flex items-center gap-2">
+                        <i class="fa-solid fa-heart-pulse text-secondary"></i>
+                        Klinik Yasmine
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
+                    <a href="#beranda" class="text-gray-600 hover:text-secondary transition">Beranda</a>
+                    <a href="#tentang" class="text-gray-600 hover:text-secondary transition">Tentang</a>
+                    <a href="#layanan" class="text-gray-600 hover:text-secondary transition">Layanan</a>
+                    <a href="#jadwal" class="text-gray-600 hover:text-secondary transition">Jadwal Dokter</a>
+                    <a href="#kontak" class="text-gray-600 hover:text-secondary transition">Kontak</a>
+                    <a href="#kontak" class="bg-primary text-white px-5 py-2 rounded-full hover:bg-secondary transition shadow-lg">Buat Janji</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section id="beranda" class="relative pt-24 pb-12 lg:pt-32 lg:pb-24 overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Hospital" class="w-full h-full object-cover opacity-20">
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-900/90 to-primary/80 mix-blend-multiply"></div>
+        </div>
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+            <span class="text-light bg-secondary/30 px-4 py-1 rounded-full text-sm font-semibold mb-6 tracking-wider">KLINIK RAWAT INAP & LAYANAN KESEHATAN</span>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+                Pelayanan Kesehatan Profesional <br> dengan Perawatan Terbaik
+            </h1>
+            <p class="text-lg text-blue-100 max-w-2xl mb-10">
+                Klinik Yasmine menghadirkan layanan kesehatan yang profesional dengan fasilitas rawat inap yang nyaman serta tenaga medis berpengalaman untuk memberikan perawatan terbaik bagi setiap pasien.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="#kontak" class="bg-white text-primary font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition shadow-lg">Daftar Konsultasi</a>
+                <a href="#layanan" class="border-2 border-white text-white font-semibold px-8 py-3 rounded-full hover:bg-white hover:text-primary transition shadow-lg">Lihat Layanan</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="tentang" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <img src="https://images.unsplash.com/photo-1581056771107-24ca5f033842?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Tentang Klinik" class="rounded-2xl shadow-xl w-full object-cover h-[400px]">
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-primary mb-4">Tentang Klinik Yasmine</h2>
+                    <div class="w-16 h-1 bg-secondary mb-6"></div>
+                    <p class="text-gray-600 mb-4 leading-relaxed">
+                        Klinik Yasmine merupakan klinik layanan kesehatan yang menyediakan berbagai pelayanan medis untuk masyarakat dengan standar pelayanan yang profesional dan terpercaya. Kami menyediakan layanan konsultasi dokter, pemeriksaan kesehatan, hingga fasilitas rawat inap.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        <div class="bg-light p-6 rounded-xl border-l-4 border-primary">
+                            <h3 class="font-bold text-primary text-xl mb-2">Visi</h3>
+                            <p class="text-sm text-gray-600">Menjadi klinik pelayanan kesehatan terpercaya yang memberikan layanan medis berkualitas bagi masyarakat.</p>
+                        </div>
+                        <div class="bg-light p-6 rounded-xl border-l-4 border-secondary">
+                            <h3 class="font-bold text-primary text-xl mb-2">Misi</h3>
+                            <ul class="text-sm text-gray-600 list-disc pl-4 space-y-1">
+                                <li>Pelayanan profesional & berkualitas</li>
+                                <li>Fasilitas aman & nyaman</li>
+                                <li>Mengutamakan keselamatan pasien</li>
+                                <li>Cepat dan responsif</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="layanan" class="py-20 bg-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-primary mb-4">Layanan Medis</h2>
+                <div class="w-16 h-1 bg-secondary mx-auto mb-6"></div>
+                <p class="text-gray-600">Kami menyediakan berbagai layanan kesehatan untuk membantu memenuhi kebutuhan medis pasien.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition group">
+                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-secondary text-2xl mb-6 group-hover:bg-primary group-hover:text-white transition">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Konsultasi Dokter Umum</h3>
+                    <p class="text-gray-600">Pemeriksaan dan konsultasi kesehatan untuk berbagai keluhan medis.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition group">
+                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-secondary text-2xl mb-6 group-hover:bg-primary group-hover:text-white transition">
+                        <i class="fa-solid fa-stethoscope"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Pemeriksaan Kesehatan</h3>
+                    <p class="text-gray-600">Pemeriksaan kondisi kesehatan secara menyeluruh.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition group">
+                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-secondary text-2xl mb-6 group-hover:bg-primary group-hover:text-white transition">
+                        <i class="fa-solid fa-wheelchair"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Layanan Rawat Jalan</h3>
+                    <p class="text-gray-600">Pemeriksaan dan pengobatan tanpa perlu rawat inap.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition group">
+                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-secondary text-2xl mb-6 group-hover:bg-primary group-hover:text-white transition">
+                        <i class="fa-solid fa-bed-pulse"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Layanan Rawat Inap</h3>
+                    <p class="text-gray-600">Perawatan pasien yang memerlukan pemantauan medis intensif.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition group">
+                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-secondary text-2xl mb-6 group-hover:bg-primary group-hover:text-white transition">
+                        <i class="fa-solid fa-syringe"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Tindakan Medis Ringan</h3>
+                    <p class="text-gray-600">Penanganan tindakan medis seperti perawatan luka dan tindakan sederhana.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition group">
+                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-secondary text-2xl mb-6 group-hover:bg-primary group-hover:text-white transition">
+                        <i class="fa-solid fa-microscope"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Pemeriksaan Laboratorium</h3>
+                    <p class="text-gray-600">Pemeriksaan laboratorium untuk mendukung diagnosis dokter.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                <div>
+                    <h2 class="text-3xl font-bold text-primary mb-4">Fasilitas Rawat Inap</h2>
+                    <div class="w-16 h-1 bg-secondary mb-6"></div>
+                    <p class="text-gray-600 mb-6">Klinik Yasmine menyediakan fasilitas rawat inap dengan lingkungan yang nyaman dan pengawasan tenaga medis yang profesional.</p>
+                    <img src="https://images.unsplash.com/photo-1519494080410-f9aa76cb4283?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Rawat Inap" class="rounded-xl shadow-lg mb-6 w-full h-48 object-cover">
+                    <ul class="space-y-3 text-gray-600">
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-secondary"></i> Kamar rawat inap nyaman</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-secondary"></i> Monitoring pasien secara berkala</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-secondary"></i> Perawatan medis oleh tenaga profesional</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-secondary"></i> Ruang pasien yang bersih dan higienis</li>
+                    </ul>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-primary mb-4">Poliklinik Tersedia</h2>
+                    <div class="w-16 h-1 bg-secondary mb-6"></div>
+                    <div class="space-y-4">
+                        <div class="flex gap-4 p-4 border border-gray-100 rounded-xl hover:shadow-md transition bg-light/50">
+                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shrink-0 shadow-sm"><i class="fa-solid fa-user-md"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Poli Umum</h4>
+                                <p class="text-sm text-gray-600">Pelayanan kesehatan umum untuk berbagai keluhan medis.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 p-4 border border-gray-100 rounded-xl hover:shadow-md transition bg-light/50">
+                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shrink-0 shadow-sm"><i class="fa-solid fa-baby"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Poli Anak</h4>
+                                <p class="text-sm text-gray-600">Pemeriksaan kesehatan untuk bayi dan anak.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 p-4 border border-gray-100 rounded-xl hover:shadow-md transition bg-light/50">
+                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shrink-0 shadow-sm"><i class="fa-solid fa-lungs"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Poli Penyakit Dalam</h4>
+                                <p class="text-sm text-gray-600">Pemeriksaan untuk penyakit yang berkaitan dengan organ dalam.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 p-4 border border-gray-100 rounded-xl hover:shadow-md transition bg-light/50">
+                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shrink-0 shadow-sm"><i class="fa-solid fa-tooth"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Poli Gigi</h4>
+                                <p class="text-sm text-gray-600">Perawatan kesehatan gigi dan mulut.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="jadwal" class="py-20 bg-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-3xl font-bold text-primary mb-4">Jadwal Praktik Dokter</h2>
+                <div class="w-16 h-1 bg-secondary mx-auto mb-6"></div>
+            </div>
+            <div class="overflow-x-auto bg-white rounded-2xl shadow-md">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-primary text-white">
+                            <th class="py-4 px-6 font-semibold">Dokter</th>
+                            <th class="py-4 px-6 font-semibold">Poli</th>
+                            <th class="py-4 px-6 font-semibold">Hari</th>
+                            <th class="py-4 px-6 font-semibold">Jam Praktik</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700">
+                        <tr class="border-b hover:bg-light transition">
+                            <td class="py-4 px-6 font-medium">dr. Yasmine Putri</td>
+                            <td class="py-4 px-6">Poli Umum</td>
+                            <td class="py-4 px-6">Senin – Jumat</td>
+                            <td class="py-4 px-6 bg-blue-50/50 font-semibold text-primary">09.00 – 14.00</td>
+                        </tr>
+                        <tr class="border-b hover:bg-light transition">
+                            <td class="py-4 px-6 font-medium">dr. Andi Saputra</td>
+                            <td class="py-4 px-6">Poli Anak</td>
+                            <td class="py-4 px-6">Senin – Kamis</td>
+                            <td class="py-4 px-6 bg-blue-50/50 font-semibold text-primary">10.00 – 15.00</td>
+                        </tr>
+                        <tr class="hover:bg-light transition">
+                            <td class="py-4 px-6 font-medium">dr. Maya Lestari</td>
+                            <td class="py-4 px-6">Poli Penyakit Dalam</td>
+                            <td class="py-4 px-6">Selasa – Sabtu</td>
+                            <td class="py-4 px-6 bg-blue-50/50 font-semibold text-primary">13.00 – 17.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                <div>
+                    <h2 class="text-3xl font-bold text-primary mb-4">Paket Pemeriksaan</h2>
+                    <div class="w-16 h-1 bg-secondary mb-8"></div>
+                    <div class="space-y-6">
+                        <div class="p-6 border-2 border-light rounded-2xl hover:border-secondary transition">
+                            <h4 class="text-xl font-bold text-primary mb-2">Paket Medical Check Up</h4>
+                            <p class="text-gray-600 text-sm">Pemeriksaan kesehatan dasar untuk mengetahui kondisi kesehatan secara umum.</p>
+                        </div>
+                        <div class="p-6 border-2 border-light rounded-2xl hover:border-secondary transition">
+                            <h4 class="text-xl font-bold text-primary mb-2">Paket Laboratorium</h4>
+                            <p class="text-gray-600 text-sm">Pemeriksaan darah dan kesehatan organ tubuh secara mendetail.</p>
+                        </div>
+                        <div class="p-6 border-2 border-light rounded-2xl hover:border-secondary transition bg-light">
+                            <h4 class="text-xl font-bold text-primary mb-2">Paket Kesehatan Keluarga</h4>
+                            <p class="text-gray-600 text-sm">Pemeriksaan kesehatan komprehensif untuk seluruh anggota keluarga tercinta.</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-primary mb-4">Fasilitas & Info Pasien</h2>
+                    <div class="w-16 h-1 bg-secondary mb-8"></div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div class="flex items-center gap-3 text-gray-700 font-medium"><i class="fa-solid fa-check text-secondary"></i> Ruang Pemeriksaan</div>
+                        <div class="flex items-center gap-3 text-gray-700 font-medium"><i class="fa-solid fa-check text-secondary"></i> Laboratorium</div>
+                        <div class="flex items-center gap-3 text-gray-700 font-medium"><i class="fa-solid fa-check text-secondary"></i> Ruang Rawat Inap</div>
+                        <div class="flex items-center gap-3 text-gray-700 font-medium"><i class="fa-solid fa-check text-secondary"></i> Apotek</div>
+                        <div class="flex items-center gap-3 text-gray-700 font-medium"><i class="fa-solid fa-check text-secondary"></i> Ruang Tindakan</div>
+                        <div class="flex items-center gap-3 text-gray-700 font-medium"><i class="fa-solid fa-check text-secondary"></i> Area Parkir Luas</div>
+                    </div>
+
+                    <div class="bg-primary text-white p-6 rounded-2xl shadow-lg">
+                        <h4 class="font-bold text-lg mb-3 border-b border-blue-400 pb-2">Panduan Pasien</h4>
+                        <ul class="space-y-2 text-sm text-blue-100">
+                            <li><i class="fa-solid fa-angle-right mr-2"></i> Prosedur pendaftaran pasien</li>
+                            <li><i class="fa-solid fa-angle-right mr-2"></i> Persiapan sebelum pemeriksaan</li>
+                            <li><i class="fa-solid fa-angle-right mr-2"></i> Informasi asuransi kesehatan</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-primary text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12">Pengalaman Pasien Kami</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-blue-800/50 p-8 rounded-2xl">
+                    <i class="fa-solid fa-quote-left text-3xl text-secondary mb-4 opacity-50"></i>
+                    <p class="italic mb-6">"Pelayanan di Klinik Yasmine sangat ramah dan profesional. Sangat merekomendasikan."</p>
+                    <h5 class="font-bold text-secondary">— Siti</h5>
+                </div>
+                <div class="bg-blue-800/50 p-8 rounded-2xl">
+                    <i class="fa-solid fa-quote-left text-3xl text-secondary mb-4 opacity-50"></i>
+                    <p class="italic mb-6">"Fasilitas rawat inapnya nyaman dan bersih. Terasa seperti dirawat di rumah sendiri."</p>
+                    <h5 class="font-bold text-secondary">— Ahmad</h5>
+                </div>
+                <div class="bg-blue-800/50 p-8 rounded-2xl">
+                    <i class="fa-solid fa-quote-left text-3xl text-secondary mb-4 opacity-50"></i>
+                    <p class="italic mb-6">"Dokternya sangat membantu dan memberikan penjelasan yang jelas. Terima kasih Klinik Yasmine!"</p>
+                    <h5 class="font-bold text-secondary">— Lina</h5>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-white">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-primary text-center mb-10">FAQ (Pertanyaan Umum)</h2>
+            <div class="space-y-4">
+                <div class="faq-item border border-gray-200 rounded-xl overflow-hidden cursor-pointer bg-light/30">
+                    <div class="px-6 py-4 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <h4 class="font-semibold text-gray-800">Apakah Klinik Yasmine menyediakan rawat inap?</h4>
+                        <i class="fa-solid fa-chevron-down text-secondary faq-icon transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer px-6 pb-4 text-gray-600 text-sm">
+                        Ya, Klinik Yasmine menyediakan layanan rawat inap dengan fasilitas yang nyaman dan pemantauan medis profesional.
+                    </div>
+                </div>
+                <div class="faq-item border border-gray-200 rounded-xl overflow-hidden cursor-pointer bg-light/30">
+                    <div class="px-6 py-4 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <h4 class="font-semibold text-gray-800">Apakah perlu membuat janji sebelum datang?</h4>
+                        <i class="fa-solid fa-chevron-down text-secondary faq-icon transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer px-6 pb-4 text-gray-600 text-sm">
+                        Disarankan untuk membuat janji terlebih dahulu agar pelayanan lebih cepat, namun kami juga menerima pasien yang datang langsung.
+                    </div>
+                </div>
+                <div class="faq-item border border-gray-200 rounded-xl overflow-hidden cursor-pointer bg-light/30">
+                    <div class="px-6 py-4 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <h4 class="font-semibold text-gray-800">Apakah Klinik Yasmine menerima asuransi?</h4>
+                        <i class="fa-solid fa-chevron-down text-secondary faq-icon transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer px-6 pb-4 text-gray-600 text-sm">
+                        Ya, kami menerima beberapa jenis asuransi kesehatan swasta maupun pemerintah. Silakan hubungi admin kami untuk detailnya.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="kontak" class="bg-gray-900 text-white pt-16 pb-8 border-t-4 border-secondary">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+                <div>
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-heart-pulse text-secondary"></i> Klinik Yasmine
+                    </h2>
+                    <p class="text-gray-400 mb-8 max-w-md">Pelayanan kesehatan profesional yang berorientasi pada keselamatan dan kenyamanan Anda dan keluarga.</p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4">
+                            <i class="fa-solid fa-location-dot text-secondary mt-1"></i>
+                            <p class="text-gray-300">Jl. Asia Afrika No. 123, Kota Bandung,<br>Jawa Barat, Indonesia</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <i class="fa-solid fa-phone text-secondary"></i>
+                            <p class="text-gray-300">(022) 1234-5678</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <i class="fa-brands fa-whatsapp text-secondary text-lg"></i>
+                            <p class="text-gray-300">+62 812-3456-7890</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <i class="fa-solid fa-envelope text-secondary"></i>
+                            <p class="text-gray-300">dadanfurman@gmail.com</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <i class="fa-solid fa-clock text-secondary"></i>
+                            <p class="text-gray-300">Senin – Minggu : 08.00 – 21.00 WIB</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="h-80 rounded-2xl overflow-hidden shadow-xl border border-gray-800">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126748.56347862248!2d107.57311709235512!3d-6.903444341687889!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e6398252477f%3A0x146a1f93d3e815b2!2sBandung%2C%20Kota%20Bandung%2C%20Jawa%20Barat!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
+                <p>&copy; 2026 Klinik Yasmine. All rights reserved.</p>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-secondary transition"><i class="fa-brands fa-instagram text-xl"></i></a>
+                    <a href="#" class="hover:text-secondary transition"><i class="fa-brands fa-facebook text-xl"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button id="scrollTopBtn" onclick="scrollToTop()" class="fixed bottom-8 right-8 bg-secondary text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl opacity-0 invisible transition-all duration-300 hover:bg-primary z-50">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // FAQ Toggle
+        function toggleFaq(element) {
+            const item = element.parentElement;
+            item.classList.toggle('active');
+        }
+
+        // Scroll to Top Logic
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+        const navbar = document.getElementById('navbar');
+
+        window.addEventListener('scroll', () => {
+            // Tampilkan tombol back to top jika scroll > 300px
+            if (window.scrollY > 300) {
+                scrollTopBtn.classList.remove('opacity-0', 'invisible');
+                scrollTopBtn.classList.add('opacity-100', 'visible');
+            } else {
+                scrollTopBtn.classList.add('opacity-0', 'invisible');
+                scrollTopBtn.classList.remove('opacity-100', 'visible');
+            }
+
+            // Beri efek shadow pada navbar saat di-scroll
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-lg', 'bg-white/95', 'backdrop-blur-sm');
+            } else {
+                navbar.classList.remove('shadow-lg', 'bg-white/95', 'backdrop-blur-sm');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

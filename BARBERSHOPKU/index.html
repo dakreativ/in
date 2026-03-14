@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BarbershopKu – Modern Grooming Experience</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        heading: ['"Bebas Neue"', 'sans-serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        darkBase: '#111111',
+                        darkGray: '#333333',
+                        darker: '#0a0a0a',
+                        light: '#FFFFFF',
+                        accent: '#F3F4F6' // Light gray for slight contrast
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles for Interactivity */
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+        }
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+        /* Image zoom hover effect */
+        .img-zoom:hover img {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="font-sans text-accent bg-darkBase antialiased">
+
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-transparent py-4" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <a href="#" class="font-heading text-4xl text-light tracking-widest flex items-center gap-2">
+                <i class="fa-solid fa-scissors transform -rotate-45"></i> BARBERSHOP<span class="text-gray-400">KU</span>
+            </a>
+            
+            <div class="hidden lg:flex items-center space-x-8 text-sm font-semibold tracking-wide uppercase">
+                <a href="#beranda" class="text-light hover:text-gray-400 transition">Beranda</a>
+                <a href="#tentang" class="text-light hover:text-gray-400 transition">Tentang</a>
+                <a href="#layanan" class="text-light hover:text-gray-400 transition">Layanan</a>
+                <a href="#galeri" class="text-light hover:text-gray-400 transition">Galeri</a>
+                <a href="#promo" class="text-light hover:text-gray-400 transition">Promo</a>
+                <a href="#kontak" class="bg-light text-darkBase px-6 py-2 hover:bg-gray-300 transition duration-300">Booking</a>
+            </div>
+
+            <button class="lg:hidden text-2xl text-light" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="hidden lg:hidden bg-darker border-t border-darkGray absolute w-full top-full left-0 text-center uppercase text-sm font-semibold">
+            <a href="#beranda" class="block py-4 text-light border-b border-darkGray" onclick="toggleMenu()">Beranda</a>
+            <a href="#tentang" class="block py-4 text-light border-b border-darkGray" onclick="toggleMenu()">Tentang</a>
+            <a href="#layanan" class="block py-4 text-light border-b border-darkGray" onclick="toggleMenu()">Layanan</a>
+            <a href="#galeri" class="block py-4 text-light border-b border-darkGray" onclick="toggleMenu()">Galeri</a>
+            <a href="#kontak" class="block py-4 text-darkBase bg-light" onclick="toggleMenu()">Booking Sekarang</a>
+        </div>
+    </nav>
+
+    <section id="beranda" class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Barbershop" class="w-full h-full object-cover opacity-40">
+            <div class="absolute inset-0 bg-gradient-to-t from-darkBase via-darkBase/80 to-transparent"></div>
+        </div>
+        <div class="relative z-10 text-center px-6 max-w-4xl mt-20">
+            <h1 class="font-heading text-6xl md:text-8xl text-light tracking-wide mb-6 leading-none shadow-black drop-shadow-lg">
+                POTONGAN RAMBUT MODERN <br><span class="text-gray-400">UNTUK TAMPIL PERCAYA DIRI</span>
+            </h1>
+            <p class="text-gray-300 text-sm md:text-base font-light mb-10 max-w-2xl mx-auto leading-relaxed">
+                BarbershopKu menghadirkan layanan potong rambut profesional dengan gaya modern dan pelayanan terbaik untuk membantu Anda tampil lebih rapi, stylish, dan percaya diri.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#kontak" class="bg-light text-darkBase font-bold px-10 py-4 uppercase tracking-wider hover:bg-gray-300 transition duration-300">Booking Sekarang</a>
+                <a href="#layanan" class="border border-light text-light font-bold px-10 py-4 uppercase tracking-wider hover:bg-light hover:text-darkBase transition duration-300">Lihat Layanan</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="tentang" class="py-24 bg-darkBase">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="font-heading text-5xl text-light tracking-wide mb-6">TENTANG BARBERSHOP<span class="text-gray-500">KU</span></h2>
+                    <div class="w-20 h-1 bg-light mb-8"></div>
+                    <p class="text-gray-400 font-light leading-relaxed mb-6 text-justify">
+                        BarbershopKu adalah tempat potong rambut modern yang menghadirkan layanan grooming berkualitas untuk pria dari berbagai kalangan. Kami memahami bahwa gaya rambut yang tepat dapat meningkatkan rasa percaya diri.
+                    </p>
+                    <p class="text-gray-400 font-light leading-relaxed mb-8 text-justify">
+                        Oleh karena itu, setiap layanan kami dilakukan oleh barber profesional yang berpengalaman dalam berbagai gaya rambut pria. Dengan suasana barbershop yang nyaman dan pelayanan yang ramah, kami berkomitmen memberikan pengalaman potong rambut terbaik.
+                    </p>
+                    <div class="flex gap-8">
+                        <div>
+                            <h4 class="font-heading text-4xl text-light">5+</h4>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest">Tahun Pengalaman</p>
+                        </div>
+                        <div>
+                            <h4 class="font-heading text-4xl text-light">10K+</h4>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest">Pelanggan Puas</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative img-zoom overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="About Barbershop" class="w-full h-auto object-cover grayscale hover:grayscale-0 transition duration-700">
+                    <div class="absolute -bottom-6 -left-6 w-32 h-32 border-l-4 border-b-4 border-light z-10 hidden md:block"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="layanan" class="py-24 bg-darker">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-heading text-5xl text-light tracking-wide mb-4">LAYANAN GROOMING</h2>
+                <div class="w-20 h-1 bg-darkGray mx-auto"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-darkBase p-10 border border-darkGray hover:border-light transition duration-300 group">
+                    <i class="fa-solid fa-scissors text-4xl text-light mb-6 group-hover:scale-110 transition"></i>
+                    <h3 class="font-heading text-2xl text-light tracking-wide mb-3">Haircut</h3>
+                    <p class="text-gray-500 text-sm font-light">Potong rambut dengan berbagai gaya modern sesuai keinginan pelanggan.</p>
+                </div>
+                <div class="bg-darkBase p-10 border border-darkGray hover:border-light transition duration-300 group">
+                    <i class="fa-solid fa-comb text-4xl text-light mb-6 group-hover:scale-110 transition"></i>
+                    <h3 class="font-heading text-2xl text-light tracking-wide mb-3">Hair Styling</h3>
+                    <p class="text-gray-500 text-sm font-light">Penataan rambut pomade/clay untuk tampilan yang lebih rapi dan stylish.</p>
+                </div>
+                <div class="bg-darkBase p-10 border border-darkGray hover:border-light transition duration-300 group">
+                    <i class="fa-solid fa-razor text-4xl text-light mb-6 group-hover:scale-110 transition"></i>
+                    <h3 class="font-heading text-2xl text-light tracking-wide mb-3">Beard Trim</h3>
+                    <p class="text-gray-500 text-sm font-light">Perapihan jenggot dan kumis agar terlihat lebih bersih, rapi, dan maskulin.</p>
+                </div>
+                <div class="bg-darkBase p-10 border border-darkGray hover:border-light transition duration-300 group">
+                    <i class="fa-solid fa-pump-soap text-4xl text-light mb-6 group-hover:scale-110 transition"></i>
+                    <h3 class="font-heading text-2xl text-light tracking-wide mb-3">Hair Wash</h3>
+                    <p class="text-gray-500 text-sm font-light">Pencucian rambut relaksasi dengan produk perawatan berkualitas premium.</p>
+                </div>
+                <div class="bg-darkBase p-10 border border-darkGray hover:border-light transition duration-300 group">
+                    <i class="fa-solid fa-spray-can text-4xl text-light mb-6 group-hover:scale-110 transition"></i>
+                    <h3 class="font-heading text-2xl text-light tracking-wide mb-3">Hair Coloring</h3>
+                    <p class="text-gray-500 text-sm font-light">Pewarnaan rambut profesional untuk tampilan yang lebih *fresh* dan stylish.</p>
+                </div>
+                <div class="bg-darkBase p-10 border border-darkGray hover:border-light transition duration-300 group">
+                    <i class="fa-solid fa-child text-4xl text-light mb-6 group-hover:scale-110 transition"></i>
+                    <h3 class="font-heading text-2xl text-light tracking-wide mb-3">Kids Haircut</h3>
+                    <p class="text-gray-500 text-sm font-light">Layanan potong rambut khusus anak-anak dengan barber yang sabar dan ramah.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 bg-darkBase">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-heading text-5xl text-light tracking-wide mb-4">PAKET GROOMING</h2>
+                <div class="w-20 h-1 bg-darkGray mx-auto"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="bg-darker border border-darkGray p-10 text-center hover:-translate-y-2 transition duration-300">
+                    <h3 class="font-heading text-3xl text-light tracking-wider mb-2">BASIC</h3>
+                    <p class="text-4xl font-light text-light mb-8">Rp 50K</p>
+                    <ul class="space-y-4 text-gray-400 text-sm mb-10">
+                        <li><i class="fa-solid fa-check text-light mr-2"></i> Haircut</li>
+                        <li><i class="fa-solid fa-check text-light mr-2"></i> Hair Wash</li>
+                        <li class="line-through text-darkGray"><i class="fa-solid fa-times mr-2"></i> Hair Styling</li>
+                        <li class="line-through text-darkGray"><i class="fa-solid fa-times mr-2"></i> Beard Trim</li>
+                    </ul>
+                    <a href="#kontak" class="block w-full border border-light text-light py-3 uppercase tracking-wider text-sm font-bold hover:bg-light hover:text-darkBase transition">Pilih Paket</a>
+                </div>
+                <div class="bg-light border border-light p-10 text-center transform md:scale-105 shadow-2xl relative">
+                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 bg-darkBase text-light text-xs py-1 px-4 uppercase tracking-widest font-bold">Best Value</div>
+                    <h3 class="font-heading text-3xl text-darkBase tracking-wider mb-2 mt-4">PREMIUM</h3>
+                    <p class="text-4xl font-bold text-darkBase mb-8">Rp 75K</p>
+                    <ul class="space-y-4 text-gray-700 text-sm mb-10">
+                        <li><i class="fa-solid fa-check text-darkBase mr-2"></i> Haircut</li>
+                        <li><i class="fa-solid fa-check text-darkBase mr-2"></i> Hair Wash</li>
+                        <li><i class="fa-solid fa-check text-darkBase mr-2"></i> Hair Styling</li>
+                        <li class="line-through text-gray-300"><i class="fa-solid fa-times mr-2"></i> Beard Trim</li>
+                    </ul>
+                    <a href="#kontak" class="block w-full bg-darkBase text-light py-3 uppercase tracking-wider text-sm font-bold hover:bg-darkGray transition">Pilih Paket</a>
+                </div>
+                <div class="bg-darker border border-darkGray p-10 text-center hover:-translate-y-2 transition duration-300">
+                    <h3 class="font-heading text-3xl text-light tracking-wider mb-2">COMPLETE</h3>
+                    <p class="text-4xl font-light text-light mb-8">Rp 100K</p>
+                    <ul class="space-y-4 text-gray-400 text-sm mb-10">
+                        <li><i class="fa-solid fa-check text-light mr-2"></i> Haircut</li>
+                        <li><i class="fa-solid fa-check text-light mr-2"></i> Hair Wash</li>
+                        <li><i class="fa-solid fa-check text-light mr-2"></i> Hair Styling</li>
+                        <li><i class="fa-solid fa-check text-light mr-2"></i> Beard Trim</li>
+                    </ul>
+                    <a href="#kontak" class="block w-full border border-light text-light py-3 uppercase tracking-wider text-sm font-bold hover:bg-light hover:text-darkBase transition">Pilih Paket</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 bg-darker">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-heading text-5xl text-light tracking-wide mb-4">TIM BARBER PROFESIONAL</h2>
+                <div class="w-20 h-1 bg-darkGray mx-auto"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="text-center group">
+                    <div class="overflow-hidden mb-6 aspect-[3/4]">
+                        <img src="https://images.unsplash.com/photo-1621644026514-46e3368fa96f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Andi Barber" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition duration-500">
+                    </div>
+                    <h3 class="font-heading text-3xl text-light tracking-wider">ANDI BARBER</h3>
+                    <p class="text-gray-500 text-sm font-light">Senior Barber (5+ Tahun Pengalaman)</p>
+                </div>
+                <div class="text-center group">
+                    <div class="overflow-hidden mb-6 aspect-[3/4]">
+                        <img src="https://images.unsplash.com/photo-1593726853403-f36551bafcc1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rafi Barber" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition duration-500">
+                    </div>
+                    <h3 class="font-heading text-3xl text-light tracking-wider">RAFI BARBER</h3>
+                    <p class="text-gray-500 text-sm font-light">Spesialis Fade & Modern Haircut</p>
+                </div>
+                <div class="text-center group">
+                    <div class="overflow-hidden mb-6 aspect-[3/4]">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Dika Barber" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition duration-500">
+                    </div>
+                    <h3 class="font-heading text-3xl text-light tracking-wider">DIKA BARBER</h3>
+                    <p class="text-gray-500 text-sm font-light">Spesialis Klasik & Pompadour</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="galeri" class="py-2 overflow-hidden bg-darkBase">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-1">
+            <div class="aspect-square overflow-hidden img-zoom cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Gallery" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-500">
+            </div>
+            <div class="aspect-square overflow-hidden img-zoom cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Gallery" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-500">
+            </div>
+            <div class="aspect-square overflow-hidden img-zoom cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1582239611681-42e6f47702f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Gallery" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-500">
+            </div>
+            <div class="aspect-square overflow-hidden img-zoom cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1512695500645-8f64243a85b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Gallery" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-500">
+            </div>
+        </div>
+    </section>
+
+    <section id="promo" class="py-24 bg-darker">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                <div>
+                    <h2 class="font-heading text-5xl text-light tracking-wide mb-8">PROMO SPESIAL</h2>
+                    <div class="space-y-6">
+                        <div class="bg-darkBase border-l-4 border-light p-6 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-light uppercase tracking-wider mb-1">New Member</h4>
+                                <p class="text-sm text-gray-500">Diskon 20% potongan rambut pertama.</p>
+                            </div>
+                            <span class="bg-light text-darkBase text-xs font-bold px-3 py-1 uppercase">Klaim</span>
+                        </div>
+                        <div class="bg-darkBase border-l-4 border-darkGray p-6 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-light uppercase tracking-wider mb-1">Paket Hemat</h4>
+                                <p class="text-sm text-gray-500">Potong + Cuci hanya Rp 60K (Senin-Kamis).</p>
+                            </div>
+                        </div>
+                        <div class="bg-darkBase border-l-4 border-darkGray p-6 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-light uppercase tracking-wider mb-1">Promo Member</h4>
+                                <p class="text-sm text-gray-500">Kumpulkan 5 stamp, gratis 1x Haircut.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="font-heading text-5xl text-light tracking-wide mb-8 text-right">KATA PELANGGAN</h2>
+                    <div class="space-y-6">
+                        <div class="bg-darkBase p-6 border border-darkGray">
+                            <i class="fa-solid fa-quote-left text-2xl text-darkGray mb-4"></i>
+                            <p class="text-gray-400 font-light italic mb-4">"Barbernya profesional, teliti banget, dan potongannya rapi. Puas banget sama hasilnya."</p>
+                            <h5 class="text-light font-bold text-sm tracking-wider uppercase">— Andi</h5>
+                        </div>
+                        <div class="bg-darkBase p-6 border border-darkGray flex flex-col md:flex-row gap-6">
+                            <div class="flex-1">
+                                <p class="text-gray-400 font-light italic mb-4">"Tempatnya nyaman, musiknya asik, dan hasil potongannya keren sesuai referensi."</p>
+                                <h5 class="text-light font-bold text-sm tracking-wider uppercase">— Rafi</h5>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-gray-400 font-light italic mb-4">"Sangat puas dengan pelayanan di BarbershopKu. Cuci rambutnya bikin rileks!"</p>
+                                <h5 class="text-light font-bold text-sm tracking-wider uppercase">— Dika</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 bg-darkBase">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="font-heading text-5xl text-light tracking-wide mb-4">FAQ</h2>
+                <div class="w-16 h-1 bg-darkGray mx-auto"></div>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="faq-item bg-darker border border-darkGray cursor-pointer">
+                    <div class="px-6 py-5 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <h4 class="font-semibold text-light text-sm uppercase tracking-wider">Apakah harus booking sebelum datang?</h4>
+                        <i class="fa-solid fa-chevron-down text-gray-500 faq-icon transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer px-6 text-gray-500 text-sm font-light">
+                        <p class="pb-5">Tidak wajib (bisa *walk-in*), tetapi kami sangat menyarankan untuk booking agar Anda tidak perlu menunggu antrean terlalu lama.</p>
+                    </div>
+                </div>
+                <div class="faq-item bg-darker border border-darkGray cursor-pointer">
+                    <div class="px-6 py-5 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <h4 class="font-semibold text-light text-sm uppercase tracking-wider">Berapa lama waktu potong rambut?</h4>
+                        <i class="fa-solid fa-chevron-down text-gray-500 faq-icon transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer px-6 text-gray-500 text-sm font-light">
+                        <p class="pb-5">Rata-rata proses grooming memakan waktu sekitar 30–45 menit tergantung pada model rambut dan paket layanan yang Anda pilih.</p>
+                    </div>
+                </div>
+                <div class="faq-item bg-darker border border-darkGray cursor-pointer">
+                    <div class="px-6 py-5 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <h4 class="font-semibold text-light text-sm uppercase tracking-wider">Apakah tersedia potong rambut anak?</h4>
+                        <i class="fa-solid fa-chevron-down text-gray-500 faq-icon transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer px-6 text-gray-500 text-sm font-light">
+                        <p class="pb-5">Ya, kami menyediakan layanan Kids Haircut. Barber kami dilatih untuk sabar dan memberikan pengalaman potong rambut yang nyaman bagi anak-anak.</p>
+                    </div>
+                </div>
+                <div class="faq-item bg-darker border border-darkGray cursor-pointer">
+                    <div class="px-6 py-5 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <h4 class="font-semibold text-light text-sm uppercase tracking-wider">Apakah bisa request gaya rambut tertentu?</h4>
+                        <i class="fa-solid fa-chevron-down text-gray-500 faq-icon transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer px-6 text-gray-500 text-sm font-light">
+                        <p class="pb-5">Tentu saja. Anda bisa menunjukkan foto referensi kepada barber kami. Barber kami juga akan memberikan konsultasi apakah gaya tersebut cocok dengan bentuk wajah dan jenis rambut Anda.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="kontak" class="bg-darker pt-20 pb-10 border-t border-darkGray">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 mb-16">
+            <div>
+                <a href="#" class="font-heading text-5xl text-light tracking-widest flex items-center gap-2 mb-8">
+                    BARBERSHOP<span class="text-gray-500">KU</span>
+                </a>
+                <p class="text-gray-500 font-light mb-10 max-w-sm">Jadwalkan sesi grooming Anda sekarang dan rasakan pengalaman potong rambut terbaik di kota.</p>
+                
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4">
+                        <i class="fa-solid fa-location-dot text-light text-xl mt-1 w-6"></i>
+                        <div>
+                            <h5 class="text-light font-bold uppercase tracking-wider text-sm mb-1">Alamat</h5>
+                            <p class="text-gray-500 text-sm font-light">Jl. Braga No. 99, Kota Bandung<br>Jawa Barat, Indonesia</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <i class="fa-solid fa-clock text-light text-xl mt-1 w-6"></i>
+                        <div>
+                            <h5 class="text-light font-bold uppercase tracking-wider text-sm mb-1">Jam Operasional</h5>
+                            <p class="text-gray-500 text-sm font-light">Senin – Minggu : 10.00 – 21.00 WIB</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <i class="fa-brands fa-whatsapp text-light text-xl mt-1 w-6"></i>
+                        <div>
+                            <h5 class="text-light font-bold uppercase tracking-wider text-sm mb-1">Booking (WhatsApp)</h5>
+                            <p class="text-gray-500 text-sm font-light">+62 811-2233-4455</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex space-x-6 mt-10">
+                    <a href="#" class="w-10 h-10 border border-darkGray rounded-full flex items-center justify-center text-light hover:bg-light hover:text-darkBase transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="w-10 h-10 border border-darkGray rounded-full flex items-center justify-center text-light hover:bg-light hover:text-darkBase transition"><i class="fa-brands fa-tiktok"></i></a>
+                </div>
+            </div>
+
+            <div class="h-80 lg:h-full min-h-[300px] border border-darkGray relative filter grayscale hover:grayscale-0 transition duration-700">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.852329686036!2d107.60834161477284!3d-6.917578294998822!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e6306bd6b541%3A0x7d018b3fb8120e!2sJl.%20Braga%2C%20Kota%20Bandung%2C%20Jawa%20Barat!5e0!3m2!1sen!2sid!4v1680000000000!5m2!1sen!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+        
+        <div class="text-center border-t border-darkGray pt-8 text-xs text-gray-600 uppercase tracking-widest">
+            &copy; 2026 BARBERSHOPKU. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Navbar Scroll Effect (Transparent to Solid Black)
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-darkBase', 'border-b', 'border-darkGray');
+                navbar.classList.remove('bg-transparent', 'py-4');
+                navbar.classList.add('py-2'); // shrink slightly
+            } else {
+                navbar.classList.add('bg-transparent', 'py-4');
+                navbar.classList.remove('bg-darkBase', 'border-b', 'border-darkGray', 'py-2');
+            }
+        });
+
+        // FAQ Accordion
+        function toggleFaq(element) {
+            const item = element.parentElement;
+            // Close others
+            document.querySelectorAll('.faq-item').forEach(faq => {
+                if(faq !== item) faq.classList.remove('active');
+            });
+            // Toggle current
+            item.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

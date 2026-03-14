@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shut Photography | Elegant Monochrome Studio</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        black: '#050505',
+                        white: '#ffffff',
+                        gray: {
+                            100: '#f5f5f5',
+                            300: '#e0e0e0',
+                            500: '#9e9e9e',
+                            800: '#222222',
+                            900: '#111111',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Inter"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #050505;
+            overflow-x: hidden;
+        }
+
+        /* Minimalist Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #ffffff; }
+        ::-webkit-scrollbar-thumb { background: #050505; }
+
+        /* Strict Grayscale Effect for Images with subtle hover reveal */
+        .img-bw {
+            filter: grayscale(100%) contrast(110%);
+            transition: all 0.7s ease;
+        }
+        .group:hover .img-bw {
+            filter: grayscale(30%) contrast(100%); /* Slight color reveal */
+            transform: scale(1.03);
+        }
+
+        /* Thin elegant borders */
+        .border-thin { border-width: 1px; border-color: #e0e0e0; }
+        .border-b-thin { border-bottom-width: 1px; border-color: #e0e0e0; }
+
+        /* Buttons */
+        .btn-solid {
+            background-color: #050505;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        .btn-solid:hover {
+            background-color: #ffffff;
+            color: #050505;
+            box-shadow: inset 0 0 0 1px #050505;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: #050505;
+            box-shadow: inset 0 0 0 1px #050505;
+            transition: all 0.3s ease;
+        }
+        .btn-outline:hover {
+            background-color: #050505;
+            color: #ffffff;
+        }
+
+        /* FAQ Accordion */
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        .faq-active .faq-answer { max-height: 300px; }
+        .faq-active .faq-icon { transform: rotate(180deg); }
+
+        button:focus, a:focus { outline: none !important; }
+
+        /* Play Button for Video Overlay */
+        .play-btn {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255,255,255,0.9);
+            color: #000;
+            border-radius: 50%;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .group:hover .play-btn {
+            background: #000;
+            color: #fff;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b-thin transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+            <a href="#beranda" class="text-2xl font-serif font-bold tracking-[0.2em] uppercase">
+                SHUT.
+            </a>
+            
+            <div class="hidden lg:flex space-x-8 text-xs font-medium tracking-widest uppercase text-gray-500">
+                <a href="#tentang" class="hover:text-black transition">Tentang</a>
+                <a href="#portfolio" class="hover:text-black transition">Portfolio</a>
+                <a href="#layanan" class="hover:text-black transition">Layanan</a>
+                <a href="#paket" class="hover:text-black transition">Paket</a>
+                <a href="#blog" class="hover:text-black transition">Blog</a>
+                <a href="#kontak" class="hover:text-black transition">Kontak</a>
+            </div>
+            
+            <button class="lg:hidden text-black focus:outline-none" id="mobile-menu-btn">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+        
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t-thin absolute w-full left-0 py-4 px-6 flex flex-col space-y-4 text-sm font-medium tracking-widest uppercase text-center shadow-2xl">
+            <a href="#tentang" class="py-2 border-b-thin">Tentang</a>
+            <a href="#portfolio" class="py-2 border-b-thin">Portfolio</a>
+            <a href="#layanan" class="py-2 border-b-thin">Layanan</a>
+            <a href="#paket" class="py-2 border-b-thin">Paket</a>
+            <a href="#kontak" class="py-2 text-black font-bold">Booking &rarr;</a>
+        </div>
+    </nav>
+
+    <section id="beranda" class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&q=80" alt="Photographer" class="w-full h-full object-cover filter grayscale contrast-125 opacity-40">
+            <div class="absolute inset-0 bg-white/60"></div>
+        </div>
+        
+        <div class="relative z-10 text-center px-6 max-w-4xl mx-auto mt-20" data-aos="fade-up" data-aos-duration="1200">
+            <span class="text-xs font-medium tracking-[0.3em] uppercase text-gray-500 mb-6 block">Est. 2018 — Fine Art Photography</span>
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-serif text-black leading-[1.1] mb-8">
+                Mengabadikan Momen Berharga<br><span class="italic text-gray-500">dalam Setiap Bidikan.</span>
+            </h1>
+            <p class="text-sm md:text-base text-gray-600 mb-12 font-light leading-relaxed max-w-2xl mx-auto">
+                Shut Photography adalah studio profesional yang menghadirkan karya visual berkualitas tinggi. Kami percaya bahwa setiap momen memiliki cerita yang pantas dihidupkan kembali dengan sempurna.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#portfolio" class="btn-solid px-10 py-4 text-xs uppercase tracking-widest font-semibold">Lihat Portfolio</a>
+                <a href="#kontak" class="btn-outline px-10 py-4 text-xs uppercase tracking-widest font-semibold">Booking Session</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="tentang" class="py-24 md:py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+            <div class="relative group overflow-hidden h-[600px]" data-aos="fade-right">
+                <img src="https://images.unsplash.com/photo-1554048665-d419357063d8?auto=format&fit=crop&q=80" alt="Studio Camera" class="w-full h-full object-cover img-bw">
+                <div class="absolute inset-4 border border-white/50 z-10 pointer-events-none"></div>
+            </div>
+            <div data-aos="fade-left">
+                <h2 class="text-3xl md:text-5xl font-serif mb-8 text-black">Filosofi <br><span class="italic text-gray-400">Visual Kami.</span></h2>
+                <div class="space-y-6 text-gray-600 font-light text-sm md:text-base leading-relaxed text-justify">
+                    <p>Shut Photography adalah studio fotografi yang berfokus pada pengambilan gambar yang artistik, natural, dan penuh cerita. Kami memandang dunia melalui lensa monokromatik yang menyoroti emosi sejati tanpa distraksi.</p>
+                    <p>Dengan pengalaman bertahun-tahun dalam berbagai genre, kami berkomitmen menghadirkan hasil foto dan video yang tidak hanya indah secara visual, tetapi juga memiliki nilai sentimental yang abadi.</p>
+                    <p>Pendekatan kami adalah <em>creative documentary</em> — menangkap momen jujur dengan arahan profesional untuk memastikan Anda mendapatkan pengalaman yang tak terlupakan.</p>
+                </div>
+                <div class="mt-10 border-t-thin pt-6 flex justify-between items-center max-w-sm">
+                    <div class="text-center">
+                        <p class="text-3xl font-serif text-black">8+</p>
+                        <p class="text-xs uppercase tracking-widest text-gray-500 mt-1">Tahun Exp.</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-3xl font-serif text-black">500+</p>
+                        <p class="text-xs uppercase tracking-widest text-gray-500 mt-1">Klien Puas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="portfolio" class="py-24 bg-gray-100">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-xs font-medium tracking-[0.3em] uppercase text-gray-500 mb-2 block">Our Archives</span>
+                <h2 class="text-4xl md:text-5xl font-serif text-black">Karya Terbaik</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                
+                <div class="relative group overflow-hidden h-96 bg-black cursor-pointer" data-aos="fade-up" data-aos-delay="0">
+                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80" alt="Pre Wedding" class="w-full h-full object-cover img-bw opacity-80 group-hover:opacity-100">
+                    <div class="absolute bottom-6 left-6 z-20">
+                        <p class="text-white font-serif text-2xl">Pre Wedding</p>
+                        <p class="text-white/70 text-xs tracking-widest uppercase mt-1">Romantis & Elegan</p>
+                    </div>
+                </div>
+
+                <div class="relative group overflow-hidden h-96 bg-black cursor-pointer" data-aos="fade-up" data-aos-delay="100">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80" alt="Wedding" class="w-full h-full object-cover img-bw opacity-80 group-hover:opacity-100">
+                    <div class="absolute bottom-6 left-6 z-20">
+                        <p class="text-white font-serif text-2xl">Wedding</p>
+                        <p class="text-white/70 text-xs tracking-widest uppercase mt-1">Penuh Makna</p>
+                    </div>
+                </div>
+
+                <div class="relative group overflow-hidden h-96 bg-black cursor-pointer" data-aos="fade-up" data-aos-delay="200">
+                    <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&q=80" alt="Video" class="w-full h-full object-cover img-bw opacity-60 group-hover:opacity-80">
+                    <div class="play-btn">
+                        <i data-lucide="play" class="w-6 h-6 fill-current"></i>
+                    </div>
+                    <div class="absolute bottom-6 left-6 z-20">
+                        <p class="text-white font-serif text-2xl">Cinematic Video</p>
+                        <p class="text-white/70 text-xs tracking-widest uppercase mt-1">Dokumentasi Visual Bergerak</p>
+                    </div>
+                </div>
+
+                <div class="relative group overflow-hidden h-96 bg-black cursor-pointer" data-aos="fade-up" data-aos-delay="0">
+                    <img src="https://images.unsplash.com/photo-1609220136736-443140cffec6?auto=format&fit=crop&q=80" alt="Family" class="w-full h-full object-cover img-bw opacity-80 group-hover:opacity-100">
+                    <div class="absolute bottom-6 left-6 z-20">
+                        <p class="text-white font-serif text-2xl">Family Portrait</p>
+                        <p class="text-white/70 text-xs tracking-widest uppercase mt-1">Kehangatan Keluarga</p>
+                    </div>
+                </div>
+
+                <div class="relative group overflow-hidden h-96 bg-black cursor-pointer" data-aos="fade-up" data-aos-delay="100">
+                    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80" alt="Product" class="w-full h-full object-cover img-bw opacity-80 group-hover:opacity-100">
+                    <div class="absolute bottom-6 left-6 z-20">
+                        <p class="text-white font-serif text-2xl">Commercial</p>
+                        <p class="text-white/70 text-xs tracking-widest uppercase mt-1">Foto Produk Profesional</p>
+                    </div>
+                </div>
+
+                <div class="relative group overflow-hidden h-96 bg-black cursor-pointer" data-aos="fade-up" data-aos-delay="200">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80" alt="Portrait" class="w-full h-full object-cover img-bw opacity-80 group-hover:opacity-100">
+                    <div class="absolute bottom-6 left-6 z-20">
+                        <p class="text-white font-serif text-2xl">Personal Portrait</p>
+                        <p class="text-white/70 text-xs tracking-widest uppercase mt-1">Artistik & Berkarakter</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="#kontak" class="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-bold border-b-2 border-black pb-1 hover:text-gray-500 hover:border-gray-500 transition">
+                    Lihat Semua Karya di Instagram <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="layanan" class="py-24 bg-white border-b-thin">
+        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-20">
+            <div data-aos="fade-right">
+                <h2 class="text-3xl md:text-4xl font-serif text-black mb-8">Layanan Spesialis</h2>
+                <ul class="space-y-6">
+                    <li class="flex items-start gap-4 border-b-thin pb-4">
+                        <i data-lucide="camera" class="w-6 h-6 mt-1 text-gray-400"></i>
+                        <div>
+                            <h4 class="text-lg font-serif">Foto & Video Pernikahan (Wedding & Pre-Wed)</h4>
+                            <p class="text-sm text-gray-500 font-light mt-1">Satu paket lengkap foto dan cinematic video untuk hari bahagia Anda.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4 border-b-thin pb-4">
+                        <i data-lucide="users" class="w-6 h-6 mt-1 text-gray-400"></i>
+                        <div>
+                            <h4 class="text-lg font-serif">Event & Family Documentation</h4>
+                            <p class="text-sm text-gray-500 font-light mt-1">Dokumentasi ulang tahun, gathering, dan foto kebersamaan keluarga.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4 border-b-thin pb-4">
+                        <i data-lucide="box" class="w-6 h-6 mt-1 text-gray-400"></i>
+                        <div>
+                            <h4 class="text-lg font-serif">Commercial & Product</h4>
+                            <p class="text-sm text-gray-500 font-light mt-1">Meningkatkan nilai jual brand Anda dengan visual produk yang tajam.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <i data-lucide="user" class="w-6 h-6 mt-1 text-gray-400"></i>
+                        <div>
+                            <h4 class="text-lg font-serif">Personal Portrait / Studio</h4>
+                            <p class="text-sm text-gray-500 font-light mt-1">Sesi foto personal, profil profesional, atau maternity shot.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div data-aos="fade-left">
+                <h2 class="text-3xl md:text-4xl font-serif text-black mb-8">Proses Kreatif</h2>
+                <div class="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-300 before:to-transparent">
+                    
+                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full border border-black bg-white text-black shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 font-serif">01</div>
+                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 border-thin bg-gray-50 rounded">
+                            <h4 class="font-bold text-sm uppercase tracking-wider mb-1">Konsultasi Konsep</h4>
+                            <p class="text-xs text-gray-500 font-light">Diskusi *moodboard*, referensi foto, dan pemilihan paket (Foto/Video).</p>
+                        </div>
+                    </div>
+                    
+                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full border border-black bg-white text-black shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 font-serif">02</div>
+                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 border-thin bg-gray-50 rounded">
+                            <h4 class="font-bold text-sm uppercase tracking-wider mb-1">Shooting Day</h4>
+                            <p class="text-xs text-gray-500 font-light">Pemotretan & perekaman dengan arahan gaya yang rileks dan natural.</p>
+                        </div>
+                    </div>
+
+                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full border border-black bg-white text-black shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 font-serif">03</div>
+                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 border-thin bg-gray-50 rounded">
+                            <h4 class="font-bold text-sm uppercase tracking-wider mb-1">Post-Production</h4>
+                            <p class="text-xs text-gray-500 font-light">Proses *color grading*, seleksi foto terbaik, dan editing video sinematik.</p>
+                        </div>
+                    </div>
+
+                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full border border-black bg-white text-black shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 font-serif">04</div>
+                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 border-thin bg-black text-white rounded">
+                            <h4 class="font-bold text-sm uppercase tracking-wider mb-1">Delivery</h4>
+                            <p class="text-xs text-gray-400 font-light">Penyerahan hasil akhir dalam format digital/flashdisk box eksklusif.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="paket" class="py-24 bg-gray-100">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-4xl md:text-5xl font-serif text-black mb-4">Investasi Kenangan</h2>
+                <p class="text-gray-500 text-sm font-light">Pilih paket dokumentasi yang sesuai dengan kebutuhan Anda.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 items-center">
+                <div class="bg-white border-thin p-10 text-center" data-aos="fade-up" data-aos-delay="0">
+                    <h3 class="text-xs tracking-[0.2em] uppercase font-bold text-gray-500 mb-4">Basic</h3>
+                    <p class="text-4xl font-serif mb-6">IDR 1.5M</p>
+                    <ul class="space-y-4 text-sm text-gray-600 font-light mb-8">
+                        <li>1 Fotografer Profesional</li>
+                        <li>Durasi pemotretan 2 Jam</li>
+                        <li>20 Foto Edit (Retouched)</li>
+                        <li>Semua File Original (Digital)</li>
+                        <li class="text-gray-300 line-through">Cinematic Video</li>
+                    </ul>
+                    <a href="#kontak" class="btn-outline block w-full py-3 text-xs uppercase tracking-widest font-bold">Pilih Paket</a>
+                </div>
+
+                <div class="bg-black text-white p-12 text-center transform md:-translate-y-4 shadow-2xl relative" data-aos="fade-up" data-aos-delay="100">
+                    <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-black text-[10px] font-bold uppercase tracking-widest px-4 py-1 border border-black">Best Value</div>
+                    <h3 class="text-xs tracking-[0.2em] uppercase font-bold text-gray-400 mb-4">Standard</h3>
+                    <p class="text-5xl font-serif mb-6">IDR 3.5M</p>
+                    <ul class="space-y-4 text-sm text-gray-300 font-light mb-8">
+                        <li>1 Fotografer & 1 Videografer</li>
+                        <li>Durasi pemotretan 4 Jam</li>
+                        <li>40 Foto Edit (Retouched)</li>
+                        <li>Video Cinematic 1 Menit</li>
+                        <li>Semua File Original (Digital)</li>
+                    </ul>
+                    <a href="#kontak" class="bg-white text-black hover:bg-gray-200 block w-full py-4 text-xs uppercase tracking-widest font-bold transition">Pilih Paket</a>
+                </div>
+
+                <div class="bg-white border-thin p-10 text-center" data-aos="fade-up" data-aos-delay="200">
+                    <h3 class="text-xs tracking-[0.2em] uppercase font-bold text-gray-500 mb-4">Premium</h3>
+                    <p class="text-4xl font-serif mb-6">IDR 6.5M</p>
+                    <ul class="space-y-4 text-sm text-gray-600 font-light mb-8">
+                        <li>2 Fotografer & 1 Videografer</li>
+                        <li>Durasi Full Day (Max 8 Jam)</li>
+                        <li>100 Foto Edit (Retouched)</li>
+                        <li>Video Cinematic 3-5 Menit</li>
+                        <li>Cetak Album Premium + Flashdisk</li>
+                    </ul>
+                    <a href="#kontak" class="btn-outline block w-full py-3 text-xs uppercase tracking-widest font-bold">Pilih Paket</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 bg-white border-b-thin">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <i data-lucide="quote" class="w-12 h-12 mx-auto mb-8 text-gray-300 fill-current"></i>
+            <h2 class="text-3xl font-serif mb-12">Apa Kata Klien Kami</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div data-aos="fade-up">
+                    <p class="text-gray-600 italic font-light mb-6">"Hasil fotonya sangat bagus, tone monokrom dan warnanya sangat natural. Kami merasa seperti model majalah!"</p>
+                    <p class="font-bold text-sm tracking-widest uppercase">— Rina</p>
+                    <p class="text-xs text-gray-400 mt-1">Personal Portrait</p>
+                </div>
+                <div data-aos="fade-up" data-aos-delay="100">
+                    <p class="text-gray-600 italic font-light mb-6">"Timnya profesional, asik, dan prosesnya menyenangkan. Video cinematicnya bikin merinding terharu pas ditonton."</p>
+                    <p class="font-bold text-sm tracking-widest uppercase">— Fajar & Dita</p>
+                    <p class="text-xs text-gray-400 mt-1">Wedding & Video</p>
+                </div>
+                <div data-aos="fade-up" data-aos-delay="200">
+                    <p class="text-gray-600 italic font-light mb-6">"Foto pre wedding kami terlihat sangat elegan dan mahal. Pengarahan gayanya gampang diikutin buat kami yang kaku."</p>
+                    <p class="font-bold text-sm tracking-widest uppercase">— Andi & Sarah</p>
+                    <p class="text-xs text-gray-400 mt-1">Pre Wedding</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="blog" class="py-24 bg-gray-100">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex justify-between items-end mb-12">
+                <h2 class="text-3xl md:text-4xl font-serif">Journal & Insight</h2>
+                <a href="#" class="text-xs uppercase tracking-widest font-bold border-b border-black pb-1 hidden sm:block hover:text-gray-500">Baca Semua</a>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <a href="#" class="group block bg-white border-thin hover:shadow-lg transition-all" data-aos="fade-up">
+                    <div class="h-48 overflow-hidden bg-black">
+                        <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80" alt="Wedding Prep" class="w-full h-full object-cover img-bw opacity-90 group-hover:opacity-100">
+                    </div>
+                    <div class="p-6">
+                        <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-2">Tips & Trik</p>
+                        <h3 class="text-lg font-serif font-bold mb-3 group-hover:text-gray-600 transition">Panduan Memilih Fotografer Pernikahan yang Tepat</h3>
+                        <p class="text-sm text-gray-500 font-light">Pernikahan adalah momen sekali seumur hidup. Ketahui hal-hal penting sebelum deal...</p>
+                    </div>
+                </a>
+                <a href="#" class="group block bg-white border-thin hover:shadow-lg transition-all" data-aos="fade-up" data-aos-delay="100">
+                    <div class="h-48 overflow-hidden bg-black">
+                        <img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&q=80" alt="Prewed Concept" class="w-full h-full object-cover img-bw opacity-90 group-hover:opacity-100">
+                    </div>
+                    <div class="p-6">
+                        <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-2">Inspirasi</p>
+                        <h3 class="text-lg font-serif font-bold mb-3 group-hover:text-gray-600 transition">5 Konsep Foto Pre-Wedding Elegan dan Timeless</h3>
+                        <p class="text-sm text-gray-500 font-light">Dari gaya studio minimalis hingga eksplorasi alam, temukan konsep yang sesuai karakter Anda...</p>
+                    </div>
+                </a>
+                <a href="#" class="group block bg-white border-thin hover:shadow-lg transition-all" data-aos="fade-up" data-aos-delay="200">
+                    <div class="h-48 overflow-hidden bg-black">
+                        <img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80" alt="Camera Tips" class="w-full h-full object-cover img-bw opacity-90 group-hover:opacity-100">
+                    </div>
+                    <div class="p-6">
+                        <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-2">Edukasi</p>
+                        <h3 class="text-lg font-serif font-bold mb-3 group-hover:text-gray-600 transition">Cara Tampil Luwes dan Mendapatkan Hasil Foto Terbaik</h3>
+                        <p class="text-sm text-gray-500 font-light">Merasa kaku di depan kamera? Ikuti tips pose berikut agar hasil foto terlihat natural...</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 bg-white border-b-thin">
+        <div class="max-w-3xl mx-auto px-6">
+            <h2 class="text-3xl font-serif text-center mb-12">Frequently Asked Questions</h2>
+            
+            <div class="space-y-2 border-t-thin pt-2">
+                <div class="faq-item border-b-thin">
+                    <button class="w-full text-left py-5 flex justify-between items-center text-sm uppercase tracking-wider font-bold" onclick="toggleFaq(this)">
+                        <span>Bagaimana cara melakukan booking?</span>
+                        <i data-lucide="chevron-down" class="faq-icon w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p class="text-gray-500 font-light text-sm pb-6">Anda dapat menghubungi kami melalui tombol WhatsApp yang tersedia atau mengisi formulir kontak di bawah. Kami akan membalas dengan ketersediaan jadwal.</p>
+                    </div>
+                </div>
+                <div class="faq-item border-b-thin">
+                    <button class="w-full text-left py-5 flex justify-between items-center text-sm uppercase tracking-wider font-bold" onclick="toggleFaq(this)">
+                        <span>Apakah menerima jasa video cinematic?</span>
+                        <i data-lucide="chevron-down" class="faq-icon w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p class="text-gray-500 font-light text-sm pb-6">Ya, kami memiliki divisi khusus videografi. Paket video cinematic tersedia secara terpisah maupun *bundling* dengan paket fotografi (Standard & Premium).</p>
+                    </div>
+                </div>
+                <div class="faq-item border-b-thin">
+                    <button class="w-full text-left py-5 flex justify-between items-center text-sm uppercase tracking-wider font-bold" onclick="toggleFaq(this)">
+                        <span>Berapa lama proses editing foto & video?</span>
+                        <i data-lucide="chevron-down" class="faq-icon w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p class="text-gray-500 font-light text-sm pb-6">Untuk foto biasanya memerlukan waktu 3–7 hari kerja setelah pemilihan. Untuk video cinematic, proses editing memakan waktu 7–14 hari kerja.</p>
+                    </div>
+                </div>
+                <div class="faq-item border-b-thin">
+                    <button class="w-full text-left py-5 flex justify-between items-center text-sm uppercase tracking-wider font-bold" onclick="toggleFaq(this)">
+                        <span>Apakah bisa request konsep foto (warna/mood)?</span>
+                        <i data-lucide="chevron-down" class="faq-icon w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p class="text-gray-500 font-light text-sm pb-6">Tentu. Meski *signature* kami adalah *Monochrome & High Contrast*, kami sangat terbuka untuk mewujudkan konsep dan *color grading* sesuai preferensi klien.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="kontak" class="bg-black text-white pt-24">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 mb-20">
+            <div>
+                <h2 class="text-4xl md:text-6xl font-serif mb-6 leading-tight">Mari Ciptakan <br><span class="italic text-gray-500">Karya Bersama.</span></h2>
+                <p class="text-gray-400 font-light mb-10 max-w-md">Silakan hubungi kami untuk mendiskusikan konsep, jadwal pemotretan, atau sekadar menyapa. Kami menantikan pesan Anda.</p>
+                
+                <div class="space-y-6 text-sm">
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="map-pin" class="w-5 h-5 text-gray-500"></i>
+                        <div>
+                            <p class="font-bold uppercase tracking-widest mb-1">Alamat Studio</p>
+                            <p class="text-gray-400 font-light">Jl. Seni Visual No. 88, Distrik Monokrom<br>Jakarta Selatan, 12345</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="clock" class="w-5 h-5 text-gray-500"></i>
+                        <div>
+                            <p class="font-bold uppercase tracking-widest mb-1">Jam Operasional</p>
+                            <p class="text-gray-400 font-light">Senin - Sabtu: 09.00 – 20.00</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="phone" class="w-5 h-5 text-gray-500"></i>
+                        <div>
+                            <p class="font-bold uppercase tracking-widest mb-1">Hubungi Kami</p>
+                            <p class="text-gray-400 font-light">WA: +62 811 222 3333<br>Email: hello@shutphotography.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-[#0a0a0a] p-8 border border-gray-800">
+                <form class="space-y-6">
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2">Nama Lengkap</label>
+                        <input type="text" class="w-full bg-transparent border-b border-gray-700 pb-2 text-white focus:outline-none focus:border-white transition" placeholder="John Doe">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2">Jenis Layanan (Foto/Video)</label>
+                        <input type="text" class="w-full bg-transparent border-b border-gray-700 pb-2 text-white focus:outline-none focus:border-white transition" placeholder="Pre Wedding + Cinematic Video">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2">Pesan / Konsep</label>
+                        <textarea rows="3" class="w-full bg-transparent border-b border-gray-700 pb-2 text-white focus:outline-none focus:border-white transition resize-none" placeholder="Ceritakan visi Anda..."></textarea>
+                    </div>
+                    <button type="button" class="w-full bg-white text-black py-4 text-xs font-bold uppercase tracking-widest hover:bg-gray-300 transition">Kirim Permintaan</button>
+                </form>
+
+                <div class="mt-12 flex justify-center gap-6 border-t border-gray-800 pt-8">
+                    <a href="#" class="text-gray-500 hover:text-white transition"><i data-lucide="instagram"></i></a>
+                    <a href="#" class="text-gray-500 hover:text-white transition"><i data-lucide="youtube"></i></a>
+                    <a href="#" class="text-gray-500 hover:text-white transition"><i data-lucide="mail"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-900 py-6 text-center text-xs tracking-widest uppercase text-gray-600">
+            &copy; 2026 Shut Photography. All Rights Reserved.
+        </div>
+    </section>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Init Icons
+        lucide.createIcons();
+
+        // Init Scroll Animation
+        AOS.init({ 
+            duration: 900, 
+            once: true, 
+            offset: 80,
+            easing: 'ease-out-quart'
+        });
+
+        // Mobile Menu Logic
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // FAQ Accordion Logic
+        function toggleFaq(element) {
+            const parent = element.parentElement;
+            const wasActive = parent.classList.contains('faq-active');
+            
+            document.querySelectorAll('.faq-item').forEach(el => {
+                el.classList.remove('faq-active');
+            });
+
+            if (!wasActive) {
+                parent.classList.add('faq-active');
+            }
+        }
+    </script>
+</body>
+</html>

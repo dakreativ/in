@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JustipHub - Jasa Titip Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcfc; }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="text-slate-900">
+
+    <nav class="glass sticky top-0 z-50 border-b border-slate-100">
+        <div class="max-w-md mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex flex-col">
+                <h1 class="text-lg font-bold tracking-tight">JUSTIP<span class="text-slate-400 font-normal">HUB</span></h1>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-medium">Premium Personal Shopper</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="switchTab('dashboard')" class="text-slate-500 hover:text-black transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </button>
+                <button onclick="toggleCart()" class="relative text-slate-500 hover:text-black transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    <span id="cartCount" class="absolute -top-1.5 -right-1.5 bg-black text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center opacity-0 transition-opacity">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section id="shopTab" class="tab-content active max-w-md mx-auto pb-24">
+        <div class="px-6 py-8">
+            <h2 class="text-3xl font-bold leading-tight mb-2">Pilih Barang<br>Impianmu.</h2>
+            <p class="text-sm text-slate-500">Katalog kurasi terbaik dari berbagai negara.</p>
+        </div>
+
+        <div class="flex space-x-3 overflow-x-auto px-6 mb-8 hide-scroll">
+            <button onclick="filterCountry('ALL')" class="country-btn active bg-black text-white px-5 py-2 rounded-2xl text-xs font-semibold whitespace-nowrap transition">Semua</button>
+            <button onclick="filterCountry('USA')" class="country-btn bg-white border border-slate-100 text-slate-500 px-5 py-2 rounded-2xl text-xs font-semibold whitespace-nowrap transition">USA</button>
+            <button onclick="filterCountry('JAPAN')" class="country-btn bg-white border border-slate-100 text-slate-500 px-5 py-2 rounded-2xl text-xs font-semibold whitespace-nowrap transition">Japan</button>
+            <button onclick="filterCountry('KOREA')" class="country-btn bg-white border border-slate-100 text-slate-500 px-5 py-2 rounded-2xl text-xs font-semibold whitespace-nowrap transition">Korea</button>
+            <button onclick="filterCountry('INDONESIA')" class="country-btn bg-white border border-slate-100 text-slate-500 px-5 py-2 rounded-2xl text-xs font-semibold whitespace-nowrap transition">Indonesia</button>
+        </div>
+
+        <div id="productGrid" class="grid grid-cols-2 gap-4 px-6">
+            </div>
+    </section>
+
+    <section id="dashboardTab" class="tab-content max-w-md mx-auto px-6 py-8 pb-24">
+        <button onclick="switchTab('shop')" class="text-xs font-bold text-slate-400 mb-6 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> BACK TO SHOP
+        </button>
+        <h2 class="text-2xl font-bold mb-6">Order Tracking</h2>
+        
+        <div id="orderList" class="space-y-4">
+            <p class="text-center text-slate-400 py-20 text-sm">Belum ada riwayat pesanan.</p>
+        </div>
+    </section>
+
+    <div id="cartDrawer" class="fixed inset-0 z-[60] invisible pointer-events-none transition-all duration-300">
+        <div onclick="toggleCart()" class="absolute inset-0 bg-black/20 backdrop-blur-sm opacity-0 transition-opacity duration-300" id="cartOverlay"></div>
+        <div class="absolute right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl translate-x-full transition-transform duration-300 flex flex-col" id="cartBody">
+            <div class="p-6 border-b flex justify-between items-center">
+                <h3 class="font-bold text-lg">Keranjang Belanja</h3>
+                <button onclick="toggleCart()" class="text-slate-400 hover:text-black">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            
+            <div id="cartItems" class="flex-1 overflow-y-auto p-6 space-y-4">
+                </div>
+
+            <div class="p-6 border-t bg-slate-50 space-y-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Pilih Batch Pengiriman</label>
+                    <select id="batchSelect" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black">
+                        <option value="">-- Pilih Batch Wajib --</option>
+                        <option value="USA - Batch Akhir Mei">USA - Batch Akhir Mei</option>
+                        <option value="Japan - Batch 15 Juni">Japan - Batch 15 Juni</option>
+                        <option value="Korea - Batch 10 Juni">Korea - Batch 10 Juni</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-slate-500 text-sm">Total Estimasi</span>
+                    <span id="cartTotal" class="font-bold text-xl text-black">Rp 0</span>
+                </div>
+                
+                <button onclick="startCheckout()" id="checkoutBtn" disabled class="w-full bg-black text-white py-4 rounded-2xl font-bold text-sm disabled:bg-slate-200 disabled:text-slate-400 transition-all active:scale-95">
+                    CHECKOUT SEKARANG
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkoutModal" class="fixed inset-0 z-[70] hidden overflow-y-auto bg-white p-6">
+        <div class="max-w-md mx-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-xl font-bold">Detail Pembayaran</h3>
+                <button onclick="closeCheckout()" class="text-slate-400">Cancel</button>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                    <p class="text-xs text-slate-400 mb-1">Transfer Bank / QRIS</p>
+                    <p class="font-bold text-sm">Bank BCA: 1234-5678-90</p>
+                    <p class="text-sm">A/N: JastipHub Admin</p>
+                    <div class="mt-4 bg-white p-4 border rounded-xl text-center">
+                        <p class="text-[10px] font-bold text-slate-400 mb-2">SCAN QRIS DISINI</p>
+                        <div class="h-32 w-32 bg-slate-200 mx-auto rounded flex items-center justify-center text-xs text-slate-400">QR CODE</div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <label class="block">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Nama Lengkap</span>
+                        <input type="text" id="custName" class="mt-1 block w-full border-b-2 border-slate-100 focus:border-black outline-none py-2 px-1 transition-all">
+                    </label>
+                    
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase">Bukti Pembayaran</span>
+                        <div class="mt-2 flex items-center justify-center w-full">
+                            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-100 border-dashed rounded-3xl cursor-pointer hover:bg-slate-50 transition">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6 text-slate-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1m-4-8-4-4m0 0L8 8m4-4v12" /></svg>
+                                    <p class="text-xs">Klik untuk upload foto bukti</p>
+                                </div>
+                                <input id="receiptFile" type="file" class="hidden" />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="submitOrder()" class="w-full bg-black text-white py-4 rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-xl shadow-slate-200">
+                    SAYA SUDAH BAYAR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // MOCK DATA [cite: 2]
+        const products = [
+            { id: 1, name: "CeraVe Hydrating Cleanser", price: 350000, country: "USA", img: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=300&q=80" },
+            { id: 2, name: "COSRX Snail Mucin", price: 220000, country: "KOREA", img: "https://images.unsplash.com/photo-1608248593842-8021c6a1bce4?auto=format&fit=crop&w=300&q=80" },
+            { id: 3, name: "Hada Labo Lotion", price: 180000, country: "JAPAN", img: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=300&q=80" },
+            { id: 4, name: "Indomie Jumbo Pack", price: 45000, country: "INDONESIA", img: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=300&q=80" }
+        ];
+
+        let cart = [];
+        let orders = [];
+
+        // UI FUNCTIONS
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function toggleCart() {
+            const drawer = document.getElementById('cartDrawer');
+            const overlay = document.getElementById('cartOverlay');
+            const body = document.getElementById('cartBody');
+            
+            if(drawer.classList.contains('invisible')) {
+                drawer.classList.remove('invisible');
+                drawer.classList.add('pointer-events-auto');
+                setTimeout(() => {
+                    overlay.classList.add('opacity-100');
+                    body.classList.remove('translate-x-full');
+                }, 10);
+            } else {
+                overlay.classList.remove('opacity-100');
+                body.classList.add('translate-x-full');
+                setTimeout(() => {
+                    drawer.classList.add('invisible');
+                    drawer.classList.remove('pointer-events-auto');
+                }, 300);
+            }
+        }
+
+        // CORE LOGIC
+        function renderProducts(filter = 'ALL') {
+            const container = document.getElementById('productGrid');
+            container.innerHTML = '';
+            const filtered = filter === 'ALL' ? products : products.filter(p => p.country === filter);
+            
+            filtered.forEach(p => {
+                container.innerHTML += `
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-50 group">
+                        <div class="relative pb-[100%] bg-slate-100">
+                            <img src="${p.img}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[8px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter">${p.country}</span>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-xs font-semibold text-slate-800 line-clamp-1 mb-1">${p.name}</h3>
+                            <p class="text-sm font-bold text-black mb-3">Rp ${p.price.toLocaleString()}</p>
+                            <button onclick="addToCart(${p.id})" class="w-full bg-slate-50 hover:bg-black hover:text-white transition-all text-black text-[10px] font-bold py-2 rounded-xl active:scale-95">TITIP SEKARANG</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterCountry(country) {
+            document.querySelectorAll('.country-btn').forEach(btn => {
+                btn.classList.remove('bg-black', 'text-white', 'active');
+                btn.classList.add('bg-white', 'text-slate-500', 'border-slate-100');
+            });
+            event.target.classList.add('bg-black', 'text-white', 'active');
+            renderProducts(country);
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push(product);
+            updateCart();
+            if(cart.length === 1) toggleCart();
+        }
+
+        function updateCart() {
+            const badge = document.getElementById('cartCount');
+            const itemsContainer = document.getElementById('cartItems');
+            const totalEl = document.getElementById('cartTotal');
+            
+            badge.textContent = cart.length;
+            badge.style.opacity = cart.length > 0 ? '1' : '0';
+            
+            itemsContainer.innerHTML = cart.length === 0 ? '<p class="text-center text-slate-400 py-10">Kosong</p>' : '';
+            
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += item.price;
+                itemsContainer.innerHTML += `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <img src="${item.img}" class="h-12 w-12 rounded-xl object-cover">
+                            <div>
+                                <p class="text-xs font-bold">${item.name}</p>
+                                <p class="text-[10px] text-slate-400">${item.country}</p>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${index})" class="text-red-400"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg></button>
+                    </div>
+                `;
+            });
+            totalEl.textContent = `Rp ${total.toLocaleString()}`;
+            checkBatchStatus();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        // BATCH LOGIC
+        function checkBatchStatus() {
+            const batchVal = document.getElementById('batchSelect').value;
+            const btn = document.getElementById('checkoutBtn');
+            btn.disabled = (batchVal === "" || cart.length === 0);
+        }
+
+        document.getElementById('batchSelect').addEventListener('change', checkBatchStatus);
+
+        function startCheckout() {
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        // SUBMIT ORDER & STATUS TRACKING
+        function submitOrder() {
+            const name = document.getElementById('custName').value;
+            const batch = document.getElementById('batchSelect').value;
+            if(!name) return alert('Nama wajib diisi');
+
+            const order = {
+                id: 'INV-' + Math.floor(Math.random() * 10000),
+                customer: name,
+                items: [...cart],
+                batch: batch,
+                total: cart.reduce((acc, curr) => acc + curr.price, 0),
+                status: 'Paid', // Simulasi status berubah setelah upload
+                date: new Date().toLocaleDateString()
+            };
+
+            orders.unshift(order);
+            cart = [];
+            updateCart();
+            closeCheckout();
+            toggleCart();
+            renderOrders();
+            switchTab('dashboard');
+        }
+
+        function renderOrders() {
+            const container = document.getElementById('orderList');
+            container.innerHTML = '';
+            
+            orders.forEach(o => {
+                // Status Mapping Color
+                let statusColor = "bg-orange-100 text-orange-600";
+                if(o.status === "Paid") statusColor = "bg-green-100 text-green-600";
+                if(o.status === "In Transit") statusColor = "bg-blue-100 text-blue-600";
+
+                container.innerHTML += `
+                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${o.id} • ${o.date}</p>
+                                <p class="font-bold text-sm">${o.items.length} Barang • ${o.batch}</p>
+                            </div>
+                            <span class="text-[8px] font-bold px-3 py-1 rounded-full uppercase ${statusColor}">${o.status}</span>
+                        </div>
+                        <div class="flex -space-x-3 mb-4">
+                            ${o.items.slice(0, 3).map(item => `<img src="${item.img}" class="h-8 w-8 rounded-full border-2 border-white object-cover">`).join('')}
+                            ${o.items.length > 3 ? `<div class="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-[8px] font-bold">+${o.items.length-3}</div>` : ''}
+                        </div>
+                        <div class="pt-4 border-t border-slate-50 flex justify-between items-center">
+                            <span class="text-[10px] text-slate-400 font-medium">Pelacakan otomatis tersedia di sini</span>
+                            <span class="text-sm font-bold">Rp ${o.total.toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // INIT
+        renderProducts();
+    </script>
+</body>
+</html>

@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portwish - Your Personal Shopper Across the World</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        // Override default Tailwind 'black' to custom #2E2E2E
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: { 50: '#FCFAF8', 100: '#F7F4ED', 200: '#EBE5D9' },
+                        black: '#2E2E2E'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { --primary: #2E2E2E; --bg: #FCFAF8; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); -webkit-tap-highlight-color: transparent; color: var(--primary); }
+        
+        html { scroll-behavior: smooth; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .glass { background: rgba(252, 250, 248, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .input-float { position: relative; margin-top: 8px; }
+        .input-float input, .input-float textarea { 
+            border: none; border-bottom: 2px solid #e7e5e4; border-radius: 0; 
+            padding: 20px 0 8px 0; background: transparent; transition: all 0.3s ease; outline: none; width: 100%; font-weight: 600; color: var(--primary);
+        }
+        .input-float input:focus, .input-float textarea:focus { border-bottom-color: var(--primary); }
+        .input-float label { 
+            position: absolute; top: 16px; left: 0; color: #a8a29e; font-size: 14px; 
+            transition: all 0.3s ease; pointer-events: none;
+        }
+        .input-float input:focus ~ label, .input-float input:not(:placeholder-shown) ~ label,
+        .input-float textarea:focus ~ label, .input-float textarea:not(:placeholder-shown) ~ label {
+            top: 0px; font-size: 10px; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        
+        .loader { border: 3px solid #e7e5e4; border-top: 3px solid var(--primary); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; }
+        .loader-white { border-top-color: #fff; border-color: rgba(255,255,255,0.3); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="overflow-x-hidden selection:bg-black selection:text-white relative">
+
+    <!-- FLOATING WHATSAPP BUTTON -->
+    <a href="https://wa.me/62811836570?text=Hello%20Portwish%20Admin,%20I%20need%20help%20with..." target="_blank" class="fixed bottom-6 right-6 z-[45] bg-black text-white p-3.5 rounded-full shadow-[0_8px_20px_rgba(46,46,46,0.3)] hover:scale-110 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group border-2 border-white">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+        </svg>
+        <span class="absolute right-[110%] bg-white text-black text-[10px] font-extrabold px-3 py-1.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap border border-stone-100">Contact Admin</span>
+    </a>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="liveToast" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-[100] transition-all duration-500 translate-y-[-150%] opacity-0 pointer-events-none w-max max-w-[90vw]">
+        <div class="bg-black/95 backdrop-blur-md text-white text-[11px] sm:text-xs font-medium px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 border border-stone-800">
+            <div class="h-2 w-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></div>
+            <span id="toastMsg">Someone just purchased an item</span>
+        </div>
+    </div>
+
+    <div id="errorToast" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-[110] transition-all duration-500 translate-y-[-150%] opacity-0 pointer-events-none w-max max-w-[90vw]">
+        <div class="bg-black/95 backdrop-blur-md text-white text-[10px] sm:text-xs font-bold px-5 py-3 rounded-full shadow-xl flex items-center space-x-2 border border-red-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span id="errorMsg">Error Message</span>
+        </div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="glass sticky top-0 z-50 border-b border-stone-200/60 shadow-sm">
+        <div class="max-w-md mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex flex-col cursor-pointer" onclick="switchTab('shop')">
+                <img src="https://res.cloudinary.com/dvtgxw9jj/image/upload/v1777637480/IMG_9379_spswky.png" alt="Portwish Logo" class="h-7 md:h-8 w-auto object-contain">
+            </div>
+            <div class="flex items-center space-x-5">
+                <button onclick="tryDashboard()" class="text-stone-500 hover:text-black transition-colors relative" title="Account / Order History">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <span id="loginIndicator" class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 border border-white rounded-full hidden"></span>
+                </button>
+                <button onclick="toggleCart()" class="relative text-stone-500 hover:text-black transition-colors" title="Cart">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold h-4.5 w-4.5 min-w-[18px] px-1 rounded-full flex items-center justify-center opacity-0 transition-opacity shadow-md">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- TAB: SHOP (CATALOG) -->
+    <section id="shopTab" class="tab-content active max-w-md mx-auto">
+        
+        <!-- PROMOTIONAL BANNER -->
+        <div class="px-6 pt-6 pb-2">
+            <div class="bg-black rounded-[24px] p-6 text-white relative overflow-hidden shadow-xl shadow-stone-300">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-cream-200/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-xl"></div>
+                <div class="absolute bottom-0 left-0 w-24 h-24 bg-cream-100/10 rounded-full translate-y-1/3 -translate-x-1/3 blur-xl"></div>
+                <div class="relative z-10">
+                    <span class="bg-white/10 backdrop-blur-sm text-[9px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-widest mb-3 inline-block border border-white/20 text-cream-50">100% ORIGINAL AUTHENTIC</span>
+                    <h2 class="text-2xl font-extrabold mb-1.5 tracking-tight leading-tight text-white">Your Personal Shopper<br>Across the World</h2>
+                    <p class="text-[11px] text-stone-300 max-w-[85%] leading-relaxed">Shop branded items from USA, Japan & Korea hassle-free. Delivered to your door via Lion Parcel.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW SECTION: SOURCED FROM 3 COUNTRIES -->
+        <div class="px-6 py-8">
+            <div class="text-center mb-6">
+                <p class="text-[10px] font-extrabold text-pink-500 uppercase tracking-widest mb-2">Where We Shop</p>
+                <h2 class="text-3xl font-extrabold text-black leading-tight tracking-tight mb-3">Sourced From 3<br>Countries</h2>
+                <p class="text-stone-500 text-sm">Explore our curated selection from trend-forward markets with clear jastip schedules and checkout info.</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="bg-white rounded-[24px] p-6 shadow-sm border border-stone-100 transition hover:shadow-md">
+                    <h3 class="font-extrabold text-xl text-black mb-2">Japan</h3>
+                    <p class="text-stone-500 text-sm leading-relaxed">Skincare, snacks, stationery, fashion, and lifestyle essentials from Tokyo and Osaka.</p>
+                </div>
+                <div class="bg-white rounded-[24px] p-6 shadow-sm border border-stone-100 transition hover:shadow-md">
+                    <h3 class="font-extrabold text-xl text-black mb-2">South Korea</h3>
+                    <p class="text-stone-500 text-sm leading-relaxed">K-beauty, accessories, hair care, and trending products directly from Seoul.</p>
+                </div>
+                <div class="bg-white rounded-[24px] p-6 shadow-sm border border-stone-100 transition hover:shadow-md">
+                    <h3 class="font-extrabold text-xl text-black mb-2">United States</h3>
+                    <p class="text-stone-500 text-sm leading-relaxed">Streetwear, supplements, electronics, and US-only releases.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- HOW TO ORDER -->
+        <div class="px-6 py-4">
+            <p class="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-3">HOW TO ORDER</p>
+            <div class="flex items-center justify-between bg-white border border-stone-100 rounded-2xl p-4 shadow-sm">
+                <div class="flex flex-col items-center text-center w-1/3">
+                    <div class="w-8 h-8 rounded-full bg-cream-100 text-black flex items-center justify-center text-xs font-bold mb-2">1</div>
+                    <span class="text-[9px] font-bold text-stone-600 uppercase tracking-wider">CHOOSE ITEM</span>
+                </div>
+                <div class="w-4 h-px bg-stone-200"></div>
+                <div class="flex flex-col items-center text-center w-1/3">
+                    <div class="w-8 h-8 rounded-full bg-cream-100 text-black flex items-center justify-center text-xs font-bold mb-2">2</div>
+                    <span class="text-[9px] font-bold text-stone-600 uppercase tracking-wider">SELECT BATCH</span>
+                </div>
+                <div class="w-4 h-px bg-stone-200"></div>
+                <div class="flex flex-col items-center text-center w-1/3">
+                    <div class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold mb-2 shadow-md">3</div>
+                    <span class="text-[9px] font-extrabold text-black uppercase tracking-wider">PAY & TRACK</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILTER & SEARCH AREA -->
+        <div class="px-6 py-2 space-y-4">
+            <div class="relative group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-stone-400 h-4 w-4 group-focus-within:text-black transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                <input type="text" id="searchInput" placeholder="Search skincare, shoes, etc..." class="w-full bg-white border border-stone-200 rounded-2xl pl-11 pr-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all shadow-sm font-semibold text-black">
+            </div>
+
+            <div class="flex flex-col space-y-3">
+                <div class="flex space-x-2 overflow-x-auto hide-scroll pb-1">
+                    <button onclick="setCountry('ALL')" class="country-btn active bg-black text-white px-5 py-2 rounded-full text-[11px] font-bold whitespace-nowrap transition-all shadow-md shadow-stone-300 border border-black">All Countries</button>
+                    <button onclick="setCountry('USA')" class="country-btn bg-white border border-stone-200 text-stone-500 px-5 py-2 rounded-full text-[11px] font-bold whitespace-nowrap transition-all hover:border-black hover:text-black">USA</button>
+                    <button onclick="setCountry('JAPAN')" class="country-btn bg-white border border-stone-200 text-stone-500 px-5 py-2 rounded-full text-[11px] font-bold whitespace-nowrap transition-all hover:border-black hover:text-black">Japan</button>
+                    <button onclick="setCountry('KOREA')" class="country-btn bg-white border border-stone-200 text-stone-500 px-5 py-2 rounded-full text-[11px] font-bold whitespace-nowrap transition-all hover:border-black hover:text-black">Korea</button>
+                </div>
+                <div class="flex space-x-4 overflow-x-auto hide-scroll pb-1 border-b border-stone-200">
+                    <button onclick="setCategory('ALL')" class="cat-btn active text-black border-b-2 border-black pb-2 text-[11px] font-extrabold whitespace-nowrap transition-all">All Categories</button>
+                    <button onclick="setCategory('Skincare')" class="cat-btn text-stone-400 border-b-2 border-transparent pb-2 text-[11px] font-bold whitespace-nowrap transition-all hover:text-black">Skincare</button>
+                    <button onclick="setCategory('Fashion')" class="cat-btn text-stone-400 border-b-2 border-transparent pb-2 text-[11px] font-bold whitespace-nowrap transition-all hover:text-black">Fashion</button>
+                    <button onclick="setCategory('Food')" class="cat-btn text-stone-400 border-b-2 border-transparent pb-2 text-[11px] font-bold whitespace-nowrap transition-all hover:text-black">Food & Snacks</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="productGrid" class="grid grid-cols-2 gap-4 px-6 pt-2 pb-8"></div>
+        
+        <div id="emptyState" class="hidden flex-col items-center justify-center py-16 px-6 text-center">
+            <div class="bg-cream-100 p-4 rounded-full mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <h3 class="font-bold text-black mb-1">Items not found</h3>
+            <p class="text-stone-500 text-xs">Try using other keywords or filters.</p>
+        </div>
+
+        <footer class="mt-8 border-t border-stone-200 bg-white pt-10 pb-24 px-6 text-center rounded-t-[32px] shadow-[0_-5px_20px_rgba(0,0,0,0.02)]">
+            <img src="https://res.cloudinary.com/dvtgxw9jj/image/upload/v1777637480/IMG_9379_spswky.png" alt="Portwish Logo" class="h-8 w-auto object-contain mx-auto mb-3">
+            <p class="text-xs text-stone-500 mb-8 font-medium">Your trusted premium personal shopper.</p>
+            <div class="flex justify-center space-x-6 mb-8">
+                <a href="https://www.instagram.com/portwish.id?igsh=MXdwZnJvcGNiemgydA==" target="_blank" class="text-stone-400 hover:text-black transition-colors transform hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                </a>
+                <a href="https://wa.me/62811836570" target="_blank" class="text-stone-400 hover:text-black transition-colors transform hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                </a>
+            </div>
+            <p class="text-[10px] text-stone-400 font-extrabold uppercase tracking-widest">&copy; 2026 Portwish. All rights reserved.</p>
+        </footer>
+    </section>
+
+    <!-- TAB: DASHBOARD (ORDER TRACKING) -->
+    <section id="dashboardTab" class="tab-content max-w-md mx-auto min-h-screen flex flex-col">
+        <div class="px-6 py-8 flex-1">
+            <button onclick="switchTab('shop')" class="text-xs font-bold text-stone-500 mb-6 flex items-center hover:text-black transition-colors group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> BACK TO SHOP
+            </button>
+            
+            <div class="flex justify-between items-end mb-6 border-b border-stone-200 pb-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold tracking-tight text-black">Hello, <span id="dashUserName">User</span></h2>
+                    <p class="text-xs text-stone-500 mt-1 font-medium">Keep track of your desired items.</p>
+                </div>
+                <button onclick="logout()" class="text-[9px] font-bold text-red-500 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-full uppercase tracking-widest transition-colors">LOGOUT</button>
+            </div>
+
+            <!-- EDUKASI RESI BANNER -->
+            <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-6 flex items-start space-x-3 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div>
+                    <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">Shipping Information</p>
+                    <p class="text-xs text-stone-600 leading-relaxed font-medium">The tracking number (Lion Parcel) will automatically appear here once your payment is confirmed and the item is shipped by Admin.</p>
+                </div>
+            </div>
+
+            <div id="orderList" class="space-y-5">
+                <div id="emptyOrder" class="text-center py-20 hidden">
+                    <p class="text-stone-400 text-sm font-medium">No order history yet.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-8 border-t border-stone-200 bg-white pt-10 pb-24 px-6 text-center rounded-t-[32px] shadow-[0_-5px_20px_rgba(0,0,0,0.02)]">
+            <img src="https://res.cloudinary.com/dvtgxw9jj/image/upload/v1777637480/IMG_9379_spswky.png" alt="Portwish Logo" class="h-8 w-auto object-contain mx-auto mb-3">
+            <p class="text-[10px] text-stone-400 font-extrabold uppercase tracking-widest mt-6">&copy; 2026 Portwish. All rights reserved.</p>
+        </footer>
+    </section>
+
+    <!-- AUTHENTICATION MODAL (LOGIN/REGISTER) -->
+    <div id="authModal" class="fixed inset-0 z-[90] hidden flex items-center justify-center px-4">
+        <div onclick="closeAuthModal()" class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300" id="authOverlay"></div>
+        <div class="bg-white w-full max-w-sm rounded-[32px] p-6 shadow-2xl scale-95 opacity-0 transition-all duration-300 relative z-10 border border-stone-100" id="authBox">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 bg-cream-50 text-stone-500 hover:text-black p-2 rounded-full transition-colors border border-stone-100">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            
+            <div class="text-center mb-6 mt-2">
+                <h3 class="text-2xl font-extrabold text-black" id="authTitle">Create Account</h3>
+                <p class="text-xs text-stone-500 mt-1 font-medium" id="authSubtitle">Fill in your details to proceed.</p>
+            </div>
+            
+            <div class="flex bg-cream-50 p-1.5 rounded-2xl mb-6 border border-stone-100">
+                <button onclick="switchAuthMode('register')" id="btnAuthReg" class="flex-1 bg-white shadow-sm text-black text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all border border-stone-200">REGISTER NEW</button>
+                <button onclick="switchAuthMode('login')" id="btnAuthLog" class="flex-1 text-stone-400 text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all hover:text-black">LOGIN</button>
+            </div>
+
+            <div id="formRegister" class="space-y-4">
+                <div class="input-float">
+                    <input type="text" id="regName" placeholder=" " required autocomplete="off">
+                    <label>Full Name</label>
+                </div>
+                <div class="input-float">
+                    <input type="email" id="regEmail" placeholder=" " required autocomplete="off">
+                    <label>Active Email</label>
+                </div>
+                <div class="input-float">
+                    <input type="tel" id="regPhone" placeholder=" " required autocomplete="off">
+                    <label>WhatsApp Number</label>
+                </div>
+                <div class="input-float">
+                    <input type="password" id="regPass" placeholder=" " required autocomplete="off">
+                    <label>Create Password</label>
+                </div>
+                <button onclick="processRegister()" id="btnRegSubmit" class="w-full bg-black hover:bg-stone-800 text-white py-4 rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-lg shadow-stone-300 mt-2">REGISTER NOW</button>
+            </div>
+
+            <div id="formLogin" class="space-y-4 hidden">
+                <div class="input-float">
+                    <input type="email" id="logEmail" placeholder=" " required autocomplete="off">
+                    <label>Registered Email</label>
+                </div>
+                <div class="input-float">
+                    <input type="password" id="logPass" placeholder=" " required autocomplete="off">
+                    <label>Password</label>
+                </div>
+                <button onclick="processLogin()" id="btnLogSubmit" class="w-full bg-black hover:bg-stone-800 text-white py-4 rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-lg shadow-stone-300 mt-2">LOGIN NOW</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CART DRAWER -->
+    <div id="cartDrawer" class="fixed inset-0 z-[60] invisible pointer-events-none transition-all duration-300">
+        <div onclick="toggleCart()" class="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 transition-opacity duration-300" id="cartOverlay"></div>
+        <div class="absolute right-0 top-0 h-full w-full max-w-sm bg-cream-50 shadow-2xl translate-x-full transition-transform duration-300 ease-in-out flex flex-col" id="cartBody">
+            <div class="p-6 border-b border-stone-200 flex justify-between items-center bg-white">
+                <h3 class="font-bold text-lg flex items-center text-black">
+                    Cart 
+                    <span id="cartDrawerCount" class="ml-2 bg-cream-100 text-black text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                </h3>
+                <button onclick="toggleCart()" class="text-stone-400 hover:text-black bg-cream-50 p-2 rounded-full transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            
+            <div id="cartItems" class="flex-1 overflow-y-auto p-6 space-y-4 bg-cream-50 hide-scroll"></div>
+
+            <div class="p-6 border-t border-stone-200 bg-white space-y-4 shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
+                
+                <!-- DROPDOWN MANUAL BATCH SELECTION (NO SYNC LOGIC) -->
+                <div>
+                    <label class="block text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> Select Shipping Batch
+                    </label>
+                    <select id="batchSelect" onchange="updateCartUI()" class="w-full bg-cream-50 border border-stone-200 rounded-xl px-4 py-3.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-all cursor-pointer text-black">
+                        <option value="">-- Select Batch --</option>
+                        <option value="Batch USA #01">Batch USA #01</option>
+                        <option value="Batch JPN #05">Batch JPN #05</option>
+                        <option value="Batch KOR #02">Batch KOR #02</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-between items-end mb-1 mt-4">
+                    <span class="text-stone-500 text-xs font-bold uppercase tracking-widest">Estimated Total</span>
+                    <span id="cartTotal" class="font-extrabold text-2xl text-black tracking-tight">Rp 0</span>
+                </div>
+                
+                <button onclick="tryCheckout()" id="checkoutBtn" disabled class="w-full bg-black text-white py-4 rounded-2xl font-bold text-sm disabled:bg-stone-200 disabled:text-stone-400 transition-all active:scale-95 shadow-xl shadow-stone-300 disabled:shadow-none flex justify-center items-center">
+                    PROCEED TO PAYMENT
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FULLSCREEN CHECKOUT MODAL -->
+    <div id="checkoutModal" class="fixed inset-0 z-[70] hidden bg-cream-50 overflow-y-auto hide-scroll">
+        <div class="max-w-md mx-auto min-h-screen flex flex-col bg-white shadow-2xl relative">
+            <div class="sticky top-0 bg-white/95 backdrop-blur-md px-6 py-5 border-b border-stone-200 flex items-center z-10">
+                <button onclick="closeCheckoutModal()" class="mr-4 text-stone-500 hover:text-black bg-cream-50 p-2 rounded-full transition-colors border border-stone-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </button>
+                <div>
+                    <h3 class="font-bold text-lg leading-tight text-black">Complete Order</h3>
+                    <p class="text-[10px] text-stone-500 font-extrabold uppercase tracking-widest" id="checkoutBatchInfo">Batch Name</p>
+                </div>
+            </div>
+
+            <div class="p-6 flex-1 space-y-10 pb-10">
+                <!-- Data Pemesan (Terisi Otomatis) -->
+                <div>
+                    <div class="flex items-center mb-6">
+                        <span class="bg-black text-white w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold mr-3 shadow-md">1</span>
+                        <h4 class="text-base font-extrabold text-black">Recipient Details <span class="ml-2 bg-green-100 text-green-700 text-[8px] px-2 py-0.5 rounded-full uppercase tracking-widest font-bold">Auto-filled</span></h4>
+                    </div>
+                    <div class="space-y-4 bg-white">
+                        <div class="input-float">
+                            <input type="text" id="cusName" placeholder=" " required autocomplete="off">
+                            <label>Full Name</label>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="input-float">
+                                <input type="email" id="cusEmail" placeholder=" " required autocomplete="off" readonly class="text-stone-500 bg-stone-50">
+                                <label>Active Email</label>
+                            </div>
+                            <div class="input-float">
+                                <input type="tel" id="cusPhone" placeholder=" " required autocomplete="off">
+                                <label>WhatsApp No.</label>
+                            </div>
+                        </div>
+                        <div class="input-float mt-2">
+                            <textarea id="cusAddress" rows="2" placeholder=" " required></textarea>
+                            <label>Full Shipping Address (Important)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pembayaran -->
+                <div>
+                    <div class="flex items-center mb-6">
+                        <span class="bg-black text-white w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold mr-3 shadow-md">2</span>
+                        <h4 class="text-base font-extrabold text-black">Payment Method</h4>
+                    </div>
+
+                    <div class="flex bg-cream-50 p-1.5 rounded-2xl mb-5 border border-stone-100">
+                        <button onclick="setPaymentMethod('qris')" id="btnQris" class="flex-1 bg-white shadow-sm text-black text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all border border-stone-200">QRIS E-WALLET</button>
+                        <button onclick="setPaymentMethod('transfer')" id="btnTransfer" class="flex-1 text-stone-400 text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all hover:text-black">BANK TRANSFER</button>
+                    </div>
+                    
+                    <div id="contentQris" class="bg-white border-2 border-stone-100 p-6 rounded-[24px] mb-6 shadow-xl shadow-stone-100/50 flex flex-col items-center text-center">
+                        <div class="bg-black text-white text-[9px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-widest mb-4">Scan QR Code below</div>
+                        <div class="bg-white p-2.5 rounded-3xl shadow-md border border-stone-200 mb-4 w-48 h-48">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PORTWISH-PAYMENT-QRIS" alt="QRIS Portwish" class="w-full h-full rounded-2xl object-cover">
+                        </div>
+                        <p class="text-[10px] text-stone-400 uppercase tracking-widest font-bold mb-1">Total Payment</p>
+                        <p id="checkoutTotalQris" class="font-extrabold text-2xl mb-4 tracking-tight text-black">Rp 0</p>
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=PORTWISH-PAYMENT-QRIS" download="QRIS_Portwish.png" target="_blank" class="w-full bg-cream-100 hover:bg-cream-200 text-black text-[10px] font-extrabold py-3.5 rounded-xl transition-colors flex items-center justify-center tracking-widest border border-stone-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            DOWNLOAD QRIS
+                        </a>
+                    </div>
+
+                    <div id="contentTransfer" class="bg-black text-white p-6 rounded-[24px] mb-6 relative overflow-hidden shadow-xl shadow-stone-300 hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-md"></div>
+                        <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/3 -translate-x-1/3 blur-md"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-center mb-4">
+                                <p class="text-[10px] text-stone-400 font-bold uppercase tracking-widest">Total Amount</p>
+                            </div>
+                            <p id="checkoutTotal" class="font-extrabold text-3xl mb-6 tracking-tight text-white">Rp 0</p>
+                            <div class="h-px bg-stone-800 w-full mb-5"></div>
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <p class="text-[10px] text-stone-400 uppercase tracking-widest mb-1">Transfer Bank BCA</p>
+                                    <p class="font-bold text-lg tracking-widest mb-0.5 text-white">8732 1234 5678</p>
+                                    <p class="text-xs text-stone-400">A/N Portwish Official</p>
+                                </div>
+                                <button class="bg-white/10 hover:bg-white/20 transition-colors text-white text-[10px] font-bold px-3 py-1.5 rounded-lg border border-white/20 active:scale-95">COPY</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload Form -->
+                    <div>
+                        <span class="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Upload Payment Proof / QRIS SS</span>
+                        <div class="mt-3 w-full">
+                            <label class="flex flex-col items-center justify-center w-full h-36 border-2 border-stone-200 border-dashed rounded-3xl cursor-pointer hover:bg-cream-50 transition-all bg-cream-50/50 overflow-hidden relative group" id="uploadArea">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6 text-stone-500 group-hover:scale-105 transition-transform" id="uploadPlaceholder">
+                                    <div class="bg-white p-3 rounded-full shadow-sm mb-3 border border-stone-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                                    </div>
+                                    <p class="text-xs font-bold text-black">Tap to Upload Photo</p>
+                                </div>
+                                <img id="previewImg" class="hidden absolute inset-0 w-full h-full object-cover">
+                                <input id="receiptFile" type="file" class="hidden" accept="image/*" onchange="previewFile()" />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-stone-200 p-6 z-10 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
+                <button onclick="processOrder()" id="finalSubmitBtn" class="w-full bg-black text-white py-4 rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-xl shadow-stone-300 flex items-center justify-center overflow-hidden relative border border-black">
+                    <span class="relative z-10">CONFIRM ORDER</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TRACKING RESI -->
+    <div id="trackingModal" class="fixed inset-0 z-[80] invisible pointer-events-none flex items-center justify-center px-4">
+        <div onclick="closeTrackingModal()" class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300" id="trackingOverlay"></div>
+        <div class="bg-white w-full max-w-sm rounded-[32px] p-6 shadow-2xl scale-95 opacity-0 transition-all duration-300 relative z-10 border border-stone-100" id="trackingBox">
+            <button onclick="closeTrackingModal()" class="absolute top-4 right-4 bg-cream-50 text-stone-500 hover:text-black p-2 rounded-full transition-colors border border-stone-100">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <div class="text-center mb-6 mt-2">
+                <div class="w-16 h-16 bg-cream-100 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                </div>
+                <h3 class="text-xl font-extrabold text-black">Package in Transit</h3>
+                <p class="text-xs text-stone-500 mt-1 font-medium">Courier: <span id="trackKurir" class="font-extrabold text-black">Lion Parcel</span></p>
+            </div>
+            <div class="bg-cream-50 border border-stone-200 rounded-2xl p-4 flex justify-between items-center mb-5">
+                <div class="overflow-hidden">
+                    <p class="text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-1">Tracking Number</p>
+                    <p id="trackResi" class="font-extrabold text-lg text-black truncate tracking-wider">JP1234567890</p>
+                </div>
+                <button onclick="copyResi()" id="copyBtn" class="bg-white border border-stone-200 text-black hover:bg-stone-50 text-[10px] font-extrabold px-4 py-2.5 rounded-xl transition-all active:scale-95 shadow-sm uppercase tracking-widest">COPY</button>
+            </div>
+
+            <!-- TIMELINE UI -->
+            <div class="mb-6 bg-white border border-stone-100 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-green-500"></div>
+                <p class="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-3">Latest Update</p>
+                <div class="flex items-start space-x-3">
+                    <div class="flex flex-col items-center">
+                        <div class="w-3 h-3 bg-green-500 rounded-full mt-1 shadow-[0_0_0_3px_rgba(34,197,94,0.2)] animate-pulse"></div>
+                    </div>
+                    <div>
+                        <p class="text-xs font-extrabold text-black leading-tight" id="trackLatestStatus">Package is being processed.</p>
+                        <p class="text-[9px] font-bold text-stone-400 mt-1 uppercase tracking-widest" id="trackLatestTime">Time</p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="openUniversalTracker()" class="w-full bg-black hover:bg-stone-800 text-white py-4 rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-lg shadow-stone-300 flex items-center justify-center uppercase tracking-widest border border-black">
+                CHECK OFFICIAL COURIER WEB
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN SCRIPT -->
+    <script>
+        const products = [
+            { id: 1, name: "CeraVe Hydrating Cleanser 236ml", price: 350000, country: "USA", category: "Skincare", batch: "Batch USA #01", closeDate: "15 May", img: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=400&q=80" },
+            { id: 2, name: "COSRX Advanced Snail 96 Mucin", price: 220000, country: "KOREA", category: "Skincare", batch: "Batch KOR #02", closeDate: "20 May", img: "https://images.unsplash.com/photo-1608248593842-8021c6a1bce4?auto=format&fit=crop&w=400&q=80" },
+            { id: 3, name: "Nike Air Force 1 '07 All White", price: 1850000, country: "USA", category: "Fashion", batch: "Batch USA #01", closeDate: "15 May", img: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80" },
+            { id: 4, name: "Hada Labo Gokujyun Premium", price: 180000, country: "JAPAN", category: "Skincare", batch: "Batch JPN #05", closeDate: "10 Jun", img: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=400&q=80" }
+        ];
+
+        let activeCountry = 'ALL', activeCategory = 'ALL', searchQuery = '', cart = [];
+        let usersDB = [{ name: "Dadan Furman", email: "user@portwish.id", phone: "081234", pass: "123" }];
+        let currentUser = usersDB[0]; // Auto-login for UI testing
+        let authIntent = null; 
+        
+        let orders = [
+            { id: 'INV-773821', userEmail: "user@portwish.id", date: 'May 1, 2026', batch: 'Batch JPN #05', items: [products[3]], total: 180000, status: 'IN TRANSIT', resi: 'LP987654321', kurir: 'Lion Parcel', latestTracking: "Package received at Jakarta sorting facility.", trackingTime: "May 2, 2026, 14:00 WIB" }
+        ];
+
+        const formatRp = (num) => 'Rp ' + num.toLocaleString('id-ID');
+
+        function showErrorToast(msg) {
+            const toast = document.getElementById('errorToast'); document.getElementById('errorMsg').textContent = msg;
+            toast.classList.remove('translate-y-[-150%]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-150%]', 'opacity-0'); }, 3000);
+        }
+
+        // --- AUTH ---
+        function openAuthModal(intent = 'checkout') {
+            authIntent = intent;
+            if(intent === 'checkout') { document.getElementById('authTitle').textContent = "Create Account"; document.getElementById('authSubtitle').textContent = "Fill in your details to proceed to checkout."; switchAuthMode('register'); } 
+            else { document.getElementById('authTitle').textContent = "Account Login"; document.getElementById('authSubtitle').textContent = "Login to view your order history."; switchAuthMode('login'); }
+            const modal = document.getElementById('authModal'), overlay = document.getElementById('authOverlay'), box = document.getElementById('authBox');
+            const cartDrawer = document.getElementById('cartDrawer'); if(!cartDrawer.classList.contains('invisible')) toggleCart();
+            modal.classList.remove('hidden'); setTimeout(() => { overlay.classList.remove('opacity-0'); box.classList.remove('scale-95', 'opacity-0'); }, 10);
+        }
+
+        function closeAuthModal() {
+            const modal = document.getElementById('authModal'), overlay = document.getElementById('authOverlay'), box = document.getElementById('authBox');
+            overlay.classList.add('opacity-0'); box.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+
+        function switchAuthMode(mode) {
+            const btnReg = document.getElementById('btnAuthReg'), btnLog = document.getElementById('btnAuthLog'), formReg = document.getElementById('formRegister'), formLog = document.getElementById('formLogin');
+            if(mode === 'register') { btnReg.className = "flex-1 bg-white shadow-sm text-black text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all border border-stone-200"; btnLog.className = "flex-1 text-stone-400 text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all hover:text-black"; formReg.classList.remove('hidden'); formLog.classList.add('hidden'); } 
+            else { btnLog.className = "flex-1 bg-white shadow-sm text-black text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all border border-stone-200"; btnReg.className = "flex-1 text-stone-400 text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all hover:text-black"; formLog.classList.remove('hidden'); formReg.classList.add('hidden'); }
+        }
+
+        function processRegister() {
+            const name = document.getElementById('regName').value, email = document.getElementById('regEmail').value, phone = document.getElementById('regPhone').value, pass = document.getElementById('regPass').value;
+            if(!name || !email || !phone || !pass) return showErrorToast("Please fill in all registration details.");
+            if(usersDB.find(u => u.email === email)) return showErrorToast("Email is already registered. Please Login.");
+            const btn = document.getElementById('btnRegSubmit'), ogText = btn.innerHTML;
+            btn.innerHTML = `<span class="loader loader-white"></span>`; btn.disabled = true;
+            setTimeout(() => { const newUser = { name, email, phone, pass }; usersDB.push(newUser); currentUser = newUser; btn.innerHTML = ogText; btn.disabled = false; completeAuthSuccess(); }, 1000);
+        }
+
+        function processLogin() {
+            const email = document.getElementById('logEmail').value, pass = document.getElementById('logPass').value;
+            if(!email || !pass) return showErrorToast("Please enter email and password.");
+            const btn = document.getElementById('btnLogSubmit'), ogText = btn.innerHTML;
+            btn.innerHTML = `<span class="loader loader-white"></span>`; btn.disabled = true;
+            setTimeout(() => {
+                const user = usersDB.find(u => u.email === email && u.pass === pass);
+                btn.innerHTML = ogText; btn.disabled = false;
+                if(user) { currentUser = user; completeAuthSuccess(); } else { showErrorToast("Incorrect Email or Password!"); }
+            }, 1000);
+        }
+
+        function completeAuthSuccess() {
+            closeAuthModal(); document.getElementById('loginIndicator').classList.remove('hidden');
+            if(authIntent === 'checkout') { setTimeout(openCheckoutModal, 300); } else if(authIntent === 'dashboard') { setTimeout(() => { switchTab('dashboard'); renderOrders(); }, 300); }
+        }
+
+        function logout() { currentUser = null; document.getElementById('loginIndicator').classList.add('hidden'); switchTab('shop'); }
+        function tryDashboard() { if(!currentUser) { openAuthModal('dashboard'); } else { switchTab('dashboard'); renderOrders(); } }
+        function tryCheckout() { if(!currentUser) { openAuthModal('checkout'); } else { openCheckoutModal(); } }
+
+        function setPaymentMethod(method) {
+            const btnTransfer = document.getElementById('btnTransfer'), btnQris = document.getElementById('btnQris'), contentTransfer = document.getElementById('contentTransfer'), contentQris = document.getElementById('contentQris');
+            if(method === 'qris') {
+                btnQris.className = "flex-1 bg-white shadow-sm text-black text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all border border-stone-200"; btnTransfer.className = "flex-1 text-stone-400 text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all hover:text-black";
+                contentQris.classList.remove('hidden'); contentQris.classList.add('flex'); contentTransfer.classList.add('hidden');
+            } else {
+                btnTransfer.className = "flex-1 bg-white shadow-sm text-black text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all border border-stone-200"; btnQris.className = "flex-1 text-stone-400 text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all hover:text-black";
+                contentTransfer.classList.remove('hidden'); contentQris.classList.add('hidden'); contentQris.classList.remove('flex');
+            }
+        }
+
+        // --- SHOP & CATALOG ---
+        function switchTab(tab) { document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active')); document.getElementById(tab + 'Tab').classList.add('active'); window.scrollTo(0,0); }
+        function setCountry(country) { activeCountry = country; document.querySelectorAll('.country-btn').forEach(btn => { btn.classList.remove('bg-black', 'text-white', 'active', 'shadow-md', 'shadow-stone-300', 'border-black'); btn.classList.add('bg-white', 'text-stone-500'); }); event.target.classList.remove('bg-white', 'text-stone-500'); event.target.classList.add('bg-black', 'text-white', 'active', 'shadow-md', 'shadow-stone-300', 'border-black'); renderProducts(); }
+        function setCategory(category) { activeCategory = category; document.querySelectorAll('.cat-btn').forEach(btn => { btn.classList.remove('text-black', 'border-black', 'active'); btn.classList.add('text-stone-400', 'border-transparent'); }); event.target.classList.remove('text-stone-400', 'border-transparent'); event.target.classList.add('text-black', 'border-black', 'active'); renderProducts(); }
+        document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value.toLowerCase(); renderProducts(); });
+
+        function renderProducts() {
+            const container = document.getElementById('productGrid'), emptyState = document.getElementById('emptyState');
+            container.innerHTML = '';
+            const filtered = products.filter(p => (activeCountry === 'ALL' || p.country === activeCountry) && (activeCategory === 'ALL' || p.category === activeCategory) && (p.name.toLowerCase().includes(searchQuery)));
+            if (filtered.length === 0) { emptyState.style.display = 'flex'; } 
+            else {
+                emptyState.style.display = 'none';
+                filtered.forEach(p => {
+                    container.innerHTML += `
+                        <div class="bg-white rounded-[24px] overflow-hidden shadow-sm border border-stone-100 flex flex-col justify-between relative group hover:shadow-lg transition-shadow duration-300 h-full">
+                            <div><div class="relative pb-[100%] bg-cream-50 overflow-hidden border-b border-stone-50"><img src="${p.img}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/eeeeee/999999';" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"><span class="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-[8px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-widest shadow-sm text-black border border-stone-100">${p.country}</span></div><div class="p-4 pb-2"><div class="flex flex-col mb-3 bg-cream-50 p-2.5 rounded-2xl border border-stone-100"><span class="text-[9px] font-extrabold text-black uppercase tracking-widest">${p.batch}</span><span class="text-[9px] text-stone-500 font-medium mt-0.5">Close: ${p.closeDate}</span></div><h3 class="text-xs font-bold text-black line-clamp-2 leading-relaxed mb-1">${p.name}</h3><p class="text-[9px] text-stone-400 font-bold tracking-widest uppercase">${p.category}</p></div></div>
+                            <div class="p-4 pt-1 mt-auto"><p class="text-sm font-extrabold text-black mb-3">${formatRp(p.price)}</p><button onclick="addToCart(${p.id})" class="w-full bg-cream-50 border border-stone-100 hover:bg-black hover:text-white transition-all duration-300 text-black text-[10px] font-bold py-3 rounded-xl active:scale-95 flex items-center justify-center">+ ADD TO CART</button></div>
+                        </div>`;
+                });
+            }
+        }
+
+        // --- CART WITHOUT STRICT BATCH SYNC ---
+        function toggleCart() {
+            const drawer = document.getElementById('cartDrawer'), overlay = document.getElementById('cartOverlay'), body = document.getElementById('cartBody');
+            if(drawer.classList.contains('invisible')) { drawer.classList.remove('invisible'); drawer.classList.add('pointer-events-auto'); setTimeout(() => { overlay.classList.add('opacity-100'); overlay.classList.remove('opacity-0'); body.classList.remove('translate-x-full'); }, 10); } 
+            else { overlay.classList.remove('opacity-100'); overlay.classList.add('opacity-0'); body.classList.add('translate-x-full'); setTimeout(() => { drawer.classList.add('invisible'); drawer.classList.remove('pointer-events-auto'); }, 300); }
+        }
+
+        function addToCart(id) { const p = products.find(x => x.id === id); cart.push({...p, cartId: Date.now()}); updateCartUI(); if(cart.length === 1) toggleCart(); }
+        function removeFromCart(cartId) { cart = cart.filter(item => item.cartId !== cartId); updateCartUI(); }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cartCount'), drawerCount = document.getElementById('cartDrawerCount'), list = document.getElementById('cartItems'), batchVal = document.getElementById('batchSelect').value, btn = document.getElementById('checkoutBtn');
+            badge.textContent = cart.length; badge.style.opacity = cart.length > 0 ? '1' : '0'; drawerCount.textContent = cart.length;
+
+            if (cart.length === 0) {
+                list.innerHTML = `<div class="h-full flex flex-col items-center justify-center opacity-50"><svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg><p class="text-sm font-semibold text-stone-600">Cart is empty</p></div>`;
+                btn.disabled = true; document.getElementById('cartTotal').textContent = "Rp 0"; return;
+            }
+            
+            let total = 0; list.innerHTML = '';
+            
+            // Render items purely without checking cross-country validity 
+            cart.forEach((item) => {
+                total += item.price;
+                list.innerHTML += `
+                    <div class="flex justify-between items-center border-stone-100 bg-white border p-3 rounded-2xl shadow-sm relative overflow-hidden group transition-all">
+                        <div class="flex items-center space-x-3 w-full pr-8">
+                            <div class="bg-cream-50 rounded-xl w-14 h-14 flex-shrink-0 relative border border-stone-100">
+                                <img src="${item.img}" onerror="this.onerror=null;this.src='https://placehold.co/400x400';" class="w-full h-full object-cover rounded-xl">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-bold text-black truncate">${item.name}</p>
+                                <p class="text-[9px] font-extrabold text-stone-500 uppercase tracking-widest mt-0.5">${item.batch}</p>
+                                <p class="text-xs font-extrabold mt-1 text-black">${formatRp(item.price)}</p>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${item.cartId})" class="absolute right-3 top-1/2 -translate-y-1/2 text-stone-300 hover:text-black hover:bg-cream-100 p-2 rounded-full transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                        </button>
+                    </div>`;
+            });
+
+            document.getElementById('cartTotal').textContent = formatRp(total);
+            
+            // Enable button if cart > 0 AND batch is selected manually
+            if(batchVal === "" || cart.length === 0) { btn.disabled = true; } else { btn.disabled = false; }
+        }
+
+        // --- CHECKOUT ---
+        function openCheckoutModal() {
+            document.getElementById('checkoutModal').classList.remove('hidden');
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('checkoutTotal').textContent = formatRp(total); document.getElementById('checkoutTotalQris').textContent = formatRp(total); 
+            // Show manually selected batch
+            document.getElementById('checkoutBatchInfo').textContent = document.getElementById('batchSelect').value.split('(')[0].trim();
+
+            document.getElementById('cusName').value = currentUser.name; document.getElementById('cusEmail').value = currentUser.email; document.getElementById('cusPhone').value = currentUser.phone;
+        }
+
+        function closeCheckoutModal() { document.getElementById('checkoutModal').classList.add('hidden'); }
+
+        function previewFile() {
+            const file = document.getElementById('receiptFile').files[0];
+            if(file) { const reader = new FileReader(); reader.onload = function(e) { document.getElementById('previewImg').src = e.target.result; document.getElementById('previewImg').classList.remove('hidden'); document.getElementById('uploadPlaceholder').classList.add('opacity-0'); }; reader.readAsDataURL(file); }
+        }
+
+        function processOrder() {
+            const name = document.getElementById('cusName').value, address = document.getElementById('cusAddress').value, receipt = document.getElementById('receiptFile').files[0];
+            if(!name || !address || !receipt) return showErrorToast("Please fill the Address and Upload Payment Proof.");
+            const btn = document.getElementById('finalSubmitBtn'), originalText = '<span class="relative z-10">CONFIRM ORDER</span>';
+            btn.innerHTML = `<span class="loader loader-white"></span> <span class="relative z-10 ml-2">PROCESSING...</span>`; btn.disabled = true;
+
+            setTimeout(() => {
+                orders.unshift({ id: 'INV-' + Math.floor(100000 + Math.random() * 900000), userEmail: currentUser.email, date: new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }), batch: document.getElementById('batchSelect').value.split('(')[0].trim(), items: [...cart], total: cart.reduce((sum, item) => sum + item.price, 0), status: 'AWAITING VERIFICATION', resi: null }); 
+                cart = []; document.getElementById('batchSelect').value = ""; updateCartUI();
+                document.getElementById('receiptFile').value = ''; document.getElementById('previewImg').classList.add('hidden'); document.getElementById('uploadPlaceholder').classList.remove('opacity-0'); document.getElementById('cusAddress').value = '';
+                btn.innerHTML = originalText; btn.disabled = false;
+                closeCheckoutModal(); switchTab('dashboard'); renderOrders();
+            }, 2000);
+        }
+
+        // --- DASHBOARD USER ---
+        function renderOrders() {
+            const list = document.getElementById('orderList'), emptyState = document.getElementById('emptyOrder');
+            document.getElementById('dashUserName').textContent = currentUser.name.split(' ')[0];
+            const userOrders = orders.filter(o => o.userEmail === currentUser.email);
+
+            if(userOrders.length === 0) { emptyState.classList.remove('hidden'); emptyState.classList.add('block'); } else { emptyState.classList.remove('block'); emptyState.classList.add('hidden'); }
+            
+            list.innerHTML = '';
+            userOrders.forEach(o => {
+                let statusColor = "bg-cream-100 text-stone-600 border-stone-200";
+                if(o.status === "IN TRANSIT") statusColor = "bg-black text-white border-black";
+                if(o.status === "COMPLETED") statusColor = "bg-green-100 text-green-700 border-green-200";
+
+                let trackingButton = `<span class="text-[10px] text-stone-400 font-bold uppercase tracking-widest cursor-not-allowed flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> VERIFICATION PROCESS</span>`;
+                
+                if(o.resi) {
+                    trackingButton = `<button onclick="openTrackingModal('${o.id}')" class="text-[10px] text-black font-extrabold uppercase tracking-widest hover:text-stone-500 flex items-center transition-colors">
+                        TRACK PARCEL <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    </button>`;
+                }
+
+                list.innerHTML += `
+                    <div class="bg-white p-6 rounded-[24px] border border-stone-200 shadow-sm relative overflow-hidden group">
+                        <div class="flex justify-between items-start mb-5 relative z-10">
+                            <div>
+                                <p class="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest">${o.id} • ${o.date}</p>
+                                <p class="font-extrabold text-sm mt-1.5 text-black">${o.items.length} Item • ${o.batch}</p>
+                            </div>
+                            <span class="text-[9px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest border ${statusColor}">${o.status}</span>
+                        </div>
+                        <div class="flex -space-x-3 mb-5 relative z-10 pl-2">
+                            ${o.items.slice(0, 3).map(i => `<img src="${i.img}" onerror="this.onerror=null;this.src='https://placehold.co/400x400';" class="h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm bg-cream-50">`).join('')}
+                            ${o.items.length > 3 ? `<div class="h-10 w-10 rounded-full bg-cream-50 border-2 border-white flex items-center justify-center text-[10px] font-bold z-10 text-black">+${o.items.length-3}</div>` : ''}
+                        </div>
+                        <div class="pt-4 border-t border-stone-100 flex justify-between items-center relative z-10">
+                            ${trackingButton}
+                            <span class="text-sm font-extrabold text-black">${formatRp(o.total)}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openTrackingModal(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if(order && order.resi) {
+                document.getElementById('trackKurir').textContent = order.kurir || "Lion Parcel";
+                document.getElementById('trackResi').textContent = order.resi;
+                document.getElementById('trackLatestStatus').textContent = order.latestTracking || "Package is being processed.";
+                document.getElementById('trackLatestTime').textContent = order.trackingTime || order.date;
+                const modal = document.getElementById('trackingModal'), overlay = document.getElementById('trackingOverlay'), box = document.getElementById('trackingBox');
+                modal.classList.remove('invisible', 'pointer-events-none'); setTimeout(() => { overlay.classList.remove('opacity-0'); box.classList.remove('scale-95', 'opacity-0'); }, 10);
+            }
+        }
+
+        function closeTrackingModal() {
+            const modal = document.getElementById('trackingModal'), overlay = document.getElementById('trackingOverlay'), box = document.getElementById('trackingBox');
+            overlay.classList.add('opacity-0'); box.classList.add('scale-95', 'opacity-0'); setTimeout(() => { modal.classList.add('invisible', 'pointer-events-none'); document.getElementById('copyBtn').textContent = 'COPY'; }, 300);
+        }
+
+        function copyResi() {
+            const resi = document.getElementById('trackResi').textContent; navigator.clipboard.writeText(resi).then(() => {
+                const btn = document.getElementById('copyBtn'); btn.textContent = 'COPIED!'; btn.classList.add('bg-black', 'text-white', 'border-black');
+                setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('bg-black', 'text-white', 'border-black'); }, 2000);
+            });
+        }
+
+        function openUniversalTracker() { window.open('https://cekresi.com', '_blank'); }
+
+        const fakeBuyers = ["Nisa", "Budi", "Sinta", "Andika", "Reza", "Putri", "Dadan", "Yasmine"];
+        function showFakeNotification() {
+            const buyer = fakeBuyers[Math.floor(Math.random() * fakeBuyers.length)], product = products[Math.floor(Math.random() * products.length)].name, toast = document.getElementById('liveToast');
+            document.getElementById('toastMsg').innerHTML = `<span class="font-extrabold">${buyer}</span> purchased <span class="text-stone-300 ml-1 truncate max-w-[140px] inline-block align-bottom">${product}</span>`;
+            toast.classList.remove('translate-y-[-150%]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-150%]', 'opacity-0'); }, 4000);
+        }
+        setTimeout(() => { showFakeNotification(); setInterval(showFakeNotification, Math.floor(Math.random() * (25000 - 15000 + 1) + 15000)); }, 3000);
+
+        renderProducts();
+        document.getElementById('loginIndicator').classList.remove('hidden'); 
+    </script>
+</body>
+</html>

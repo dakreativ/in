@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portwish Admin - System Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    colors: { 
+                        cream: { 50: '#FCFAF8', 100: '#F7F4ED', 200: '#EBE5D9' }, 
+                        black: '#2E2E2E' 
+                    } 
+                } 
+            } 
+        }
+    </script>
+    <style>
+        :root { --primary: #2E2E2E; --bg: #FCFAF8; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--primary); }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .input-box { width: 100%; border: 2px solid #e7e5e4; border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 600; transition: all 0.3s ease; outline: none; background: #fff; }
+        .input-box:focus { border-color: var(--primary); }
+        
+        .input-float { position: relative; margin-top: 8px; }
+        .input-float input, .input-float select { border: none; border-bottom: 2px solid #e7e5e4; border-radius: 0; padding: 20px 0 8px 0; background: transparent; transition: all 0.3s ease; outline: none; width: 100%; font-weight: 600; color: var(--primary); }
+        .input-float input:focus, .input-float select:focus { border-bottom-color: var(--primary); }
+        .input-float label { position: absolute; top: 16px; left: 0; color: #a8a29e; font-size: 14px; transition: all 0.3s ease; pointer-events: none; }
+        .input-float input:focus ~ label, .input-float input:not(:placeholder-shown) ~ label, .input-float select:focus ~ label, .input-float select:not([value=""]) ~ label { top: 0px; font-size: 10px; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .loader { border: 3px solid #e7e5e4; border-top: 3px solid var(--primary); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; }
+        .loader-white { border-top-color: #fff; border-color: rgba(255,255,255,0.3); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        @media print { 
+            body * { visibility: hidden; } 
+            #invoiceModal, #invoiceModal * { visibility: visible; } 
+            #invoiceModal { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: white; padding: 20px; } 
+            .no-print { display: none !important; } 
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden selection:bg-black selection:text-white">
+
+    <!-- LOGIN GATE -->
+    <div id="adminLoginGate" class="fixed inset-0 z-[999] bg-cream-50 flex items-center justify-center px-4 transition-opacity duration-500">
+        <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl border border-stone-200 text-center relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-stone-100 rounded-full -translate-y-1/2 translate-x-1/3 blur-xl"></div>
+            <div class="relative z-10">
+                <img src="https://res.cloudinary.com/dvtgxw9jj/image/upload/v1777637480/IMG_9379_spswky.png" alt="Portwish" class="h-10 mx-auto mb-6">
+                <h2 class="text-2xl font-extrabold tracking-tight mb-1">System Control</h2>
+                <p class="text-xs text-stone-500 font-medium mb-8">Masukan kredensial admin untuk akses.</p>
+                
+                <div class="space-y-5 text-left mb-8">
+                    <div class="input-float">
+                        <input type="email" id="adminEmail" placeholder=" " required onkeypress="handleEnter(event)">
+                        <label>Admin Email</label>
+                    </div>
+                    <div class="input-float">
+                        <input type="password" id="adminPass" placeholder=" " required onkeypress="handleEnter(event)">
+                        <label>Password</label>
+                    </div>
+                </div>
+                
+                <p id="loginErrorMsg" class="text-[10px] text-red-500 font-bold uppercase tracking-widest mb-4 hidden">Akses Ditolak! Kredensial Salah.</p>
+                <button onclick="loginAdmin()" id="btnAdminLogin" class="w-full bg-black text-white font-extrabold py-4 rounded-2xl shadow-xl hover:bg-stone-800 transition active:scale-95">MASUK DASHBOARD</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="adminToast" class="fixed top-10 left-1/2 transform -translate-x-1/2 z-[1000] transition-all duration-500 translate-y-[-150%] opacity-0 pointer-events-none w-max max-w-[90vw]">
+        <div class="bg-black/95 backdrop-blur-md text-white text-[11px] font-bold px-5 py-3 rounded-full shadow-2xl flex items-center space-x-2 border border-stone-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+            <span id="adminToastMsg">Success</span>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-white border-r border-stone-200 flex flex-col justify-between hidden md:flex z-20">
+        <div>
+            <div class="h-20 flex items-center px-8 border-b border-stone-100">
+                <img src="https://res.cloudinary.com/dvtgxw9jj/image/upload/v1777637480/IMG_9379_spswky.png" class="h-7">
+                <span class="ml-2 text-[9px] font-extrabold bg-cream-100 text-black px-2 py-0.5 rounded uppercase tracking-widest border border-stone-200">ADMIN</span>
+            </div>
+            <nav class="p-4 space-y-2">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-black text-white font-bold text-sm transition-all shadow-md">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="switchTab('orders')" id="nav-orders" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-stone-500 hover:bg-cream-50 hover:text-black font-bold text-sm transition-all">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+                    <span>Pesanan & Resi</span>
+                    <span class="ml-auto bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full" id="pendingCount">0</span>
+                </button>
+                <button onclick="switchTab('tracking')" id="nav-tracking" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-stone-500 hover:bg-cream-50 hover:text-black font-bold text-sm transition-all relative">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <span>Update Logistik</span>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full animate-pulse" id="activeShipmentDot"></span>
+                </button>
+                <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-stone-500 hover:bg-cream-50 hover:text-black font-bold text-sm transition-all">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>
+                    <span>Kelola Katalog</span>
+                </button>
+                <button onclick="switchTab('users')" id="nav-users" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-stone-500 hover:bg-cream-50 hover:text-black font-bold text-sm transition-all">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <span>Database Akun</span>
+                </button>
+            </nav>
+        </div>
+        <div class="p-4 border-t border-stone-100">
+            <button onclick="logoutAdmin()" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 font-bold text-sm transition-all">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                <span>Keluar Admin</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 overflow-y-auto bg-cream-50 relative">
+        <header class="h-20 bg-white/90 backdrop-blur-md border-b border-stone-200 sticky top-0 z-10 flex items-center justify-between px-8 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+            <h2 class="text-xl font-extrabold tracking-tight" id="headerTitle">Dashboard Analytics</h2>
+            <div class="flex items-center space-x-4">
+                <span class="text-xs font-bold text-stone-400 uppercase tracking-widest hidden sm:block" id="currentDate"></span>
+                <div class="h-10 w-10 bg-black rounded-full border-2 border-stone-200 flex items-center justify-center text-white font-bold shadow-sm">A</div>
+            </div>
+        </header>
+
+        <div class="p-8">
+            <!-- TAB 1: DASHBOARD -->
+            <div id="dashboardTab" class="tab-content active space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-[24px] border border-stone-200 shadow-sm relative overflow-hidden group">
+                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-cream-100 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+                        <div class="relative z-10">
+                            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Total Pendapatan</p>
+                            <h3 class="text-3xl font-extrabold" id="statRevenue">Rp 0</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-[24px] border border-stone-200 shadow-sm relative overflow-hidden group">
+                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+                        <div class="relative z-10">
+                            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Paket Dalam Perjalanan</p>
+                            <h3 class="text-3xl font-extrabold" id="statOrders">0</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-[24px] border border-stone-200 shadow-sm relative overflow-hidden group">
+                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-orange-50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+                        <div class="relative z-10">
+                            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Menunggu Verifikasi/Resi</p>
+                            <h3 class="text-3xl font-extrabold text-orange-600" id="statPending">0</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-[24px] border border-stone-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="font-extrabold text-lg">Kurva Penjualan 2026</h3>
+                            <p class="text-xs text-stone-500 font-medium">Statistik pendapatan per bulan</p>
+                        </div>
+                        <button onclick="exportToExcel()" class="bg-black hover:bg-stone-800 text-white text-[10px] font-extrabold px-4 py-2.5 rounded-xl uppercase tracking-widest flex items-center shadow-md transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg> Export Excel
+                        </button>
+                    </div>
+                    <div class="w-full h-72"><canvas id="salesChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- TAB 2: ORDERS & RESI -->
+            <div id="ordersTab" class="tab-content">
+                <div class="bg-white rounded-[24px] border border-stone-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-stone-100 flex flex-col sm:flex-row justify-between items-center bg-cream-50/50 gap-4">
+                        <h3 class="font-extrabold text-lg w-full sm:w-auto">Daftar Transaksi</h3>
+                        <input type="text" placeholder="Cari ID / Nama..." class="input-box sm:w-64 py-2 text-sm font-semibold" oninput="filterOrders(this.value)">
+                    </div>
+                    <div class="overflow-x-auto hide-scroll">
+                        <table class="w-full text-left border-collapse whitespace-nowrap">
+                            <thead>
+                                <tr class="bg-stone-50 text-[10px] uppercase tracking-widest text-stone-500 border-b border-stone-200">
+                                    <th class="p-4 font-extrabold">Order ID</th>
+                                    <th class="p-4 font-extrabold">Pelanggan</th>
+                                    <th class="p-4 font-extrabold">Batch</th>
+                                    <th class="p-4 font-extrabold">Total</th>
+                                    <th class="p-4 font-extrabold">Status & Aksi</th>
+                                    <th class="p-4 font-extrabold text-center">Invoice</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orderTableBody" class="text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: TRACKING / LOGISTIK -->
+            <div id="trackingTab" class="tab-content">
+                <div class="bg-white rounded-[24px] border border-stone-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-stone-100 bg-blue-50/30">
+                        <h3 class="font-extrabold text-lg">Update Logistik Manual</h3>
+                        <p class="text-xs text-stone-500 mt-1">Hanya pesanan berstatus <span class="font-bold text-black border-b border-black">IN TRANSIT</span>. Update status agar pembeli bisa melacak via web portwish.</p>
+                    </div>
+                    <div class="p-6 space-y-4" id="trackingListArea"></div>
+                </div>
+            </div>
+
+            <!-- TAB 4: CATALOG -->
+            <div id="catalogTab" class="tab-content">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-extrabold text-xl">Kelola Produk</h3>
+                    <div class="flex space-x-3">
+                        <!-- Tombol Kelola Batch -->
+                        <button onclick="openBatchModal()" class="bg-white border border-stone-200 text-stone-600 text-[11px] font-extrabold px-5 py-3 rounded-xl uppercase tracking-widest shadow-sm hover:text-black hover:border-black transition-colors flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg> Kelola Batch
+                        </button>
+                        <button onclick="openProductModal()" class="bg-black text-white text-[11px] font-extrabold px-5 py-3 rounded-xl uppercase tracking-widest shadow-md hover:bg-stone-800 transition-colors">+ Tambah Produk</button>
+                    </div>
+                </div>
+                <!-- Catalog Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="adminCatalogGrid"></div>
+            </div>
+
+            <!-- TAB 5: USERS -->
+            <div id="usersTab" class="tab-content">
+                <div class="bg-white rounded-[24px] border border-stone-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-stone-100 bg-cream-50/50">
+                        <h3 class="font-extrabold text-lg">Database Akun Pelanggan</h3>
+                    </div>
+                    <div class="overflow-x-auto hide-scroll">
+                        <table class="w-full text-left border-collapse whitespace-nowrap">
+                            <thead>
+                                <tr class="bg-stone-50 text-[10px] uppercase tracking-widest text-stone-500 border-b border-stone-200">
+                                    <th class="p-4 font-extrabold">Nama Lengkap</th>
+                                    <th class="p-4 font-extrabold">Email</th>
+                                    <th class="p-4 font-extrabold">No. WhatsApp</th>
+                                    <th class="p-4 font-extrabold text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody" class="text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- INVOICE MODAL ADMIN -->
+    <div id="invoiceModal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-[32px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b border-stone-100 flex justify-between items-center bg-cream-50 no-print">
+                <h3 class="font-extrabold text-lg text-black">Detail Invoice</h3>
+                <div class="flex space-x-2">
+                    <button onclick="printInvoice()" class="bg-black text-white text-[10px] font-extrabold px-4 py-2 rounded-lg uppercase tracking-widest hover:bg-stone-800 transition">Print PDF</button>
+                    <button onclick="closeInvoiceModal()" class="bg-white border border-stone-200 text-stone-600 px-3 py-2 rounded-lg hover:bg-stone-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-8 overflow-y-auto flex-1 text-black bg-white" id="invoicePrintArea">
+                <div class="flex justify-between items-start mb-10 border-b border-stone-200 pb-8">
+                    <div>
+                        <img src="https://res.cloudinary.com/dvtgxw9jj/image/upload/v1777637480/IMG_9379_spswky.png" class="h-8 mb-4">
+                        <p class="text-[10px] text-stone-500 font-bold uppercase tracking-widest">Premium Personal Shopper</p>
+                    </div>
+                    <div class="text-right">
+                        <h1 class="text-4xl font-extrabold tracking-tighter mb-1">INVOICE</h1>
+                        <p class="font-bold text-stone-500" id="invId">INV-000000</p>
+                        <p class="text-xs font-semibold mt-1 text-stone-400" id="invDate">Date: -</p>
+                    </div>
+                </div>
+                <div class="flex justify-between mb-8">
+                    <div>
+                        <p class="text-[10px] text-stone-400 font-extrabold uppercase tracking-widest mb-1">Billed To:</p>
+                        <h4 class="font-extrabold text-lg" id="invName">Nama Pelanggan</h4>
+                        <p class="text-sm text-stone-600 mt-1 font-medium" id="invEmail">email@domain.com</p>
+                        <p class="text-sm text-stone-600 max-w-xs mt-1 font-medium" id="invAddress">Alamat</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] text-stone-400 font-extrabold uppercase tracking-widest mb-1">Batch:</p>
+                        <span class="bg-cream-100 text-black font-extrabold px-3 py-1 rounded-full text-xs border border-stone-200 inline-block" id="invBatch">BATCH NAME</span>
+                    </div>
+                </div>
+                <table class="w-full text-left border-collapse mb-8">
+                    <thead>
+                        <tr class="border-b-2 border-black text-[10px] uppercase tracking-widest text-stone-500">
+                            <th class="py-3 font-extrabold w-2/3">Deskripsi Produk</th>
+                            <th class="py-3 font-extrabold text-center">Qty</th>
+                            <th class="py-3 font-extrabold text-right">Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invItems" class="text-sm font-semibold border-b border-stone-200"></tbody>
+                </table>
+                <div class="flex justify-end">
+                    <div class="w-1/2">
+                        <div class="flex justify-between py-2 text-stone-500 font-bold"><span>Subtotal</span><span id="invSubtotal">Rp 0</span></div>
+                        <div class="flex justify-between py-3 border-t-2 border-black mt-2 text-lg"><span class="font-extrabold text-black">TOTAL</span><span class="font-extrabold text-black" id="invTotalMain">Rp 0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CEK BUKTI BAYAR -->
+    <div id="proofModal" class="fixed inset-0 z-[110] hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[32px] p-6 max-w-sm w-full text-center relative border border-stone-100 shadow-2xl">
+            <button onclick="closeProofModal()" class="absolute top-4 right-4 bg-cream-50 p-2 rounded-full text-stone-500 hover:text-black transition-colors border border-stone-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <h3 class="font-extrabold text-lg mb-4 text-black">Bukti Pembayaran</h3>
+            <div class="bg-cream-50 p-2 rounded-[24px] border border-stone-200 mb-4">
+                <img src="https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?auto=format&fit=crop&w=400&q=80" alt="Bukti Transfer" class="w-full rounded-[16px] object-cover max-h-[50vh]">
+            </div>
+            <button onclick="approveFromProof()" id="btnProofApprove" class="w-full bg-black text-white font-extrabold py-3.5 rounded-2xl shadow-xl hover:bg-stone-800 transition text-[11px] uppercase tracking-widest">VERIFIKASI & APPROVE</button>
+        </div>
+    </div>
+
+    <!-- MODAL KELOLA BATCH (BARU) -->
+    <div id="batchModal" class="fixed inset-0 z-[110] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-[32px] shadow-2xl p-6 relative border border-stone-100">
+            <button onclick="closeBatchModal()" class="absolute top-4 right-4 bg-cream-50 p-2 rounded-full text-stone-500 hover:text-black">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <h3 class="font-extrabold text-lg mb-1">Daftar Batch</h3>
+            <p class="text-[10px] text-stone-500 font-medium mb-4">Batch ini akan muncul di Dropdown Checkout User.</p>
+            
+            <div class="flex space-x-2 mb-4">
+                <input type="text" id="newBatchInput" placeholder="Misal: Batch USA #02" class="input-box py-2.5 text-xs">
+                <button onclick="addBatch()" class="bg-black text-white text-[10px] font-extrabold px-4 py-2.5 rounded-xl transition hover:bg-stone-800 active:scale-95">TAMBAH</button>
+            </div>
+            
+            <div id="batchListArea" class="space-y-2 max-h-60 overflow-y-auto hide-scroll pb-2">
+                <!-- List Batch Rendered Here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FORM PRODUK (DIUPDATE: FOTO UPLOAD FISIK & HAPUS BATCH/CLOSE) -->
+    <div id="productModal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-[32px] shadow-2xl p-8 relative border border-stone-100 max-h-[90vh] overflow-y-auto hide-scroll">
+            <h3 class="font-extrabold text-xl mb-6" id="prodModalTitle">Tambah Produk</h3>
+            <div class="space-y-4">
+                <input type="hidden" id="prodId">
+                
+                <!-- UPLOAD FOTO AREA (Base64 ready for DB) -->
+                <div>
+                    <label class="text-[10px] font-extrabold text-stone-400 uppercase block mb-2 tracking-widest">Foto Produk</label>
+                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-stone-200 border-dashed rounded-2xl cursor-pointer hover:bg-cream-50 transition-all bg-cream-50/50 overflow-hidden relative group" id="uploadArea">
+                        <div class="flex flex-col items-center justify-center text-stone-500 group-hover:scale-105 transition-transform" id="uploadPlaceholder">
+                            <div class="bg-white p-2 rounded-full shadow-sm mb-2 border border-stone-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                            </div>
+                            <p class="text-[10px] font-bold text-black">Klik untuk Upload Foto</p>
+                        </div>
+                        <img id="prodImgPreview" src="" class="hidden absolute inset-0 w-full h-full object-contain bg-white">
+                        <input id="prodImgFile" type="file" class="hidden" accept="image/*" onchange="previewUploadedImage(event)" />
+                    </label>
+                </div>
+
+                <div class="input-float mt-2">
+                    <input type="text" id="prodName" placeholder=" " required>
+                    <label>Nama Produk</label>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="input-float">
+                        <input type="number" id="prodPrice" placeholder=" " required>
+                        <label>Harga (Rp)</label>
+                    </div>
+                    <div class="relative mt-2">
+                        <label class="text-[10px] font-extrabold text-stone-400 uppercase block mb-1">Kategori</label>
+                        <select id="prodCat" class="input-box bg-cream-50 border-stone-200 text-black">
+                            <option value="Skincare">Skincare</option>
+                            <option value="Fashion">Fashion</option>
+                            <option value="Food">Food & Snacks</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="relative mt-2">
+                    <label class="text-[10px] font-extrabold text-stone-400 uppercase block mb-1">Negara Asal</label>
+                    <select id="prodCountry" class="input-box bg-cream-50 border-stone-200 text-black w-full">
+                        <option value="USA">USA</option>
+                        <option value="JAPAN">Japan</option>
+                        <option value="KOREA">Korea</option>
+                    </select>
+                </div>
+                <!-- Batch dan Close Date Dihapus dari Modal Produk -->
+            </div>
+            <div class="flex space-x-3 mt-8">
+                <button onclick="closeProductModal()" class="flex-1 bg-white border border-stone-200 text-black font-extrabold py-3.5 rounded-2xl transition hover:bg-stone-50 text-[11px] tracking-widest uppercase">BATAL</button>
+                <button onclick="saveProduct()" class="flex-1 bg-black text-white font-extrabold py-3.5 rounded-2xl shadow-lg hover:bg-stone-800 transition text-[11px] tracking-widest uppercase">SIMPAN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT UTAMA ADMIN -->
+    <script>
+        // Database Produk (Atribut batch & closeDate sudah dihilangkan sesuai permintaan)
+        let catalogDB = [
+            { id: 1, name: "CeraVe Hydrating Cleanser 236ml", price: 350000, country: "USA", category: "Skincare", img: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=400&q=80" },
+            { id: 2, name: "COSRX Advanced Snail 96 Mucin", price: 220000, country: "KOREA", category: "Skincare", img: "https://images.unsplash.com/photo-1608248593842-8021c6a1bce4?auto=format&fit=crop&w=400&q=80" },
+            { id: 3, name: "Nike Air Force 1 '07 All White", price: 1850000, country: "USA", category: "Fashion", img: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80" },
+            { id: 4, name: "Hada Labo Gokujyun Premium", price: 180000, country: "JAPAN", category: "Skincare", img: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=400&q=80" }
+        ];
+
+        // Database Custom Batch (Akan dirender di User Side nantinya)
+        let batchesDB = ["Batch USA #01", "Batch JPN #05", "Batch KOR #02"];
+
+        // Data User Dummy
+        let usersDB = [
+            { name: "Dadan Furman", email: "user@portwish.id", phone: "081234567890", pass: "123" },
+            { name: "Nisa Putri", email: "nisa@portwish.id", phone: "082111222333", pass: "123" },
+            { name: "Budi Santoso", email: "budi@portwish.id", phone: "081999888777", pass: "123" }
+        ];
+
+        // Data Pesanan Dummy (Sinkron dengan user mockup)
+        let ordersDB = [
+            { id: 'INV-' + Math.floor(100000 + Math.random() * 900000), date: new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }), user: usersDB[1], address: "Jl. Sudirman No 10, Jakarta", batch: 'Batch USA #01', items: [catalogDB[0]], total: 350000, status: 'AWAITING VERIFICATION', resi: '' },
+            { id: 'INV-773821', date: 'May 1, 2026', user: usersDB[0], address: "Jl Bandung No. 12", batch: 'Batch JPN #05', items: [catalogDB[3]], total: 180000, status: 'IN TRANSIT', resi: 'LP987654321', kurir: 'Lion Parcel', latestTracking: "Package received at Jakarta sorting facility.", trackingTime: "May 2, 2026, 14:00 WIB" }
+        ];
+
+        const salesMonthly = [0, 0, 1500000, 4200000, 7900000, 0, 0, 0, 0, 0, 0, 0]; 
+        const formatRp = (num) => 'Rp ' + num.toLocaleString('id-ID');
+        let currentEditingOrderIndex = null;
+        let currentUploadedImageBase64 = null; // Menyimpan Base64 file upload fisik
+
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+        // --- AUTHENTICATION ---
+        function loginAdmin() {
+            const email = document.getElementById('adminEmail').value, pass = document.getElementById('adminPass').value;
+            if(email === 'admin@portwish.id' && pass === 'admin123') {
+                document.getElementById('loginErrorMsg').classList.add('hidden');
+                document.getElementById('btnAdminLogin').innerHTML = `<span class="loader loader-white"></span>`;
+                setTimeout(() => { 
+                    document.getElementById('adminLoginGate').classList.add('opacity-0'); 
+                    setTimeout(() => { 
+                        document.getElementById('adminLoginGate').classList.add('hidden'); 
+                        showAdminToast("Login Berhasil!"); 
+                    }, 500); 
+                }, 800);
+            } else { 
+                document.getElementById('loginErrorMsg').classList.remove('hidden'); 
+                document.getElementById('adminPass').value = ''; 
+            }
+        }
+        function handleEnter(e) { if (e.key === 'Enter') loginAdmin(); }
+        function logoutAdmin() {
+            if(confirm("Yakin ingin keluar dari panel admin?")) {
+                document.getElementById('adminEmail').value = ''; document.getElementById('adminPass').value = '';
+                document.getElementById('btnAdminLogin').innerHTML = `MASUK DASHBOARD`;
+                document.getElementById('adminLoginGate').classList.remove('hidden'); 
+                setTimeout(() => { document.getElementById('adminLoginGate').classList.remove('opacity-0'); }, 10);
+            }
+        }
+
+        // --- TOAST NOTIFICATION ---
+        function showAdminToast(msg) {
+            const toast = document.getElementById('adminToast'); document.getElementById('adminToastMsg').textContent = msg;
+            toast.classList.remove('translate-y-[-150%]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-150%]', 'opacity-0'); }, 3000);
+        }
+
+        // --- NAVIGATION ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active')); document.getElementById(tabId + 'Tab').classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('bg-black', 'text-white', 'shadow-md'); btn.classList.add('text-stone-500'); });
+            const activeBtn = document.getElementById('nav-' + tabId); 
+            activeBtn.classList.remove('text-stone-500', 'hover:bg-cream-50', 'hover:text-black'); 
+            activeBtn.classList.add('bg-black', 'text-white', 'shadow-md');
+            const titles = { 'dashboard': 'Dashboard Analytics', 'orders': 'Order Management', 'tracking': 'Logistics Update', 'catalog': 'Manage Catalog', 'users': 'User Database' }; 
+            document.getElementById('headerTitle').textContent = titles[tabId];
+            
+            if(tabId === 'dashboard') renderDashboard(); 
+            if(tabId === 'orders') renderOrders(); 
+            if(tabId === 'tracking') renderTracking(); 
+            if(tabId === 'catalog') renderCatalog(); 
+            if(tabId === 'users') renderUsers();
+        }
+
+        // --- DASHBOARD CHARTS & STATS ---
+        let salesChartInstance = null;
+        function initChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d'); 
+            if(salesChartInstance) salesChartInstance.destroy();
+            salesChartInstance = new Chart(ctx, { 
+                type: 'line', 
+                data: { 
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], 
+                    datasets: [{ data: salesMonthly, borderColor: '#000000', backgroundColor: 'rgba(0, 0, 0, 0.05)', borderWidth: 3, pointBackgroundColor: '#fff', pointBorderColor: '#000', pointBorderWidth: 2, pointRadius: 4, fill: true, tension: 0.4 }] 
+                }, 
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f5f5f4', drawBorder: false } }, x: { grid: { display: false, drawBorder: false } } } } 
+            });
+        }
+
+        function renderDashboard() {
+            const totalRev = ordersDB.filter(o => o.status !== 'AWAITING VERIFICATION').reduce((sum, o) => sum + o.total, 0);
+            const shippingOrd = ordersDB.filter(o => o.status === 'IN TRANSIT').length;
+            const pendingOrd = ordersDB.filter(o => o.status === 'AWAITING VERIFICATION' || o.status === 'PROCESS (INPUT RESI)').length;
+
+            document.getElementById('statRevenue').textContent = formatRp(totalRev); 
+            document.getElementById('statOrders').textContent = shippingOrd; 
+            document.getElementById('statPending').textContent = pendingOrd; 
+            document.getElementById('pendingCount').textContent = pendingOrd;
+            document.getElementById('activeShipmentDot').style.display = shippingOrd > 0 ? 'block' : 'none'; 
+            initChart();
+        }
+
+        function exportToExcel() {
+            const data = ordersDB.map(o => ({ "Order ID": o.id, "Date": o.date, "Customer": o.user.name, "WA": o.user.phone, "Address": o.address, "Batch": o.batch, "Total": o.total, "Status": o.status, "Resi": o.resi || '-' }));
+            const ws = XLSX.utils.json_to_sheet(data); const wb = XLSX.utils.book_new(); 
+            XLSX.utils.book_append_sheet(wb, ws, "Data"); 
+            XLSX.writeFile(wb, "Data_Portwish.xlsx"); 
+            showAdminToast("Export Excel Success!");
+        }
+
+        // --- ORDER MANAGEMENT ---
+        function renderOrders(search = '') {
+            const tbody = document.getElementById('orderTableBody'); tbody.innerHTML = '';
+            let filtered = search ? ordersDB.filter(o => o.id.toLowerCase().includes(search) || o.user.name.toLowerCase().includes(search)) : ordersDB;
+
+            filtered.forEach((o, index) => {
+                let badgeClass = o.status === "IN TRANSIT" ? "bg-black text-white border-black" : (o.status === "PROCESS (INPUT RESI)" ? "bg-blue-100 text-blue-700 border-blue-200" : "bg-orange-100 text-orange-700 border-orange-200");
+                
+                let resiAction = ``;
+                if(o.status === "AWAITING VERIFICATION") { 
+                    resiAction = `
+                        <div class="flex space-x-2 w-full max-w-[200px]">
+                            <button onclick="viewProof(${index})" class="flex-1 bg-white border border-stone-200 text-stone-600 text-[9px] font-extrabold px-2 py-2 rounded-lg shadow-sm hover:text-black hover:border-black transition whitespace-nowrap">CEK BUKTI</button>
+                            <button onclick="approveOrder(${index})" class="flex-1 bg-black text-white text-[9px] font-extrabold px-2 py-2 rounded-lg shadow-sm hover:bg-stone-800 transition whitespace-nowrap">APPROVE</button>
+                        </div>
+                    `; 
+                } 
+                else if(o.status === "PROCESS (INPUT RESI)") { 
+                    resiAction = `
+                        <div class="flex items-center space-x-2 mt-2">
+                            <input type="text" id="resiInput_${index}" placeholder="Input Resi..." class="border border-stone-300 rounded-lg px-2 py-1.5 text-xs w-32 outline-none focus:border-black bg-white">
+                            <button onclick="saveResi(${index})" class="bg-blue-600 text-white text-[10px] font-extrabold px-3 py-2 rounded-lg hover:bg-blue-700 transition">KIRIM</button>
+                        </div>
+                    `; 
+                } 
+                else { 
+                    resiAction = `<span class="text-xs font-extrabold text-black block mt-1">Resi: ${o.resi}</span>`; 
+                }
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-stone-100 hover:bg-cream-100/50 transition-colors">
+                        <td class="p-4 font-extrabold text-black align-top">${o.id}<br><span class="text-[9px] text-stone-400 font-bold">${o.date}</span></td>
+                        <td class="p-4 align-top"><p class="font-extrabold text-black">${o.user.name}</p><p class="text-[10px] text-stone-500 font-bold">${o.user.phone}</p></td>
+                        <td class="p-4 text-[10px] font-extrabold text-stone-500 align-top">${o.batch}</td>
+                        <td class="p-4 font-extrabold text-black align-top">${formatRp(o.total)}</td>
+                        <td class="p-4 align-top">
+                            <span class="text-[9px] font-extrabold px-2.5 py-1 rounded-full border inline-block mb-2 ${badgeClass}">${o.status}</span>
+                            <div>${resiAction}</div>
+                        </td>
+                        <td class="p-4 text-center align-middle">
+                            <button onclick="openInvoice('${o.id}')" class="text-stone-400 hover:text-black bg-white border border-stone-200 p-2.5 rounded-xl shadow-sm transition-colors" title="Lihat Invoice">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            </button>
+                        </td>
+                    </tr>`;
+            });
+            renderDashboard(); 
+        }
+
+        function filterOrders(val) { renderOrders(val.toLowerCase()); }
+        function approveOrder(index) { 
+            ordersDB[index].status = "PROCESS (INPUT RESI)"; 
+            showAdminToast("Payment Approved!"); 
+            renderOrders(); 
+        }
+        function saveResi(index) { 
+            const r = document.getElementById(`resiInput_${index}`).value; 
+            if(!r) return alert("Silakan input nomor resi terlebih dahulu!"); 
+            ordersDB[index].resi = r; 
+            ordersDB[index].status = "IN TRANSIT"; 
+            showAdminToast("Resi berhasil diinput & disinkronkan."); 
+            renderOrders(); 
+            renderTracking(); 
+        }
+
+        // --- PAYMENT PROOF MODAL ---
+        function viewProof(index) {
+            currentEditingOrderIndex = index;
+            document.getElementById('proofModal').classList.remove('hidden');
+        }
+        function closeProofModal() {
+            document.getElementById('proofModal').classList.add('hidden');
+            currentEditingOrderIndex = null;
+        }
+        function approveFromProof() {
+            if(currentEditingOrderIndex !== null) {
+                approveOrder(currentEditingOrderIndex);
+                closeProofModal();
+            }
+        }
+
+        // --- TRACKING MANAGEMENT ---
+        function renderTracking() {
+            const container = document.getElementById('trackingListArea'); container.innerHTML = '';
+            const active = ordersDB.filter(o => o.status === "IN TRANSIT" && o.resi);
+            
+            if(active.length === 0) { 
+                container.innerHTML = `<div class="text-center py-10"><p class="text-stone-400 font-bold text-sm">Belum ada paket yang sedang dikirim (IN TRANSIT).</p></div>`; 
+                return; 
+            }
+            
+            active.forEach(o => {
+                const i = ordersDB.findIndex(x => x.id === o.id);
+                container.innerHTML += `
+                    <div class="border border-stone-200 rounded-[20px] p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex-1">
+                            <p class="font-extrabold text-lg text-black">${o.id} <span class="text-[10px] text-stone-500 bg-stone-100 px-2 py-1 rounded-md ml-2 border border-stone-200">${o.user.name}</span></p>
+                            <div class="mt-2 flex items-center space-x-4">
+                                <p class="text-[10px] font-bold text-stone-400 border-r border-stone-200 pr-4">Resi: <span class="text-black font-extrabold">${o.resi}</span></p>
+                                <p class="text-[10px] font-bold text-stone-400">${o.batch}</p>
+                            </div>
+                            <div class="mt-4 bg-blue-50/50 border border-blue-100 p-3 rounded-xl">
+                                <p class="text-[9px] text-stone-500 font-bold mb-1 uppercase tracking-widest">Status Web Pengguna:</p>
+                                <p class="font-extrabold text-blue-700 text-xs">${o.latestTracking || 'Waiting for first update...'}</p>
+                                <p class="text-[9px] text-stone-400 font-bold mt-1">${o.trackingTime || '-'}</p>
+                            </div>
+                        </div>
+                        <div class="w-full md:w-2/5 flex flex-col space-y-2 bg-cream-50 p-4 rounded-2xl border border-stone-100">
+                            <input type="text" id="manualTrack_${i}" placeholder="Ketik status terkini..." class="border border-stone-200 rounded-xl px-4 py-3 text-xs font-bold bg-white text-black focus:border-black outline-none transition-colors">
+                            <button onclick="updateManualTracking(${i})" class="bg-black text-white text-[10px] font-extrabold px-4 py-3 rounded-xl w-full hover:bg-stone-800 transition-colors uppercase tracking-widest shadow-md">UPDATE USER STATUS</button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function updateManualTracking(index) {
+            const v = document.getElementById(`manualTrack_${index}`).value; 
+            if(!v) return alert("Ketikan status terlebih dahulu!");
+            const t = new Date().toLocaleString('en-US', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }) + ' WIB';
+            ordersDB[index].latestTracking = v; 
+            ordersDB[index].trackingTime = t; 
+            showAdminToast("Status berhasil diupdate ke pengguna!"); 
+            renderTracking();
+        }
+
+        // --- INVOICE MODAL ---
+        function openInvoice(orderId) {
+            const o = ordersDB.find(x => x.id === orderId);
+            document.getElementById('invId').textContent = o.id; 
+            document.getElementById('invDate').textContent = `Date: ${o.date}`; 
+            document.getElementById('invName').textContent = o.user.name; 
+            document.getElementById('invEmail').textContent = o.user.email; 
+            document.getElementById('invAddress').textContent = o.address; 
+            document.getElementById('invBatch').textContent = o.batch;
+            
+            const tbody = document.getElementById('invItems'); tbody.innerHTML = '';
+            let grouped = {}; 
+            o.items.forEach(i => { if(!grouped[i.id]) grouped[i.id] = {...i, qty: 0}; grouped[i.id].qty += 1; });
+            for(let k in grouped) { 
+                const i = grouped[k]; 
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="py-4 border-b border-stone-100">
+                            <p class="font-extrabold text-black">${i.name}</p>
+                            <p class="text-[9px] text-stone-400 uppercase tracking-widest font-bold">${i.country} • ${i.category}</p>
+                        </td>
+                        <td class="py-4 text-center font-bold border-b border-stone-100">x${i.qty}</td>
+                        <td class="py-4 text-right font-extrabold text-black border-b border-stone-100">${formatRp(i.price * i.qty)}</td>
+                    </tr>`; 
+            }
+            document.getElementById('invSubtotal').textContent = formatRp(o.total); 
+            document.getElementById('invTotalMain').textContent = formatRp(o.total);
+            document.getElementById('invoiceModal').classList.remove('hidden');
+        }
+        function closeInvoiceModal() { document.getElementById('invoiceModal').classList.add('hidden'); }
+        function printInvoice() { window.print(); }
+
+        // --- BATCH MANAGEMENT (CUSTOM BATCH UNTUK USER) ---
+        function openBatchModal() {
+            renderBatches();
+            document.getElementById('batchModal').classList.remove('hidden');
+        }
+        function closeBatchModal() {
+            document.getElementById('batchModal').classList.add('hidden');
+        }
+        function renderBatches() {
+            const area = document.getElementById('batchListArea');
+            area.innerHTML = '';
+            if(batchesDB.length === 0) {
+                area.innerHTML = `<p class="text-xs text-stone-400 text-center py-4">Belum ada batch tersedia.</p>`;
+                return;
+            }
+            batchesDB.forEach((b, i) => {
+                area.innerHTML += `
+                    <div class="flex justify-between items-center bg-cream-50 p-3 rounded-xl border border-stone-100">
+                        <span class="text-xs font-bold text-black">${b}</span>
+                        <button onclick="deleteBatch(${i})" class="text-stone-400 hover:text-red-500 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>`;
+            });
+        }
+        function addBatch() {
+            const input = document.getElementById('newBatchInput');
+            const val = input.value.trim();
+            if(val) {
+                batchesDB.push(val);
+                input.value = '';
+                renderBatches();
+                showAdminToast("Batch berhasil ditambahkan!");
+            }
+        }
+        function deleteBatch(index) {
+            batchesDB.splice(index, 1);
+            renderBatches();
+            showAdminToast("Batch dihapus.");
+        }
+
+        // --- CATALOG MANAGEMENT (TANPA BATCH & CLOSE DATE) ---
+        function renderCatalog() {
+            const grid = document.getElementById('adminCatalogGrid'); grid.innerHTML = '';
+            catalogDB.forEach(p => {
+                grid.innerHTML += `
+                    <div class="bg-white rounded-[24px] overflow-hidden shadow-sm border border-stone-100 flex flex-col group relative hover:shadow-md transition-shadow">
+                        <div class="absolute top-2 right-2 flex space-x-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="openProductModal(${p.id})" class="bg-white text-blue-600 p-2.5 rounded-full shadow-md hover:scale-110 transition-transform">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </button>
+                            <button onclick="deleteProduct(${p.id})" class="bg-white text-red-600 p-2.5 rounded-full shadow-md hover:scale-110 transition-transform">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                        <div class="relative pb-[100%] bg-cream-50 border-b border-stone-50">
+                            <img src="${p.img}" onerror="this.src='https://placehold.co/400';" class="absolute inset-0 w-full h-full object-cover">
+                            <span class="absolute top-3 left-3 bg-white/95 text-black border border-stone-100 text-[8px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-widest shadow-sm">${p.country}</span>
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-between">
+                            <h3 class="font-bold text-xs mb-2 text-black line-clamp-2 leading-relaxed">${p.name}</h3>
+                            <div class="mt-auto flex justify-between items-end pt-3">
+                                <p class="text-[9px] text-stone-400 font-bold uppercase tracking-widest">${p.category}</p>
+                                <p class="font-extrabold text-sm text-black">${formatRp(p.price)}</p>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // Logika Upload Fisik (Menyimpan File via FileReader Base64 sebagai simulasi Data Database nantinya)
+        function previewUploadedImage(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentUploadedImageBase64 = e.target.result;
+                    document.getElementById('prodImgPreview').src = currentUploadedImageBase64;
+                    document.getElementById('prodImgPreview').classList.remove('hidden');
+                    document.getElementById('uploadPlaceholder').classList.add('opacity-0'); // Sembunyikan icon uploader
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function openProductModal(id = null) {
+            if(id) {
+                const p = catalogDB.find(x => x.id === id); 
+                document.getElementById('prodModalTitle').textContent = "Edit Product"; 
+                document.getElementById('prodId').value = p.id; 
+                
+                // Show existing image
+                currentUploadedImageBase64 = p.img;
+                document.getElementById('prodImgPreview').src = p.img;
+                document.getElementById('prodImgPreview').classList.remove('hidden');
+                document.getElementById('uploadPlaceholder').classList.add('opacity-0');
+
+                document.getElementById('prodName').value = p.name; 
+                document.getElementById('prodPrice').value = p.price; 
+                document.getElementById('prodCat').value = p.category; 
+                document.getElementById('prodCountry').value = p.country; 
+            } else { 
+                document.getElementById('prodModalTitle').textContent = "Add New Product"; 
+                document.getElementById('prodId').value = ""; 
+                
+                // Reset Uploader
+                currentUploadedImageBase64 = null;
+                document.getElementById('prodImgFile').value = '';
+                document.getElementById('prodImgPreview').classList.add('hidden');
+                document.getElementById('uploadPlaceholder').classList.remove('opacity-0');
+
+                document.getElementById('prodName').value = ""; 
+                document.getElementById('prodPrice').value = "";
+            }
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function closeProductModal() { document.getElementById('productModal').classList.add('hidden'); }
+        
+        function saveProduct() {
+            // Validasi Input
+            const name = document.getElementById('prodName').value;
+            const price = document.getElementById('prodPrice').value;
+            if(!name || !price || !currentUploadedImageBase64) {
+                return alert("Mohon lengkapi Nama Produk, Harga, dan Upload Foto!");
+            }
+
+            const id = document.getElementById('prodId').value;
+            const newProd = { 
+                id: id ? parseInt(id) : Date.now(), 
+                name: name, 
+                price: parseInt(price), 
+                category: document.getElementById('prodCat').value, 
+                country: document.getElementById('prodCountry').value,
+                img: currentUploadedImageBase64 
+            };
+
+            if(id) { 
+                const i = catalogDB.findIndex(x => x.id === parseInt(id)); 
+                catalogDB[i] = newProd; 
+                showAdminToast("Product updated successfully!"); 
+            } else { 
+                catalogDB.push(newProd); 
+                showAdminToast("New product added!"); 
+            }
+            
+            closeProductModal(); 
+            renderCatalog();
+        }
+
+        function deleteProduct(id) { 
+            if(confirm("Yakin ingin menghapus produk ini dari katalog?")) { 
+                catalogDB = catalogDB.filter(x => x.id !== id); 
+                showAdminToast("Product deleted."); 
+                renderCatalog(); 
+            } 
+        }
+
+        // --- USER MANAGEMENT ---
+        function renderUsers() {
+            const tbody = document.getElementById('userTableBody'); tbody.innerHTML = '';
+            usersDB.forEach((u, i) => {
+                tbody.innerHTML += `
+                    <tr class="border-b border-stone-100 hover:bg-cream-100/50 transition-colors">
+                        <td class="p-4 font-extrabold text-black">${u.name}</td>
+                        <td class="p-4 text-stone-600 font-bold text-xs">${u.email}</td>
+                        <td class="p-4 text-stone-600 font-bold text-xs">${u.phone}</td>
+                        <td class="p-4 font-mono text-center">
+                            <button onclick="changeUserPass(${i})" class="bg-white border border-stone-200 text-stone-600 hover:text-black hover:border-black text-[9px] uppercase tracking-widest font-extrabold px-3 py-2 rounded-lg shadow-sm transition-colors">RESET PASS</button>
+                        </td>
+                    </tr>`;
+            });
+        }
+        
+        function changeUserPass(index) { 
+            const newPass = prompt(`Masukan password baru untuk ${usersDB[index].name}:`); 
+            if(newPass && newPass.trim() !== "") { 
+                usersDB[index].pass = newPass; 
+                showAdminToast(`Password ${usersDB[index].name} berhasil diubah.`); 
+                renderUsers(); 
+            } 
+        }
+
+        // Initialize First View
+        renderDashboard();
+    </script>
+</body>
+</html>

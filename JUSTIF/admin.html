@@ -30,16 +30,17 @@
         .input-box:focus { border-color: #000; }
         
         .input-float { position: relative; margin-top: 8px; }
-        .input-float input { 
+        .input-float input, .input-float select { 
             border: none; border-bottom: 2px solid #e7e5e4; border-radius: 0; 
             padding: 20px 0 8px 0; background: transparent; transition: all 0.3s ease; outline: none; width: 100%; font-weight: 600; color: #000;
         }
-        .input-float input:focus { border-bottom-color: var(--primary); }
+        .input-float input:focus, .input-float select:focus { border-bottom-color: var(--primary); }
         .input-float label { 
             position: absolute; top: 16px; left: 0; color: #a8a29e; font-size: 14px; 
             transition: all 0.3s ease; pointer-events: none;
         }
-        .input-float input:focus ~ label, .input-float input:not(:placeholder-shown) ~ label {
+        .input-float input:focus ~ label, .input-float input:not(:placeholder-shown) ~ label,
+        .input-float select:focus ~ label, .input-float select:not([value=""]) ~ label {
             top: 0px; font-size: 10px; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
         }
 
@@ -61,7 +62,6 @@
     <!-- ADMIN LOGIN GATE -->
     <div id="adminLoginGate" class="fixed inset-0 z-[999] bg-cream-50 flex items-center justify-center px-4 transition-opacity duration-500">
         <div class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl border border-stone-200 text-center relative overflow-hidden">
-            <!-- Decorative BG -->
             <div class="absolute top-0 right-0 w-32 h-32 bg-stone-100 rounded-full -translate-y-1/2 translate-x-1/3 blur-xl"></div>
             
             <div class="relative z-10">
@@ -110,10 +110,19 @@
                     <span>Dashboard</span>
                 </button>
                 <button onclick="switchTab('orders')" id="nav-orders" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-stone-500 hover:bg-cream-50 hover:text-black font-bold text-sm transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
                     <span>Pesanan & Resi</span>
                     <span class="ml-auto bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full" id="pendingCount">0</span>
                 </button>
+                
+                <!-- MENU BARU: UPDATE LOGISTIK -->
+                <button onclick="switchTab('tracking')" id="nav-tracking" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-stone-500 hover:bg-cream-50 hover:text-black font-bold text-sm transition-all relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <span>Update Logistik</span>
+                    <!-- Indikator ada paket yg sedang jalan -->
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full animate-pulse" id="activeShipmentDot"></span>
+                </button>
+
                 <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-stone-500 hover:bg-cream-50 hover:text-black font-bold text-sm transition-all">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>
                     <span>Kelola Katalog</span>
@@ -135,14 +144,11 @@
     <!-- MAIN CONTENT -->
     <main class="flex-1 overflow-y-auto bg-cream-50 relative">
         
-        <!-- HEADER -->
-        <header class="h-20 bg-white/90 backdrop-blur-md border-b border-stone-200 sticky top-0 z-10 flex items-center justify-between px-8">
+        <header class="h-20 bg-white/90 backdrop-blur-md border-b border-stone-200 sticky top-0 z-10 flex items-center justify-between px-8 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
             <h2 class="text-xl font-extrabold tracking-tight" id="headerTitle">Dashboard Analytics</h2>
             <div class="flex items-center space-x-4">
                 <span class="text-xs font-bold text-stone-400 uppercase tracking-widest hidden sm:block" id="currentDate"></span>
-                <div class="h-10 w-10 bg-black rounded-full border-2 border-stone-200 flex items-center justify-center text-white font-bold shadow-sm">
-                    A
-                </div>
+                <div class="h-10 w-10 bg-black rounded-full border-2 border-stone-200 flex items-center justify-center text-white font-bold shadow-sm">A</div>
             </div>
         </header>
 
@@ -162,7 +168,7 @@
                     <div class="bg-white p-6 rounded-[24px] border border-stone-200 shadow-sm relative overflow-hidden group">
                         <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative z-10">
-                            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Pesanan Berhasil</p>
+                            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Paket Dalam Perjalanan</p>
                             <h3 class="text-3xl font-extrabold" id="statOrders">0</h3>
                         </div>
                     </div>
@@ -187,13 +193,11 @@
                             Export Excel
                         </button>
                     </div>
-                    <div class="w-full h-72">
-                        <canvas id="salesChart"></canvas>
-                    </div>
+                    <div class="w-full h-72"><canvas id="salesChart"></canvas></div>
                 </div>
             </div>
 
-            <!-- 2. TAB PESANAN (MANAJEMEN RESI & INVOICE) -->
+            <!-- 2. TAB PESANAN & INPUT RESI AWAL -->
             <div id="ordersTab" class="tab-content">
                 <div class="bg-white rounded-[24px] border border-stone-200 shadow-sm overflow-hidden">
                     <div class="p-6 border-b border-stone-100 flex justify-between items-center bg-cream-50/50">
@@ -208,7 +212,7 @@
                                     <th class="p-4 font-extrabold">Pelanggan</th>
                                     <th class="p-4 font-extrabold">Batch</th>
                                     <th class="p-4 font-extrabold">Total</th>
-                                    <th class="p-4 font-extrabold">Status & Resi</th>
+                                    <th class="p-4 font-extrabold">Status & Input Resi</th>
                                     <th class="p-4 font-extrabold text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -220,7 +224,20 @@
                 </div>
             </div>
 
-            <!-- 3. TAB KATALOG -->
+            <!-- 3. TAB BARU: UPDATE TRACKING LOGISTIK MANUAL (WIZARD OF OZ) -->
+            <div id="trackingTab" class="tab-content">
+                <div class="bg-white rounded-[24px] border border-stone-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-stone-100 bg-blue-50/30">
+                        <h3 class="font-extrabold text-lg">Update Logistik Manual (Auto-Pilot Illusion)</h3>
+                        <p class="text-xs text-stone-500 mt-1">Hanya menampilkan pesanan yang <span class="font-bold text-black">Sedang Dikirim</span>. Ketik status terbaru dari web kurir, maka status di HP pembeli akan otomatis berubah.</p>
+                    </div>
+                    <div class="p-6 space-y-4" id="trackingListArea">
+                        <!-- Render via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. TAB KATALOG -->
             <div id="catalogTab" class="tab-content">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-extrabold text-xl">Kelola Produk</h3>
@@ -228,12 +245,10 @@
                         + Tambah Produk
                     </button>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="adminCatalogGrid">
-                    <!-- Render via JS -->
-                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="adminCatalogGrid"></div>
             </div>
 
-            <!-- 4. TAB PENGGUNA (AKUN) -->
+            <!-- 5. TAB PENGGUNA (AKUN) -->
             <div id="usersTab" class="tab-content">
                 <div class="bg-white rounded-[24px] border border-stone-200 shadow-sm overflow-hidden">
                     <div class="p-6 border-b border-stone-100 bg-cream-50/50">
@@ -246,13 +261,10 @@
                                     <th class="p-4 font-extrabold">Nama Lengkap</th>
                                     <th class="p-4 font-extrabold">Email</th>
                                     <th class="p-4 font-extrabold">No. WhatsApp</th>
-                                    <th class="p-4 font-extrabold">Password Terenkripsi</th>
                                     <th class="p-4 font-extrabold text-center">Aksi (Ganti Pass)</th>
                                 </tr>
                             </thead>
-                            <tbody id="userTableBody" class="text-sm">
-                                <!-- Render via JS -->
-                            </tbody>
+                            <tbody id="userTableBody" class="text-sm"></tbody>
                         </table>
                     </div>
                 </div>
@@ -261,7 +273,7 @@
         </div>
     </main>
 
-    <!-- MODAL INVOICE OTOMATIS -->
+    <!-- MODAL INVOICE -->
     <div id="invoiceModal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-2xl rounded-[32px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             <div class="p-4 border-b border-stone-100 flex justify-between items-center bg-cream-50 no-print">
@@ -275,7 +287,6 @@
             </div>
             
             <div class="p-8 overflow-y-auto flex-1 text-black bg-white" id="invoicePrintArea">
-                <!-- Header Invoice -->
                 <div class="flex justify-between items-start mb-10 border-b border-stone-200 pb-8">
                     <div>
                         <img src="https://res.cloudinary.com/dvtgxw9jj/image/upload/v1777637480/IMG_9379_spswky.png" class="h-8 mb-4">
@@ -287,8 +298,6 @@
                         <p class="text-xs font-semibold mt-1 text-stone-400" id="invDate">Tanggal: -</p>
                     </div>
                 </div>
-
-                <!-- Billed To -->
                 <div class="flex justify-between mb-8">
                     <div>
                         <p class="text-[10px] text-stone-400 font-extrabold uppercase tracking-widest mb-1">Ditagihkan Kepada:</p>
@@ -302,8 +311,6 @@
                         <span class="bg-cream-100 text-black font-extrabold px-3 py-1 rounded-full text-xs border border-stone-200 inline-block" id="invBatch">BATCH NAME</span>
                     </div>
                 </div>
-
-                <!-- Items Table -->
                 <table class="w-full text-left border-collapse mb-8">
                     <thead>
                         <tr class="border-b-2 border-black text-[10px] uppercase tracking-widest text-stone-500">
@@ -312,82 +319,43 @@
                             <th class="py-3 font-extrabold text-right">Harga</th>
                         </tr>
                     </thead>
-                    <tbody id="invItems" class="text-sm font-semibold border-b border-stone-200">
-                        <!-- Items injected here -->
-                    </tbody>
+                    <tbody id="invItems" class="text-sm font-semibold border-b border-stone-200"></tbody>
                 </table>
-
-                <!-- Total -->
                 <div class="flex justify-end">
                     <div class="w-1/2">
-                        <div class="flex justify-between py-2 text-stone-500 font-bold">
-                            <span>Subtotal</span>
-                            <span id="invSubtotal">Rp 0</span>
-                        </div>
-                        <div class="flex justify-between py-2 text-stone-500 font-bold">
-                            <span>Biaya Jasa & Ongkir</span>
-                            <span>Termasuk</span>
-                        </div>
-                        <div class="flex justify-between py-3 border-t-2 border-black mt-2 text-lg">
-                            <span class="font-extrabold text-black">TOTAL</span>
-                            <span class="font-extrabold text-black" id="invTotalMain">Rp 0</span>
-                        </div>
+                        <div class="flex justify-between py-2 text-stone-500 font-bold"><span>Subtotal</span><span id="invSubtotal">Rp 0</span></div>
+                        <div class="flex justify-between py-2 text-stone-500 font-bold"><span>Biaya Jasa & Ongkir</span><span>Termasuk</span></div>
+                        <div class="flex justify-between py-3 border-t-2 border-black mt-2 text-lg"><span class="font-extrabold text-black">TOTAL</span><span class="font-extrabold text-black" id="invTotalMain">Rp 0</span></div>
                     </div>
                 </div>
-                
-                <div class="mt-16 text-center text-[10px] font-bold text-stone-400 uppercase tracking-widest">
-                    Terima kasih telah berbelanja di Portwish
-                </div>
+                <div class="mt-16 text-center text-[10px] font-bold text-stone-400 uppercase tracking-widest">Terima kasih telah berbelanja di Portwish</div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL FORM PRODUK (TAMBAH/EDIT KATALOG) -->
+    <!-- MODAL FORM PRODUK -->
     <div id="productModal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-[32px] shadow-2xl p-8 relative border border-stone-100">
             <h3 class="font-extrabold text-xl mb-6" id="prodModalTitle">Tambah Produk</h3>
             <div class="space-y-4">
                 <input type="hidden" id="prodId">
-                <div class="input-float">
-                    <input type="text" id="prodImg" placeholder=" " required>
-                    <label>URL Gambar (https://...)</label>
-                </div>
-                <div class="input-float">
-                    <input type="text" id="prodName" placeholder=" " required>
-                    <label>Nama Produk</label>
-                </div>
+                <div class="input-float"><input type="text" id="prodImg" placeholder=" " required><label>URL Gambar (https://...)</label></div>
+                <div class="input-float"><input type="text" id="prodName" placeholder=" " required><label>Nama Produk</label></div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="input-float">
-                        <input type="number" id="prodPrice" placeholder=" " required>
-                        <label>Harga (Rp)</label>
-                    </div>
+                    <div class="input-float"><input type="number" id="prodPrice" placeholder=" " required><label>Harga (Rp)</label></div>
                     <div class="relative mt-2">
                         <label class="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest block mb-1">Kategori</label>
-                        <select id="prodCat" class="input-box bg-cream-50 border-stone-200">
-                            <option value="Skincare">Skincare</option>
-                            <option value="Fashion">Fashion</option>
-                            <option value="Food">Food</option>
-                        </select>
+                        <select id="prodCat" class="input-box bg-cream-50 border-stone-200"><option value="Skincare">Skincare</option><option value="Fashion">Fashion</option><option value="Food">Food</option></select>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="relative mt-2">
                         <label class="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest block mb-1">Negara Asal</label>
-                        <select id="prodCountry" class="input-box bg-cream-50 border-stone-200">
-                            <option value="USA">USA</option>
-                            <option value="JAPAN">Japan</option>
-                            <option value="KOREA">Korea</option>
-                        </select>
+                        <select id="prodCountry" class="input-box bg-cream-50 border-stone-200"><option value="USA">USA</option><option value="JAPAN">Japan</option><option value="KOREA">Korea</option></select>
                     </div>
-                    <div class="input-float mt-2">
-                        <input type="text" id="prodBatch" placeholder=" " required>
-                        <label>Nama Batch</label>
-                    </div>
+                    <div class="input-float mt-2"><input type="text" id="prodBatch" placeholder=" " required><label>Nama Batch</label></div>
                 </div>
-                <div class="input-float">
-                    <input type="text" id="prodClose" placeholder=" " required>
-                    <label>Tgl Close Order (Cth: 15 Mei)</label>
-                </div>
+                <div class="input-float"><input type="text" id="prodClose" placeholder=" " required><label>Tgl Close Order</label></div>
             </div>
             <div class="flex space-x-3 mt-8">
                 <button onclick="closeProductModal()" class="flex-1 bg-white border border-stone-200 text-black font-extrabold py-3.5 rounded-2xl transition hover:bg-stone-50 text-[11px] tracking-widest uppercase">BATAL</button>
@@ -398,97 +366,54 @@
 
     <!-- SCRIPT UTAMA ADMIN -->
     <script>
-        // --- 0. LOGIN GATE LOGIC ---
+        // --- LOGIN GATE ---
         function loginAdmin() {
             const email = document.getElementById('adminEmail').value;
             const pass = document.getElementById('adminPass').value;
-            const errorMsg = document.getElementById('loginErrorMsg');
-            const btn = document.getElementById('btnAdminLogin');
-            
             if(email === 'admin@portwish.id' && pass === 'admin123') {
-                errorMsg.classList.add('hidden');
-                
-                // Animate button
-                const ogText = btn.innerHTML;
-                btn.innerHTML = `<span class="loader loader-white"></span>`;
-                btn.disabled = true;
-
+                document.getElementById('loginErrorMsg').classList.add('hidden');
+                document.getElementById('btnAdminLogin').innerHTML = `<span class="loader loader-white"></span>`;
                 setTimeout(() => {
-                    const gate = document.getElementById('adminLoginGate');
-                    gate.classList.add('opacity-0');
-                    setTimeout(() => {
-                        gate.classList.add('hidden');
-                        showAdminToast("Login Berhasil! Selamat datang, Admin.");
-                    }, 500); // Wait for fade out
+                    document.getElementById('adminLoginGate').classList.add('opacity-0');
+                    setTimeout(() => { document.getElementById('adminLoginGate').classList.add('hidden'); showAdminToast("Login Berhasil!"); }, 500);
                 }, 800);
             } else {
-                errorMsg.classList.remove('hidden');
-                document.getElementById('adminPass').value = ''; // clear pass
+                document.getElementById('loginErrorMsg').classList.remove('hidden'); document.getElementById('adminPass').value = '';
             }
         }
-
-        function handleEnter(e) {
-            if (e.key === 'Enter') loginAdmin();
-        }
-
+        function handleEnter(e) { if (e.key === 'Enter') loginAdmin(); }
         function logoutAdmin() {
-            if(confirm("Anda yakin ingin keluar dari sistem admin?")) {
-                // Reset form & show gate
-                document.getElementById('adminEmail').value = '';
-                document.getElementById('adminPass').value = '';
-                document.getElementById('loginErrorMsg').classList.add('hidden');
-                const btn = document.getElementById('btnAdminLogin');
-                btn.innerHTML = `MASUK DASHBOARD`;
-                btn.disabled = false;
-                
-                const gate = document.getElementById('adminLoginGate');
-                gate.classList.remove('hidden');
-                setTimeout(() => { gate.classList.remove('opacity-0'); }, 10);
+            if(confirm("Yakin ingin keluar?")) {
+                document.getElementById('adminEmail').value = ''; document.getElementById('adminPass').value = '';
+                document.getElementById('btnAdminLogin').innerHTML = `MASUK DASHBOARD`;
+                document.getElementById('adminLoginGate').classList.remove('hidden');
+                setTimeout(() => { document.getElementById('adminLoginGate').classList.remove('opacity-0'); }, 10);
             }
         }
-
         function showAdminToast(msg) {
-            const toast = document.getElementById('adminToast');
-            document.getElementById('adminToastMsg').textContent = msg;
-            toast.classList.remove('translate-y-[-150%]', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-[-150%]', 'opacity-0');
-            }, 3000);
+            const toast = document.getElementById('adminToast'); document.getElementById('adminToastMsg').textContent = msg;
+            toast.classList.remove('translate-y-[-150%]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-150%]', 'opacity-0'); }, 3000);
         }
 
-        // --- 1. MOCK DATA BASE ---
+        // --- MOCK DATA BASE ---
         let catalogDB = [
             { id: 1, name: "CeraVe Hydrating Cleanser 236ml", price: 350000, country: "USA", category: "Skincare", batch: "Batch USA #01", closeDate: "15 Mei", img: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=400&q=80" },
             { id: 2, name: "COSRX Advanced Snail 96 Mucin", price: 220000, country: "KOREA", category: "Skincare", batch: "Batch KOR #02", closeDate: "20 Mei", img: "https://images.unsplash.com/photo-1608248593842-8021c6a1bce4?auto=format&fit=crop&w=400&q=80" },
-            { id: 3, name: "Nike Air Force 1 '07 All White", price: 1850000, country: "USA", category: "Fashion", batch: "Batch USA #01", closeDate: "15 Mei", img: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80" },
-            { id: 4, name: "Hada Labo Gokujyun Premium", price: 180000, country: "JAPAN", category: "Skincare", batch: "Batch JPN #05", closeDate: "10 Juni", img: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=400&q=80" }
+            { id: 3, name: "Nike Air Force 1 '07 All White", price: 1850000, country: "USA", category: "Fashion", batch: "Batch USA #01", closeDate: "15 Mei", img: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80" }
         ];
 
-        let usersDB = [
-            { name: "Andika Pratama", email: "andika@gmail.com", phone: "08123456789", pass: "rahasia123", date: "10 Apr 2026" },
-            { name: "Sinta Wijaya", email: "sinta.w@yahoo.com", phone: "08561234123", pass: "sinta123", date: "15 Apr 2026" }
-        ];
+        let usersDB = [{ name: "Dadan Furman", email: "dadan@gmail.com", phone: "08123456789", pass: "rahasia123" }];
 
         let ordersDB = [
-            {
-                id: 'INV-773821', date: '1 Mei 2026', user: usersDB[0], address: "Jl. Sudirman No 10, Bandung", 
-                batch: 'Batch JPN #05', items: [catalogDB[3]], total: 180000, 
-                status: 'Menunggu Verifikasi', resi: ''
-            },
-            {
-                id: 'INV-992112', date: '28 Apr 2026', user: usersDB[1], address: "Komp. Kencana Blok B, Jakarta", 
-                batch: 'Batch KOR #02', items: [catalogDB[1], catalogDB[1]], total: 440000, 
-                status: 'Sedang Dikirim', resi: 'LP987654321'
-            }
+            { id: 'INV-773821', date: '1 Mei 2026', user: usersDB[0], address: "Jl. Sudirman No 10", batch: 'Batch JPN #05', items: [catalogDB[0]], total: 350000, status: 'Menunggu Verifikasi', resi: '' },
+            { id: 'INV-992112', date: '28 Apr 2026', user: usersDB[0], address: "Komp. Kencana Blok B", batch: 'Batch KOR #02', items: [catalogDB[1], catalogDB[1]], total: 440000, status: 'Sedang Dikirim', resi: 'LP987654321', latestTracking: "Paket transit di Jakarta.", trackingTime: "2 Mei 2026, 14:00 WIB" }
         ];
 
         const salesMonthly = [0, 0, 1500000, 4200000, 7900000, 0, 0, 0, 0, 0, 0, 0]; 
-
         const formatRp = (num) => 'Rp ' + num.toLocaleString('id-ID');
 
-        // --- 2. INITIALIZATION & DASHBOARD ---
+        // --- NAVIGATION ---
         document.getElementById('currentDate').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
         function switchTab(tabId) {
@@ -504,318 +429,197 @@
             activeBtn.classList.remove('text-stone-500', 'hover:bg-cream-50', 'hover:text-black');
             activeBtn.classList.add('bg-black', 'text-white', 'shadow-md');
 
-            const titles = { 'dashboard': 'Dashboard Analytics', 'orders': 'Manajemen Pesanan', 'catalog': 'Kelola Katalog', 'users': 'Database Akun' };
+            const titles = { 'dashboard': 'Dashboard Analytics', 'orders': 'Manajemen Pesanan', 'tracking': 'Tracking Logistik', 'catalog': 'Kelola Katalog', 'users': 'Database Akun' };
             document.getElementById('headerTitle').textContent = titles[tabId];
 
             if(tabId === 'dashboard') renderDashboard();
             if(tabId === 'orders') renderOrders();
+            if(tabId === 'tracking') renderTracking();
             if(tabId === 'catalog') renderCatalog();
             if(tabId === 'users') renderUsers();
         }
 
-        // --- CHART JS SETUP ---
+        // --- DASHBOARD & CHART ---
         let salesChartInstance = null;
         function initChart() {
             const ctx = document.getElementById('salesChart').getContext('2d');
             if(salesChartInstance) salesChartInstance.destroy();
-            
             salesChartInstance = new Chart(ctx, {
                 type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'],
-                    datasets: [{
-                        label: 'Pendapatan (Rp)',
-                        data: salesMonthly,
-                        borderColor: '#000000',
-                        backgroundColor: 'rgba(0, 0, 0, 0.05)',
-                        borderWidth: 3,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#000',
-                        pointBorderWidth: 2,
-                        pointRadius: 4,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: '#f5f5f4', drawBorder: false } },
-                        x: { grid: { display: false, drawBorder: false } }
-                    }
-                }
+                data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'], datasets: [{ data: salesMonthly, borderColor: '#000000', backgroundColor: 'rgba(0, 0, 0, 0.05)', borderWidth: 3, pointBackgroundColor: '#fff', pointBorderColor: '#000', pointBorderWidth: 2, pointRadius: 4, fill: true, tension: 0.4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f5f5f4', drawBorder: false } }, x: { grid: { display: false, drawBorder: false } } } }
             });
         }
 
         function renderDashboard() {
             const totalRev = ordersDB.filter(o => o.status !== 'Menunggu Verifikasi').reduce((sum, o) => sum + o.total, 0);
-            const totalOrd = ordersDB.filter(o => o.status !== 'Menunggu Verifikasi').length;
-            const pendingOrd = ordersDB.filter(o => o.status === 'Menunggu Verifikasi').length;
+            const shippingOrd = ordersDB.filter(o => o.status === 'Sedang Dikirim').length;
+            const pendingOrd = ordersDB.filter(o => o.status === 'Menunggu Verifikasi' || o.status === 'Diproses (Input Resi)').length;
 
             document.getElementById('statRevenue').textContent = formatRp(totalRev);
-            document.getElementById('statOrders').textContent = totalOrd;
+            document.getElementById('statOrders').textContent = shippingOrd;
             document.getElementById('statPending').textContent = pendingOrd;
             document.getElementById('pendingCount').textContent = pendingOrd;
+            
+            // Dot Indicator for Tracking Tab
+            document.getElementById('activeShipmentDot').style.display = shippingOrd > 0 ? 'block' : 'none';
 
             initChart();
         }
 
-        // --- 3. EXPORT EXCEL (SHEET JS) ---
         function exportToExcel() {
-            const dataToExport = ordersDB.map(o => ({
-                "Order ID": o.id,
-                "Tanggal": o.date,
-                "Nama Pelanggan": o.user.name,
-                "No. WhatsApp": o.user.phone,
-                "Alamat Pengiriman": o.address,
-                "Batch": o.batch,
-                "Total Bayar (Rp)": o.total,
-                "Status": o.status,
-                "Nomor Resi": o.resi || '-'
-            }));
-
-            const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Data Penjualan");
-            XLSX.writeFile(workbook, "Laporan_Penjualan_Portwish.xlsx");
-            showAdminToast("File Excel Berhasil Diunduh!");
+            const data = ordersDB.map(o => ({ "Order ID": o.id, "Tanggal": o.date, "Pelanggan": o.user.name, "WA": o.user.phone, "Alamat": o.address, "Batch": o.batch, "Total": o.total, "Status": o.status, "Resi": o.resi || '-' }));
+            const ws = XLSX.utils.json_to_sheet(data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Data"); XLSX.writeFile(wb, "Data_Portwish.xlsx"); showAdminToast("Berhasil Diunduh!");
         }
 
-        // --- 4. MANAJEMEN PESANAN (RESI & INVOICE) ---
+        // --- MANAJEMEN PESANAN (TAB PESANAN) ---
         function renderOrders(search = '') {
             const tbody = document.getElementById('orderTableBody');
             tbody.innerHTML = '';
-
-            let filtered = ordersDB;
-            if(search) {
-                filtered = ordersDB.filter(o => o.id.toLowerCase().includes(search) || o.user.name.toLowerCase().includes(search));
-            }
+            let filtered = search ? ordersDB.filter(o => o.id.toLowerCase().includes(search) || o.user.name.toLowerCase().includes(search)) : ordersDB;
 
             filtered.forEach((o, index) => {
-                let badgeClass = "bg-orange-100 text-orange-700 border-orange-200";
-                if(o.status === "Sedang Dikirim") badgeClass = "bg-black text-white border-black";
-                if(o.status === "Diproses (Input Resi)") badgeClass = "bg-blue-100 text-blue-700 border-blue-200";
+                let badgeClass = o.status === "Sedang Dikirim" ? "bg-black text-white border-black" : (o.status === "Diproses (Input Resi)" ? "bg-blue-100 text-blue-700 border-blue-200" : "bg-orange-100 text-orange-700 border-orange-200");
                 
+                // Form Resi HANYA untuk input awal, update tracking dipindah ke Tab Tracking
                 let resiAction = ``;
                 if(o.status === "Menunggu Verifikasi") {
                     resiAction = `<button onclick="approveOrder(${index})" class="bg-black text-white text-[10px] font-extrabold px-3 py-1.5 rounded-lg shadow-sm hover:bg-stone-800 transition">APPROVE PEMBAYARAN</button>`;
                 } else if(o.status === "Diproses (Input Resi)") {
                     resiAction = `
                         <div class="flex items-center space-x-2 mt-2">
-                            <input type="text" id="resiInput_${index}" placeholder="Input Resi Lion..." class="border border-stone-300 rounded-lg px-2 py-1.5 text-xs w-32 font-bold outline-none focus:border-black bg-white text-black">
+                            <input type="text" id="resiInput_${index}" placeholder="Input Nomor Resi..." class="border border-stone-300 rounded-lg px-2 py-1.5 text-xs w-32 font-bold outline-none focus:border-black bg-white text-black">
                             <button onclick="saveResi(${index})" class="bg-blue-600 text-white text-[10px] font-extrabold px-3 py-1.5 rounded-lg hover:bg-blue-700 transition">KIRIM</button>
                         </div>
                     `;
                 } else {
-                    resiAction = `<span class="text-xs font-extrabold tracking-widest text-black">${o.resi}</span>`;
+                    resiAction = `<span class="text-xs font-extrabold tracking-widest text-black">Resi: ${o.resi}</span>`;
                 }
 
                 tbody.innerHTML += `
                     <tr class="border-b border-stone-100 hover:bg-cream-100/50 transition-colors">
                         <td class="p-4 font-extrabold text-black">${o.id}<br><span class="text-[9px] text-stone-400 font-bold uppercase tracking-widest">${o.date}</span></td>
-                        <td class="p-4">
-                            <p class="font-extrabold text-black">${o.user.name}</p>
-                            <p class="text-[10px] font-bold text-stone-500">${o.user.phone}</p>
-                        </td>
+                        <td class="p-4"><p class="font-extrabold text-black">${o.user.name}</p><p class="text-[10px] font-bold text-stone-500">${o.user.phone}</p></td>
                         <td class="p-4 text-[10px] font-extrabold text-stone-500 uppercase tracking-widest">${o.batch}</td>
                         <td class="p-4 font-extrabold text-black">${formatRp(o.total)}</td>
-                        <td class="p-4">
-                            <span class="text-[9px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-widest border ${badgeClass}">${o.status}</span>
-                            <div class="mt-2.5">${resiAction}</div>
-                        </td>
-                        <td class="p-4 text-center">
-                            <button onclick="openInvoice('${o.id}')" class="text-stone-400 hover:text-black bg-white border border-stone-200 p-2 rounded-lg transition-colors shadow-sm" title="Lihat Invoice">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                        <td class="p-4"><span class="text-[9px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-widest border ${badgeClass}">${o.status}</span><div class="mt-2.5">${resiAction}</div></td>
+                        <td class="p-4 text-center"><button onclick="openInvoice('${o.id}')" class="text-stone-400 hover:text-black bg-white border border-stone-200 p-2 rounded-lg shadow-sm"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></button></td>
+                    </tr>`;
             });
             renderDashboard(); 
         }
 
         function filterOrders(val) { renderOrders(val); }
-
-        function approveOrder(index) {
-            ordersDB[index].status = "Diproses (Input Resi)";
-            showAdminToast(`Pembayaran ${ordersDB[index].id} Disetujui!`);
-            renderOrders();
-        }
-
+        function approveOrder(index) { ordersDB[index].status = "Diproses (Input Resi)"; showAdminToast("Pembayaran Disetujui!"); renderOrders(); }
         function saveResi(index) {
             const resiVal = document.getElementById(`resiInput_${index}`).value;
-            if(!resiVal) return alert("Nomor Resi harus diisi!");
-            
-            ordersDB[index].resi = resiVal;
-            ordersDB[index].status = "Sedang Dikirim";
-            showAdminToast(`Resi ${resiVal} berhasil diinput.`);
-            renderOrders();
+            if(!resiVal) return alert("Resi harus diisi!");
+            ordersDB[index].resi = resiVal; ordersDB[index].status = "Sedang Dikirim";
+            showAdminToast("Resi diinput, pindah ke menu Update Logistik.");
+            renderOrders(); renderTracking(); // Refresh both tabs
         }
 
-        // --- INVOICE MODAL LOGIC ---
-        function openInvoice(orderId) {
-            const o = ordersDB.find(x => x.id === orderId);
-            if(!o) return;
-
-            document.getElementById('invId').textContent = o.id;
-            document.getElementById('invDate').textContent = `Tanggal: ${o.date}`;
-            document.getElementById('invName').textContent = o.user.name;
-            document.getElementById('invEmail').textContent = o.user.email;
-            document.getElementById('invPhone').textContent = o.user.phone;
-            document.getElementById('invAddress').textContent = o.address;
-            document.getElementById('invBatch').textContent = o.batch;
-
-            const tbody = document.getElementById('invItems');
-            tbody.innerHTML = '';
+        // --- MENU BARU: TRACKING LOGISTIK (WIZARD OF OZ) ---
+        function renderTracking() {
+            const container = document.getElementById('trackingListArea');
+            container.innerHTML = '';
             
-            let groupedItems = {};
-            o.items.forEach(item => {
-                if(!groupedItems[item.id]) groupedItems[item.id] = {...item, qty: 0};
-                groupedItems[item.id].qty += 1;
-            });
+            // Filter hanya pesanan yg "Sedang Dikirim"
+            const activeShipments = ordersDB.filter(o => o.status === "Sedang Dikirim" && o.resi);
 
-            for(let key in groupedItems) {
-                const item = groupedItems[key];
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="py-4">
-                            <p class="font-extrabold text-black">${item.name}</p>
-                            <p class="text-[9px] text-stone-400 uppercase tracking-widest font-bold">${item.country} • ${item.category}</p>
-                        </td>
-                        <td class="py-4 text-center font-bold">x${item.qty}</td>
-                        <td class="py-4 text-right font-extrabold text-black">${formatRp(item.price * item.qty)}</td>
-                    </tr>
-                `;
+            if(activeShipments.length === 0) {
+                container.innerHTML = `<p class="text-center text-stone-400 py-10 font-medium">Tidak ada paket yang sedang dalam perjalanan saat ini.</p>`;
+                return;
             }
 
-            document.getElementById('invSubtotal').textContent = formatRp(o.total);
-            document.getElementById('invTotalMain').textContent = formatRp(o.total);
-
-            document.getElementById('invoiceModal').classList.remove('hidden');
-        }
-
-        function closeInvoiceModal() { document.getElementById('invoiceModal').classList.add('hidden'); }
-        function printInvoice() { window.print(); }
-
-        // --- 5. MANAJEMEN KATALOG ---
-        function renderCatalog() {
-            const grid = document.getElementById('adminCatalogGrid');
-            grid.innerHTML = '';
-            catalogDB.forEach(p => {
-                grid.innerHTML += `
-                    <div class="bg-white rounded-[24px] overflow-hidden shadow-sm border border-stone-100 flex flex-col group relative">
-                        <div class="absolute top-2 right-2 flex space-x-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onclick="openProductModal(${p.id})" class="bg-white text-blue-600 p-2 rounded-full shadow-md hover:bg-blue-50"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
-                            <button onclick="deleteProduct(${p.id})" class="bg-white text-red-600 p-2 rounded-full shadow-md hover:bg-red-50"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
-                        </div>
-                        <div class="relative pb-[100%] bg-cream-50 border-b border-stone-50">
-                            <img src="${p.img}" onerror="this.src='https://placehold.co/400';" class="absolute inset-0 w-full h-full object-cover">
-                            <span class="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-black border border-stone-100 text-[8px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-widest">${p.country}</span>
-                        </div>
-                        <div class="p-4 flex-1 flex flex-col">
-                            <p class="text-[9px] font-extrabold text-black uppercase tracking-widest mb-2 border border-stone-200 bg-cream-50 inline-block px-2 py-0.5 rounded-md w-max">${p.batch}</p>
-                            <h3 class="font-bold text-sm leading-tight mb-2 line-clamp-2 text-black">${p.name}</h3>
-                            <div class="mt-auto flex justify-between items-end border-t border-stone-100 pt-3">
-                                <p class="text-[9px] text-stone-400 font-bold uppercase tracking-widest">Close: <span class="text-black font-extrabold">${p.closeDate}</span></p>
-                                <p class="font-extrabold text-black">${formatRp(p.price)}</p>
+            activeShipments.forEach(o => {
+                const originalIndex = ordersDB.findIndex(x => x.id === o.id);
+                container.innerHTML += `
+                    <div class="border border-stone-200 rounded-[20px] p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex-1">
+                            <p class="font-extrabold text-black text-lg">${o.id} <span class="text-[10px] text-stone-500 font-extrabold tracking-widest ml-2 bg-stone-100 px-2 py-1 rounded-md">${o.user.name}</span></p>
+                            <div class="mt-2 flex items-center space-x-4">
+                                <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest border-r border-stone-200 pr-4">Resi: <span class="text-black font-extrabold">${o.resi}</span></p>
+                                <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">${o.batch}</p>
                             </div>
+                            <div class="mt-4 bg-blue-50/50 border border-blue-100 p-3 rounded-xl inline-block w-full md:w-auto">
+                                <p class="text-[9px] text-stone-500 uppercase tracking-widest font-bold mb-1">Status Web Pembeli Saat Ini:</p>
+                                <p class="font-bold text-blue-700 text-xs">${o.latestTracking || 'Menunggu update pertama dari Admin...'}</p>
+                                <p class="text-[9px] font-extrabold text-stone-400 uppercase tracking-widest mt-1">${o.trackingTime || '-'}</p>
+                            </div>
+                        </div>
+                        <div class="w-full md:w-2/5 flex flex-col space-y-2 bg-cream-50 p-4 rounded-2xl border border-stone-100">
+                            <label class="text-[9px] font-extrabold text-stone-500 uppercase tracking-widest">Ketik Status Terkini (Cek Web Kurir)</label>
+                            <input type="text" id="manualTrack_${originalIndex}" placeholder="Contoh: Paket sedang transit di Jakarta..." class="border border-stone-300 rounded-xl px-3 py-2.5 text-xs font-bold outline-none focus:border-black bg-white text-black shadow-sm">
+                            <button onclick="updateManualTracking(${originalIndex})" class="bg-black text-white text-[10px] font-extrabold px-4 py-3 rounded-xl hover:bg-stone-800 transition uppercase tracking-widest shadow-sm w-full">UPDATE STATUS PEMBELI</button>
                         </div>
                     </div>
                 `;
             });
         }
 
-        function openProductModal(id = null) {
-            if(id) {
-                const p = catalogDB.find(x => x.id === id);
-                document.getElementById('prodModalTitle').textContent = "Edit Produk";
-                document.getElementById('prodId').value = p.id;
-                document.getElementById('prodImg').value = p.img;
-                document.getElementById('prodName').value = p.name;
-                document.getElementById('prodPrice').value = p.price;
-                document.getElementById('prodCat').value = p.category;
-                document.getElementById('prodCountry').value = p.country;
-                document.getElementById('prodBatch').value = p.batch;
-                document.getElementById('prodClose').value = p.closeDate;
-            } else {
-                document.getElementById('prodModalTitle').textContent = "Tambah Produk Baru";
-                document.getElementById('prodId').value = "";
-                ['prodImg', 'prodName', 'prodPrice', 'prodBatch', 'prodClose'].forEach(x => document.getElementById(x).value = "");
-            }
-            document.getElementById('productModal').classList.remove('hidden');
+        function updateManualTracking(index) {
+            const inputVal = document.getElementById(`manualTrack_${index}`).value;
+            if(!inputVal) return alert("Ketik status terbarunya dulu!");
+            
+            const now = new Date();
+            const timeString = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + ", " + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + " WIB";
+
+            ordersDB[index].latestTracking = inputVal;
+            ordersDB[index].trackingTime = timeString;
+            
+            showAdminToast("Status logistik di aplikasi pembeli berhasil diperbarui!");
+            renderTracking(); // Refresh view
         }
 
-        function closeProductModal() { document.getElementById('productModal').classList.add('hidden'); }
-
-        function saveProduct() {
-            const id = document.getElementById('prodId').value;
-            const newProd = {
-                id: id ? parseInt(id) : Date.now(),
-                name: document.getElementById('prodName').value,
-                price: parseInt(document.getElementById('prodPrice').value),
-                category: document.getElementById('prodCat').value,
-                country: document.getElementById('prodCountry').value,
-                batch: document.getElementById('prodBatch').value,
-                closeDate: document.getElementById('prodClose').value,
-                img: document.getElementById('prodImg').value || "https://placehold.co/400"
-            };
-
-            if(!newProd.name || !newProd.price || !newProd.batch) return alert("Nama, Harga, dan Batch wajib diisi!");
-
-            if(id) {
-                const index = catalogDB.findIndex(x => x.id === parseInt(id));
-                catalogDB[index] = newProd;
-                showAdminToast("Produk berhasil diperbarui!");
-            } else {
-                catalogDB.push(newProd);
-                showAdminToast("Produk baru berhasil ditambahkan!");
-            }
-            closeProductModal();
-            renderCatalog();
+        // --- INVOICE ---
+        function openInvoice(orderId) {
+            const o = ordersDB.find(x => x.id === orderId);
+            document.getElementById('invId').textContent = o.id; document.getElementById('invDate').textContent = `Tanggal: ${o.date}`; document.getElementById('invName').textContent = o.user.name; document.getElementById('invPhone').textContent = o.user.phone; document.getElementById('invAddress').textContent = o.address; document.getElementById('invBatch').textContent = o.batch;
+            const tbody = document.getElementById('invItems'); tbody.innerHTML = '';
+            let grouped = {}; o.items.forEach(i => { if(!grouped[i.id]) grouped[i.id] = {...i, qty: 0}; grouped[i.id].qty += 1; });
+            for(let k in grouped) { const i = grouped[k]; tbody.innerHTML += `<tr><td class="py-4"><p class="font-extrabold text-black">${i.name}</p><p class="text-[9px] text-stone-400 uppercase tracking-widest font-bold">${i.country} • ${i.category}</p></td><td class="py-4 text-center font-bold">x${i.qty}</td><td class="py-4 text-right font-extrabold text-black">${formatRp(i.price * i.qty)}</td></tr>`; }
+            document.getElementById('invSubtotal').textContent = formatRp(o.total); document.getElementById('invTotalMain').textContent = formatRp(o.total);
+            document.getElementById('invoiceModal').classList.remove('hidden');
         }
+        function closeInvoiceModal() { document.getElementById('invoiceModal').classList.add('hidden'); }
+        function printInvoice() { window.print(); }
 
-        function deleteProduct(id) {
-            if(confirm("Yakin ingin menghapus produk ini dari katalog?")) {
-                catalogDB = catalogDB.filter(x => x.id !== id);
-                showAdminToast("Produk dihapus.");
-                renderCatalog();
-            }
-        }
-
-        // --- 6. MANAJEMEN PENGGUNA ---
-        function renderUsers() {
-            const tbody = document.getElementById('userTableBody');
-            tbody.innerHTML = '';
-            usersDB.forEach((u, i) => {
-                const maskedPass = u.pass.replace(/./g, '*');
-                tbody.innerHTML += `
-                    <tr class="border-b border-stone-100 hover:bg-cream-100/50 transition-colors">
-                        <td class="p-4 font-extrabold text-black">${u.name}</td>
-                        <td class="p-4 text-stone-600 font-bold text-xs">${u.email}</td>
-                        <td class="p-4 text-stone-600 font-bold text-xs">${u.phone}</td>
-                        <td class="p-4 font-mono text-stone-400 text-lg tracking-widest">${maskedPass}</td>
-                        <td class="p-4 text-center">
-                            <button onclick="changeUserPass(${i})" class="bg-white border border-stone-200 text-stone-600 hover:text-black hover:border-black text-[9px] uppercase tracking-widest font-extrabold px-3 py-1.5 rounded-lg shadow-sm transition">
-                                RESET PASS
-                            </button>
-                        </td>
-                    </tr>
-                `;
+        // --- KATALOG ---
+        function renderCatalog() {
+            const grid = document.getElementById('adminCatalogGrid'); grid.innerHTML = '';
+            catalogDB.forEach(p => {
+                grid.innerHTML += `<div class="bg-white rounded-[24px] overflow-hidden shadow-sm border border-stone-100 flex flex-col group relative"><div class="absolute top-2 right-2 flex space-x-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity"><button onclick="openProductModal(${p.id})" class="bg-white text-blue-600 p-2 rounded-full shadow-md"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button><button onclick="deleteProduct(${p.id})" class="bg-white text-red-600 p-2 rounded-full shadow-md"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div><div class="relative pb-[100%] bg-cream-50 border-b border-stone-50"><img src="${p.img}" onerror="this.src='https://placehold.co/400';" class="absolute inset-0 w-full h-full object-cover"><span class="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-black border border-stone-100 text-[8px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-widest">${p.country}</span></div><div class="p-4 flex-1 flex flex-col"><p class="text-[9px] font-extrabold text-black uppercase tracking-widest mb-2 border border-stone-200 bg-cream-50 inline-block px-2 py-0.5 rounded-md w-max">${p.batch}</p><h3 class="font-bold text-sm leading-tight mb-2 text-black">${p.name}</h3><div class="mt-auto flex justify-between items-end border-t border-stone-100 pt-3"><p class="text-[9px] text-stone-400 font-bold uppercase tracking-widest">Close: <span class="text-black font-extrabold">${p.closeDate}</span></p><p class="font-extrabold text-black">${formatRp(p.price)}</p></div></div></div>`;
             });
         }
+        function openProductModal(id = null) {
+            if(id) {
+                const p = catalogDB.find(x => x.id === id); document.getElementById('prodModalTitle').textContent = "Edit Produk"; document.getElementById('prodId').value = p.id; document.getElementById('prodImg').value = p.img; document.getElementById('prodName').value = p.name; document.getElementById('prodPrice').value = p.price; document.getElementById('prodCat').value = p.category; document.getElementById('prodCountry').value = p.country; document.getElementById('prodBatch').value = p.batch; document.getElementById('prodClose').value = p.closeDate;
+            } else { document.getElementById('prodModalTitle').textContent = "Tambah Produk Baru"; document.getElementById('prodId').value = ""; ['prodImg', 'prodName', 'prodPrice', 'prodBatch', 'prodClose'].forEach(x => document.getElementById(x).value = ""); }
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+        function closeProductModal() { document.getElementById('productModal').classList.add('hidden'); }
+        function saveProduct() {
+            const id = document.getElementById('prodId').value;
+            const newProd = { id: id ? parseInt(id) : Date.now(), name: document.getElementById('prodName').value, price: parseInt(document.getElementById('prodPrice').value), category: document.getElementById('prodCat').value, country: document.getElementById('prodCountry').value, batch: document.getElementById('prodBatch').value, closeDate: document.getElementById('prodClose').value, img: document.getElementById('prodImg').value || "https://placehold.co/400" };
+            if(id) { const index = catalogDB.findIndex(x => x.id === parseInt(id)); catalogDB[index] = newProd; showAdminToast("Produk diperbarui!"); } else { catalogDB.push(newProd); showAdminToast("Produk ditambahkan!"); }
+            closeProductModal(); renderCatalog();
+        }
+        function deleteProduct(id) { if(confirm("Hapus produk?")) { catalogDB = catalogDB.filter(x => x.id !== id); showAdminToast("Produk dihapus."); renderCatalog(); } }
 
+        // --- PENGGUNA ---
+        function renderUsers() {
+            const tbody = document.getElementById('userTableBody'); tbody.innerHTML = '';
+            usersDB.forEach((u, i) => {
+                const maskedPass = u.pass.replace(/./g, '*');
+                tbody.innerHTML += `<tr class="border-b border-stone-100 hover:bg-cream-100/50"><td class="p-4 font-extrabold text-black">${u.name}</td><td class="p-4 text-stone-600 font-bold text-xs">${u.email}</td><td class="p-4 text-stone-600 font-bold text-xs">${u.phone}</td><td class="p-4 font-mono text-stone-400 text-lg tracking-widest">${maskedPass}</td><td class="p-4 text-center"><button onclick="changeUserPass(${i})" class="bg-white border border-stone-200 text-stone-600 hover:text-black hover:border-black text-[9px] uppercase tracking-widest font-extrabold px-3 py-1.5 rounded-lg shadow-sm transition">RESET PASS</button></td></tr>`;
+            });
+        }
         function changeUserPass(index) {
-            const newPass = prompt(`Masukkan password baru untuk ${usersDB[index].name}:`);
-            if(newPass && newPass.trim() !== "") {
-                usersDB[index].pass = newPass;
-                showAdminToast(`Password ${usersDB[index].name} berhasil diubah.`);
-                renderUsers();
-            }
+            const newPass = prompt(`Password baru untuk ${usersDB[index].name}:`);
+            if(newPass && newPass.trim() !== "") { usersDB[index].pass = newPass; showAdminToast(`Password diubah.`); renderUsers(); }
         }
 
-        // --- INIT ALL ---
         renderDashboard();
     </script>
 </body>

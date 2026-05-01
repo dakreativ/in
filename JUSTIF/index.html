@@ -41,6 +41,14 @@
 </head>
 <body class="text-slate-900 overflow-x-hidden selection:bg-black selection:text-white">
 
+    <!-- FLOATING WHATSAPP BUTTON -->
+    <a href="https://wa.me/6281234567890?text=Halo%20Admin%20JustipHub,%20saya%20butuh%20bantuan%20terkait%20pesanan%20saya..." target="_blank" class="fixed bottom-6 right-6 z-[45] bg-[#25D366] text-white p-3.5 rounded-full shadow-[0_8px_20px_rgba(37,211,102,0.4)] hover:scale-110 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+        </svg>
+        <span class="absolute right-[110%] bg-white text-slate-800 text-[10px] font-extrabold px-3 py-1.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">Butuh Bantuan?</span>
+    </a>
+
     <!-- LIVE NOTIFICATION (FOMO TOAST) -->
     <div id="liveToast" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-[100] transition-all duration-500 translate-y-[-150%] opacity-0 pointer-events-none w-max max-w-[90vw]">
         <div class="bg-black/90 backdrop-blur-md text-white text-[11px] sm:text-xs font-medium px-5 py-3 rounded-full shadow-2xl flex items-center space-x-3 border border-slate-700">
@@ -116,7 +124,7 @@
         </div>
     </section>
 
-    <!-- CART DRAWER (Tetap Sama) -->
+    <!-- CART DRAWER -->
     <div id="cartDrawer" class="fixed inset-0 z-[60] invisible pointer-events-none transition-all duration-300">
         <div onclick="toggleCart()" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 transition-opacity duration-300" id="cartOverlay"></div>
         <div class="absolute right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl translate-x-full transition-transform duration-300 ease-in-out flex flex-col" id="cartBody">
@@ -155,9 +163,8 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN CHECKOUT MODAL (Tetap Sama) -->
+    <!-- FULLSCREEN CHECKOUT MODAL -->
     <div id="checkoutModal" class="fixed inset-0 z-[70] hidden bg-slate-50 overflow-y-auto hide-scroll">
-        <!-- Kode checkout modal sama persis seperti versi sebelumnya, dipotong agar tidak kepanjangan di layar, Anda bisa paste dari V4 -->
         <div class="max-w-md mx-auto min-h-screen flex flex-col bg-white shadow-2xl relative">
             <div class="sticky top-0 bg-white/90 backdrop-blur-md px-6 py-5 border-b border-slate-100 flex items-center z-10">
                 <button onclick="closeCheckoutModal()" class="mr-4 text-slate-400 hover:text-black bg-slate-50 p-2 rounded-full transition-colors">
@@ -198,14 +205,41 @@
                     </div>
                 </div>
 
-                <!-- Pembayaran -->
+                <!-- Pembayaran dengan Tab (QRIS & Transfer) -->
                 <div>
                     <div class="flex items-center mb-6">
                         <span class="bg-black text-white w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold mr-3 shadow-md">2</span>
-                        <h4 class="text-base font-extrabold">Pembayaran</h4>
+                        <h4 class="text-base font-extrabold">Metode Pembayaran</h4>
+                    </div>
+
+                    <!-- Toggle Button -->
+                    <div class="flex bg-slate-100 p-1 rounded-2xl mb-5">
+                        <button onclick="setPaymentMethod('qris')" id="btnQris" class="flex-1 bg-white shadow-sm text-black text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all">QRIS E-WALLET</button>
+                        <button onclick="setPaymentMethod('transfer')" id="btnTransfer" class="flex-1 text-slate-400 text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all hover:text-black">TRANSFER BANK</button>
                     </div>
                     
-                    <div class="bg-slate-900 text-white p-6 rounded-3xl mb-6 relative overflow-hidden shadow-xl shadow-slate-200">
+                    <!-- Konten QRIS -->
+                    <div id="contentQris" class="bg-white border-2 border-slate-100 p-6 rounded-[24px] mb-6 shadow-xl shadow-slate-100/50 flex flex-col items-center text-center">
+                        <div class="bg-blue-50 text-blue-600 text-[9px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-widest mb-4 border border-blue-100">Scan QR Code di bawah</div>
+                        
+                        <!-- Area Gambar QRIS -->
+                        <div class="bg-white p-2.5 rounded-3xl shadow-md border border-slate-100 mb-4 w-48 h-48">
+                            <!-- Ganti URL src ini dengan link QRIS asli milik Anda -->
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=DUMMY-QRIS-JUSTIPHUB" alt="QRIS JustipHub" class="w-full h-full rounded-2xl object-cover">
+                        </div>
+                        
+                        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-1">Total Bayar</p>
+                        <p id="checkoutTotalQris" class="font-extrabold text-2xl mb-4 tracking-tight text-black">Rp 0</p>
+                        
+                        <!-- Tombol Download QRIS -->
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=DUMMY-QRIS-JUSTIPHUB" download="QRIS_JustipHub.png" target="_blank" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-extrabold py-3.5 rounded-xl transition-colors flex items-center justify-center tracking-widest">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            DOWNLOAD QRIS
+                        </a>
+                    </div>
+
+                    <!-- Konten Transfer Bank -->
+                    <div id="contentTransfer" class="bg-slate-900 text-white p-6 rounded-[24px] mb-6 relative overflow-hidden shadow-xl shadow-slate-200 hidden">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3"></div>
                         <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/3 -translate-x-1/3"></div>
                         
@@ -226,9 +260,9 @@
                         </div>
                     </div>
 
-                    <!-- Upload Form -->
+                    <!-- Upload Form (Berlaku untuk keduanya) -->
                     <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Upload Bukti Transfer</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Upload Bukti Transfer / SS QRIS</span>
                         <div class="mt-3 w-full">
                             <label class="flex flex-col items-center justify-center w-full h-36 border-2 border-slate-200 border-dashed rounded-3xl cursor-pointer hover:bg-slate-50 transition-all bg-slate-50/50 overflow-hidden relative group" id="uploadArea">
                                 <div class="flex flex-col items-center justify-center pt-5 pb-6 text-slate-400 group-hover:scale-105 transition-transform" id="uploadPlaceholder">
@@ -254,7 +288,7 @@
         </div>
     </div>
 
-    <!-- MODAL TRACKING RESI (BARU) -->
+    <!-- MODAL TRACKING RESI -->
     <div id="trackingModal" class="fixed inset-0 z-[80] invisible pointer-events-none flex items-center justify-center px-4">
         <div onclick="closeTrackingModal()" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm opacity-0 transition-opacity duration-300" id="trackingOverlay"></div>
         
@@ -285,7 +319,6 @@
                 CEK STATUS PENGIRIMAN
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
             </button>
-            <p class="text-[10px] text-center text-slate-400 mt-3">Diarahkan ke portal tracking universal</p>
         </div>
     </div>
 
@@ -302,22 +335,44 @@
         let searchQuery = '';
         let cart = [];
         
-        // DUMMY DATA PESANAN AWAL (Untuk tes fitur resi)
         let orders = [
             {
                 id: 'INV-773821',
                 date: '1 Mei 2026',
                 batch: 'Batch JPN #05',
-                items: [products[3]], // Hada Labo
+                items: [products[3]],
                 total: 180000,
                 status: 'Sedang Dikirim',
-                resi: 'JP987654321', // Ini data yang diinput admin
+                resi: 'JP987654321',
                 kurir: 'J&T Express'
             }
         ];
 
         const formatRp = (num) => 'Rp ' + num.toLocaleString('id-ID');
 
+        // PAYMENT TAB LOGIC
+        function setPaymentMethod(method) {
+            const btnTransfer = document.getElementById('btnTransfer');
+            const btnQris = document.getElementById('btnQris');
+            const contentTransfer = document.getElementById('contentTransfer');
+            const contentQris = document.getElementById('contentQris');
+
+            if(method === 'qris') {
+                btnQris.className = "flex-1 bg-white shadow-sm text-black text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all";
+                btnTransfer.className = "flex-1 text-slate-400 text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all hover:text-black";
+                contentQris.classList.remove('hidden');
+                contentQris.classList.add('flex');
+                contentTransfer.classList.add('hidden');
+            } else {
+                btnTransfer.className = "flex-1 bg-white shadow-sm text-black text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all";
+                btnQris.className = "flex-1 text-slate-400 text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all hover:text-black";
+                contentTransfer.classList.remove('hidden');
+                contentQris.classList.add('hidden');
+                contentQris.classList.remove('flex');
+            }
+        }
+
+        // TABS & FILTERS
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById(tab + 'Tab').classList.add('active');
@@ -351,7 +406,7 @@
             renderProducts();
         });
 
-        // Penambahan atribut onerror di tag <img> agar tidak ada gambar pecah (broken image icon)
+        // RENDER
         function renderProducts() {
             const container = document.getElementById('productGrid');
             const emptyState = document.getElementById('emptyState');
@@ -396,7 +451,7 @@
             }
         }
 
-        // Cart Logic (Sama)
+        // CART & CHECKOUT
         function toggleCart() {
             const drawer = document.getElementById('cartDrawer');
             const overlay = document.getElementById('cartOverlay');
@@ -405,19 +460,10 @@
             if(drawer.classList.contains('invisible')) {
                 drawer.classList.remove('invisible');
                 drawer.classList.add('pointer-events-auto');
-                setTimeout(() => {
-                    overlay.classList.add('opacity-100');
-                    overlay.classList.remove('opacity-0');
-                    body.classList.remove('translate-x-full');
-                }, 10);
+                setTimeout(() => { overlay.classList.add('opacity-100'); overlay.classList.remove('opacity-0'); body.classList.remove('translate-x-full'); }, 10);
             } else {
-                overlay.classList.remove('opacity-100');
-                overlay.classList.add('opacity-0');
-                body.classList.add('translate-x-full');
-                setTimeout(() => {
-                    drawer.classList.add('invisible');
-                    drawer.classList.remove('pointer-events-auto');
-                }, 300);
+                overlay.classList.remove('opacity-100'); overlay.classList.add('opacity-0'); body.classList.add('translate-x-full');
+                setTimeout(() => { drawer.classList.add('invisible'); drawer.classList.remove('pointer-events-auto'); }, 300);
             }
         }
 
@@ -438,8 +484,7 @@
             const drawerCount = document.getElementById('cartDrawerCount');
             const list = document.getElementById('cartItems');
             
-            badge.textContent = cart.length;
-            badge.style.opacity = cart.length > 0 ? '1' : '0';
+            badge.textContent = cart.length; badge.style.opacity = cart.length > 0 ? '1' : '0';
             drawerCount.textContent = cart.length;
 
             list.innerHTML = cart.length === 0 ? `
@@ -476,16 +521,18 @@
         }
 
         function checkCartValidity() {
-            const batchVal = document.getElementById('batchSelect').value;
-            const btn = document.getElementById('checkoutBtn');
-            btn.disabled = (batchVal === "" || cart.length === 0);
+            document.getElementById('checkoutBtn').disabled = (document.getElementById('batchSelect').value === "" || cart.length === 0);
         }
 
         function openCheckoutModal() {
             toggleCart();
             document.getElementById('checkoutModal').classList.remove('hidden');
             const total = cart.reduce((sum, item) => sum + item.price, 0);
+            
+            // Sync Total for both Transfer and QRIS tab
             document.getElementById('checkoutTotal').textContent = formatRp(total);
+            document.getElementById('checkoutTotalQris').textContent = formatRp(total);
+            
             document.getElementById('checkoutBatchInfo').textContent = document.getElementById('batchSelect').value;
         }
 
@@ -508,7 +555,7 @@
             const name = document.getElementById('cusName').value;
             const receipt = document.getElementById('receiptFile').files[0];
 
-            if(!name || !receipt) return alert("Mohon lengkapi Form dan Upload Bukti Transfer.");
+            if(!name || !receipt) return alert("Mohon lengkapi Form dan Upload Bukti Pembayaran.");
 
             const btn = document.getElementById('finalSubmitBtn');
             const originalText = '<span class="relative z-10">KONFIRMASI PESANAN</span>';
@@ -516,49 +563,39 @@
             btn.disabled = true;
 
             setTimeout(() => {
-                const newOrder = {
+                orders.unshift({
                     id: 'INV-' + Math.floor(100000 + Math.random() * 900000),
                     date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
                     batch: document.getElementById('batchSelect').value.split('(')[0].trim(),
                     items: [...cart],
                     total: cart.reduce((sum, item) => sum + item.price, 0),
                     status: 'Menunggu Verifikasi',
-                    resi: null // Resi kosong karena baru pesan
-                };
-
-                orders.unshift(newOrder); 
+                    resi: null
+                }); 
                 
-                cart = [];
-                updateCartUI();
+                cart = []; updateCartUI();
                 document.getElementById('batchSelect').value = "";
                 document.getElementById('receiptFile').value = '';
                 document.getElementById('previewImg').classList.add('hidden');
                 document.getElementById('uploadPlaceholder').classList.remove('opacity-0');
-                
                 ['cusName', 'cusEmail', 'cusPhone', 'cusAddress'].forEach(id => document.getElementById(id).value = '');
 
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-
-                closeCheckoutModal();
-                switchTab('dashboard');
-                renderOrders();
+                btn.innerHTML = originalText; btn.disabled = false;
+                closeCheckoutModal(); switchTab('dashboard'); renderOrders();
             }, 2000);
         }
 
-        // FUNGSI RENDER ORDERS (DENGAN LOGIKA RESI)
+        // RENDER ORDERS & RESI TRACKING
         function renderOrders() {
             const list = document.getElementById('orderList');
             document.getElementById('emptyOrder').style.display = orders.length === 0 ? 'block' : 'none';
             
             list.innerHTML = '';
             orders.forEach(o => {
-                // Tentukan warna status
-                let statusColor = "bg-orange-100/80 text-orange-600 border-orange-200/50"; // default: pending
+                let statusColor = "bg-orange-100/80 text-orange-600 border-orange-200/50";
                 if(o.status === "Sedang Dikirim") statusColor = "bg-blue-100/80 text-blue-600 border-blue-200/50";
                 if(o.status === "Selesai") statusColor = "bg-green-100/80 text-green-600 border-green-200/50";
 
-                // Logika Tombol Resi
                 let trackingButton = `<span class="text-[10px] text-slate-300 font-bold uppercase tracking-widest cursor-not-allowed">Belum Ada Resi</span>`;
                 if(o.resi) {
                     trackingButton = `<button onclick="openTrackingModal('${o.id}')" class="text-[10px] text-blue-600 font-extrabold uppercase tracking-widest hover:text-blue-800 flex items-center transition-colors">
@@ -588,23 +625,16 @@
             });
         }
 
-        // --- SISTEM TRACKING RESI MODAL ---
         function openTrackingModal(orderId) {
             const order = orders.find(o => o.id === orderId);
             if(order && order.resi) {
                 document.getElementById('trackKurir').textContent = order.kurir || "Kurir Reguler";
                 document.getElementById('trackResi').textContent = order.resi;
-                
-                // Animasi Modal
                 const modal = document.getElementById('trackingModal');
                 const overlay = document.getElementById('trackingOverlay');
                 const box = document.getElementById('trackingBox');
-                
                 modal.classList.remove('invisible', 'pointer-events-none');
-                setTimeout(() => {
-                    overlay.classList.remove('opacity-0');
-                    box.classList.remove('scale-95', 'opacity-0');
-                }, 10);
+                setTimeout(() => { overlay.classList.remove('opacity-0'); box.classList.remove('scale-95', 'opacity-0'); }, 10);
             }
         }
 
@@ -612,33 +642,20 @@
             const modal = document.getElementById('trackingModal');
             const overlay = document.getElementById('trackingOverlay');
             const box = document.getElementById('trackingBox');
-            
-            overlay.classList.add('opacity-0');
-            box.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => {
-                modal.classList.add('invisible', 'pointer-events-none');
-                // Reset tombol copy
-                document.getElementById('copyBtn').textContent = 'SALIN';
-            }, 300);
+            overlay.classList.add('opacity-0'); box.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => { modal.classList.add('invisible', 'pointer-events-none'); document.getElementById('copyBtn').textContent = 'SALIN'; }, 300);
         }
 
         function copyResi() {
             const resi = document.getElementById('trackResi').textContent;
             navigator.clipboard.writeText(resi).then(() => {
                 const btn = document.getElementById('copyBtn');
-                btn.textContent = 'TERSALIN!';
-                btn.classList.add('bg-green-50', 'text-green-600', 'border-green-200');
-                setTimeout(() => {
-                    btn.textContent = 'SALIN';
-                    btn.classList.remove('bg-green-50', 'text-green-600', 'border-green-200');
-                }, 2000);
+                btn.textContent = 'TERSALIN!'; btn.classList.add('bg-green-50', 'text-green-600', 'border-green-200');
+                setTimeout(() => { btn.textContent = 'SALIN'; btn.classList.remove('bg-green-50', 'text-green-600', 'border-green-200'); }, 2000);
             });
         }
 
-        function openUniversalTracker() {
-            // Membuka portal tracking universal di tab baru
-            window.open('https://cekresi.com', '_blank');
-        }
+        function openUniversalTracker() { window.open('https://cekresi.com', '_blank'); }
 
         // FOMO NOTIF
         const fakeBuyers = ["Nisa", "Budi", "Sinta", "Andika", "Reza", "Putri"];
@@ -647,21 +664,14 @@
             const product = products[Math.floor(Math.random() * products.length)].name;
             const toast = document.getElementById('liveToast');
             document.getElementById('toastMsg').innerHTML = `<span class="font-extrabold">${buyer}</span> memesan <span class="text-slate-300 ml-1 truncate max-w-[140px] inline-block align-bottom">${product}</span>`;
-            toast.classList.remove('translate-y-[-150%]', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-[-150%]', 'opacity-0');
-            }, 4000);
+            toast.classList.remove('translate-y-[-150%]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-150%]', 'opacity-0'); }, 4000);
         }
-        setTimeout(() => {
-            showFakeNotification();
-            setInterval(showFakeNotification, Math.floor(Math.random() * (25000 - 15000 + 1) + 15000));
-        }, 3000);
+        setTimeout(() => { showFakeNotification(); setInterval(showFakeNotification, Math.floor(Math.random() * (25000 - 15000 + 1) + 15000)); }, 3000);
 
         // INIT
         renderProducts();
-        renderOrders(); // Memanggil render order di awal agar dummy data resi langsung muncul
+        renderOrders();
     </script>
 </body>
 </html>

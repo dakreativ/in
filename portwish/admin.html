@@ -73,6 +73,7 @@
                 
                 <p id="loginErrorMsg" class="text-[10px] text-red-500 font-bold uppercase tracking-widest mb-4 hidden">Akses Ditolak! Kredensial Salah.</p>
                 <button onclick="loginAdmin()" id="btnAdminLogin" class="w-full bg-black text-white font-extrabold py-4 rounded-2xl shadow-xl hover:bg-stone-800 transition active:scale-95">MASUK DASHBOARD</button>
+                <p class="text-[9px] text-stone-400 mt-4">Hint: admin@portwish.id / admin123</p>
             </div>
         </div>
     </div>
@@ -138,6 +139,7 @@
         <div class="p-8">
             <!-- TAB 1: DASHBOARD -->
             <div id="dashboardTab" class="tab-content active space-y-6">
+                <!-- 3 Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-white p-6 rounded-[24px] border border-stone-200 shadow-sm relative overflow-hidden group">
                         <div class="absolute -right-6 -top-6 w-24 h-24 bg-cream-100 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
@@ -162,17 +164,45 @@
                     </div>
                 </div>
                 
+                <!-- Chart & Excel Export Button -->
                 <div class="bg-white p-6 rounded-[24px] border border-stone-200 shadow-sm">
-                    <div class="flex justify-between items-center mb-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                         <div>
                             <h3 class="font-extrabold text-lg">Kurva Penjualan 2026</h3>
                             <p class="text-xs text-stone-500 font-medium">Statistik pendapatan per bulan</p>
                         </div>
-                        <button onclick="exportToExcel()" class="bg-black hover:bg-stone-800 text-white text-[10px] font-extrabold px-4 py-2.5 rounded-xl uppercase tracking-widest flex items-center shadow-md transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg> Export Excel
+                        <button onclick="exportToExcel()" class="bg-[#107c41] hover:bg-[#0b5e31] text-white text-[10px] font-extrabold px-4 py-3 rounded-xl uppercase tracking-widest flex items-center shadow-md transition-colors active:scale-95">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm1.5 16h-1.8l-1.6-3.8-1.7 3.8H8.6l2.6-5.4-2.4-5.2h1.8l1.4 3.6 1.5-3.6h1.7l-2.4 5.2 2.7 5.4zM13 9V3.5L18.5 9H13z"/></svg>
+                            UNDUH LAPORAN KEUANGAN
                         </button>
                     </div>
                     <div class="w-full h-72"><canvas id="salesChart"></canvas></div>
+                </div>
+
+                <!-- NEW: Recent Orders Table -->
+                <div class="bg-white p-6 rounded-[24px] border border-stone-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="font-extrabold text-lg">Transaksi Terkini</h3>
+                            <p class="text-xs text-stone-500 font-medium">Pantau nama pemesan dan nomor resi terbaru</p>
+                        </div>
+                        <button onclick="switchTab('orders')" class="text-[10px] font-extrabold text-stone-500 hover:text-black uppercase tracking-widest transition-colors flex items-center">
+                            Lihat Semua <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto hide-scroll">
+                        <table class="w-full text-left border-collapse whitespace-nowrap">
+                            <thead>
+                                <tr class="bg-stone-50 text-[10px] uppercase tracking-widest text-stone-500 border-b border-stone-200">
+                                    <th class="p-4 font-extrabold rounded-tl-xl">Pelanggan</th>
+                                    <th class="p-4 font-extrabold">Status Pembayaran</th>
+                                    <th class="p-4 font-extrabold">No. Resi Pengiriman</th>
+                                    <th class="p-4 font-extrabold text-right rounded-tr-xl">Total Bayar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersBody" class="text-sm"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -180,7 +210,7 @@
             <div id="ordersTab" class="tab-content">
                 <div class="bg-white rounded-[24px] border border-stone-200 shadow-sm overflow-hidden">
                     <div class="p-6 border-b border-stone-100 flex flex-col sm:flex-row justify-between items-center bg-cream-50/50 gap-4">
-                        <h3 class="font-extrabold text-lg w-full sm:w-auto">Daftar Transaksi</h3>
+                        <h3 class="font-extrabold text-lg w-full sm:w-auto">Daftar Semua Transaksi</h3>
                         <input type="text" placeholder="Cari ID / Nama..." class="input-box sm:w-64 py-2 text-sm font-semibold" oninput="filterOrders(this.value)">
                     </div>
                     <div class="overflow-x-auto hide-scroll">
@@ -309,7 +339,7 @@
         </div>
     </div>
 
-    <!-- MODAL CEK BUKTI BAYAR -->
+    <!-- MODAL CEK BUKTI BAYAR (DENGAN TOMBOL UNDUH) -->
     <div id="proofModal" class="fixed inset-0 z-[110] hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-[32px] p-6 max-w-sm w-full text-center relative border border-stone-100 shadow-2xl">
             <button onclick="closeProofModal()" class="absolute top-4 right-4 bg-cream-50 p-2 rounded-full text-stone-500 hover:text-black transition-colors border border-stone-200">
@@ -317,13 +347,19 @@
             </button>
             <h3 class="font-extrabold text-lg mb-4 text-black">Bukti Pembayaran</h3>
             <div class="bg-cream-50 p-2 rounded-[24px] border border-stone-200 mb-4">
-                <img src="https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?auto=format&fit=crop&w=400&q=80" alt="Bukti Transfer" class="w-full rounded-[16px] object-cover max-h-[50vh]">
+                <img id="proofImage" src="https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?auto=format&fit=crop&w=400&q=80" alt="Bukti Transfer" class="w-full rounded-[16px] object-cover max-h-[50vh]">
             </div>
-            <button onclick="approveFromProof()" id="btnProofApprove" class="w-full bg-black text-white font-extrabold py-3.5 rounded-2xl shadow-xl hover:bg-stone-800 transition text-[11px] uppercase tracking-widest">VERIFIKASI & APPROVE</button>
+            <div class="flex space-x-3">
+                <a id="downloadProofBtn" href="#" download="Bukti_Transfer.jpg" class="w-1/3 bg-white border border-stone-200 text-black font-extrabold py-3.5 rounded-2xl shadow-sm hover:bg-stone-50 transition text-[11px] uppercase tracking-widest flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    UNDUH
+                </a>
+                <button onclick="approveFromProof()" id="btnProofApprove" class="w-2/3 bg-black text-white font-extrabold py-3.5 rounded-2xl shadow-xl hover:bg-stone-800 transition text-[11px] uppercase tracking-widest">VERIFIKASI</button>
+            </div>
         </div>
     </div>
 
-    <!-- MODAL KELOLA BATCH (BARU) -->
+    <!-- MODAL KELOLA BATCH -->
     <div id="batchModal" class="fixed inset-0 z-[110] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-[32px] shadow-2xl p-6 relative border border-stone-100">
             <button onclick="closeBatchModal()" class="absolute top-4 right-4 bg-cream-50 p-2 rounded-full text-stone-500 hover:text-black">
@@ -343,7 +379,7 @@
         </div>
     </div>
 
-    <!-- MODAL FORM PRODUK (DIUPDATE: FOTO UPLOAD FISIK & HAPUS BATCH/CLOSE) -->
+    <!-- MODAL FORM PRODUK -->
     <div id="productModal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-[32px] shadow-2xl p-8 relative border border-stone-100 max-h-[90vh] overflow-y-auto hide-scroll">
             <h3 class="font-extrabold text-xl mb-6" id="prodModalTitle">Tambah Produk</h3>
@@ -393,7 +429,6 @@
                         <option value="KOREA">Korea</option>
                     </select>
                 </div>
-                <!-- Batch dan Close Date Dihapus dari Modal Produk -->
             </div>
             <div class="flex space-x-3 mt-8">
                 <button onclick="closeProductModal()" class="flex-1 bg-white border border-stone-200 text-black font-extrabold py-3.5 rounded-2xl transition hover:bg-stone-50 text-[11px] tracking-widest uppercase">BATAL</button>
@@ -404,7 +439,7 @@
 
     <!-- SCRIPT UTAMA ADMIN -->
     <script>
-        // Database Produk (Atribut batch & closeDate sudah dihilangkan sesuai permintaan)
+        // Database Produk (Atribut batch & closeDate sudah dihilangkan)
         let catalogDB = [
             { id: 1, name: "CeraVe Hydrating Cleanser 236ml", price: 350000, country: "USA", category: "Skincare", img: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=400&q=80" },
             { id: 2, name: "COSRX Advanced Snail 96 Mucin", price: 220000, country: "KOREA", category: "Skincare", img: "https://images.unsplash.com/photo-1608248593842-8021c6a1bce4?auto=format&fit=crop&w=400&q=80" },
@@ -422,7 +457,7 @@
             { name: "Budi Santoso", email: "budi@portwish.id", phone: "081999888777", pass: "123" }
         ];
 
-        // Data Pesanan Dummy (Sinkron dengan user mockup)
+        // Data Pesanan Dummy
         let ordersDB = [
             { id: 'INV-' + Math.floor(100000 + Math.random() * 900000), date: new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }), user: usersDB[1], address: "Jl. Sudirman No 10, Jakarta", batch: 'Batch USA #01', items: [catalogDB[0]], total: 350000, status: 'AWAITING VERIFICATION', resi: '' },
             { id: 'INV-773821', date: 'May 1, 2026', user: usersDB[0], address: "Jl Bandung No. 12", batch: 'Batch JPN #05', items: [catalogDB[3]], total: 180000, status: 'IN TRANSIT', resi: 'LP987654321', kurir: 'Lion Parcel', latestTracking: "Package received at Jakarta sorting facility.", trackingTime: "May 2, 2026, 14:00 WIB" }
@@ -431,7 +466,7 @@
         const salesMonthly = [0, 0, 1500000, 4200000, 7900000, 0, 0, 0, 0, 0, 0, 0]; 
         const formatRp = (num) => 'Rp ' + num.toLocaleString('id-ID');
         let currentEditingOrderIndex = null;
-        let currentUploadedImageBase64 = null; // Menyimpan Base64 file upload fisik
+        let currentUploadedImageBase64 = null; 
 
         document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -496,7 +531,7 @@
                 type: 'line', 
                 data: { 
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], 
-                    datasets: [{ data: salesMonthly, borderColor: '#000000', backgroundColor: 'rgba(0, 0, 0, 0.05)', borderWidth: 3, pointBackgroundColor: '#fff', pointBorderColor: '#000', pointBorderWidth: 2, pointRadius: 4, fill: true, tension: 0.4 }] 
+                    datasets: [{ data: salesMonthly, borderColor: '#107c41', backgroundColor: 'rgba(16, 124, 65, 0.05)', borderWidth: 3, pointBackgroundColor: '#fff', pointBorderColor: '#107c41', pointBorderWidth: 2, pointRadius: 4, fill: true, tension: 0.4 }] 
                 }, 
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f5f5f4', drawBorder: false } }, x: { grid: { display: false, drawBorder: false } } } } 
             });
@@ -512,15 +547,54 @@
             document.getElementById('statPending').textContent = pendingOrd; 
             document.getElementById('pendingCount').textContent = pendingOrd;
             document.getElementById('activeShipmentDot').style.display = shippingOrd > 0 ? 'block' : 'none'; 
+            
+            // Render Recent Orders (Top 5) on Dashboard
+            const recentBody = document.getElementById('recentOrdersBody');
+            recentBody.innerHTML = '';
+            const latestOrders = ordersDB.slice(0, 5); // Ambil 5 pesanan terbaru
+
+            if(latestOrders.length === 0) {
+                recentBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-xs text-stone-400 font-bold">Belum ada transaksi.</td></tr>`;
+            } else {
+                latestOrders.forEach(o => {
+                    let badgeClass = o.status === "IN TRANSIT" ? "bg-black text-white border-black" : (o.status === "PROCESS (INPUT RESI)" ? "bg-blue-100 text-blue-700 border-blue-200" : "bg-orange-100 text-orange-700 border-orange-200");
+                    let resiText = o.resi ? `<span class="font-extrabold text-black bg-cream-100 px-2 py-1 rounded-md border border-stone-200">${o.resi}</span>` : `<span class="text-stone-400 italic text-[10px]">Belum diinput</span>`;
+                    
+                    recentBody.innerHTML += `
+                        <tr class="border-b border-stone-100 hover:bg-cream-100/50 transition-colors">
+                            <td class="p-4 align-middle">
+                                <p class="font-extrabold text-black">${o.user.name}</p>
+                                <p class="text-[10px] text-stone-400 font-bold">${o.id}</p>
+                            </td>
+                            <td class="p-4 align-middle">
+                                <span class="text-[9px] font-extrabold px-2.5 py-1 rounded-full border inline-block ${badgeClass}">${o.status}</span>
+                            </td>
+                            <td class="p-4 text-xs align-middle">${resiText}</td>
+                            <td class="p-4 font-extrabold text-black text-right align-middle">${formatRp(o.total)}</td>
+                        </tr>
+                    `;
+                });
+            }
+
             initChart();
         }
 
         function exportToExcel() {
-            const data = ordersDB.map(o => ({ "Order ID": o.id, "Date": o.date, "Customer": o.user.name, "WA": o.user.phone, "Address": o.address, "Batch": o.batch, "Total": o.total, "Status": o.status, "Resi": o.resi || '-' }));
+            const data = ordersDB.map(o => ({ 
+                "Tanggal Transaksi": o.date,
+                "ID Pesanan": o.id, 
+                "Nama Pelanggan": o.user.name, 
+                "No. WhatsApp": o.user.phone, 
+                "Alamat Lengkap": o.address, 
+                "Batch": o.batch, 
+                "Status Pembayaran": o.status, 
+                "Nomor Resi": o.resi || 'Belum Ada',
+                "Total Pendapatan (Rp)": o.total
+            }));
             const ws = XLSX.utils.json_to_sheet(data); const wb = XLSX.utils.book_new(); 
-            XLSX.utils.book_append_sheet(wb, ws, "Data"); 
-            XLSX.writeFile(wb, "Data_Portwish.xlsx"); 
-            showAdminToast("Export Excel Success!");
+            XLSX.utils.book_append_sheet(wb, ws, "Laporan Keuangan"); 
+            XLSX.writeFile(wb, "Laporan_Keuangan_Portwish.xlsx"); 
+            showAdminToast("Laporan Keuangan Berhasil Diunduh!");
         }
 
         // --- ORDER MANAGEMENT ---
@@ -569,7 +643,9 @@
                         </td>
                     </tr>`;
             });
-            renderDashboard(); 
+            // Hapus pemanggilan renderDashboard() disini agar dashboard tidak ter-refresh 
+            // setiap kali pindah tab (karena memotong flow canvas JS). 
+            // renderDashboard hanya dipanggil saat klik tab Dashboard.
         }
 
         function filterOrders(val) { renderOrders(val.toLowerCase()); }
@@ -588,9 +664,19 @@
             renderTracking(); 
         }
 
-        // --- PAYMENT PROOF MODAL ---
+        // --- PAYMENT PROOF MODAL (DENGAN UNDUH) ---
         function viewProof(index) {
             currentEditingOrderIndex = index;
+            const order = ordersDB[index];
+            
+            // Set image source and dynamic download name based on order ID
+            const imgSrc = order.proofImg || "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?auto=format&fit=crop&w=400&q=80";
+            document.getElementById('proofImage').src = imgSrc;
+            
+            const downloadBtn = document.getElementById('downloadProofBtn');
+            downloadBtn.href = imgSrc;
+            downloadBtn.download = `Bukti_Transfer_${order.id}.jpg`;
+            
             document.getElementById('proofModal').classList.remove('hidden');
         }
         function closeProofModal() {
@@ -750,7 +836,7 @@
             });
         }
 
-        // Logika Upload Fisik (Menyimpan File via FileReader Base64 sebagai simulasi Data Database nantinya)
+        // Logika Upload Fisik (Menyimpan File via FileReader Base64 sebagai simulasi Data Database)
         function previewUploadedImage(event) {
             const file = event.target.files[0];
             if(file) {
@@ -759,7 +845,7 @@
                     currentUploadedImageBase64 = e.target.result;
                     document.getElementById('prodImgPreview').src = currentUploadedImageBase64;
                     document.getElementById('prodImgPreview').classList.remove('hidden');
-                    document.getElementById('uploadPlaceholder').classList.add('opacity-0'); // Sembunyikan icon uploader
+                    document.getElementById('uploadPlaceholder').classList.add('opacity-0');
                 }
                 reader.readAsDataURL(file);
             }

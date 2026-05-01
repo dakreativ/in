@@ -39,13 +39,14 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="text-slate-900 overflow-x-hidden selection:bg-black selection:text-white">
+<body class="text-slate-900 overflow-x-hidden selection:bg-black selection:text-white relative">
 
     <!-- FLOATING WHATSAPP BUTTON -->
     <a href="https://wa.me/6281234567890?text=Halo%20Admin%20JustipHub,%20saya%20butuh%20bantuan..." target="_blank" class="fixed bottom-6 right-6 z-[45] bg-[#25D366] text-white p-3.5 rounded-full shadow-[0_8px_20px_rgba(37,211,102,0.4)] hover:scale-110 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center group">
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
             <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
         </svg>
+        <span class="absolute right-[110%] bg-white text-slate-800 text-[10px] font-extrabold px-3 py-1.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">Butuh Bantuan?</span>
     </a>
 
     <!-- LIVE NOTIFICATION (FOMO TOAST) -->
@@ -56,12 +57,19 @@
         </div>
     </div>
 
+    <!-- ERROR NOTIFICATION TOAST -->
+    <div id="errorToast" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-[110] transition-all duration-500 translate-y-[-150%] opacity-0 pointer-events-none w-max max-w-[90vw]">
+        <div class="bg-red-500/95 backdrop-blur-md text-white text-[10px] sm:text-xs font-bold px-5 py-3 rounded-full shadow-xl shadow-red-500/30 flex items-center space-x-2 border border-red-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span id="errorMsg">Error Message</span>
+        </div>
+    </div>
+
     <!-- NAVIGATION -->
     <nav class="glass sticky top-0 z-50 border-b border-slate-200 shadow-sm">
         <div class="max-w-md mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex flex-col cursor-pointer" onclick="switchTab('shop')">
                 <h1 class="text-xl font-extrabold tracking-tight">JUSTIP<span class="text-slate-400 font-light">HUB</span></h1>
-                <p class="text-[9px] text-slate-400 uppercase tracking-[0.2em] font-semibold mt-0.5">Premium Shopper</p>
             </div>
             <div class="flex items-center space-x-5">
                 <button onclick="switchTab('dashboard')" class="text-slate-500 hover:text-black transition-colors" title="Riwayat Pesanan">
@@ -76,8 +84,46 @@
     </nav>
 
     <!-- TAB: SHOP (CATALOG) -->
-    <section id="shopTab" class="tab-content active max-w-md mx-auto pb-28">
-        <div class="px-6 pt-6 pb-4 space-y-5">
+    <section id="shopTab" class="tab-content active max-w-md mx-auto">
+        
+        <!-- PROMOTIONAL BANNER -->
+        <div class="px-6 pt-6 pb-2">
+            <div class="bg-slate-900 rounded-[24px] p-6 text-white relative overflow-hidden shadow-xl shadow-slate-200">
+                <!-- Abstract Design Elements -->
+                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-xl"></div>
+                <div class="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/20 rounded-full translate-y-1/3 -translate-x-1/3 blur-xl"></div>
+                
+                <div class="relative z-10">
+                    <span class="bg-white/20 backdrop-blur-sm text-[9px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-widest mb-3 inline-block border border-white/10">100% Original</span>
+                    <h2 class="text-2xl font-extrabold mb-1.5 tracking-tight leading-tight">Premium<br>Personal Shopper</h2>
+                    <p class="text-[11px] text-slate-300 max-w-[85%] leading-relaxed">Belanja barang *branded* dari USA, Japan & Korea tanpa ribet. Terima beres sampai depan rumah.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- HOW TO ORDER (CARA ORDER) -->
+        <div class="px-6 py-4">
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">Cara Order Simple</p>
+            <div class="flex items-center justify-between bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
+                <div class="flex flex-col items-center text-center w-1/3">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 text-black flex items-center justify-center text-xs font-bold mb-2">1</div>
+                    <span class="text-[9px] font-bold text-slate-600 uppercase tracking-wider">Pilih Barang</span>
+                </div>
+                <div class="w-4 h-px bg-slate-200"></div>
+                <div class="flex flex-col items-center text-center w-1/3">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 text-black flex items-center justify-center text-xs font-bold mb-2">2</div>
+                    <span class="text-[9px] font-bold text-slate-600 uppercase tracking-wider">Pilih Batch</span>
+                </div>
+                <div class="w-4 h-px bg-slate-200"></div>
+                <div class="flex flex-col items-center text-center w-1/3">
+                    <div class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold mb-2">3</div>
+                    <span class="text-[9px] font-bold text-black uppercase tracking-wider">Bayar & Lacak</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILTER & SEARCH AREA -->
+        <div class="px-6 py-2 space-y-4">
             <div class="relative group">
                 <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4 group-focus-within:text-black transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 <input type="text" id="searchInput" placeholder="Cari skincare, sepatu, dll..." class="w-full bg-white border border-slate-200 rounded-2xl pl-11 pr-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all shadow-sm font-medium">
@@ -99,28 +145,60 @@
             </div>
         </div>
 
-        <div id="productGrid" class="grid grid-cols-2 gap-4 px-6"></div>
+        <!-- PRODUCT GRID -->
+        <div id="productGrid" class="grid grid-cols-2 gap-4 px-6 pt-2 pb-8"></div>
         
-        <div id="emptyState" class="hidden flex-col items-center justify-center py-20 px-6 text-center">
+        <div id="emptyState" class="hidden flex-col items-center justify-center py-16 px-6 text-center">
             <div class="bg-slate-100 p-4 rounded-full mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
             <h3 class="font-bold text-slate-700 mb-1">Barang tidak ditemukan</h3>
             <p class="text-slate-400 text-xs">Coba gunakan kata kunci atau filter lain.</p>
         </div>
+
+        <!-- PROFESSIONAL FOOTER -->
+        <footer class="mt-8 border-t border-slate-200 bg-white pt-10 pb-24 px-6 text-center rounded-t-[32px] shadow-[0_-5px_20px_rgba(0,0,0,0.02)]">
+            <h2 class="text-2xl font-extrabold tracking-tight mb-1 text-slate-900">JUSTIP<span class="text-slate-400 font-light">HUB</span></h2>
+            <p class="text-xs text-slate-500 mb-8 font-medium">Your trusted premium personal shopper.</p>
+            
+            <div class="flex justify-center space-x-6 mb-8">
+                <!-- Instagram -->
+                <a href="#" class="text-slate-400 hover:text-black transition-colors transform hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                </a>
+                <!-- TikTok -->
+                <a href="#" class="text-slate-400 hover:text-black transition-colors transform hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
+                </a>
+                <!-- WhatsApp -->
+                <a href="https://wa.me/6281234567890" target="_blank" class="text-slate-400 hover:text-green-500 transition-colors transform hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                </a>
+            </div>
+            
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">&copy; 2026 JustipHub. All rights reserved.</p>
+        </footer>
     </section>
 
     <!-- TAB: DASHBOARD (ORDER TRACKING) -->
-    <section id="dashboardTab" class="tab-content max-w-md mx-auto px-6 py-8 pb-28">
-        <button onclick="switchTab('shop')" class="text-xs font-bold text-slate-400 mb-6 flex items-center hover:text-black transition-colors group">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> KEMBALI BELANJA
-        </button>
-        <h2 class="text-3xl font-extrabold mb-8 tracking-tight">Riwayat Pesanan</h2>
-        <div id="orderList" class="space-y-5">
-            <div id="emptyOrder" class="text-center py-20 hidden">
-                <p class="text-slate-400 text-sm">Belum ada riwayat pesanan.</p>
+    <section id="dashboardTab" class="tab-content max-w-md mx-auto min-h-screen flex flex-col">
+        <div class="px-6 py-8 flex-1">
+            <button onclick="switchTab('shop')" class="text-xs font-bold text-slate-400 mb-6 flex items-center hover:text-black transition-colors group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> KEMBALI BELANJA
+            </button>
+            <h2 class="text-3xl font-extrabold mb-8 tracking-tight">Riwayat Pesanan</h2>
+            <div id="orderList" class="space-y-5">
+                <div id="emptyOrder" class="text-center py-20 hidden">
+                    <p class="text-slate-400 text-sm">Belum ada riwayat pesanan.</p>
+                </div>
             </div>
         </div>
+
+        <!-- FOOTER FOR DASHBOARD -->
+        <footer class="mt-8 border-t border-slate-200 bg-white pt-10 pb-24 px-6 text-center rounded-t-[32px]">
+            <h2 class="text-2xl font-extrabold tracking-tight mb-1 text-slate-900">JUSTIP<span class="text-slate-400 font-light">HUB</span></h2>
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-6">&copy; 2026 JustipHub. All rights reserved.</p>
+        </footer>
     </section>
 
     <!-- CART DRAWER -->
@@ -141,7 +219,7 @@
 
             <div class="p-6 border-t border-slate-100 bg-white space-y-4 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
                 
-                <!-- DROPDOWN PILIH BATCH KEMBALI HADIR SESUAI BRIEF -->
+                <!-- DROPDOWN PILIH BATCH -->
                 <div>
                     <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> Pilih Batch Pengiriman
@@ -187,7 +265,7 @@
                 </div>
             </div>
 
-            <div class="p-6 flex-1 space-y-10">
+            <div class="p-6 flex-1 space-y-10 pb-10">
                 <!-- Data Pemesan -->
                 <div>
                     <div class="flex items-center mb-6">
@@ -451,7 +529,6 @@
             }
         }
 
-        // 1. Pembeli sekarang bebas add apa saja (campuran USA/Jepang dll)
         function addToCart(id) {
             const product = products.find(p => p.id === id);
             cart.push({...product, cartId: Date.now()}); 
@@ -464,7 +541,6 @@
             updateCartUI();
         }
 
-        // 2. Logic Validasi Silang (Pilihan Dropdown vs Isi Keranjang)
         function updateCartUI() {
             const badge = document.getElementById('cartCount');
             const drawerCount = document.getElementById('cartDrawerCount');
@@ -493,12 +569,10 @@
             let hasMixedItems = false;
             list.innerHTML = '';
 
-            const selectedBatchName = batchVal.split('(')[0].trim(); // Ambil string misal "Batch USA #01"
+            const selectedBatchName = batchVal.split('(')[0].trim();
 
             cart.forEach((item) => {
                 total += item.price;
-                
-                // Jika batch sudah dipilih dan item INI tidak cocok, nyalakan UI error
                 const isWrongBatch = batchVal !== "" && item.batch !== selectedBatchName;
                 if(isWrongBatch) hasMixedItems = true;
 
@@ -526,15 +600,14 @@
 
             document.getElementById('cartTotal').textContent = formatRp(total);
             
-            // 3. Logika Kunci Tombol Checkout & Warning
             if(batchVal === "") {
                 btn.disabled = true;
                 warningBox.classList.add('hidden');
             } else if (hasMixedItems) {
-                btn.disabled = true; // KUNCI JIKA ADA ITEM CAMPURAN
+                btn.disabled = true;
                 warningBox.classList.remove('hidden');
             } else {
-                btn.disabled = false; // BUKA JIKA SEMUA AMAN
+                btn.disabled = false;
                 warningBox.classList.add('hidden');
             }
         }
@@ -546,8 +619,6 @@
             
             document.getElementById('checkoutTotal').textContent = formatRp(total);
             document.getElementById('checkoutTotalQris').textContent = formatRp(total);
-            
-            // Tampilkan batch terpilih di header modal checkout
             document.getElementById('checkoutBatchInfo').textContent = document.getElementById('batchSelect').value.split('(')[0].trim();
         }
 
@@ -581,7 +652,7 @@
                 orders.unshift({
                     id: 'INV-' + Math.floor(100000 + Math.random() * 900000),
                     date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
-                    batch: document.getElementById('batchSelect').value.split('(')[0].trim(), // Ambil dari dropdown yg divalidasi
+                    batch: document.getElementById('batchSelect').value.split('(')[0].trim(),
                     items: [...cart],
                     total: cart.reduce((sum, item) => sum + item.price, 0),
                     status: 'Menunggu Verifikasi',
@@ -589,7 +660,7 @@
                 }); 
                 
                 cart = []; 
-                document.getElementById('batchSelect').value = ""; // Reset dropdown
+                document.getElementById('batchSelect').value = "";
                 updateCartUI();
                 
                 document.getElementById('receiptFile').value = '';
@@ -602,7 +673,6 @@
             }, 2000);
         }
 
-        // RENDER ORDERS & RESI TRACKING
         function renderOrders() {
             const list = document.getElementById('orderList');
             document.getElementById('emptyOrder').style.display = orders.length === 0 ? 'block' : 'none';
@@ -674,7 +744,6 @@
 
         function openUniversalTracker() { window.open('https://cekresi.com', '_blank'); }
 
-        // FOMO NOTIF
         const fakeBuyers = ["Nisa", "Budi", "Sinta", "Andika", "Reza", "Putri"];
         function showFakeNotification() {
             const buyer = fakeBuyers[Math.floor(Math.random() * fakeBuyers.length)];
@@ -686,7 +755,6 @@
         }
         setTimeout(() => { showFakeNotification(); setInterval(showFakeNotification, Math.floor(Math.random() * (25000 - 15000 + 1) + 15000)); }, 3000);
 
-        // INIT
         renderProducts();
         renderOrders();
     </script>

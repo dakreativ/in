@@ -12,6 +12,22 @@
         .hide-scroll::-webkit-scrollbar { display: none; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+        
+        /* Custom Input Styles for Premium Look */
+        .input-float { position: relative; }
+        .input-float input, .input-float textarea { 
+            border: none; border-bottom: 2px solid #e2e8f0; border-radius: 0; 
+            padding: 12px 0 8px 0; background: transparent; transition: all 0.3s ease; outline: none; width: 100%;
+        }
+        .input-float input:focus, .input-float textarea:focus { border-bottom-color: #000; }
+        .input-float label { 
+            position: absolute; top: 12px; left: 0; color: #94a3b8; font-size: 14px; 
+            transition: all 0.3s ease; pointer-events: none; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; font-size: 10px;
+        }
+        .input-float input:focus ~ label, .input-float input:not(:placeholder-shown) ~ label,
+        .input-float textarea:focus ~ label, .input-float textarea:not(:placeholder-shown) ~ label {
+            top: -10px; font-size: 9px; color: #000;
+        }
     </style>
 </head>
 <body class="text-slate-900 overflow-x-hidden">
@@ -44,7 +60,6 @@
 
     <!-- TAB: SHOP (CATALOG) -->
     <section id="shopTab" class="tab-content active max-w-md mx-auto pb-24">
-        
         <div class="px-6 py-6 space-y-4">
             <!-- SEARCH BAR -->
             <div class="relative">
@@ -64,75 +79,167 @@
                     <button onclick="setCategory('ALL')" class="cat-btn active text-black border-b-2 border-black px-1 py-1 text-[11px] font-bold whitespace-nowrap transition">Semua Kategori</button>
                     <button onclick="setCategory('Skincare')" class="cat-btn text-slate-400 border-b-2 border-transparent px-1 py-1 text-[11px] font-bold whitespace-nowrap transition">Skincare</button>
                     <button onclick="setCategory('Fashion')" class="cat-btn text-slate-400 border-b-2 border-transparent px-1 py-1 text-[11px] font-bold whitespace-nowrap transition">Fashion</button>
-                    <button onclick="setCategory('Food')" class="cat-btn text-slate-400 border-b-2 border-transparent px-1 py-1 text-[11px] font-bold whitespace-nowrap transition">Food & Snack</button>
                 </div>
             </div>
         </div>
 
         <!-- PRODUCT GRID -->
-        <div id="productGrid" class="grid grid-cols-2 gap-4 px-6">
-            <!-- Render via JS -->
-        </div>
-        
-        <!-- Empty State Not Found -->
-        <div id="emptyState" class="hidden text-center py-12 px-6">
-            <p class="text-slate-400 text-sm">Barang tidak ditemukan. Coba kata kunci lain.</p>
-        </div>
+        <div id="productGrid" class="grid grid-cols-2 gap-4 px-6"></div>
+        <div id="emptyState" class="hidden text-center py-12 px-6"><p class="text-slate-400 text-sm">Barang tidak ditemukan.</p></div>
     </section>
 
-    <!-- TAB: DASHBOARD (Biarkan sama seperti sebelumnya) -->
+    <!-- TAB: DASHBOARD (ORDER TRACKING) -->
     <section id="dashboardTab" class="tab-content max-w-md mx-auto px-6 py-8 pb-24">
-        <button onclick="switchTab('shop')" class="text-xs font-bold text-slate-400 mb-6 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> BACK TO SHOP
+        <button onclick="switchTab('shop')" class="text-xs font-bold text-slate-400 mb-6 flex items-center hover:text-black">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> KEMBALI BELANJA
         </button>
-        <h2 class="text-2xl font-bold mb-6">Order Tracking</h2>
+        <h2 class="text-2xl font-bold mb-6">Riwayat Pesanan</h2>
         <div id="orderList" class="space-y-4">
-            <p class="text-center text-slate-400 py-20 text-sm">Belum ada riwayat pesanan.</p>
+            <p id="emptyOrder" class="text-center text-slate-400 py-20 text-sm">Belum ada riwayat pesanan.</p>
         </div>
     </section>
 
-    <!-- CART DRAWER (Sama seperti V1, dipotong untuk ringkas, pastikan Anda copy dari versi sebelumnya jika ada yang kurang) -->
+    <!-- CART DRAWER -->
     <div id="cartDrawer" class="fixed inset-0 z-[60] invisible pointer-events-none transition-all duration-300">
         <div onclick="toggleCart()" class="absolute inset-0 bg-black/20 backdrop-blur-sm opacity-0 transition-opacity duration-300" id="cartOverlay"></div>
         <div class="absolute right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl translate-x-full transition-transform duration-300 flex flex-col" id="cartBody">
-            <div class="p-6 border-b flex justify-between items-center">
+            <div class="p-6 border-b flex justify-between items-center bg-white">
                 <h3 class="font-bold text-lg">Keranjang</h3>
                 <button onclick="toggleCart()" class="text-slate-400 hover:text-black">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
-            <div id="cartItems" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+            
+            <div id="cartItems" class="flex-1 overflow-y-auto p-6 space-y-4 bg-white"></div>
+
             <div class="p-6 border-t bg-slate-50 space-y-4">
-                <button onclick="alert('Lanjut ke form checkout (Logic V1)')" id="checkoutBtn" disabled class="w-full bg-black text-white py-4 rounded-2xl font-bold text-sm disabled:bg-slate-200 disabled:text-slate-400 transition-all active:scale-95">
-                    CHECKOUT SEKARANG
+                <!-- WAJIB PILIH BATCH SEBELUM CHECKOUT -->
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Pilih Batch Pengiriman</label>
+                    <select id="batchSelect" onchange="checkCartValidity()" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all">
+                        <option value="">-- Pilih Batch Wajib --</option>
+                        <option value="Batch USA #01">Batch USA #01 (Close 15 Mei)</option>
+                        <option value="Batch JPN #05">Batch JPN #05 (Close 10 Juni)</option>
+                        <option value="Batch KOR #02">Batch KOR #02 (Close 20 Mei)</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-slate-500 text-sm">Total Estimasi</span>
+                    <span id="cartTotal" class="font-bold text-xl text-black">Rp 0</span>
+                </div>
+                
+                <button onclick="openCheckoutModal()" id="checkoutBtn" disabled class="w-full bg-black text-white py-4 rounded-2xl font-bold text-sm disabled:bg-slate-200 disabled:text-slate-400 transition-all active:scale-95 shadow-lg">
+                    LANJUT PEMBAYARAN
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FULLSCREEN CHECKOUT MODAL -->
+    <div id="checkoutModal" class="fixed inset-0 z-[70] hidden bg-white overflow-y-auto">
+        <div class="max-w-md mx-auto min-h-screen flex flex-col">
+            <!-- Header -->
+            <div class="sticky top-0 bg-white/90 backdrop-blur-md px-6 py-4 border-b border-slate-100 flex items-center z-10">
+                <button onclick="closeCheckoutModal()" class="mr-4 text-slate-400 hover:text-black">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </button>
+                <h3 class="font-bold text-lg">Selesaikan Pesanan</h3>
+            </div>
+
+            <div class="p-6 flex-1 space-y-8">
+                <!-- Data Pemesan Form -->
+                <div>
+                    <h4 class="text-sm font-bold mb-4 flex items-center"><span class="bg-black text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] mr-2">1</span> Data Penerima</h4>
+                    <div class="space-y-4">
+                        <div class="input-float">
+                            <input type="text" id="cusName" placeholder=" " required>
+                            <label>Nama Lengkap</label>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="input-float">
+                                <input type="email" id="cusEmail" placeholder=" " required>
+                                <label>Email Aktif</label>
+                            </div>
+                            <div class="input-float">
+                                <input type="tel" id="cusPhone" placeholder=" " required>
+                                <label>Nomor WhatsApp</label>
+                            </div>
+                        </div>
+                        <div class="input-float mt-4">
+                            <textarea id="cusAddress" rows="3" placeholder=" " required></textarea>
+                            <label>Alamat Lengkap (Jl, RT/RW, Kec, Kota)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pembayaran -->
+                <div>
+                    <h4 class="text-sm font-bold mb-4 flex items-center"><span class="bg-black text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] mr-2">2</span> Pembayaran</h4>
+                    
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 mb-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <p class="text-xs text-slate-400 font-bold uppercase">Total Tagihan</p>
+                            <p id="checkoutTotal" class="font-bold text-lg">Rp 0</p>
+                        </div>
+                        <div class="h-px bg-slate-200 w-full my-3"></div>
+                        <p class="text-xs text-slate-500 mb-1">Transfer Bank BCA</p>
+                        <p class="font-bold text-sm tracking-widest">8732-1234-5678 <button class="text-blue-500 text-xs ml-2 font-normal">Salin</button></p>
+                        <p class="text-xs text-slate-500">A/N JustipHub Official</p>
+                    </div>
+
+                    <div class="mt-4">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Upload Bukti Transfer</span>
+                        <div class="mt-2 w-full">
+                            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 border-dashed rounded-2xl cursor-pointer hover:bg-slate-50 transition-all bg-white overflow-hidden relative" id="uploadArea">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6 text-slate-400" id="uploadPlaceholder">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                                    <p class="text-xs font-medium">Pilih file / Ambil foto</p>
+                                </div>
+                                <img id="previewImg" class="hidden absolute inset-0 w-full h-full object-cover">
+                                <input id="receiptFile" type="file" class="hidden" accept="image/*" onchange="previewFile()" />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sticky Footer Action -->
+            <div class="sticky bottom-0 bg-white border-t border-slate-100 p-6">
+                <button onclick="processOrder()" id="finalSubmitBtn" class="w-full bg-black text-white py-4 rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-xl flex items-center justify-center">
+                    KONFIRMASI PESANAN
                 </button>
             </div>
         </div>
     </div>
 
     <script>
-        // 1. DATA PRODUK (Ditambah Kategori, Batch, & Close Order)
+        // DATA PRODUK
         const products = [
-            { id: 1, name: "CeraVe Hydrating Cleanser", price: 350000, country: "USA", category: "Skincare", batch: "Batch USA #01", closeDate: "15 Mei 2026", img: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=300&q=80" },
-            { id: 2, name: "COSRX Snail Mucin", price: 220000, country: "KOREA", category: "Skincare", batch: "Batch KOR #02", closeDate: "20 Mei 2026", img: "https://images.unsplash.com/photo-1608248593842-8021c6a1bce4?auto=format&fit=crop&w=300&q=80" },
-            { id: 3, name: "Nike Air Force 1", price: 1850000, country: "USA", category: "Fashion", batch: "Batch USA #01", closeDate: "15 Mei 2026", img: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=300&q=80" },
-            { id: 4, name: "Tokyo Banana 8pcs", price: 150000, country: "JAPAN", category: "Food", batch: "Batch JPN #05", closeDate: "10 Juni 2026", img: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?auto=format&fit=crop&w=300&q=80" },
-            { id: 5, name: "Hada Labo Lotion", price: 180000, country: "JAPAN", category: "Skincare", batch: "Batch JPN #05", closeDate: "10 Juni 2026", img: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=300&q=80" }
+            { id: 1, name: "CeraVe Hydrating Cleanser", price: 350000, country: "USA", category: "Skincare", batch: "Batch USA #01", closeDate: "15 Mei", img: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=300&q=80" },
+            { id: 2, name: "COSRX Snail Mucin", price: 220000, country: "KOREA", category: "Skincare", batch: "Batch KOR #02", closeDate: "20 Mei", img: "https://images.unsplash.com/photo-1608248593842-8021c6a1bce4?auto=format&fit=crop&w=300&q=80" },
+            { id: 3, name: "Nike Air Force 1", price: 1850000, country: "USA", category: "Fashion", batch: "Batch USA #01", closeDate: "15 Mei", img: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=300&q=80" },
+            { id: 4, name: "Hada Labo Gokujyun", price: 180000, country: "JAPAN", category: "Skincare", batch: "Batch JPN #05", closeDate: "10 Juni", img: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=300&q=80" }
         ];
 
-        // State Filter Dinamis
+        // STATE
         let activeCountry = 'ALL';
         let activeCategory = 'ALL';
         let searchQuery = '';
+        let cart = [];
+        let orders = [];
 
-        // UI TAB LOGIC
+        // FORMATTER
+        const formatRp = (num) => 'Rp ' + num.toLocaleString('id-ID');
+
+        // TABS
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById(tab + 'Tab').classList.add('active');
             window.scrollTo(0,0);
         }
 
-        // FILTER ACTIONS
+        // FILTER LOGIC
         function setCountry(country) {
             activeCountry = country;
             document.querySelectorAll('.country-btn').forEach(btn => {
@@ -159,44 +266,40 @@
             renderProducts();
         });
 
-        // CORE RENDER
+        // RENDER KATALOG
         function renderProducts() {
             const container = document.getElementById('productGrid');
             const emptyState = document.getElementById('emptyState');
             container.innerHTML = '';
 
-            // Engine Filter Multiple (Search + Country + Category)
             const filtered = products.filter(p => {
-                const matchCountry = activeCountry === 'ALL' || p.country === activeCountry;
-                const matchCategory = activeCategory === 'ALL' || p.category === activeCategory;
-                const matchSearch = p.name.toLowerCase().includes(searchQuery);
-                return matchCountry && matchCategory && matchSearch;
+                return (activeCountry === 'ALL' || p.country === activeCountry) &&
+                       (activeCategory === 'ALL' || p.category === activeCategory) &&
+                       (p.name.toLowerCase().includes(searchQuery));
             });
 
-            if (filtered.length === 0) {
-                emptyState.classList.remove('hidden');
-            } else {
+            if (filtered.length === 0) { emptyState.classList.remove('hidden'); } 
+            else {
                 emptyState.classList.add('hidden');
                 filtered.forEach(p => {
                     container.innerHTML += `
-                        <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-50 group flex flex-col justify-between h-full relative">
+                        <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-50 flex flex-col justify-between relative">
                             <div>
                                 <div class="relative pb-[100%] bg-slate-100">
-                                    <img src="${p.img}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                    <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[8px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter shadow-sm">${p.country}</span>
+                                    <img src="${p.img}" class="absolute inset-0 w-full h-full object-cover">
+                                    <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[8px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter">${p.country}</span>
                                 </div>
                                 <div class="p-4 pb-2">
-                                    <!-- INFO BATCH & CLOSE ORDER -->
-                                    <div class="flex flex-col mb-2 bg-orange-50/50 p-2 rounded-xl border border-orange-100/50">
-                                        <span class="text-[9px] font-bold text-orange-600 uppercase tracking-tight">${p.batch}</span>
-                                        <span class="text-[9px] text-orange-500 font-medium">Close: ${p.closeDate}</span>
+                                    <div class="flex flex-col mb-2 bg-orange-50 p-2 rounded-xl border border-orange-100">
+                                        <span class="text-[9px] font-bold text-orange-600 uppercase">${p.batch}</span>
+                                        <span class="text-[8px] text-orange-500 font-medium">Close: ${p.closeDate}</span>
                                     </div>
-                                    <p class="text-[9px] text-slate-400 uppercase tracking-widest font-semibold mb-1">${p.category}</p>
+                                    <p class="text-[8px] text-slate-400 uppercase tracking-widest font-semibold mb-1">${p.category}</p>
                                     <h3 class="text-xs font-semibold text-slate-800 line-clamp-2 leading-tight">${p.name}</h3>
                                 </div>
                             </div>
                             <div class="p-4 pt-0">
-                                <p class="text-sm font-bold text-black mb-3">Rp ${p.price.toLocaleString()}</p>
+                                <p class="text-sm font-bold text-black mb-3">${formatRp(p.price)}</p>
                                 <button onclick="addToCart(${p.id})" class="w-full bg-slate-50 hover:bg-black hover:text-white transition-all text-black text-[10px] font-bold py-2.5 rounded-xl active:scale-95">TITIP SEKARANG</button>
                             </div>
                         </div>
@@ -205,44 +308,7 @@
             }
         }
 
-        // FAKE LIVE NOTIFICATION (SOCIAL PROOF) LOGIC
-        const fakeBuyers = ["Nisa", "Budi", "Sinta", "Andika", "Reza", "Putri", "Dadan", "Yasmine"];
-        
-        function showFakeNotification() {
-            // Pilih nama dan produk acak
-            const randomBuyer = fakeBuyers[Math.floor(Math.random() * fakeBuyers.length)];
-            const randomProduct = products[Math.floor(Math.random() * products.length)].name;
-            
-            const toast = document.getElementById('liveToast');
-            const msg = document.getElementById('toastMsg');
-            
-            msg.innerHTML = `<span class="font-bold">${randomBuyer}</span> memesan <span class="text-slate-300">${randomProduct}</span>`;
-            
-            // Tampilkan animasi masuk
-            toast.classList.remove('translate-y-[-150%]', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-            
-            // Sembunyikan setelah 3.5 detik
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-[-150%]', 'opacity-0');
-            }, 3500);
-        }
-
-        // Jalankan notifikasi pertama setelah 5 detik web dibuka, lalu ulang tiap 12-20 detik secara acak
-        setTimeout(() => {
-            showFakeNotification();
-            setInterval(showFakeNotification, Math.floor(Math.random() * (20000 - 12000 + 1) + 12000));
-        }, 5000);
-
-        // INIT CART DUMMY & RENDER
-        let cart = [];
-        function addToCart(id) {
-            cart.push(id);
-            document.getElementById('cartCount').textContent = cart.length;
-            document.getElementById('cartCount').style.opacity = '1';
-            document.getElementById('checkoutBtn').disabled = false;
-        }
+        // CART LOGIC
         function toggleCart() {
             const drawer = document.getElementById('cartDrawer');
             if(drawer.classList.contains('invisible')) {
@@ -254,6 +320,196 @@
             }
         }
 
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push({...product, cartId: Date.now()}); // Clone with unique ID
+            updateCartUI();
+            if(cart.length === 1) toggleCart();
+        }
+
+        function removeFromCart(cartId) {
+            cart = cart.filter(item => item.cartId !== cartId);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            // Update Badge
+            const badge = document.getElementById('cartCount');
+            badge.textContent = cart.length;
+            badge.style.opacity = cart.length > 0 ? '1' : '0';
+
+            // Update List
+            const list = document.getElementById('cartItems');
+            list.innerHTML = cart.length === 0 ? '<p class="text-center text-slate-400 py-10 text-sm">Keranjang kosong</p>' : '';
+            
+            let total = 0;
+            cart.forEach((item) => {
+                total += item.price;
+                list.innerHTML += `
+                    <div class="flex justify-between items-center bg-white border border-slate-100 p-3 rounded-2xl shadow-sm">
+                        <div class="flex items-center space-x-3">
+                            <img src="${item.img}" class="h-12 w-12 rounded-xl object-cover">
+                            <div>
+                                <p class="text-xs font-bold text-slate-800 line-clamp-1">${item.name}</p>
+                                <p class="text-[10px] text-slate-400">${item.batch}</p>
+                                <p class="text-xs font-bold mt-1">${formatRp(item.price)}</p>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${item.cartId})" class="text-slate-300 hover:text-red-500 transition-colors p-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg></button>
+                    </div>
+                `;
+            });
+
+            document.getElementById('cartTotal').textContent = formatRp(total);
+            checkCartValidity();
+        }
+
+        function checkCartValidity() {
+            const batchVal = document.getElementById('batchSelect').value;
+            const btn = document.getElementById('checkoutBtn');
+            btn.disabled = (batchVal === "" || cart.length === 0);
+        }
+
+        // CHECKOUT FLOW
+        function openCheckoutModal() {
+            toggleCart();
+            document.getElementById('checkoutModal').classList.remove('hidden');
+            
+            // Set Total in Modal
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('checkoutTotal').textContent = formatRp(total);
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        // PREVIEW IMAGE UPLOAD
+        function previewFile() {
+            const file = document.getElementById('receiptFile').files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('previewImg').classList.remove('hidden');
+                    document.getElementById('uploadPlaceholder').classList.add('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // SUBMIT TO DASHBOARD
+        function processOrder() {
+            const name = document.getElementById('cusName').value;
+            const email = document.getElementById('cusEmail').value;
+            const phone = document.getElementById('cusPhone').value;
+            const address = document.getElementById('cusAddress').value;
+            const receipt = document.getElementById('receiptFile').files[0];
+
+            // Validasi Sederhana
+            if(!name || !email || !phone || !address) {
+                return alert("Mohon lengkapi Data Penerima!");
+            }
+            if(!receipt) {
+                return alert("Mohon upload Bukti Transfer!");
+            }
+
+            // Ganti tombol loading
+            const btn = document.getElementById('finalSubmitBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Memproses...`;
+            btn.disabled = true;
+
+            // Simulasi API Request (delay 1.5 detik)
+            setTimeout(() => {
+                const newOrder = {
+                    id: 'INV-' + Math.floor(1000 + Math.random() * 9000),
+                    date: new Date().toLocaleDateString('id-ID'),
+                    customer: name,
+                    batch: document.getElementById('batchSelect').value,
+                    items: [...cart],
+                    total: cart.reduce((sum, item) => sum + item.price, 0),
+                    status: 'Menunggu Verifikasi Admin' // Sesuai flow
+                };
+
+                orders.unshift(newOrder); // Masukkan ke data awal
+                
+                // Reset State
+                cart = [];
+                updateCartUI();
+                document.getElementById('receiptFile').value = '';
+                document.getElementById('previewImg').classList.add('hidden');
+                document.getElementById('uploadPlaceholder').classList.remove('hidden');
+                
+                // Reset form inputs manually or wrap in <form> and call reset()
+                document.getElementById('cusName').value = '';
+                document.getElementById('cusEmail').value = '';
+                document.getElementById('cusPhone').value = '';
+                document.getElementById('cusAddress').value = '';
+
+                // Restore Button
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+
+                // Tutup modal, pindah tab
+                closeCheckoutModal();
+                switchTab('dashboard');
+                renderOrders();
+
+            }, 1500);
+        }
+
+        function renderOrders() {
+            const list = document.getElementById('orderList');
+            document.getElementById('emptyOrder').style.display = orders.length === 0 ? 'block' : 'none';
+            
+            list.innerHTML = '';
+            orders.forEach(o => {
+                list.innerHTML += `
+                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${o.id} • ${o.date}</p>
+                                <p class="font-bold text-sm mt-1">${o.items.length} Barang • ${o.batch.split('(')[0]}</p>
+                            </div>
+                            <span class="text-[9px] font-bold px-3 py-1.5 rounded-full uppercase bg-orange-100 text-orange-600 border border-orange-200">${o.status}</span>
+                        </div>
+                        <div class="flex -space-x-3 mb-4">
+                            ${o.items.slice(0, 3).map(i => `<img src="${i.img}" class="h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm">`).join('')}
+                            ${o.items.length > 3 ? `<div class="h-10 w-10 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[10px] font-bold">+${o.items.length-3}</div>` : ''}
+                        </div>
+                        <div class="pt-4 border-t border-slate-50 flex justify-between items-center">
+                            <span class="text-[10px] text-slate-400 font-medium">Tracking resi otomatis disini</span>
+                            <span class="text-sm font-bold">${formatRp(o.total)}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // FOMO NOTIF LOGIC
+        const fakeBuyers = ["Nisa", "Budi", "Sinta", "Andika", "Reza", "Putri"];
+        function showFakeNotification() {
+            const buyer = fakeBuyers[Math.floor(Math.random() * fakeBuyers.length)];
+            const product = products[Math.floor(Math.random() * products.length)].name;
+            const toast = document.getElementById('liveToast');
+            document.getElementById('toastMsg').innerHTML = `<span class="font-bold">${buyer}</span> memesan <span class="text-slate-300 line-clamp-1 max-w-[120px] inline-block align-bottom">${product}</span>`;
+            
+            toast.classList.remove('translate-y-[-150%]', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-[-150%]', 'opacity-0');
+            }, 3500);
+        }
+
+        setTimeout(() => {
+            showFakeNotification();
+            setInterval(showFakeNotification, Math.floor(Math.random() * (20000 - 12000 + 1) + 12000));
+        }, 3000);
+
+        // INIT
         renderProducts();
     </script>
 </body>

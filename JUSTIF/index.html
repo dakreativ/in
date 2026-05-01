@@ -58,6 +58,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
             <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
         </svg>
+        <span class="absolute right-[110%] bg-white text-black text-[10px] font-extrabold px-3 py-1.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap border border-stone-100">Hubungi Admin</span>
     </a>
 
     <!-- TOAST NOTIFICATIONS -->
@@ -82,10 +83,8 @@
                 <img src="https://res.cloudinary.com/dvtgxw9jj/image/upload/v1777637480/IMG_9379_spswky.png" alt="Portwish Logo" class="h-7 md:h-8 w-auto object-contain">
             </div>
             <div class="flex items-center space-x-5">
-                <!-- User Profile / Dashboard Button -->
                 <button onclick="tryDashboard()" class="text-stone-500 hover:text-black transition-colors relative" title="Akun / Riwayat Pesanan">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                    <!-- Indicator dot if logged in -->
                     <span id="loginIndicator" class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 border border-white rounded-full hidden"></span>
                 </button>
                 <button onclick="toggleCart()" class="relative text-stone-500 hover:text-black transition-colors" title="Keranjang">
@@ -98,6 +97,7 @@
 
     <!-- TAB: SHOP (CATALOG) -->
     <section id="shopTab" class="tab-content active max-w-md mx-auto">
+        
         <div class="px-6 pt-6 pb-2">
             <div class="bg-black rounded-[24px] p-6 text-white relative overflow-hidden shadow-xl shadow-stone-300">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-cream-200/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-xl"></div>
@@ -184,12 +184,21 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> KEMBALI BELANJA
             </button>
             
-            <div class="flex justify-between items-end mb-8 border-b border-stone-200 pb-4">
+            <div class="flex justify-between items-end mb-6 border-b border-stone-200 pb-4">
                 <div>
                     <h2 class="text-3xl font-extrabold tracking-tight text-black">Halo, <span id="dashUserName">User</span></h2>
                     <p class="text-xs text-stone-500 mt-1 font-medium">Pantau terus barang incaranmu.</p>
                 </div>
                 <button onclick="logout()" class="text-[9px] font-bold text-red-500 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-full uppercase tracking-widest transition-colors">Keluar</button>
+            </div>
+
+            <!-- EDUKASI RESI BANNER -->
+            <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-6 flex items-start space-x-3 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div>
+                    <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">Informasi Pengiriman</p>
+                    <p class="text-xs text-stone-600 leading-relaxed font-medium">Nomor resi (Lion Parcel) akan otomatis muncul di sini setelah pembayaran Anda dikonfirmasi dan barang siap dikirim oleh Admin.</p>
+                </div>
             </div>
 
             <div id="orderList" class="space-y-5">
@@ -215,16 +224,14 @@
             
             <div class="text-center mb-6 mt-2">
                 <h3 class="text-2xl font-extrabold text-black" id="authTitle">Daftar Akun</h3>
-                <p class="text-xs text-stone-500 mt-1 font-medium" id="authSubtitle">Lengkapi data untuk lanjut *checkout*.</p>
+                <p class="text-xs text-stone-500 mt-1 font-medium" id="authSubtitle">Lengkapi data untuk lanjut checkout.</p>
             </div>
             
-            <!-- Auth Tabs -->
             <div class="flex bg-cream-50 p-1.5 rounded-2xl mb-6 border border-stone-100">
                 <button onclick="switchAuthMode('register')" id="btnAuthReg" class="flex-1 bg-white shadow-sm text-black text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all border border-stone-200">DAFTAR BARU</button>
                 <button onclick="switchAuthMode('login')" id="btnAuthLog" class="flex-1 text-stone-400 text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all hover:text-black">MASUK</button>
             </div>
 
-            <!-- Form Register -->
             <div id="formRegister" class="space-y-4">
                 <div class="input-float">
                     <input type="text" id="regName" placeholder=" " required autocomplete="off">
@@ -245,7 +252,6 @@
                 <button onclick="processRegister()" id="btnRegSubmit" class="w-full bg-black hover:bg-stone-800 text-white py-4 rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-lg shadow-stone-300 mt-2">DAFTAR SEKARANG</button>
             </div>
 
-            <!-- Form Login -->
             <div id="formLogin" class="space-y-4 hidden">
                 <div class="input-float">
                     <input type="email" id="logEmail" placeholder=" " required autocomplete="off">
@@ -462,12 +468,11 @@
         let activeCategory = 'ALL';
         let searchQuery = '';
         let cart = [];
-        let orders = []; // Reset ke kosong agar murni dari login
+        let orders = [];
         
-        // --- AUTHENTICATION STATE & DB MOCK ---
         let usersDB = [];
-        let currentUser = null; // null jika belum login
-        let authIntent = null; // 'checkout' atau 'dashboard'
+        let currentUser = null; 
+        let authIntent = null; 
 
         const formatRp = (num) => 'Rp ' + num.toLocaleString('id-ID');
 
@@ -482,30 +487,24 @@
             }, 3000);
         }
 
-        // --- AUTHENTICATION LOGIC ---
         function openAuthModal(intent = 'checkout') {
             authIntent = intent;
-            
-            // Ubah teks berdasarkan intent
             if(intent === 'checkout') {
                 document.getElementById('authTitle').textContent = "Daftar / Masuk";
                 document.getElementById('authSubtitle').textContent = "Lengkapi data kamu sebelum checkout.";
-                switchAuthMode('register'); // Arahkan ke daftar kalau mau checkout
+                switchAuthMode('register'); 
             } else {
                 document.getElementById('authTitle').textContent = "Masuk Akun";
                 document.getElementById('authSubtitle').textContent = "Masuk untuk melihat riwayat pesanan.";
-                switchAuthMode('login'); // Arahkan ke login kalau mau cek dashboard
+                switchAuthMode('login'); 
             }
 
             const modal = document.getElementById('authModal');
             const overlay = document.getElementById('authOverlay');
             const box = document.getElementById('authBox');
             
-            // Tutup keranjang jika sedang buka dari tombol checkout
             const cartDrawer = document.getElementById('cartDrawer');
-            if(!cartDrawer.classList.contains('invisible')) {
-                toggleCart();
-            }
+            if(!cartDrawer.classList.contains('invisible')) toggleCart();
 
             modal.classList.remove('hidden');
             setTimeout(() => { overlay.classList.remove('opacity-0'); box.classList.remove('scale-95', 'opacity-0'); }, 10);
@@ -515,7 +514,6 @@
             const modal = document.getElementById('authModal');
             const overlay = document.getElementById('authOverlay');
             const box = document.getElementById('authBox');
-            
             overlay.classList.add('opacity-0'); box.classList.add('scale-95', 'opacity-0');
             setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
@@ -529,13 +527,11 @@
             if(mode === 'register') {
                 btnReg.className = "flex-1 bg-white shadow-sm text-black text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all border border-stone-200";
                 btnLog.className = "flex-1 text-stone-400 text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all hover:text-black";
-                formReg.classList.remove('hidden');
-                formLog.classList.add('hidden');
+                formReg.classList.remove('hidden'); formLog.classList.add('hidden');
             } else {
                 btnLog.className = "flex-1 bg-white shadow-sm text-black text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all border border-stone-200";
                 btnReg.className = "flex-1 text-stone-400 text-[10px] font-extrabold tracking-widest py-3 rounded-xl transition-all hover:text-black";
-                formLog.classList.remove('hidden');
-                formReg.classList.add('hidden');
+                formLog.classList.remove('hidden'); formReg.classList.add('hidden');
             }
         }
 
@@ -546,20 +542,15 @@
             const pass = document.getElementById('regPass').value;
 
             if(!name || !email || !phone || !pass) return showErrorToast("Mohon lengkapi semua data pendaftaran.");
-            
-            // Cek email kembar
-            if(usersDB.find(u => u.email === email)) return showErrorToast("Email ini sudah terdaftar. Silakan Masuk.");
+            if(usersDB.find(u => u.email === email)) return showErrorToast("Email sudah terdaftar. Silakan Masuk.");
 
             const btn = document.getElementById('btnRegSubmit');
             const ogText = btn.innerHTML;
-            btn.innerHTML = `<span class="loader loader-white"></span>`;
-            btn.disabled = true;
+            btn.innerHTML = `<span class="loader loader-white"></span>`; btn.disabled = true;
 
             setTimeout(() => {
                 const newUser = { name, email, phone, pass };
-                usersDB.push(newUser);
-                currentUser = newUser; // Auto login
-                
+                usersDB.push(newUser); currentUser = newUser; 
                 btn.innerHTML = ogText; btn.disabled = false;
                 completeAuthSuccess();
             }, 1000);
@@ -573,61 +564,39 @@
 
             const btn = document.getElementById('btnLogSubmit');
             const ogText = btn.innerHTML;
-            btn.innerHTML = `<span class="loader loader-white"></span>`;
-            btn.disabled = true;
+            btn.innerHTML = `<span class="loader loader-white"></span>`; btn.disabled = true;
 
             setTimeout(() => {
                 const user = usersDB.find(u => u.email === email && u.pass === pass);
                 btn.innerHTML = ogText; btn.disabled = false;
-
-                if(user) {
-                    currentUser = user;
-                    completeAuthSuccess();
-                } else {
-                    showErrorToast("Email atau Password salah!");
-                }
+                if(user) { currentUser = user; completeAuthSuccess(); } 
+                else { showErrorToast("Email atau Password salah!"); }
             }, 1000);
         }
 
         function completeAuthSuccess() {
             closeAuthModal();
-            // Tampilkan indikator hijau di navbar
             document.getElementById('loginIndicator').classList.remove('hidden');
-            
-            // Redirect sesuai niat awal
-            if(authIntent === 'checkout') {
-                setTimeout(openCheckoutModal, 300); // Buka form checkout otomatis
-            } else if(authIntent === 'dashboard') {
-                setTimeout(() => { switchTab('dashboard'); renderOrders(); }, 300);
-            }
+            if(authIntent === 'checkout') { setTimeout(openCheckoutModal, 300); } 
+            else if(authIntent === 'dashboard') { setTimeout(() => { switchTab('dashboard'); renderOrders(); }, 300); }
         }
 
         function logout() {
             currentUser = null;
             document.getElementById('loginIndicator').classList.add('hidden');
             switchTab('shop');
-            showErrorToast("Berhasil keluar dari akun.");
         }
 
         function tryDashboard() {
-            if(!currentUser) {
-                openAuthModal('dashboard');
-            } else {
-                switchTab('dashboard');
-                renderOrders();
-            }
+            if(!currentUser) { openAuthModal('dashboard'); } 
+            else { switchTab('dashboard'); renderOrders(); }
         }
 
         function tryCheckout() {
-            if(!currentUser) {
-                openAuthModal('checkout');
-            } else {
-                openCheckoutModal();
-            }
+            if(!currentUser) { openAuthModal('checkout'); } 
+            else { openCheckoutModal(); }
         }
 
-
-        // --- CATALOG & CART LOGIC ---
         function setPaymentMethod(method) {
             const btnTransfer = document.getElementById('btnTransfer');
             const btnQris = document.getElementById('btnQris');
@@ -769,9 +738,7 @@
                         <p class="text-sm font-semibold text-stone-600">Keranjang masih kosong</p>
                     </div>
                 `;
-                btn.disabled = true;
-                warningBox.classList.add('hidden');
-                document.getElementById('cartTotal').textContent = "Rp 0";
+                btn.disabled = true; warningBox.classList.add('hidden'); document.getElementById('cartTotal').textContent = "Rp 0";
                 return;
             }
             
@@ -810,22 +777,12 @@
 
             document.getElementById('cartTotal').textContent = formatRp(total);
             
-            if(batchVal === "") {
-                btn.disabled = true;
-                warningBox.classList.add('hidden');
-            } else if (hasMixedItems) {
-                btn.disabled = true;
-                warningBox.classList.remove('hidden');
-            } else {
-                btn.disabled = false;
-                warningBox.classList.add('hidden');
-            }
+            if(batchVal === "") { btn.disabled = true; warningBox.classList.add('hidden'); } 
+            else if (hasMixedItems) { btn.disabled = true; warningBox.classList.remove('hidden'); } 
+            else { btn.disabled = false; warningBox.classList.add('hidden'); }
         }
 
-        // --- CHECKOUT LOGIC WITH AUTOFILL ---
         function openCheckoutModal() {
-            // Karena ini dipanggil dari tryCheckout, kita pasti sudah punya currentUser
-            
             document.getElementById('checkoutModal').classList.remove('hidden');
             const total = cart.reduce((sum, item) => sum + item.price, 0);
             
@@ -833,7 +790,6 @@
             document.getElementById('checkoutTotalQris').textContent = formatRp(total);
             document.getElementById('checkoutBatchInfo').textContent = document.getElementById('batchSelect').value.split('(')[0].trim();
 
-            // Auto-fill form data dari currentUser
             document.getElementById('cusName').value = currentUser.name;
             document.getElementById('cusEmail').value = currentUser.email;
             document.getElementById('cusPhone').value = currentUser.phone;
@@ -856,7 +812,7 @@
 
         function processOrder() {
             const name = document.getElementById('cusName').value;
-            const address = document.getElementById('cusAddress').value; // Ambil alamat
+            const address = document.getElementById('cusAddress').value; 
             const receipt = document.getElementById('receiptFile').files[0];
 
             if(!name || !address || !receipt) return showErrorToast("Mohon isi Alamat dan Upload Bukti Pembayaran.");
@@ -869,7 +825,7 @@
             setTimeout(() => {
                 orders.unshift({
                     id: 'INV-' + Math.floor(100000 + Math.random() * 900000),
-                    userEmail: currentUser.email, // Tautkan order ke user
+                    userEmail: currentUser.email, 
                     date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
                     batch: document.getElementById('batchSelect').value.split('(')[0].trim(),
                     items: [...cart],
@@ -878,10 +834,7 @@
                     resi: null
                 }); 
                 
-                cart = []; 
-                document.getElementById('batchSelect').value = "";
-                updateCartUI();
-                
+                cart = []; document.getElementById('batchSelect').value = ""; updateCartUI();
                 document.getElementById('receiptFile').value = '';
                 document.getElementById('previewImg').classList.add('hidden');
                 document.getElementById('uploadPlaceholder').classList.remove('opacity-0');
@@ -896,18 +849,14 @@
             const list = document.getElementById('orderList');
             const emptyState = document.getElementById('emptyOrder');
             
-            // Ubah sapaan
             document.getElementById('dashUserName').textContent = currentUser.name.split(' ')[0];
 
-            // Filter orderan milik user yang sedang login saja
             const userOrders = orders.filter(o => o.userEmail === currentUser.email);
 
             if(userOrders.length === 0) {
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('block');
+                emptyState.classList.remove('hidden'); emptyState.classList.add('block');
             } else {
-                emptyState.classList.remove('block');
-                emptyState.classList.add('hidden');
+                emptyState.classList.remove('block'); emptyState.classList.add('hidden');
             }
             
             list.innerHTML = '';
@@ -916,7 +865,9 @@
                 if(o.status === "Sedang Dikirim") statusColor = "bg-black text-white border-black";
                 if(o.status === "Selesai") statusColor = "bg-green-100 text-green-700 border-green-200";
 
-                let trackingButton = `<span class="text-[10px] text-stone-300 font-bold uppercase tracking-widest cursor-not-allowed">Belum Ada Resi</span>`;
+                // PERUBAHAN TEKS TRACKING BUTTON 
+                let trackingButton = `<span class="text-[10px] text-stone-400 font-bold uppercase tracking-widest cursor-not-allowed flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> PROSES VERIFIKASI</span>`;
+                
                 if(o.resi) {
                     trackingButton = `<button onclick="openTrackingModal('${o.id}')" class="text-[10px] text-black font-extrabold uppercase tracking-widest hover:text-stone-500 flex items-center transition-colors">
                         LACAK RESI <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>

@@ -10,20 +10,16 @@
         :root { --primary: #0f172a; --bg: #f8fafc; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); -webkit-tap-highlight-color: transparent; }
         
-        /* Smooth Scroll & Hide Scrollbar */
         html { scroll-behavior: smooth; }
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Glassmorphism */
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
         
-        /* Tab Navigation */
         .tab-content { display: none; animation: fadeIn 0.4s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Premium Floating Input Styles */
         .input-float { position: relative; margin-top: 8px; }
         .input-float input, .input-float textarea { 
             border: none; border-bottom: 2px solid #e2e8f0; border-radius: 0; 
@@ -39,7 +35,6 @@
             top: 0px; font-size: 10px; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
         }
         
-        /* Custom Loader */
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid #fff; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -76,13 +71,11 @@
     <!-- TAB: SHOP (CATALOG) -->
     <section id="shopTab" class="tab-content active max-w-md mx-auto pb-28">
         <div class="px-6 pt-6 pb-4 space-y-5">
-            <!-- SEARCH BAR -->
             <div class="relative group">
                 <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4 group-focus-within:text-black transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 <input type="text" id="searchInput" placeholder="Cari skincare, sepatu, dll..." class="w-full bg-white border border-slate-200 rounded-2xl pl-11 pr-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all shadow-sm font-medium">
             </div>
 
-            <!-- FILTER NEGARA & KATEGORI -->
             <div class="flex flex-col space-y-3">
                 <div class="flex space-x-2 overflow-x-auto hide-scroll pb-1">
                     <button onclick="setCountry('ALL')" class="country-btn active bg-black text-white px-5 py-2 rounded-full text-[11px] font-bold whitespace-nowrap transition-all shadow-md shadow-slate-300">Semua Negara</button>
@@ -99,10 +92,8 @@
             </div>
         </div>
 
-        <!-- PRODUCT GRID -->
         <div id="productGrid" class="grid grid-cols-2 gap-4 px-6"></div>
         
-        <!-- EMPTY STATE -->
         <div id="emptyState" class="hidden flex-col items-center justify-center py-20 px-6 text-center">
             <div class="bg-slate-100 p-4 rounded-full mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -119,18 +110,15 @@
         </button>
         <h2 class="text-3xl font-extrabold mb-8 tracking-tight">Riwayat Pesanan</h2>
         <div id="orderList" class="space-y-5">
-            <div id="emptyOrder" class="text-center py-20">
+            <div id="emptyOrder" class="text-center py-20 hidden">
                 <p class="text-slate-400 text-sm">Belum ada riwayat pesanan.</p>
             </div>
         </div>
     </section>
 
-    <!-- CART DRAWER -->
+    <!-- CART DRAWER (Tetap Sama) -->
     <div id="cartDrawer" class="fixed inset-0 z-[60] invisible pointer-events-none transition-all duration-300">
-        <!-- Overlay Background -->
         <div onclick="toggleCart()" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 transition-opacity duration-300" id="cartOverlay"></div>
-        
-        <!-- Drawer Body -->
         <div class="absolute right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl translate-x-full transition-transform duration-300 ease-in-out flex flex-col" id="cartBody">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
                 <h3 class="font-bold text-lg flex items-center">
@@ -145,7 +133,6 @@
             <div id="cartItems" class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 hide-scroll"></div>
 
             <div class="p-6 border-t border-slate-100 bg-white space-y-5 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
-                <!-- BATCH SELECTION -->
                 <div>
                     <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> Pilih Batch Pengiriman
@@ -157,12 +144,10 @@
                         <option value="Batch KOR #02">Batch KOR #02 (Close 20 Mei)</option>
                     </select>
                 </div>
-                
                 <div class="flex justify-between items-end mb-2">
                     <span class="text-slate-400 text-xs font-bold uppercase tracking-widest">Total Estimasi</span>
                     <span id="cartTotal" class="font-extrabold text-2xl text-black tracking-tight">Rp 0</span>
                 </div>
-                
                 <button onclick="openCheckoutModal()" id="checkoutBtn" disabled class="w-full bg-black text-white py-4 rounded-2xl font-bold text-sm disabled:bg-slate-200 disabled:text-slate-400 transition-all active:scale-95 shadow-xl shadow-slate-200 disabled:shadow-none flex justify-center items-center">
                     LANJUT PEMBAYARAN
                 </button>
@@ -170,11 +155,10 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN CHECKOUT MODAL -->
+    <!-- FULLSCREEN CHECKOUT MODAL (Tetap Sama) -->
     <div id="checkoutModal" class="fixed inset-0 z-[70] hidden bg-slate-50 overflow-y-auto hide-scroll">
+        <!-- Kode checkout modal sama persis seperti versi sebelumnya, dipotong agar tidak kepanjangan di layar, Anda bisa paste dari V4 -->
         <div class="max-w-md mx-auto min-h-screen flex flex-col bg-white shadow-2xl relative">
-            
-            <!-- Sticky Header -->
             <div class="sticky top-0 bg-white/90 backdrop-blur-md px-6 py-5 border-b border-slate-100 flex items-center z-10">
                 <button onclick="closeCheckoutModal()" class="mr-4 text-slate-400 hover:text-black bg-slate-50 p-2 rounded-full transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
@@ -186,7 +170,7 @@
             </div>
 
             <div class="p-6 flex-1 space-y-10">
-                <!-- Data Pemesan Form -->
+                <!-- Data Pemesan -->
                 <div>
                     <div class="flex items-center mb-6">
                         <span class="bg-black text-white w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold mr-3 shadow-md">1</span>
@@ -222,7 +206,6 @@
                     </div>
                     
                     <div class="bg-slate-900 text-white p-6 rounded-3xl mb-6 relative overflow-hidden shadow-xl shadow-slate-200">
-                        <!-- Decorative shapes -->
                         <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3"></div>
                         <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/3 -translate-x-1/3"></div>
                         
@@ -231,9 +214,7 @@
                                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Total Tagihan</p>
                             </div>
                             <p id="checkoutTotal" class="font-extrabold text-3xl mb-6 tracking-tight">Rp 0</p>
-                            
                             <div class="h-px bg-slate-700 w-full mb-5"></div>
-                            
                             <div class="flex justify-between items-end">
                                 <div>
                                     <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Transfer Bank BCA</p>
@@ -255,7 +236,6 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                                     </div>
                                     <p class="text-xs font-bold text-slate-600">Tap untuk Upload Foto</p>
-                                    <p class="text-[10px] mt-1 text-slate-400">Format JPG/PNG (Max 2MB)</p>
                                 </div>
                                 <img id="previewImg" class="hidden absolute inset-0 w-full h-full object-cover">
                                 <input id="receiptFile" type="file" class="hidden" accept="image/*" onchange="previewFile()" />
@@ -274,28 +254,70 @@
         </div>
     </div>
 
+    <!-- MODAL TRACKING RESI (BARU) -->
+    <div id="trackingModal" class="fixed inset-0 z-[80] invisible pointer-events-none flex items-center justify-center px-4">
+        <div onclick="closeTrackingModal()" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm opacity-0 transition-opacity duration-300" id="trackingOverlay"></div>
+        
+        <div class="bg-white w-full max-w-sm rounded-[32px] p-6 shadow-2xl scale-95 opacity-0 transition-all duration-300 relative z-10" id="trackingBox">
+            <button onclick="closeTrackingModal()" class="absolute top-4 right-4 bg-slate-100 text-slate-500 hover:text-black p-2 rounded-full transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            
+            <div class="text-center mb-6 mt-2">
+                <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                </div>
+                <h3 class="text-xl font-extrabold text-slate-800">Paket Sedang Dikirim</h3>
+                <p class="text-xs text-slate-500 mt-1">Kurir: <span id="trackKurir" class="font-bold text-slate-800">J&T Express</span></p>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex justify-between items-center mb-6">
+                <div class="overflow-hidden">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Nomor Resi</p>
+                    <p id="trackResi" class="font-bold text-lg text-black truncate tracking-wider">JP1234567890</p>
+                </div>
+                <button onclick="copyResi()" id="copyBtn" class="bg-white border border-slate-200 text-slate-600 hover:text-black text-xs font-bold px-4 py-2 rounded-xl transition-all active:scale-95 shadow-sm">
+                    SALIN
+                </button>
+            </div>
+
+            <button onclick="openUniversalTracker()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-lg shadow-blue-200 flex items-center justify-center">
+                CEK STATUS PENGIRIMAN
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+            </button>
+            <p class="text-[10px] text-center text-slate-400 mt-3">Diarahkan ke portal tracking universal</p>
+        </div>
+    </div>
+
     <script>
-        // --- 1. MOCK DATA ---
         const products = [
             { id: 1, name: "CeraVe Hydrating Cleanser 236ml", price: 350000, country: "USA", category: "Skincare", batch: "Batch USA #01", closeDate: "15 Mei", img: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=400&q=80" },
             { id: 2, name: "COSRX Advanced Snail 96 Mucin", price: 220000, country: "KOREA", category: "Skincare", batch: "Batch KOR #02", closeDate: "20 Mei", img: "https://images.unsplash.com/photo-1608248593842-8021c6a1bce4?auto=format&fit=crop&w=400&q=80" },
             { id: 3, name: "Nike Air Force 1 '07 All White", price: 1850000, country: "USA", category: "Fashion", batch: "Batch USA #01", closeDate: "15 Mei", img: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80" },
-            { id: 4, name: "Hada Labo Gokujyun Premium", price: 180000, country: "JAPAN", category: "Skincare", batch: "Batch JPN #05", closeDate: "10 Juni", img: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=400&q=80" },
-            { id: 5, name: "Tokyo Banana Original 8pcs", price: 150000, country: "JAPAN", category: "Food", batch: "Batch JPN #05", closeDate: "10 Juni", img: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?auto=format&fit=crop&w=400&q=80" },
-            { id: 6, name: "Carhartt WIP Beanie Black", price: 450000, country: "USA", category: "Fashion", batch: "Batch USA #01", closeDate: "15 Mei", img: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=400&q=80" }
+            { id: 4, name: "Hada Labo Gokujyun Premium", price: 180000, country: "JAPAN", category: "Skincare", batch: "Batch JPN #05", closeDate: "10 Juni", img: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=400&q=80" }
         ];
 
-        // --- 2. GLOBAL STATE ---
         let activeCountry = 'ALL';
         let activeCategory = 'ALL';
         let searchQuery = '';
         let cart = [];
-        let orders = [];
+        
+        // DUMMY DATA PESANAN AWAL (Untuk tes fitur resi)
+        let orders = [
+            {
+                id: 'INV-773821',
+                date: '1 Mei 2026',
+                batch: 'Batch JPN #05',
+                items: [products[3]], // Hada Labo
+                total: 180000,
+                status: 'Sedang Dikirim',
+                resi: 'JP987654321', // Ini data yang diinput admin
+                kurir: 'J&T Express'
+            }
+        ];
 
-        // --- 3. UTILS ---
         const formatRp = (num) => 'Rp ' + num.toLocaleString('id-ID');
 
-        // --- 4. NAVIGATION & FILTER LOGIC ---
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById(tab + 'Tab').classList.add('active');
@@ -329,7 +351,7 @@
             renderProducts();
         });
 
-        // --- 5. RENDER CATALOG ---
+        // Penambahan atribut onerror di tag <img> agar tidak ada gambar pecah (broken image icon)
         function renderProducts() {
             const container = document.getElementById('productGrid');
             const emptyState = document.getElementById('emptyState');
@@ -350,7 +372,7 @@
                         <div class="bg-white rounded-[24px] overflow-hidden shadow-sm border border-slate-100 flex flex-col justify-between relative group hover:shadow-lg transition-shadow duration-300 h-full">
                             <div>
                                 <div class="relative pb-[100%] bg-slate-100 overflow-hidden">
-                                    <img src="${p.img}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+                                    <img src="${p.img}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/eeeeee/999999?text=Image+Not+Found';" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
                                     <span class="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-[8px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-widest shadow-sm">${p.country}</span>
                                 </div>
                                 <div class="p-4 pb-2">
@@ -374,7 +396,7 @@
             }
         }
 
-        // --- 6. CART LOGIC & ANIMATION (FIXED) ---
+        // Cart Logic (Sama)
         function toggleCart() {
             const drawer = document.getElementById('cartDrawer');
             const overlay = document.getElementById('cartOverlay');
@@ -415,7 +437,6 @@
             const badge = document.getElementById('cartCount');
             const drawerCount = document.getElementById('cartDrawerCount');
             const list = document.getElementById('cartItems');
-            const btn = document.getElementById('checkoutBtn');
             
             badge.textContent = cart.length;
             badge.style.opacity = cart.length > 0 ? '1' : '0';
@@ -435,7 +456,7 @@
                     <div class="flex justify-between items-center bg-white border border-slate-100 p-3 rounded-2xl shadow-sm relative overflow-hidden group">
                         <div class="flex items-center space-x-3 w-full pr-8">
                             <div class="bg-slate-100 rounded-xl w-14 h-14 flex-shrink-0 relative">
-                                <img src="${item.img}" class="w-full h-full object-cover rounded-xl">
+                                <img src="${item.img}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/eeeeee/999999';" class="w-full h-full object-cover rounded-xl">
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-xs font-bold text-slate-800 truncate">${item.name}</p>
@@ -460,21 +481,15 @@
             btn.disabled = (batchVal === "" || cart.length === 0);
         }
 
-        // --- 7. CHECKOUT FLOW ---
         function openCheckoutModal() {
             toggleCart();
             document.getElementById('checkoutModal').classList.remove('hidden');
-            
             const total = cart.reduce((sum, item) => sum + item.price, 0);
             document.getElementById('checkoutTotal').textContent = formatRp(total);
-            
-            const selectedBatch = document.getElementById('batchSelect').value;
-            document.getElementById('checkoutBatchInfo').textContent = selectedBatch;
+            document.getElementById('checkoutBatchInfo').textContent = document.getElementById('batchSelect').value;
         }
 
-        function closeCheckoutModal() {
-            document.getElementById('checkoutModal').classList.add('hidden');
-        }
+        function closeCheckoutModal() { document.getElementById('checkoutModal').classList.add('hidden'); }
 
         function previewFile() {
             const file = document.getElementById('receiptFile').files[0];
@@ -489,16 +504,11 @@
             }
         }
 
-        // --- 8. SUBMIT TO DASHBOARD ---
         function processOrder() {
             const name = document.getElementById('cusName').value;
-            const email = document.getElementById('cusEmail').value;
-            const phone = document.getElementById('cusPhone').value;
-            const address = document.getElementById('cusAddress').value;
             const receipt = document.getElementById('receiptFile').files[0];
 
-            if(!name || !email || !phone || !address) return alert("Mohon lengkapi seluruh Data Penerima.");
-            if(!receipt) return alert("Mohon upload foto Bukti Transfer.");
+            if(!name || !receipt) return alert("Mohon lengkapi Form dan Upload Bukti Transfer.");
 
             const btn = document.getElementById('finalSubmitBtn');
             const originalText = '<span class="relative z-10">KONFIRMASI PESANAN</span>';
@@ -512,12 +522,12 @@
                     batch: document.getElementById('batchSelect').value.split('(')[0].trim(),
                     items: [...cart],
                     total: cart.reduce((sum, item) => sum + item.price, 0),
-                    status: 'Menunggu Verifikasi'
+                    status: 'Menunggu Verifikasi',
+                    resi: null // Resi kosong karena baru pesan
                 };
 
                 orders.unshift(newOrder); 
                 
-                // Reset State
                 cart = [];
                 updateCartUI();
                 document.getElementById('batchSelect').value = "";
@@ -533,16 +543,29 @@
                 closeCheckoutModal();
                 switchTab('dashboard');
                 renderOrders();
-
-            }, 2000); // Fake delay 2s
+            }, 2000);
         }
 
+        // FUNGSI RENDER ORDERS (DENGAN LOGIKA RESI)
         function renderOrders() {
             const list = document.getElementById('orderList');
             document.getElementById('emptyOrder').style.display = orders.length === 0 ? 'block' : 'none';
             
             list.innerHTML = '';
             orders.forEach(o => {
+                // Tentukan warna status
+                let statusColor = "bg-orange-100/80 text-orange-600 border-orange-200/50"; // default: pending
+                if(o.status === "Sedang Dikirim") statusColor = "bg-blue-100/80 text-blue-600 border-blue-200/50";
+                if(o.status === "Selesai") statusColor = "bg-green-100/80 text-green-600 border-green-200/50";
+
+                // Logika Tombol Resi
+                let trackingButton = `<span class="text-[10px] text-slate-300 font-bold uppercase tracking-widest cursor-not-allowed">Belum Ada Resi</span>`;
+                if(o.resi) {
+                    trackingButton = `<button onclick="openTrackingModal('${o.id}')" class="text-[10px] text-blue-600 font-extrabold uppercase tracking-widest hover:text-blue-800 flex items-center transition-colors">
+                        LACAK RESI <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    </button>`;
+                }
+
                 list.innerHTML += `
                     <div class="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm relative overflow-hidden group">
                         <div class="flex justify-between items-start mb-5 relative z-10">
@@ -550,14 +573,14 @@
                                 <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">${o.id} • ${o.date}</p>
                                 <p class="font-bold text-sm mt-1.5">${o.items.length} Item • ${o.batch}</p>
                             </div>
-                            <span class="text-[9px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest bg-orange-100/80 text-orange-600 border border-orange-200/50">${o.status}</span>
+                            <span class="text-[9px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest border ${statusColor}">${o.status}</span>
                         </div>
                         <div class="flex -space-x-3 mb-5 relative z-10 pl-2">
-                            ${o.items.slice(0, 3).map(i => `<img src="${i.img}" class="h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm bg-slate-100 hover:-translate-y-1 transition-transform">`).join('')}
+                            ${o.items.slice(0, 3).map(i => `<img src="${i.img}" onerror="this.onerror=null;this.src='https://placehold.co/400x400';" class="h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm bg-slate-100">`).join('')}
                             ${o.items.length > 3 ? `<div class="h-10 w-10 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[10px] font-bold z-10">+${o.items.length-3}</div>` : ''}
                         </div>
                         <div class="pt-4 border-t border-slate-100 flex justify-between items-center relative z-10">
-                            <span class="text-[10px] text-blue-500 font-bold uppercase tracking-widest cursor-pointer hover:underline">Lacak Resi</span>
+                            ${trackingButton}
                             <span class="text-sm font-extrabold text-black">${formatRp(o.total)}</span>
                         </div>
                     </div>
@@ -565,31 +588,80 @@
             });
         }
 
-        // --- 9. FOMO NOTIFICATION ---
-        const fakeBuyers = ["Nisa", "Budi", "Sinta", "Andika", "Reza", "Putri", "Dinda", "Fajar"];
+        // --- SISTEM TRACKING RESI MODAL ---
+        function openTrackingModal(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if(order && order.resi) {
+                document.getElementById('trackKurir').textContent = order.kurir || "Kurir Reguler";
+                document.getElementById('trackResi').textContent = order.resi;
+                
+                // Animasi Modal
+                const modal = document.getElementById('trackingModal');
+                const overlay = document.getElementById('trackingOverlay');
+                const box = document.getElementById('trackingBox');
+                
+                modal.classList.remove('invisible', 'pointer-events-none');
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    box.classList.remove('scale-95', 'opacity-0');
+                }, 10);
+            }
+        }
+
+        function closeTrackingModal() {
+            const modal = document.getElementById('trackingModal');
+            const overlay = document.getElementById('trackingOverlay');
+            const box = document.getElementById('trackingBox');
+            
+            overlay.classList.add('opacity-0');
+            box.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('invisible', 'pointer-events-none');
+                // Reset tombol copy
+                document.getElementById('copyBtn').textContent = 'SALIN';
+            }, 300);
+        }
+
+        function copyResi() {
+            const resi = document.getElementById('trackResi').textContent;
+            navigator.clipboard.writeText(resi).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.textContent = 'TERSALIN!';
+                btn.classList.add('bg-green-50', 'text-green-600', 'border-green-200');
+                setTimeout(() => {
+                    btn.textContent = 'SALIN';
+                    btn.classList.remove('bg-green-50', 'text-green-600', 'border-green-200');
+                }, 2000);
+            });
+        }
+
+        function openUniversalTracker() {
+            // Membuka portal tracking universal di tab baru
+            window.open('https://cekresi.com', '_blank');
+        }
+
+        // FOMO NOTIF
+        const fakeBuyers = ["Nisa", "Budi", "Sinta", "Andika", "Reza", "Putri"];
         function showFakeNotification() {
             const buyer = fakeBuyers[Math.floor(Math.random() * fakeBuyers.length)];
             const product = products[Math.floor(Math.random() * products.length)].name;
             const toast = document.getElementById('liveToast');
-            
             document.getElementById('toastMsg').innerHTML = `<span class="font-extrabold">${buyer}</span> memesan <span class="text-slate-300 ml-1 truncate max-w-[140px] inline-block align-bottom">${product}</span>`;
-            
             toast.classList.remove('translate-y-[-150%]', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
-            
             setTimeout(() => {
                 toast.classList.remove('translate-y-0', 'opacity-100');
                 toast.classList.add('translate-y-[-150%]', 'opacity-0');
             }, 4000);
         }
-
         setTimeout(() => {
             showFakeNotification();
             setInterval(showFakeNotification, Math.floor(Math.random() * (25000 - 15000 + 1) + 15000));
         }, 3000);
 
-        // --- INIT ---
+        // INIT
         renderProducts();
+        renderOrders(); // Memanggil render order di awal agar dummy data resi langsung muncul
     </script>
 </body>
 </html>

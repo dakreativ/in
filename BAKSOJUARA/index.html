@@ -1,1389 +1,520 @@
 <!doctype html>
 <html lang="id" class="scroll-smooth">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Baso Juara Nusantara | Rasa Juara, Legendaris</title>
+    <title>Baso Juara | 100% Sapi Asli</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
 
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#e50914",
-              "primary-hover": "#b80710",
-              dark: "#0a0a0a",
-              "dark-card": "#171717",
-              "dark-border": "#262626",
-            },
-            fontFamily: {
-              sans: ["Poppins", "sans-serif"],
-            },
-          },
-        },
-      };
-    </script>
-
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
-
+    
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Inter"', "sans-serif"],
+                        display: ['"Outfit"', "sans-serif"],
+                    },
+                    colors: {
+                        brandRed: "#D90429",     /* Appetizing Crimson Red */
+                        brandRedDark: "#BA0424",
+                        brandWhite: "#FFFFFF",
+                        brandOffWhite: "#F8FAFC", /* Slate 50 for slight contrast */
+                        textDark: "#0F172A",      /* Deep Slate for high readability */
+                        textMuted: "#64748B",     /* Slate 500 */
+                    },
+                }
+            }
+        };
+    </script>
 
     <style>
-      body {
-        background-color: #0a0a0a;
-        color: #ffffff;
-        overflow-x: hidden;
-      }
+        body { background-color: #FFFFFF; color: #0F172A; overflow-x: hidden; }
 
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #0a0a0a;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #e50914;
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #b80710;
-      }
+        /* Clean Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #F8FAFC; }
+        ::-webkit-scrollbar-thumb { background: #D90429; border-radius: 10px; }
 
-      /* Glassmorphism Navbar Dark */
-      .glass-nav {
-        background: rgba(10, 10, 10, 0.85);
-        backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(229, 9, 20, 0.2);
-      }
+        /* Smudge Slow Reveal Animation */
+        .reveal-smudge {
+            opacity: 0; filter: blur(16px); transform: translateY(40px) scale(0.98);
+            transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 1.5s cubic-bezier(0.16, 1, 0.3, 1),
+                        filter 1.5s ease;
+        }
+        .reveal-smudge.active { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
 
-      /* Hover Effects untuk Card Menu */
-      .menu-card {
-        transition: all 0.4s ease;
-      }
-      .menu-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px -10px rgba(229, 9, 20, 0.15);
-        border-color: rgba(229, 9, 20, 0.5);
-      }
+        /* Clean Glassmorphism Navbar */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
 
-      /* FAQ Accordion */
-      .faq-answer {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.4s ease-out;
-      }
-      .faq-active .faq-answer {
-        max-height: 300px;
-      }
-      .faq-active .faq-icon {
-        transform: rotate(180deg);
-        color: #e50914;
-      }
+        /* Image Appetizing Hover */
+        .img-food { overflow: hidden; position: relative; border-radius: 24px; background: #F8FAFC; }
+        .img-food img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1), filter 1s ease;
+        }
+        .group:hover .img-food img { transform: scale(1.05); filter: contrast(1.05) saturate(1.1); }
 
-      /* Menghilangkan outline biru bawaan browser */
-      button:focus,
-      a:focus {
-        outline: none !important;
-        -webkit-tap-highlight-color: transparent;
-      }
+        /* Card Hover Clean */
+        .food-card { transition: all 0.4s ease; border: 1px solid #F1F5F9; }
+        .food-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -15px rgba(217, 4, 41, 0.15);
+            border-color: rgba(217, 4, 41, 0.2);
+        }
 
-      /* Efek teks gradasi merah */
-      .text-gradient-red {
-        background: linear-gradient(to right, #ff4b2b, #e50914);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
+        /* Red Text Gradient */
+        .text-red-grad {
+            background: linear-gradient(135deg, #D90429, #FF4B2B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-      /* Image Zoom Hover */
-      .img-zoom-container {
-        overflow: hidden;
-      }
-      .img-zoom {
-        transition: transform 0.7s ease;
-      }
-      .group:hover .img-zoom {
-        transform: scale(1.1);
-      }
+        /* Buttons */
+        .btn-red {
+            background: #D90429; color: #FFFFFF; transition: all 0.4s ease;
+        }
+        .btn-red:hover {
+            background: #BA0424; transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(217, 4, 41, 0.3);
+        }
+
+        /* FAQ Accordion */
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease; opacity: 0; }
+        .faq-item.active .faq-answer { max-height: 200px; opacity: 1; }
+        .faq-item.active .faq-icon { transform: rotate(180deg); color: #D90429; }
     </style>
-  </head>
-  <body class="font-sans antialiased text-gray-300">
-    <nav class="fixed w-full z-50 glass-nav transition-all duration-300">
-      <div
-        class="max-w-7xl mx-auto px-5 lg:px-8 py-4 relative flex items-center justify-between"
-      >
-        <div class="flex-none z-20">
-          <a
-            href="#beranda"
-            class="text-2xl font-bold tracking-tight text-white flex items-center gap-2"
-          >
-            <i data-lucide="flame" class="text-primary w-6 h-6"></i>
-            BASO<span class="text-primary">JUARA</span>
-          </a>
+</head>
+<body class="antialiased selection:bg-brandRed selection:text-white">
+
+    <nav class="fixed w-full z-50 transition-all duration-300 py-4 glass-nav" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            
+            <a href="#beranda" class="font-display text-2xl font-black tracking-tight flex items-center gap-2 text-textDark">
+                <i data-lucide="flame" class="w-6 h-6 text-brandRed"></i>
+                BASO<span class="text-brandRed">JUARA.</span>
+            </a>
+
+            <div class="hidden md:flex items-center space-x-10 text-xs uppercase tracking-widest font-bold text-textMuted">
+                <a href="#cerita" class="hover:text-brandRed transition-colors">Cerita</a>
+                <a href="#menu" class="hover:text-brandRed transition-colors">Menu</a>
+                <a href="#promo" class="hover:text-brandRed transition-colors">Promo</a>
+                <a href="#galeri" class="hover:text-brandRed transition-colors">Galeri</a>
+            </div>
+
+            <div class="hidden md:block">
+                <a href="#pesan" class="btn-red px-6 py-3 rounded-full font-display font-bold text-sm tracking-wide shadow-lg shadow-brandRed/20">
+                    Pesan Antar
+                </a>
+            </div>
+
+            <button class="md:hidden text-textDark focus:outline-none" onclick="toggleMenu()" id="mobile-btn">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
         </div>
 
-        <div
-          class="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 space-x-6 text-sm font-medium tracking-wide"
-        >
-          <a href="#beranda" class="hover:text-primary transition">Beranda</a>
-          <a href="#tentang-kami" class="hover:text-primary transition"
-            >Tentang Kami</a
-          >
-          <a href="#menu" class="hover:text-primary transition">Menu Baso</a>
-          <a href="#promo" class="hover:text-primary transition">Promo</a>
-          <a href="#galeri" class="hover:text-primary transition">Galeri</a>
-          <a href="#faq" class="hover:text-primary transition">FAQ</a>
+        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white border-t border-gray-100 py-6 px-6 flex flex-col space-y-4 shadow-2xl">
+            <a href="#cerita" class="font-display font-bold text-2xl text-textDark border-b border-gray-100 pb-2 mobile-link">Cerita Kami</a>
+            <a href="#menu" class="font-display font-bold text-2xl text-textDark border-b border-gray-100 pb-2 mobile-link">Katalog Menu</a>
+            <a href="#promo" class="font-display font-bold text-2xl text-textDark border-b border-gray-100 pb-2 mobile-link">Promo Spesial</a>
+            <a href="#pesan" class="text-brandRed font-display font-bold text-2xl mobile-link">Pesan Sekarang</a>
         </div>
-
-        <div class="hidden lg:flex flex-none z-20">
-          <a
-            href="#kontak"
-            class="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-md text-sm font-semibold transition duration-300 shadow-[0_0_15px_rgba(229,9,20,0.4)]"
-            >Order Sekarang</a
-          >
-        </div>
-
-        <div class="lg:hidden z-20">
-          <button
-            id="mobile-menu-btn"
-            class="text-white p-2 focus:outline-none"
-          >
-            <i data-lucide="menu" class="w-7 h-7"></i>
-          </button>
-        </div>
-      </div>
-
-      <div
-        id="mobile-menu"
-        class="hidden lg:hidden bg-dark border-t border-dark-border absolute w-full left-0 py-4 px-6 shadow-2xl flex flex-col space-y-1"
-      >
-        <a
-          href="#beranda"
-          class="block py-3 text-white hover:text-primary border-b border-dark-border"
-          >Beranda</a
-        >
-        <a
-          href="#tentang-kami"
-          class="block py-3 text-white hover:text-primary border-b border-dark-border"
-          >Tentang Kami</a
-        >
-        <a
-          href="#menu"
-          class="block py-3 text-white hover:text-primary border-b border-dark-border"
-          >Menu Baso</a
-        >
-        <a
-          href="#promo"
-          class="block py-3 text-white hover:text-primary border-b border-dark-border"
-          >Paket & Promo</a
-        >
-        <a
-          href="#galeri"
-          class="block py-3 text-white hover:text-primary border-b border-dark-border"
-          >Galeri & Cabang</a
-        >
-        <a
-          href="#faq"
-          class="block py-3 text-white hover:text-primary border-b border-dark-border"
-          >FAQ</a
-        >
-        <a href="#kontak" class="block py-4 text-primary font-bold"
-          >Kontak / Order &rarr;</a
-        >
-      </div>
     </nav>
 
-    <section
-      id="beranda"
-      class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden"
-    >
-      <div class="absolute inset-0 z-0">
-        <img
-          src="https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80"
-          alt="Mangkuk Baso Panas"
-          class="w-full h-full object-cover opacity-40"
-        />
-        <div
-          class="absolute inset-0 bg-gradient-to-t from-dark via-dark/80 to-transparent"
-        ></div>
-        <div
-          class="absolute inset-0 bg-gradient-to-r from-dark via-dark/50 to-transparent"
-        ></div>
-      </div>
+    <section id="beranda" class="relative min-h-[100svh] flex items-center pt-24 pb-12 overflow-hidden bg-brandOffWhite">
+        <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-brandRed/5 rounded-full blur-[100px] -z-10 translate-x-1/3 -translate-y-1/4"></div>
 
-      <div
-        class="relative z-10 w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center"
-      >
-        <div data-aos="fade-up" data-aos-duration="1200">
-          <div
-            class="inline-block bg-primary/20 border border-primary text-primary text-xs px-3 py-1.5 rounded-full mb-6 uppercase tracking-widest font-bold"
-          >
-            🔥 100% Halal & Premium
-          </div>
-          <h1
-            class="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6"
-          >
-            Baso Legendaris<br />dengan
-            <span class="text-gradient-red">Rasa Juara</span>
-          </h1>
-          <p
-            class="text-base md:text-lg text-gray-400 mb-8 font-light leading-relaxed max-w-lg"
-          >
-            Nikmati kelezatan baso dengan daging sapi pilihan, kuah gurih khas
-            yang direbus berjam-jam, dan resep rahasia yang membuat setiap
-            mangkuknya selalu dirindukan.
-          </p>
-
-          <div
-            class="grid grid-cols-2 gap-4 mb-10 text-sm font-medium text-gray-300"
-          >
-            <div class="flex items-center gap-2">
-              <i data-lucide="check-circle-2" class="text-primary w-5 h-5"></i>
-              Daging sapi pilihan
-            </div>
-            <div class="flex items-center gap-2">
-              <i data-lucide="check-circle-2" class="text-primary w-5 h-5"></i>
-              Kuah gurih khas
-            </div>
-            <div class="flex items-center gap-2">
-              <i data-lucide="check-circle-2" class="text-primary w-5 h-5"></i>
-              Porsi puas
-            </div>
-            <div class="flex items-center gap-2">
-              <i data-lucide="check-circle-2" class="text-primary w-5 h-5"></i>
-              Harga bersahabat
-            </div>
-          </div>
-
-          <div class="flex flex-col sm:flex-row gap-4">
-            <a
-              href="#kontak"
-              class="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-md font-bold text-center transition-all shadow-[0_0_20px_rgba(229,9,20,0.5)]"
-              >Pesan Sekarang</a
-            >
-            <a
-              href="#menu"
-              class="bg-transparent border border-gray-500 text-white hover:border-white px-8 py-4 rounded-md font-bold text-center transition-all"
-              >Lihat Menu</a
-            >
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="tentang-kami" class="py-20 md:py-28 bg-dark">
-      <div
-        class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center"
-      >
-        <div
-          class="relative img-zoom-container rounded-2xl overflow-hidden shadow-2xl group"
-          data-aos="fade-right"
-        >
-          <div
-            class="absolute inset-0 border-4 border-dark-border rounded-2xl z-10 pointer-events-none"
-          ></div>
-          <img
-            src="https://images.unsplash.com/photo-1687425973283-d0d266b73325?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YmFrc298ZW58MHx8MHx8fDA%3D"
-            alt="Memasak Kuah Kaldu"
-            class="w-full h-full object-cover img-zoom"
-          />
-          <div
-            class="absolute bottom-6 left-6 bg-dark/90 backdrop-blur p-4 rounded-lg border border-dark-border z-20"
-          >
-            <p class="text-primary font-bold text-xl">Sejak 2010</p>
-            <p class="text-xs text-gray-400">Resep Asli Nusantara</p>
-          </div>
-        </div>
-
-        <div data-aos="fade-left">
-          <h4
-            class="text-primary font-semibold uppercase tracking-widest text-sm mb-2"
-          >
-            Cerita Brand Kami
-          </h4>
-          <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">
-            Lebih Dari Sekadar <span class="text-primary">Semangkuk Baso</span>
-          </h2>
-
-          <div
-            class="space-y-4 text-gray-400 font-light leading-relaxed text-justify"
-          >
-            <p>
-              Baso Juara Nusantara hadir untuk menghadirkan pengalaman menikmati
-              bakso yang autentik dan berkualitas tinggi di setiap gigitannya.
-            </p>
-            <p>
-              Kami menggunakan bahan-bahan pilihan, daging sapi segar, dan bumbu
-              racikan khas warisan keluarga yang menghasilkan rasa gurih yang
-              kaya dan menggugah selera. Kuah kaldu kami direbus lambat selama
-              lebih dari 8 jam untuk mengekstrak cita rasa alami tulang sapi.
-            </p>
-            <p>
-              Dengan proses pembuatan yang higienis dan standar kualitas yang
-              ketat, setiap mangkuk baso yang kami sajikan memberikan cita rasa
-              yang konsisten. Kami percaya bahwa makanan terbaik bukan hanya
-              tentang rasa, tetapi juga tentang pengalaman dan kebersamaan di
-              meja makan.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section
-      id="menu"
-      class="py-20 md:py-28 bg-[#0f0f0f] border-y border-dark-border"
-    >
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16" data-aos="fade-up">
-          <h4
-            class="text-primary font-semibold uppercase tracking-widest text-sm mb-2"
-          >
-            Menu Spesial
-          </h4>
-          <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">
-            Favorit <span class="text-primary">Pelanggan</span>
-          </h2>
-          <p class="text-gray-400 max-w-2xl mx-auto">
-            Pilih varian baso kesukaanmu. Dibuat *fresh* setiap hari tanpa bahan
-            pengawet.
-          </p>
-        </div>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          <div
-            class="bg-dark-card border border-dark-border rounded-xl overflow-hidden menu-card group"
-            data-aos="fade-up"
-            data-aos-delay="0"
-          >
-            <div
-              class="h-48 img-zoom-container overflow-hidden bg-black relative"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80"
-                alt="Baso Original"
-                class="w-full h-full object-cover img-zoom opacity-80 group-hover:opacity-100 transition-opacity"
-              />
-              <div
-                class="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg"
-              >
-                Best Seller
-              </div>
-            </div>
-            <div class="p-6">
-              <div class="flex justify-between items-start mb-2">
-                <h3 class="text-lg font-bold text-white">Baso Original</h3>
-                <span class="text-primary font-bold">25k</span>
-              </div>
-              <p class="text-gray-400 text-sm font-light">
-                Bakso daging sapi halus kenyal dengan kuah kaldu sapi asli yang
-                gurih nan kaya rasa.
-              </p>
-            </div>
-          </div>
-
-          <div
-            class="bg-dark-card border border-dark-border rounded-xl overflow-hidden menu-card group"
-            data-aos="fade-up"
-            data-aos-delay="100"
-          >
-            <div
-              class="h-48 img-zoom-container overflow-hidden bg-black relative"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1747317277795-0d601795682c?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGJha3NvfGVufDB8fDB8fHww"
-                alt="Baso Urat"
-                class="w-full h-full object-cover img-zoom opacity-80 group-hover:opacity-100 transition-opacity"
-              />
-            </div>
-            <div class="p-6">
-              <div class="flex justify-between items-start mb-2">
-                <h3 class="text-lg font-bold text-white">Baso Urat</h3>
-                <span class="text-primary font-bold">28k</span>
-              </div>
-              <p class="text-gray-400 text-sm font-light">
-                Bakso dengan potongan urat sapi asli yang memberikan tekstur
-                kres-kres unik dan rasa daging yang kuat.
-              </p>
-            </div>
-          </div>
-
-          <div
-            class="bg-dark-card border border-dark-border rounded-xl overflow-hidden menu-card group"
-            data-aos="fade-up"
-            data-aos-delay="200"
-          >
-            <div
-              class="h-48 img-zoom-container overflow-hidden bg-black relative"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1747317498894-d2af58330072?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJha3NvfGVufDB8fDB8fHww"
-                alt="Baso Jumbo"
-                class="w-full h-full object-cover img-zoom opacity-80 group-hover:opacity-100 transition-opacity"
-              />
-            </div>
-            <div class="p-6">
-              <div class="flex justify-between items-start mb-2">
-                <h3 class="text-lg font-bold text-white">Baso Jumbo</h3>
-                <span class="text-primary font-bold">40k</span>
-              </div>
-              <p class="text-gray-400 text-sm font-light">
-                Bakso ukuran raksasa dengan isi daging cincang melimpah di
-                dalamnya. Porsi mengenyangkan.
-              </p>
-            </div>
-          </div>
-
-          <div
-            class="bg-dark-card border border-dark-border rounded-xl overflow-hidden menu-card group"
-            data-aos="fade-up"
-            data-aos-delay="300"
-          >
-            <div
-              class="h-48 img-zoom-container overflow-hidden bg-black relative"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&q=80"
-                alt="Baso Mercon"
-                class="w-full h-full object-cover img-zoom opacity-80 group-hover:opacity-100 transition-opacity"
-              />
-              <div
-                class="absolute top-4 right-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg"
-              >
-                Pedas Gila
-              </div>
-            </div>
-            <div class="p-6">
-              <div class="flex justify-between items-start mb-2">
-                <h3 class="text-lg font-bold text-white">Baso Mercon</h3>
-                <span class="text-primary font-bold">32k</span>
-              </div>
-              <p class="text-gray-400 text-sm font-light">
-                Bakso besar dengan isian sambal rawit merah pedas yang siap
-                meledak di dalam mulut Anda.
-              </p>
-            </div>
-          </div>
-
-          <div
-            class="bg-dark-card border border-dark-border rounded-xl overflow-hidden menu-card group"
-            data-aos="fade-up"
-            data-aos-delay="0"
-          >
-            <div
-              class="h-48 img-zoom-container overflow-hidden bg-black relative"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1606755456206-b25206cde27e?auto=format&fit=crop&q=80"
-                alt="Baso Keju"
-                class="w-full h-full object-cover img-zoom opacity-80 group-hover:opacity-100 transition-opacity"
-              />
-            </div>
-            <div class="p-6">
-              <div class="flex justify-between items-start mb-2">
-                <h3 class="text-lg font-bold text-white">Baso Keju</h3>
-                <span class="text-primary font-bold">30k</span>
-              </div>
-              <p class="text-gray-400 text-sm font-light">
-                Perpaduan modern bakso sapi dengan isian keju mozarella leleh
-                yang gurih dan creamy.
-              </p>
-            </div>
-          </div>
-
-          <div
-            class="bg-dark-card border border-dark-border rounded-xl overflow-hidden menu-card group"
-            data-aos="fade-up"
-            data-aos-delay="100"
-          >
-            <div
-              class="h-48 img-zoom-container overflow-hidden bg-black relative"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&q=80"
-                alt="Baso Komplit"
-                class="w-full h-full object-cover img-zoom opacity-80 group-hover:opacity-100 transition-opacity"
-              />
-            </div>
-            <div class="p-6">
-              <div class="flex justify-between items-start mb-2">
-                <h3 class="text-lg font-bold text-white">Baso Komplit</h3>
-                <span class="text-primary font-bold">45k</span>
-              </div>
-              <p class="text-gray-400 text-sm font-light">
-                Sajian penuh dengan paduan baso urat, baso halus, mie, tahu
-                putih, pangsit goreng, dan sayuran segar.
-              </p>
-            </div>
-          </div>
-
-          <div
-            class="bg-dark-card border border-dark-border rounded-xl overflow-hidden menu-card group lg:col-span-3 xl:col-span-2"
-            data-aos="fade-up"
-            data-aos-delay="200"
-          >
-            <div class="flex flex-col md:flex-row h-full">
-              <div
-                class="w-full md:w-1/2 h-48 md:h-full img-zoom-container overflow-hidden bg-black relative"
-              >
-                <img
-                  src="https://media.istockphoto.com/id/1285977914/id/foto/bakso.jpg?s=612x612&w=0&k=20&c=fT6hwo6S3pFnkagwMi1MMl_q77-dIyLGsYE-0IHnfDY="
-                  alt="Baso Lava Pedas"
-                  class="w-full h-full object-cover img-zoom opacity-80 group-hover:opacity-100 transition-opacity"
-                />
-                <div
-                  class="absolute inset-0 bg-primary/20 mix-blend-multiply"
-                ></div>
-                <div
-                  class="absolute bottom-4 left-4 bg-dark/80 backdrop-blur text-white text-xs font-bold px-3 py-1 rounded-sm border border-primary"
-                >
-                  Challenge Menu
+        <div class="max-w-7xl mx-auto px-6 w-full grid lg:grid-cols-2 gap-12 items-center relative z-10">
+            <div class="reveal-smudge">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-red-100 bg-red-50 text-brandRed font-bold text-[10px] uppercase tracking-widest mb-6">
+                    <span class="w-2 h-2 rounded-full bg-brandRed animate-pulse"></span>
+                    100% Daging Sapi Asli
                 </div>
-              </div>
-              <div class="w-full md:w-1/2 p-6 flex flex-col justify-center">
-                <div class="flex justify-between items-start mb-2">
-                  <h3 class="text-xl font-bold text-white">Baso Lava Pedas</h3>
-                  <span class="text-primary font-bold text-xl">55k</span>
-                </div>
-                <p class="text-gray-400 text-sm font-light mb-4">
-                  Bakso dengan kuah merah menyala tingkat kepedasan ekstrem.
-                  Dikhususkan bagi Anda pecinta pedas sejati. Berani coba?
+                
+                <h1 class="font-display text-5xl md:text-7xl lg:text-[80px] font-black leading-[1.05] tracking-tight text-textDark mb-6">
+                    Satu Seruputan, <br>
+                    <span class="text-red-grad">Jutaan Kenangan.</span>
+                </h1>
+                
+                <p class="text-textMuted text-base md:text-lg font-light mb-10 leading-relaxed max-w-md">
+                    Nikmati kelembutan baso urat premium berpadu dengan gurihnya kuah kaldu sumsum yang direbus perlahan selama 12 jam.
                 </p>
-                <a
-                  href="#kontak"
-                  class="text-primary hover:text-white text-sm font-bold flex items-center gap-1 transition-colors"
-                  >Pesan Sekarang
-                  <i data-lucide="arrow-right" class="w-4 h-4"></i
-                ></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="promo" class="py-20 md:py-28 bg-dark relative overflow-hidden">
-      <div
-        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[100px] pointer-events-none"
-      ></div>
-
-      <div class="max-w-7xl mx-auto px-6 relative z-10">
-        <div class="text-center mb-16" data-aos="fade-up">
-          <h4
-            class="text-primary font-semibold uppercase tracking-widest text-sm mb-2"
-          >
-            Penawaran Spesial
-          </h4>
-          <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">
-            Paket <span class="text-primary">& Promo</span>
-          </h2>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-8">
-          <div
-            class="bg-gradient-to-br from-dark-card to-dark border border-dark-border hover:border-primary p-8 rounded-2xl text-center menu-card"
-            data-aos="fade-up"
-          >
-            <div
-              class="w-16 h-16 mx-auto bg-dark border border-primary rounded-full flex items-center justify-center mb-6"
-            >
-              <i data-lucide="percent" class="text-primary w-8 h-8"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-white mb-2">Paket Hemat</h3>
-            <p class="text-gray-400 text-sm mb-6 h-10">
-              2 Porsi Baso Original + 2 Es Teh Manis segar.
-            </p>
-            <p class="text-3xl font-bold text-primary mb-6">
-              55k <span class="text-sm text-gray-500 line-through">65k</span>
-            </p>
-            <a
-              href="#kontak"
-              class="block w-full py-3 rounded-md border border-primary text-primary hover:bg-primary hover:text-white font-semibold transition-colors"
-              >Ambil Promo</a
-            >
-          </div>
-
-          <div
-            class="bg-gradient-to-b from-primary/20 to-dark-card border border-primary p-8 rounded-2xl text-center transform md:-translate-y-4 shadow-[0_10px_30px_rgba(229,9,20,0.2)]"
-            data-aos="fade-up"
-            data-aos-delay="100"
-          >
-            <div
-              class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-xs font-bold px-4 py-1 rounded-full"
-            >
-              Paling Laris
-            </div>
-            <div
-              class="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center mb-6 mt-2"
-            >
-              <i data-lucide="users" class="text-white w-8 h-8"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-white mb-2">Paket Keluarga</h3>
-            <p class="text-gray-300 text-sm mb-6 h-10">
-              5 Porsi Baso Campur + 1 Porsi Pangsit + Minuman Pitcher.
-            </p>
-            <p class="text-4xl font-bold text-white mb-6">
-              145k <span class="text-sm text-gray-400 line-through">175k</span>
-            </p>
-            <a
-              href="#kontak"
-              class="block w-full py-3 rounded-md bg-primary hover:bg-primary-hover text-white font-semibold transition-colors shadow-lg shadow-primary/30"
-              >Order Sekarang</a
-            >
-          </div>
-
-          <div
-            class="bg-gradient-to-br from-dark-card to-dark border border-dark-border hover:border-primary p-8 rounded-2xl text-center menu-card"
-            data-aos="fade-up"
-            data-aos-delay="200"
-          >
-            <div
-              class="w-16 h-16 mx-auto bg-dark border border-primary rounded-full flex items-center justify-center mb-6"
-            >
-              <i data-lucide="coffee" class="text-primary w-8 h-8"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-white mb-2">Paket Nongkrong</h3>
-            <p class="text-gray-400 text-sm mb-6 h-10">
-              3 Porsi Baso Urat/Keju + 3 Minuman Dingin bebas pilih.
-            </p>
-            <p class="text-3xl font-bold text-primary mb-6">
-              95k <span class="text-sm text-gray-500 line-through">115k</span>
-            </p>
-            <a
-              href="#kontak"
-              class="block w-full py-3 rounded-md border border-primary text-primary hover:bg-primary hover:text-white font-semibold transition-colors"
-              >Ambil Promo</a
-            >
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section
-      id="keunggulan"
-      class="py-20 md:py-28 bg-[#0a0a0a] border-y border-dark-border"
-    >
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16" data-aos="fade-up">
-          <h2 class="text-3xl md:text-5xl font-bold text-white mb-4">
-            Kenapa Harus <span class="text-primary">Makan di Sini?</span>
-          </h2>
-          <div class="w-20 h-1 bg-primary mx-auto rounded-full"></div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          <div class="text-center group" data-aos="fade-up" data-aos-delay="0">
-            <div
-              class="w-20 h-20 bg-dark-card rounded-full flex items-center justify-center mx-auto mb-6 text-primary border border-dark-border group-hover:border-primary transition-colors"
-            >
-              <i data-lucide="beef" class="w-10 h-10"></i>
-            </div>
-            <h4 class="text-white font-semibold mb-2">Daging Pilihan</h4>
-            <p class="text-sm text-gray-500 font-light">
-              100% daging sapi segar berkualitas tinggi tanpa pengenyal buatan.
-            </p>
-          </div>
-          <div
-            class="text-center group"
-            data-aos="fade-up"
-            data-aos-delay="100"
-          >
-            <div
-              class="w-20 h-20 bg-dark-card rounded-full flex items-center justify-center mx-auto mb-6 text-primary border border-dark-border group-hover:border-primary transition-colors"
-            >
-              <i data-lucide="droplets" class="w-10 h-10"></i>
-            </div>
-            <h4 class="text-white font-semibold mb-2">Kuah Kaldu Khas</h4>
-            <p class="text-sm text-gray-500 font-light">
-              Direbus berjam-jam menghasilkan rasa kaldu sumsum yang gurih
-              alami.
-            </p>
-          </div>
-          <div
-            class="text-center group"
-            data-aos="fade-up"
-            data-aos-delay="200"
-          >
-            <div
-              class="w-20 h-20 bg-dark-card rounded-full flex items-center justify-center mx-auto mb-6 text-primary border border-dark-border group-hover:border-primary transition-colors"
-            >
-              <i data-lucide="utensils" class="w-10 h-10"></i>
-            </div>
-            <h4 class="text-white font-semibold mb-2">Porsi Melimpah</h4>
-            <p class="text-sm text-gray-500 font-light">
-              Satu mangkuk penuh dengan isian yang dijamin membuat Anda kenyang
-              puas.
-            </p>
-          </div>
-          <div
-            class="text-center group"
-            data-aos="fade-up"
-            data-aos-delay="300"
-          >
-            <div
-              class="w-20 h-20 bg-dark-card rounded-full flex items-center justify-center mx-auto mb-6 text-primary border border-dark-border group-hover:border-primary transition-colors"
-            >
-              <i data-lucide="wallet" class="w-10 h-10"></i>
-            </div>
-            <h4 class="text-white font-semibold mb-2">Harga Bersahabat</h4>
-            <p class="text-sm text-gray-500 font-light">
-              Nikmat kualitas bintang lima tanpa bikin kantong Anda jebol.
-            </p>
-          </div>
-          <div
-            class="text-center group md:col-span-2 lg:col-span-1"
-            data-aos="fade-up"
-            data-aos-delay="400"
-          >
-            <div
-              class="w-20 h-20 bg-dark-card rounded-full flex items-center justify-center mx-auto mb-6 text-primary border border-dark-border group-hover:border-primary transition-colors"
-            >
-              <i data-lucide="sofa" class="w-10 h-10"></i>
-            </div>
-            <h4 class="text-white font-semibold mb-2">Tempat Nyaman</h4>
-            <p class="text-sm text-gray-500 font-light">
-              Area makan bersih, luas, dan nyaman untuk keluarga maupun
-              nongkrong.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="testimoni" class="py-20 md:py-28 bg-[#121212]">
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16" data-aos="fade-up">
-          <h4
-            class="text-primary font-semibold uppercase tracking-widest text-sm mb-2"
-          >
-            Review
-          </h4>
-          <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">
-            Kata <span class="text-primary">Mereka</span>
-          </h2>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-6">
-          <div
-            class="bg-dark-card p-8 rounded-xl border border-dark-border relative"
-            data-aos="fade-up"
-          >
-            <i
-              data-lucide="quote"
-              class="text-dark-border w-16 h-16 absolute top-4 right-4 fill-current opacity-50"
-            ></i>
-            <div class="flex text-primary mb-6 relative z-10">
-              <i data-lucide="star" class="w-4 h-4 fill-current"></i
-              ><i data-lucide="star" class="w-4 h-4 fill-current"></i
-              ><i data-lucide="star" class="w-4 h-4 fill-current"></i
-              ><i data-lucide="star" class="w-4 h-4 fill-current"></i
-              ><i data-lucide="star" class="w-4 h-4 fill-current"></i>
-            </div>
-            <p class="text-gray-300 font-light italic mb-6 relative z-10">
-              "Kuahnya enak banget, ngaldu parah. Baksonya kenyal, dagingnya
-              terasa banget nggak cuma tepung doang. Fix bakal balik lagi!"
-            </p>
-            <div class="flex items-center gap-4 relative z-10">
-              <div
-                class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold"
-              >
-                A
-              </div>
-              <div>
-                <h5 class="text-white font-medium text-sm">Andi</h5>
-                <span class="text-gray-500 text-xs">Local Guide</span>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="bg-dark-card p-8 rounded-xl border border-dark-border relative"
-            data-aos="fade-up"
-            data-aos-delay="100"
-          >
-            <i
-              data-lucide="quote"
-              class="text-dark-border w-16 h-16 absolute top-4 right-4 fill-current opacity-50"
-            ></i>
-            <div class="flex text-primary mb-6 relative z-10">
-              <i data-lucide="star" class="w-4 h-4 fill-current"></i
-              ><i data-lucide="star" class="w-4 h-4 fill-current"></i
-              ><i data-lucide="star" class="w-4 h-4 fill-current"></i
-              ><i data-lucide="star" class="w-4 h-4 fill-current"></i
-              ><i data-lucide="star" class="w-4 h-4 fill-current"></i>
-            </div>
-            <p class="text-gray-300 font-light italic mb-6 relative z-10">
-              "Baso merconnya mantap pedasnya! Cabenya beneran melimpah di
-              dalem, cocok banget buat ngilangin stres abis kerja."
-            </p>
-            <div class="flex items-center gap-4 relative z-10">
-              <div
-                class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold"
-              >
-                R
-              </div>
-              <div>
-                <h5 class="text-white font-medium text-sm">Rizky</h5>
-                <span class="text-gray-500 text-xs">Pecinta Pedas</span>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="bg-dark-card p-8 rounded-xl border border-dark-border relative"
-            data-aos="fade-up"
-            data-aos-delay="200"
-          >
-            <i
-              data-lucide="quote"
-              class="text-dark-border w-16 h-16 absolute top-4 right-4 fill-current opacity-50"
-            ></i>
-            <div class="flex text-primary mb-6 relative z-10">
-              <i data-lucide="star" class="w-4 h-4 fill-current"></i
-              ><i data-lucide="star" class="w-4 h-4 fill-current"></i
-              ><i data-lucide="star" class="w-4 h-4 fill-current"></i
-              ><i data-lucide="star" class="w-4 h-4 fill-current"></i
-              ><i
-                data-lucide="star"
-                class="w-4 h-4 fill-current text-dark-border"
-              ></i>
-            </div>
-            <p class="text-gray-300 font-light italic mb-6 relative z-10">
-              "Bawa keluarga ke sini nyaman banget. Tempatnya bersih,
-              pelayanannya ramah cepat, dan porsinya besar. Anak-anak suka baso
-              kejunya."
-            </p>
-            <div class="flex items-center gap-4 relative z-10">
-              <div
-                class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold"
-              >
-                R
-              </div>
-              <div>
-                <h5 class="text-white font-medium text-sm">Rina</h5>
-                <span class="text-gray-500 text-xs">Ibu Rumah Tangga</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="galeri" class="py-20 md:py-28 bg-dark">
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16" data-aos="fade-up">
-          <h2 class="text-3xl md:text-5xl font-bold text-white mb-4">
-            Galeri & <span class="text-primary">Cabang Kami</span>
-          </h2>
-          <div class="w-20 h-1 bg-primary mx-auto rounded-full"></div>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-          <div
-            class="col-span-2 row-span-2 rounded-xl overflow-hidden relative group"
-            data-aos="zoom-in"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80"
-              alt="Suasana Restoran"
-              class="w-full h-full object-cover group-hover:scale-110 transition duration-700"
-            />
-            <div
-              class="absolute inset-0 bg-gradient-to-t from-dark/90 via-transparent to-transparent flex items-end p-6"
-            >
-              <p class="text-white font-bold text-lg">Tempat Nyaman & Luas</p>
-            </div>
-          </div>
-          <div
-            class="rounded-xl overflow-hidden relative group h-48 md:h-auto"
-            data-aos="zoom-in"
-            data-aos-delay="100"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1556155092-490a1ba16284?auto=format&fit=crop&q=80"
-              alt="Dapur Bersih"
-              class="w-full h-full object-cover group-hover:scale-110 transition duration-700"
-            />
-            <div
-              class="absolute inset-0 bg-dark/40 group-hover:bg-transparent transition duration-300"
-            ></div>
-          </div>
-          <div
-            class="rounded-xl overflow-hidden relative group h-48 md:h-auto"
-            data-aos="zoom-in"
-            data-aos-delay="200"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&q=80"
-              alt="Proses Pembuatan"
-              class="w-full h-full object-cover group-hover:scale-110 transition duration-700"
-            />
-          </div>
-          <div
-            class="col-span-2 rounded-xl overflow-hidden relative group h-48 md:h-64"
-            data-aos="zoom-in"
-            data-aos-delay="100"
-          >
-            <img
-              src="https://media.istockphoto.com/id/1285977914/id/foto/bakso.jpg?s=612x612&w=0&k=20&c=fT6hwo6S3pFnkagwMi1MMl_q77-dIyLGsYE-0IHnfDY="
-              alt="Baso Spesial"
-              class="w-full h-full object-cover group-hover:scale-110 transition duration-700"
-            />
-            <div
-              class="absolute inset-0 bg-gradient-to-t from-dark/80 via-transparent to-transparent flex items-end p-6"
-            >
-              <p class="text-white font-bold text-lg">Menu Otentik</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" data-aos="fade-up">
-          <div
-            class="bg-dark-card border border-dark-border p-4 rounded-xl flex items-center gap-3"
-          >
-            <div
-              class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary"
-            >
-              <i data-lucide="map-pin" class="w-5 h-5"></i>
-            </div>
-            <span class="text-white font-medium">Bandung (Pusat)</span>
-          </div>
-          <div
-            class="bg-dark-card border border-dark-border p-4 rounded-xl flex items-center gap-3"
-          >
-            <div
-              class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary"
-            >
-              <i data-lucide="map-pin" class="w-5 h-5"></i>
-            </div>
-            <span class="text-white font-medium">Jakarta Selatan</span>
-          </div>
-          <div
-            class="bg-dark-card border border-dark-border p-4 rounded-xl flex items-center gap-3"
-          >
-            <div
-              class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary"
-            >
-              <i data-lucide="map-pin" class="w-5 h-5"></i>
-            </div>
-            <span class="text-white font-medium">Bekasi Barat</span>
-          </div>
-          <div
-            class="bg-dark-card border border-dark-border p-4 rounded-xl flex items-center gap-3"
-          >
-            <div
-              class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary"
-            >
-              <i data-lucide="map-pin" class="w-5 h-5"></i>
-            </div>
-            <span class="text-white font-medium">Tasikmalaya</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section
-      id="faq"
-      class="py-20 md:py-28 bg-[#121212] border-t border-dark-border"
-    >
-      <div class="max-w-3xl mx-auto px-6">
-        <div class="text-center mb-16" data-aos="fade-up">
-          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-            Pertanyaan yang <span class="text-primary">Sering Diajukan</span>
-          </h2>
-        </div>
-
-        <div class="space-y-4" data-aos="fade-up">
-          <div
-            class="faq-item bg-dark-card border border-dark-border rounded-lg overflow-hidden"
-          >
-            <button
-              class="w-full text-left px-6 py-5 flex justify-between items-center transition-colors hover:bg-dark"
-              onclick="toggleFaq(this)"
-            >
-              <span class="font-medium text-white pr-4"
-                >Apakah bisa pesan online / delivery?</span
-              >
-              <i
-                data-lucide="chevron-down"
-                class="faq-icon text-gray-500 transition-transform duration-300 shrink-0"
-              ></i>
-            </button>
-            <div class="faq-answer px-6 bg-dark">
-              <p class="text-gray-400 font-light pb-5 pt-2">
-                Ya, tentu saja. Kami melayani pemesanan melalui WhatsApp resmi
-                kami dan sudah tersedia di berbagai aplikasi *food delivery*
-                (GoFood, GrabFood, ShopeeFood).
-              </p>
-            </div>
-          </div>
-
-          <div
-            class="faq-item bg-dark-card border border-dark-border rounded-lg overflow-hidden"
-          >
-            <button
-              class="w-full text-left px-6 py-5 flex justify-between items-center transition-colors hover:bg-dark"
-              onclick="toggleFaq(this)"
-            >
-              <span class="font-medium text-white pr-4"
-                >Apakah tersedia paket untuk catering / acara?</span
-              >
-              <i
-                data-lucide="chevron-down"
-                class="faq-icon text-gray-500 transition-transform duration-300 shrink-0"
-              ></i>
-            </button>
-            <div class="faq-answer px-6 bg-dark">
-              <p class="text-gray-400 font-light pb-5 pt-2">
-                Tersedia. Kami menerima pesanan porsi besar lengkap dengan
-                gerobak/stand untuk acara keluarga, arisan, resepsi pernikahan,
-                maupun gathering kantor.
-              </p>
-            </div>
-          </div>
-
-          <div
-            class="faq-item bg-dark-card border border-dark-border rounded-lg overflow-hidden"
-          >
-            <button
-              class="w-full text-left px-6 py-5 flex justify-between items-center transition-colors hover:bg-dark"
-              onclick="toggleFaq(this)"
-            >
-              <span class="font-medium text-white pr-4"
-                >Apakah ada pilihan level pedas?</span
-              >
-              <i
-                data-lucide="chevron-down"
-                class="faq-icon text-gray-500 transition-transform duration-300 shrink-0"
-              ></i>
-            </button>
-            <div class="faq-answer px-6 bg-dark">
-              <p class="text-gray-400 font-light pb-5 pt-2">
-                Ya, untuk menu tertentu seperti Baso Lava Pedas, Anda bisa
-                merequest tingkat kepedasan dari Level 1 hingga Level 5
-                (Ekstrem).
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section
-      id="kontak"
-      class="py-20 bg-dark border-t border-dark-border relative overflow-hidden"
-    >
-      <div
-        class="absolute bottom-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[80px]"
-      ></div>
-
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="grid lg:grid-cols-2 gap-16 mb-16">
-          <div data-aos="fade-right">
-            <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">
-              Mampir & <span class="text-primary">Buktikan Sendiri</span>
-            </h2>
-            <p class="text-gray-400 font-light mb-10">
-              Lapar? Jangan ditahan. Hubungi kami untuk delivery atau langsung
-              datang ke outlet terdekat untuk menikmati mangkuk hangat Baso
-              Juara Nusantara.
-            </p>
-
-            <div class="space-y-6">
-              <div class="flex items-start gap-4">
-                <div
-                  class="w-12 h-12 bg-dark-card border border-dark-border rounded-full flex items-center justify-center text-primary shrink-0"
-                >
-                  <i data-lucide="map-pin"></i>
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#menu" class="btn-red px-8 py-4 rounded-full font-display text-sm font-bold text-center shadow-xl shadow-brandRed/20">
+                        Eksplorasi Menu
+                    </a>
+                    <a href="#pesan" class="bg-white border-2 border-gray-200 text-textDark px-8 py-4 rounded-full font-display text-sm font-bold text-center hover:border-brandRed hover:text-brandRed transition-colors">
+                        Pesan via WA
+                    </a>
                 </div>
+            </div>
+
+            <div class="reveal-smudge delay-1 h-[50vh] lg:h-[75vh] w-full relative">
+                <div class="img-food w-full h-full shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=1200&q=80" alt="Mangkuk Baso Panas">
+                </div>
+                <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-4 animate-[float_4s_ease-in-out_infinite]">
+                    <div class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center text-brandRed">
+                        <i data-lucide="award" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="font-display font-bold text-textDark text-sm">Resep Legendaris</p>
+                        <p class="text-xs text-textMuted">Sejak 2010</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="cerita" class="py-24 bg-white border-y border-gray-100">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal-smudge">
+                <h2 class="font-display text-4xl md:text-5xl font-black text-textDark mb-4">Rahasia <span class="text-brandRed">Dapur Kami.</span></h2>
+                <p class="text-textMuted font-light text-sm max-w-md mx-auto">Kami tidak menggunakan jalan pintas. Rasa juara lahir dari proses yang panjang dan bahan baku terbaik.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center group reveal-smudge">
+                    <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 text-brandRed group-hover:scale-110 group-hover:bg-brandRed group-hover:text-white transition-all duration-300">
+                        <i data-lucide="beef" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-textDark mb-3">100% Sapi Murni</h3>
+                    <p class="text-textMuted text-sm font-light leading-relaxed">Tanpa campuran, tanpa pengenyal buatan. Hanya daging sapi segar pilihan setiap paginya.</p>
+                </div>
+                <div class="text-center group reveal-smudge delay-1">
+                    <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 text-brandRed group-hover:scale-110 group-hover:bg-brandRed group-hover:text-white transition-all duration-300">
+                        <i data-lucide="flame" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-textDark mb-3">Kaldu Sumsum 12 Jam</h3>
+                    <p class="text-textMuted text-sm font-light leading-relaxed">Ekstraksi kaldu tulang sumsum asli yang dimasak perlahan (slow-cooked) untuk rasa gurih yang dalam.</p>
+                </div>
+                <div class="text-center group reveal-smudge delay-2">
+                    <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 text-brandRed group-hover:scale-110 group-hover:bg-brandRed group-hover:text-white transition-all duration-300">
+                        <i data-lucide="leaf" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-textDark mb-3">Bumbu Rempah Segar</h3>
+                    <p class="text-textMuted text-sm font-light leading-relaxed">Bawang putih goreng renyah, seledri segar, dan sambal rawit merah ulek tanpa pengawet.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="menu" class="py-24 bg-brandOffWhite">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 reveal-smudge">
                 <div>
-                  <h5 class="text-white font-semibold">Alamat Pusat</h5>
-                  <p class="text-gray-400 font-light text-sm mt-1">
-                    Jl. Kuliner Lezat No. 99, Cibaduyut<br />Bandung, Jawa Barat
-                  </p>
+                    <h2 class="font-display text-4xl md:text-5xl font-black text-textDark tracking-tight">Katalog <span class="text-brandRed">Rasa.</span></h2>
                 </div>
-              </div>
-              <div class="flex items-start gap-4">
-                <div
-                  class="w-12 h-12 bg-dark-card border border-dark-border rounded-full flex items-center justify-center text-primary shrink-0"
-                >
-                  <i data-lucide="phone"></i>
-                </div>
-                <div>
-                  <h5 class="text-white font-semibold">Order via WhatsApp</h5>
-                  <p class="text-gray-400 font-light text-sm mt-1">
-                    +62 811 2233 4455
-                  </p>
-                </div>
-              </div>
-              <div class="flex items-start gap-4">
-                <div
-                  class="w-12 h-12 bg-dark-card border border-dark-border rounded-full flex items-center justify-center text-primary shrink-0"
-                >
-                  <i data-lucide="clock"></i>
-                </div>
-                <div>
-                  <h5 class="text-white font-semibold">
-                    Jam Buka (Setiap Hari)
-                  </h5>
-                  <p class="text-gray-400 font-light text-sm mt-1">
-                    10.00 – 22.00 WIB
-                  </p>
-                </div>
-              </div>
+                <p class="text-textMuted font-light text-sm max-w-xs">
+                    Pilih porsi kebahagiaan Anda hari ini. Disajikan panas, pedas, dan nikmat.
+                </p>
             </div>
-          </div>
 
-          <div
-            data-aos="fade-left"
-            class="bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-dark-border rounded-2xl p-8 flex flex-col justify-center items-center text-center relative overflow-hidden"
-          >
-            <div class="absolute -top-10 -right-10 text-primary/10">
-              <i data-lucide="chef-hat" class="w-48 h-48"></i>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-4 rounded-3xl food-card group reveal-smudge">
+                    <div class="img-food aspect-square mb-6">
+                        <img src="https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&w=600&q=80" alt="Baso Urat">
+                    </div>
+                    <div class="px-2">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-display text-xl font-bold text-textDark">Baso Urat Super</h3>
+                            <span class="font-display font-black text-brandRed text-lg">28k</span>
+                        </div>
+                        <p class="text-textMuted text-xs font-light leading-relaxed mb-4">Tekstur urat kres-kres padat dengan kuah kaldu sapi pekat.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-3xl food-card group reveal-smudge delay-1 relative">
+                    <div class="absolute top-6 right-6 bg-brandRed text-white text-[10px] font-bold px-3 py-1 rounded-full z-10">Best Seller</div>
+                    <div class="img-food aspect-square mb-6">
+                        <img src="https://images.unsplash.com/photo-1606755456206-b25206cde27e?auto=format&fit=crop&w=600&q=80" alt="Baso Keju">
+                    </div>
+                    <div class="px-2">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-display text-xl font-bold text-textDark">Baso Keju Lumer</h3>
+                            <span class="font-display font-black text-brandRed text-lg">30k</span>
+                        </div>
+                        <p class="text-textMuted text-xs font-light leading-relaxed mb-4">Keju mozzarella asli yang lumer di mulut pada gigitan pertama.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-3xl food-card group reveal-smudge delay-2">
+                    <div class="img-food aspect-square mb-6">
+                        <img src="https://images.unsplash.com/photo-1544681280-d2dc1c6e12e1?auto=format&fit=crop&w=600&q=80" alt="Baso Mercon">
+                    </div>
+                    <div class="px-2">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-display text-xl font-bold text-textDark">Baso Mercon</h3>
+                            <span class="font-display font-black text-brandRed text-lg">32k</span>
+                        </div>
+                        <p class="text-textMuted text-xs font-light leading-relaxed mb-4">Isian sambal rawit setan yang siap meledak di lidah Anda.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-3xl food-card group reveal-smudge delay-1">
+                    <div class="img-food aspect-square mb-6">
+                        <img src="https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&w=600&q=80" alt="Baso Komplit">
+                    </div>
+                    <div class="px-2">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-display text-xl font-bold text-textDark">Yamin Komplit</h3>
+                            <span class="font-display font-black text-brandRed text-lg">35k</span>
+                        </div>
+                        <p class="text-textMuted text-xs font-light leading-relaxed mb-4">Mie yamin manis gurih dipadu baso kecil, pangsit, dan tahu.</p>
+                    </div>
+                </div>
             </div>
-            <h3 class="text-2xl font-bold text-white mb-4 relative z-10">
-              Lapar Sekarang?
-            </h3>
-            <p class="text-gray-400 text-sm mb-8 relative z-10">
-              Pesan langsung tanpa antre. Klik tombol di bawah untuk order via
-              WhatsApp.
-            </p>
-            <a
-              href="#"
-              class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-full font-bold transition-colors flex items-center justify-center gap-2 relative z-10"
-            >
-              <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                <path
-                  d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"
-                />
-              </svg>
-              Chat via WhatsApp
-            </a>
-          </div>
+            
+            <div class="mt-12 text-center reveal-smudge">
+                <a href="#pesan" class="inline-flex items-center gap-2 text-brandRed font-bold text-sm hover:text-brandRedDark transition-colors">
+                    Lihat Menu Lengkap via WhatsApp <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
         </div>
-      </div>
     </section>
 
-    <footer class="bg-[#050505] border-t border-dark-border pt-16 pb-8">
-      <div
-        class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12"
-      >
-        <div>
-          <a
-            href="#beranda"
-            class="text-2xl font-bold tracking-tight text-white flex items-center gap-2 mb-6"
-          >
-            <i data-lucide="flame" class="text-primary w-6 h-6"></i>
-            BASO<span class="text-primary">JUARA</span>
-          </a>
-          <p class="text-gray-500 font-light text-sm leading-relaxed mb-6">
-            Membawa cita rasa baso Nusantara autentik ke tingkat yang lebih
-            premium. Kualitas juara untuk pelanggan istimewa.
-          </p>
-          <div class="flex gap-4">
-            <a
-              href="#"
-              class="w-10 h-10 rounded-full bg-dark-card border border-dark-border flex items-center justify-center text-gray-400 hover:text-white hover:border-primary transition-colors"
-              ><i class="fa-brands fa-instagram h=5 w=5"></i
-            ></a>
-            <a
-              href="#"
-              class="w-10 h-10 rounded-full bg-dark-card border border-dark-border flex items-center justify-center text-gray-400 hover:text-white hover:border-primary transition-colors"
-              ><i class="fa-brands fa-facebook h=5 w=5"></i
-            ></a>
-            <a
-              href="#"
-              class="w-10 h-10 rounded-full bg-dark-card border border-dark-border flex items-center justify-center text-gray-400 hover:text-white hover:border-primary transition-colors"
-              ><i class="fa-brands fa-x-twitter h=5 w=5"></i
-            ></a>
-          </div>
-        </div>
+    <section id="promo" class="py-24 bg-white border-y border-gray-100">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal-smudge">
+                <h2 class="font-display text-4xl md:text-5xl font-black text-textDark mb-4">Promo <span class="text-brandRed">Kenyang.</span></h2>
+                <p class="text-textMuted font-light text-sm">Makan puas, harga pas. Cocok untuk dinikmati bersama-sama.</p>
+            </div>
 
-        <div>
-          <h4
-            class="text-white font-bold mb-6 uppercase tracking-wider text-sm"
-          >
-            Navigasi
-          </h4>
-          <ul class="space-y-3 text-gray-500 font-light text-sm">
-            <li>
-              <a
-                href="#tentang-kami"
-                class="hover:text-primary transition-colors"
-                >Cerita Kami</a
-              >
-            </li>
-            <li>
-              <a href="#menu" class="hover:text-primary transition-colors"
-                >Menu Favorit</a
-              >
-            </li>
-            <li>
-              <a href="#promo" class="hover:text-primary transition-colors"
-                >Promo Spesial</a
-              >
-            </li>
-            <li>
-              <a href="#galeri" class="hover:text-primary transition-colors"
-                >Lokasi Cabang</a
-              >
-            </li>
-          </ul>
-        </div>
+            <div class="grid lg:grid-cols-2 gap-8 items-center max-w-4xl mx-auto">
+                <div class="bg-brandOffWhite p-10 rounded-3xl border border-gray-200 hover:border-brandRed/30 transition-colors reveal-smudge">
+                    <h4 class="font-display text-2xl font-bold text-textDark mb-1">Paket Berdua</h4>
+                    <p class="text-textMuted text-[10px] uppercase tracking-widest mb-6">Cocok untuk Nge-date</p>
+                    <div class="flex items-end gap-3 mb-8">
+                        <div class="text-5xl font-black text-brandRed">50K</div>
+                        <div class="text-lg text-gray-400 line-through mb-1">65K</div>
+                    </div>
+                    <ul class="space-y-4 mb-8 text-sm font-medium text-textDark">
+                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-brandRed"></i> 2 Porsi Baso Campur</li>
+                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-brandRed"></i> 2 Gelas Es Jeruk / Teh Manis</li>
+                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-brandRed"></i> 1 Porsi Tetelan Ekstra</li>
+                    </ul>
+                    <a href="#pesan" class="block text-center border-2 border-brandRed text-brandRed py-3 rounded-full text-sm font-display font-bold hover:bg-brandRed hover:text-white transition-colors">Ambil Promo</a>
+                </div>
 
-        <div>
-          <h4
-            class="text-white font-bold mb-6 uppercase tracking-wider text-sm"
-          >
-            Eksplorasi
-          </h4>
-          <ul class="space-y-3 text-gray-500 font-light text-sm">
-            <li>
-              <a
-                href="#"
-                class="hover:text-primary transition-colors flex items-center gap-2"
-                ><i data-lucide="book-open" class="w-4 h-4"></i> Blog Kuliner</a
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="hover:text-primary transition-colors flex items-center gap-2"
-                ><i data-lucide="briefcase" class="w-4 h-4"></i> Peluang
-                Franchise</a
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="hover:text-primary transition-colors flex items-center gap-2"
-                ><i data-lucide="users" class="w-4 h-4"></i> Karir / Lowongan</a
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="hover:text-primary transition-colors flex items-center gap-2"
-                ><i data-lucide="calendar" class="w-4 h-4"></i> Event & Kupon</a
-              >
-            </li>
-          </ul>
+                <div class="bg-brandRed p-10 rounded-3xl shadow-[0_20px_40px_rgba(217,4,41,0.2)] text-white relative transform lg:-translate-y-4 reveal-smudge delay-1">
+                    <div class="absolute top-0 right-8 bg-white text-brandRed text-[10px] font-bold px-4 py-1.5 rounded-b-lg uppercase tracking-widest">Keluarga</div>
+                    <h4 class="font-display text-2xl font-bold text-white mb-1">Paket Ramean</h4>
+                    <p class="text-red-200 text-[10px] uppercase tracking-widest mb-6">Puas untuk 4 Orang</p>
+                    <div class="flex items-end gap-3 mb-8">
+                        <div class="text-5xl font-black text-white">100K</div>
+                        <div class="text-lg text-red-300 line-through mb-1">135K</div>
+                    </div>
+                    <ul class="space-y-4 mb-8 text-sm font-medium text-white">
+                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-white"></i> 4 Porsi Baso Spesial (Bebas Pilih)</li>
+                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-white"></i> 4 Minuman Dingin</li>
+                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-5 h-5 text-white"></i> 2 Porsi Pangsit Goreng</li>
+                    </ul>
+                    <a href="#pesan" class="block text-center bg-white text-brandRed py-3.5 rounded-full text-sm font-display font-black hover:bg-gray-100 transition-colors shadow-lg shadow-black/10">Order Paket Ramean</a>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div>
-          <h4
-            class="text-white font-bold mb-6 uppercase tracking-wider text-sm"
-          >
-            Newsletter
-          </h4>
-          <p class="text-gray-500 font-light text-sm mb-4">
-            Dapatkan info promo rahasia dan diskon khusus.
-          </p>
-          <div class="flex">
-            <input
-              type="email"
-              placeholder="Email Anda"
-              class="px-4 py-3 w-full rounded-l-md bg-dark-card border border-dark-border text-white focus:border-primary focus:outline-none text-sm"
-            />
-            <button
-              class="bg-primary hover:bg-primary-hover px-4 py-3 rounded-r-md text-white transition-colors"
-            >
-              <i data-lucide="send" class="w-4 h-4"></i>
-            </button>
-          </div>
+    <section id="galeri" class="py-4 bg-white">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 px-2">
+            <div class="aspect-square img-food cursor-pointer reveal-smudge"><img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80" alt="Suasana Resto"></div>
+            <div class="aspect-square img-food cursor-pointer reveal-smudge delay-1"><img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&w=600&q=80" alt="Pembuatan"></div>
+            <div class="aspect-square img-food cursor-pointer reveal-smudge delay-2"><img src="https://images.unsplash.com/photo-1556155092-490a1ba16284?auto=format&fit=crop&w=600&q=80" alt="Dapur Bersih"></div>
+            <div class="aspect-square img-food cursor-pointer reveal-smudge delay-1"><img src="https://images.unsplash.com/photo-1627308595229-7830f5c9100f?auto=format&fit=crop&w=600&q=80" alt="Detail Makanan"></div>
         </div>
-      </div>
+    </section>
 
-      <div
-        class="border-t border-dark-border pt-8 text-center text-gray-600 font-light text-xs"
-      >
-        <p>
-          &copy; 2026 Baso Juara Nusantara. All Rights Reserved. Crafted with
-          passion.
-        </p>
-      </div>
+    <section class="py-24 bg-brandOffWhite border-y border-gray-100">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="text-center mb-12 reveal-smudge">
+                <h2 class="font-display text-4xl font-black text-textDark mb-4">Ada <span class="text-brandRed">Pertanyaan?</span></h2>
+            </div>
+
+            <div class="space-y-4 reveal-smudge delay-1">
+                <div class="faq-item bg-white border border-gray-200 rounded-2xl cursor-pointer hover:border-brandRed/30 transition-colors shadow-sm">
+                    <div class="px-6 py-5 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <h4 class="font-bold text-textDark text-sm">Apakah Baso Juara bisa dipesan melalui GoFood/GrabFood?</h4>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-textMuted faq-icon transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer px-6 text-textMuted text-sm font-light">
+                        <p class="pb-5">Ya, kami sudah tersedia di seluruh aplikasi food delivery (GoFood, GrabFood, ShopeeFood). Anda cukup mencari "Baso Juara Nusantara".</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item bg-white border border-gray-200 rounded-2xl cursor-pointer hover:border-brandRed/30 transition-colors shadow-sm">
+                    <div class="px-6 py-5 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <h4 class="font-bold text-textDark text-sm">Bisa pesan untuk acara hajatan / catering?</h4>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-textMuted faq-icon transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer px-6 text-textMuted text-sm font-light">
+                        <p class="pb-5">Sangat bisa! Kami menyediakan paket catering (gerobak baso) untuk acara pernikahan, arisan, maupun gathering kantor. Hubungi WA kami untuk detail harga grosir.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item bg-white border border-gray-200 rounded-2xl cursor-pointer hover:border-brandRed/30 transition-colors shadow-sm">
+                    <div class="px-6 py-5 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <h4 class="font-bold text-textDark text-sm">Apakah baso dibuat tanpa bahan pengawet?</h4>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-textMuted faq-icon transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer px-6 text-textMuted text-sm font-light">
+                        <p class="pb-5">100% tanpa pengawet. Kami memproduksi baso secara segar (fresh) setiap pagi hari untuk menjamin kualitas dan kesehatan pelanggan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="pesan" class="bg-textDark text-white pt-24 pb-12 relative overflow-hidden">
+        <div class="absolute bottom-0 right-0 w-[400px] h-[400px] bg-brandRed/10 rounded-full blur-[80px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center mb-16 reveal-smudge">
+                
+                <div class="lg:col-span-6">
+                    <h2 class="font-display text-5xl md:text-6xl font-black mb-6">
+                        Lapar <br><span class="text-brandRed">Sekarang?</span>
+                    </h2>
+                    <p class="text-gray-400 font-light mb-10 text-sm leading-relaxed max-w-md">
+                        Jangan ditahan. Pesan via WhatsApp sekarang dan nikmati semangkuk baso panas langsung di depan pintu rumah Anda.
+                    </p>
+                    <a href="https://wa.me/6281234567890" target="_blank" class="inline-flex items-center gap-3 bg-brandRed text-white px-8 py-4 rounded-full font-display font-bold uppercase tracking-wide text-sm hover:bg-white hover:text-brandRed transition-colors duration-300 shadow-xl shadow-brandRed/20">
+                        <i data-lucide="message-circle" class="w-5 h-5"></i> Order via WhatsApp
+                    </a>
+                </div>
+
+                <div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-6 bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-sm">
+                    <div>
+                        <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-brandRed mb-4"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
+                        <h5 class="text-white font-bold text-xs uppercase tracking-widest mb-2">Outlet Pusat</h5>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed">
+                            Jl. Kuliner Juara No. 1<br />Bandung, Jawa Barat<br>(Tersedia Parkir Luas)
+                        </p>
+                    </div>
+                    <div>
+                        <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-brandRed mb-4"><i data-lucide="clock" class="w-4 h-4"></i></div>
+                        <h5 class="text-white font-bold text-xs uppercase tracking-widest mb-2">Jam Buka</h5>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed">
+                            Setiap Hari<br />10.00 – 22.00 WIB<br>(Jumat Libur)
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-[10px] text-gray-500 uppercase tracking-widest font-bold text-center md:text-left">
+                <p>© 2026 BASO JUARA NUSANTARA. ALL RIGHTS RESERVED.</p>
+                <div class="flex gap-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-brandRed transition-colors">Instagram</a>
+                    <a href="#" class="hover:text-brandRed transition-colors">Tiktok</a>
+                    <a href="#" class="hover:text-brandRed transition-colors">GrabFood</a>
+                </div>
+            </div>
+        </div>
     </footer>
 
-    <a
-      href="#beranda"
-      id="back-to-top"
-      class="fixed bottom-8 right-8 bg-dark-card border border-primary text-primary w-12 h-12 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(229,9,20,0.3)] transform scale-0 transition-all duration-300 z-50 hover:bg-primary hover:text-white group"
-    >
-      <i
-        data-lucide="arrow-up"
-        class="group-hover:-translate-y-1 transition-transform"
-      ></i>
-    </a>
+    <div class="fixed bottom-6 right-6 md:bottom-8 md:right-8 flex flex-col gap-3 z-50">
+        <button id="btn-top" class="w-12 h-12 md:w-14 md:h-14 bg-white border border-gray-200 text-textDark rounded-full flex justify-center items-center hover:border-brandRed hover:text-brandRed transition-all duration-500 opacity-0 translate-y-6 pointer-events-none shadow-lg backdrop-blur-md" aria-label="Scroll Top">
+            <i data-lucide="arrow-up" class="w-5 h-5"></i>
+        </button>
 
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        <a href="https://wa.me/6281234567890?text=Halo%20Baso%20Juara,%20saya%20mau%20pesan." target="_blank" class="h-12 md:h-14 bg-brandRed text-white px-4 rounded-full flex items-center gap-3 hover:bg-brandRedDark transition-all duration-500 group shadow-[0_10px_20px_rgba(217,4,41,0.3)]" aria-label="Order via WhatsApp">
+            <i class="fa-brands fa-whatsapp text-xl md:text-2xl text-white"></i>
+            <span class="text-[10px] md:text-xs font-display font-bold uppercase tracking-widest hidden sm:block pr-2">Pesan Cepat</span>
+        </a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
     <script>
-      // Inisialisasi Icons
-      lucide.createIcons();
+        // Init Lucide
+        lucide.createIcons();
 
-      // Inisialisasi AOS Animation
-      AOS.init({
-        duration: 800,
-        once: true,
-        offset: 80,
-      });
+        // Mobile Menu
+        const btn = document.getElementById("mobile-btn");
+        const menu = document.getElementById("mobile-menu");
 
-      // Mobile Menu Toggle
-      const btn = document.getElementById("mobile-menu-btn");
-      const menu = document.getElementById("mobile-menu");
-
-      btn.addEventListener("click", () => {
-        menu.classList.toggle("hidden");
-      });
-
-      // Close mobile menu on link click
-      menu.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", () => {
-          menu.classList.add("hidden");
-        });
-      });
-
-      // FAQ Toggle Logic
-      function toggleFaq(element) {
-        const parent = element.parentElement;
-        const wasActive = parent.classList.contains("faq-active");
-
-        // Tutup semua FAQ
-        document.querySelectorAll(".faq-item").forEach((el) => {
-          el.classList.remove("faq-active");
+        btn.addEventListener("click", () => {
+            menu.classList.toggle("hidden");
+            btn.innerHTML = menu.classList.contains("hidden") 
+                ? '<i data-lucide="menu" class="w-6 h-6"></i>' 
+                : '<i data-lucide="x" class="w-6 h-6"></i>';
+            lucide.createIcons();
+            document.body.style.overflow = menu.classList.contains("hidden") ? "auto" : "hidden";
         });
 
-        // Buka jika tidak aktif
-        if (!wasActive) {
-          parent.classList.add("faq-active");
-        }
-      }
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+                btn.innerHTML = '<i data-lucide="menu" class="w-6 h-6"></i>';
+                lucide.createIcons();
+                document.body.style.overflow = "auto";
+            });
+        });
 
-      // Back to Top Logic
-      const backToTopBtn = document.getElementById("back-to-top");
-      window.addEventListener("scroll", () => {
-        if (window.scrollY > 500) {
-          backToTopBtn.classList.remove("scale-0");
-          backToTopBtn.classList.add("scale-100");
-        } else {
-          backToTopBtn.classList.remove("scale-100");
-          backToTopBtn.classList.add("scale-0");
+        // Glass Navbar Effect
+        const navbar = document.getElementById("navbar");
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add("glass-nav", "shadow-sm");
+                navbar.classList.remove("bg-transparent", "py-4");
+                navbar.classList.add("py-3");
+            } else {
+                navbar.classList.remove("glass-nav", "shadow-sm", "py-3");
+                navbar.classList.add("bg-transparent", "py-4");
+            }
+        });
+
+        // Accordion FAQ
+        function toggleFaq(element) {
+            const item = element.parentElement;
+            const icon = element.querySelector('.faq-icon');
+            
+            document.querySelectorAll('.faq-item').forEach(faq => {
+                if (faq !== item) {
+                    faq.classList.remove("active");
+                    const otherIcon = faq.querySelector('.faq-icon');
+                    if(otherIcon) otherIcon.style.transform = 'rotate(0deg)';
+                }
+            });
+            item.classList.toggle("active");
+            icon.style.transform = item.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
         }
-      });
+
+        // Back to top Button
+        const btnTop = document.getElementById("btn-top");
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 500) {
+                btnTop.classList.remove("opacity-0", "translate-y-6", "pointer-events-none");
+                btnTop.classList.add("opacity-100", "translate-y-0", "pointer-events-auto");
+            } else {
+                btnTop.classList.remove("opacity-100", "translate-y-0", "pointer-events-auto");
+                btnTop.classList.add("opacity-0", "translate-y-6", "pointer-events-none");
+            }
+        });
+        btnTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // Reveal Animation Observer (Smudge Slow)
+        const observerOptions = { root: null, rootMargin: '0px 0px -50px 0px', threshold: 0.15 };
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-smudge').forEach(el => observer.observe(el));
     </script>
-  </body>
+</body>
 </html>

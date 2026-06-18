@@ -1,692 +1,467 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cafe Dakretiv | Tempat Inspirasi Bertemu Rasa</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Dakretiv | Coffee & Creative Space</title>
     
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        coffee: "#2C1E16",     /* Deep Espresso */
+                        cream: "#F9F6F0",      /* Warm Oat */
+                        gold: "#C89B7B",       /* Copper Gold */
+                        goldHover: "#b08566",
+                    },
+                    fontFamily: {
+                        sans: ['"Poppins"', "sans-serif"],
+                        serif: ['"Playfair Display"', "serif"],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
-        /* === VARIABLES & RESET === */
-        :root {
-            --coffee: #3E2723;
-            --cream: #FFF8E1;
-            --gold: #FFD700;
-            --gold-hover: #e6c200;
-            --white: #ffffff;
-            --black-overlay: rgba(62, 39, 35, 0.85);
+        body { background-color: #F9F6F0; color: #2C1E16; overflow-x: hidden; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #C89B7B; border-radius: 10px; }
+
+        /* --- SMUDGE SLOW ANIMATION --- */
+        .reveal-smudge {
+            opacity: 0;
+            filter: blur(12px);
+            transform: translateY(40px) scale(0.98);
+            transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 1.5s cubic-bezier(0.16, 1, 0.3, 1),
+                        filter 1.5s ease;
+        }
+        .reveal-smudge.active {
+            opacity: 1;
+            filter: blur(0);
+            transform: translateY(0) scale(1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            scroll-behavior: smooth;
+        .delay-1 { transition-delay: 0.15s; }
+        .delay-2 { transition-delay: 0.3s; }
+        .delay-3 { transition-delay: 0.45s; }
+
+        /* Glassmorphism Navbar */
+        .glass-nav {
+            background: rgba(249, 246, 240, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            transition: all 0.4s ease;
+        }
+        .glass-nav.scrolled {
+            background: rgba(249, 246, 240, 0.98);
+            border-bottom: 1px solid rgba(44, 30, 22, 0.08);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.03);
+            padding-top: 15px; padding-bottom: 15px;
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--cream);
-            color: var(--coffee);
-            line-height: 1.6;
-            overflow-x: hidden;
+        /* Image Slow Zoom on Hover */
+        .img-zoom { overflow: hidden; border-radius: 16px; }
+        .img-zoom img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 2s cubic-bezier(0.16, 1, 0.3, 1), filter 1s ease;
+        }
+        .group:hover .img-zoom img {
+            transform: scale(1.08);
+            filter: brightness(0.9);
         }
 
-        h1, h2, h3, h4, .logo {
+        /* Custom Button Hover */
+        .btn-gold {
+            background: #C89B7B; color: #fff;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-gold:hover {
+            background: #2C1E16; color: #fff;
+            box-shadow: 0 10px 25px rgba(44, 30, 22, 0.2);
+            transform: translateY(-3px);
+        }
+        .btn-outline {
+            border: 1px solid #2C1E16; color: #2C1E16;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-outline:hover {
+            background: #2C1E16; color: #fff;
+            transform: translateY(-3px);
+        }
+
+        /* Testimonial Quote */
+        .quote-mark {
             font-family: 'Playfair Display', serif;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        ul {
-            list-style: none;
-        }
-
-        /* === REUSABLE CLASSES === */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .section-padding {
-            padding: 100px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            color: var(--coffee);
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            max-width: 700px;
-            margin: 0 auto 50px;
-            font-size: 1.1rem;
-            color: #5D4037;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        .btn-primary {
-            background-color: var(--gold);
-            color: var(--coffee);
-            border: 2px solid var(--gold);
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-        }
-
-        .btn-primary:hover {
-            background-color: transparent;
-            color: var(--gold);
-            transform: translateY(-3px);
-        }
-
-        .btn-secondary {
-            background-color: transparent;
-            color: var(--white);
-            border: 2px solid var(--white);
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--white);
-            color: var(--coffee);
-            transform: translateY(-3px);
-        }
-
-        /* === NAVBAR === */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 20px 0;
-            background-color: rgba(62, 39, 35, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--gold);
-            letter-spacing: 1px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-        }
-
-        .nav-links a {
-            color: var(--cream);
-            font-weight: 400;
-            font-size: 1rem;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--gold);
-        }
-
-        /* === HERO SECTION === */
-        .hero {
-            height: 100vh;
-            background: linear-gradient(var(--black-overlay), var(--black-overlay)), 
-                        url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: var(--white);
-            padding-top: 80px; /* Offset for navbar */
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            color: var(--gold);
-            margin-bottom: 20px;
-            animation: fadeInDown 1s ease;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 800px;
-            margin: 0 auto 40px;
-            font-weight: 300;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-        }
-
-        /* === ABOUT US === */
-        .about-section {
-            background-color: var(--cream);
-        }
-
-        .visi-misi-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-top: 40px;
-        }
-
-        .visi-misi-card {
-            background-color: var(--white);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(62, 39, 35, 0.05);
-            border-left: 5px solid var(--gold);
-            transition: transform 0.3s ease;
-        }
-
-        .visi-misi-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .visi-misi-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: var(--coffee);
-        }
-
-        /* === SERVICES === */
-        .services-section {
-            background-color: var(--white);
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-        }
-
-        .service-card {
-            text-align: center;
-            padding: 40px 20px;
-            background-color: var(--cream);
-            border-radius: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .service-card:hover {
-            background-color: var(--coffee);
-            color: var(--cream);
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(62, 39, 35, 0.15);
-        }
-
-        .service-card:hover h3 {
-            color: var(--gold);
-        }
-
-        .service-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        .service-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: var(--coffee);
-            transition: color 0.3s;
-        }
-
-        /* === WHY CHOOSE US === */
-        .why-us-section {
-            background-color: var(--coffee);
-            color: var(--cream);
-        }
-
-        .why-us-section .section-title {
-            color: var(--gold);
-        }
-
-        .why-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .why-item {
-            flex: 1 1 45%;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 1.1rem;
-        }
-
-        .why-item span {
-            color: var(--gold);
-            font-size: 1.5rem;
-        }
-
-        /* === MENU === */
-        .menu-section {
-            background-color: var(--cream);
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-
-        .menu-card {
-            background-color: var(--white);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease;
-        }
-
-        .menu-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .menu-img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-        }
-
-        .menu-content {
-            padding: 25px;
-            text-align: center;
-        }
-
-        .menu-content h3 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-        }
-
-        .menu-content p {
-            font-size: 0.9rem;
-            color: #777;
-            margin-bottom: 15px;
-        }
-
-        .menu-price {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--gold);
-        }
-
-        /* === GALLERY === */
-        .gallery-section {
-            background-color: var(--white);
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        .gallery-img {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 10px;
-            transition: transform 0.5s ease;
-            cursor: pointer;
-        }
-
-        .gallery-item {
-            overflow: hidden;
-            border-radius: 10px;
-        }
-
-        .gallery-item:hover .gallery-img {
-            transform: scale(1.1);
-        }
-
-        /* === TESTIMONIALS === */
-        .testimonial-section {
-            background-color: var(--coffee);
-            color: var(--cream);
-        }
-
-        .testimonial-section .section-title {
-            color: var(--gold);
-        }
-
-        .testimonial-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .testi-card {
-            background-color: rgba(255, 255, 255, 0.05);
-            padding: 40px;
-            border-radius: 15px;
-            position: relative;
-        }
-
-        .quote-icon {
-            font-size: 3rem;
-            color: var(--gold);
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            opacity: 0.3;
-        }
-
-        .testi-card p {
-            font-style: italic;
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .testi-author {
-            font-weight: 700;
-            color: var(--gold);
-        }
-
-        /* === CONTACT === */
-        .contact-section {
-            background-color: var(--cream);
-            text-align: center;
-        }
-
-        .contact-info {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-        }
-
-        .map-container {
-            width: 100%;
-            max-width: 1000px;
-            margin: 0 auto;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .map-container iframe {
-            width: 100%;
-            height: 400px;
-            border: 0;
-        }
-
-        /* === FOOTER === */
-        footer {
-            background-color: #241512;
-            color: var(--cream);
-            text-align: center;
-            padding: 30px 20px;
-            font-size: 0.9rem;
-        }
-
-        /* === FLOATING BUTTONS === */
-        .floating-wa {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background-color: #25D366; /* Standard WA color */
-            color: var(--white);
-            padding: 12px 20px;
-            border-radius: 50px;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: transform 0.3s;
-        }
-
-        .floating-wa:hover {
-            transform: scale(1.05);
-        }
-
-        .back-to-top {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--gold);
-            color: var(--coffee);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            z-index: 999;
-            transition: transform 0.3s, background 0.3s;
-        }
-
-        .back-to-top:hover {
-            background-color: var(--gold-hover);
-            transform: translateY(-3px);
-        }
-
-        /* === RESPONSIVE (MOBILE & TABLET) === */
-        @media (max-width: 992px) {
-            .hero h1 { font-size: 3rem; }
-            .services-grid { grid-template-columns: repeat(2, 1fr); }
-            .gallery-grid { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 768px) {
-            .nav-links { display: none; /* In real app, this would be a hamburger menu */ }
-            .hero h1 { font-size: 2.5rem; }
-            .hero-buttons { flex-direction: column; }
-            .visi-misi-grid { grid-template-columns: 1fr; }
-            .services-grid { grid-template-columns: 1fr; }
-            .why-item { flex: 1 1 100%; }
-            .testimonial-grid { grid-template-columns: 1fr; }
-            .section-title { font-size: 2rem; }
+            font-size: 80px; line-height: 0;
+            color: #C89B7B; opacity: 0.2;
+            position: absolute; top: 40px; left: 20px;
         }
     </style>
 </head>
-<body id="top">
+<body class="font-sans antialiased selection:bg-gold selection:text-white">
 
-    <nav>
-        <div class="container nav-container">
-            <a href="#top" class="logo">Cafe Dakretiv</a>
-            <ul class="nav-links">
-                <li><a href="#top">Beranda</a></li>
-                <li><a href="#cerita">Cerita Kami</a></li>
-                <li><a href="#menu">Menu</a></li>
-                <li><a href="#galeri">Galeri</a></li>
-                <li><a href="#kontak">Kontak</a></li>
-            </ul>
+    <!-- NAVBAR -->
+    <nav id="navbar" class="fixed w-full z-50 glass-nav py-5">
+        <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+            <a href="#beranda" class="font-serif text-2xl font-bold tracking-wide text-coffee">
+                Dakretiv<span class="text-gold italic">.</span>
+            </a>
+
+            <div class="hidden lg:flex items-center space-x-10 text-xs font-medium uppercase tracking-widest text-gray-500">
+                <a href="#cerita" class="hover:text-coffee transition-colors">Cerita</a>
+                <a href="#fasilitas" class="hover:text-coffee transition-colors">Ruang</a>
+                <a href="#menu" class="hover:text-coffee transition-colors">Rasa</a>
+                <a href="#galeri" class="hover:text-coffee transition-colors">Galeri</a>
+            </div>
+
+            <div class="hidden lg:block">
+                <a href="#kontak" class="text-[10px] font-bold uppercase tracking-widest border-b border-coffee pb-1 hover:text-gold hover:border-gold transition-colors">
+                    Kunjungi Kami
+                </a>
+            </div>
+
+            <button id="mobile-btn" class="lg:hidden text-coffee focus:outline-none">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-cream border-b border-gray-200 py-6 px-6 flex flex-col space-y-6 shadow-xl">
+            <a href="#cerita" class="font-serif text-2xl border-b border-gray-200 pb-2">Cerita</a>
+            <a href="#fasilitas" class="font-serif text-2xl border-b border-gray-200 pb-2">Ruang</a>
+            <a href="#menu" class="font-serif text-2xl border-b border-gray-200 pb-2">Rasa</a>
+            <a href="#kontak" class="font-serif text-2xl text-gold pb-2">Lokasi</a>
         </div>
     </nav>
 
-    <header class="hero">
-        <div class="container">
-            <h1>Tempat Inspirasi Bertemu Rasa</h1>
-            <p>Lebih dari sekadar kopi. Nikmati suasana premium dan racikan barista terbaik di kota Anda, khusus untuk momen tak terlupakan.</p>
-            <div class="hero-buttons">
-                <a href="#menu" class="btn btn-secondary">Lihat Menu</a>
-                <a href="https://wa.me/6281234567890" target="_blank" class="btn btn-primary">Reservasi Sekarang</a>
+    <!-- HERO SECTION -->
+    <section id="beranda" class="relative h-[100svh] flex items-center justify-center text-center px-6 overflow-hidden">
+        <!-- Bg Image with elegant overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=1920&q=80" alt="Cafe Interior" class="w-full h-full object-cover filter brightness-[0.4]">
+        </div>
+        
+        <div class="relative z-10 max-w-3xl reveal-smudge">
+            <p class="text-gold font-medium uppercase tracking-[0.3em] text-xs mb-6">Ruang. Rasa. Realita.</p>
+            <h1 class="font-serif text-5xl md:text-7xl lg:text-[80px] leading-[1.1] font-bold text-white mb-6">
+                Inspirasi dalam <br>
+                <span class="italic font-light">Tiap Seduhan.</span>
+            </h1>
+            <p class="text-gray-300 font-light text-base md:text-lg mb-10 max-w-xl mx-auto">
+                Lebih dari sekadar kedai kopi. Ini adalah suaka bagi para kreator, di mana ide-ide besar lahir di atas meja kayu yang hangat.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <a href="#menu" class="btn-gold px-8 py-4 text-xs font-bold uppercase tracking-widest rounded-full w-full sm:w-auto">
+                    Katalog Menu
+                </a>
+                <a href="https://wa.me/6281234567890" target="_blank" class="border border-white text-white hover:bg-white hover:text-coffee transition-colors duration-300 px-8 py-4 text-xs font-bold uppercase tracking-widest rounded-full w-full sm:w-auto">
+                    Reservasi Meja
+                </a>
             </div>
         </div>
-    </header>
+    </section>
 
-    <section id="cerita" class="section-padding about-section">
-        <div class="container">
-            <h2 class="section-title">Cerita di Balik Cafe Dakretiv</h2>
-            <p class="section-subtitle">Berdiri sejak 2021, Cafe Dakretiv lahir dari kecintaan kami pada biji kopi nusantara dan ruang diskusi yang hangat. Kami hadir untuk menjadi rumah kedua bagi para kreator, profesional, dan siapa saja yang mencari ketenangan.</p>
+    <!-- CERITA / ABOUT -->
+    <section id="cerita" class="py-24 md:py-32 bg-cream">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+            <div class="img-zoom h-[400px] md:h-[600px] reveal-smudge">
+                <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1000&q=80" alt="Barista Pouring Coffee" class="rounded-2xl">
+            </div>
             
-            <div class="visi-misi-grid">
-                <div class="visi-misi-card">
-                    <h3>Visi Kami</h3>
-                    <p>Menjadi pelopor kedai kopi dengan pengalaman rasa dan kenyamanan standar internasional.</p>
-                </div>
-                <div class="visi-misi-card">
-                    <h3>Misi Kami</h3>
-                    <p>Menyajikan biji kopi pilihan terbaik dan menciptakan ekosistem ruang kreatif yang positif.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="section-padding services-section">
-        <div class="container">
-            <h2 class="section-title">Layanan Kami</h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">☕</div>
-                    <h3>Dine-In & Workspace</h3>
-                    <p>Area nyaman dengan WiFi super cepat, cocok untuk bekerja atau bersantai.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🤝</div>
-                    <h3>Meeting Room</h3>
-                    <p>Ruang privat yang kedap suara, dirancang khusus untuk diskusi bisnis Anda.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🎂</div>
-                    <h3>Event & Catering</h3>
-                    <p>Rayakan momen spesial Anda bersama kami dengan hidangan premium.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="section-padding why-us-section">
-        <div class="container">
-            <h2 class="section-title">Kenapa Memilih Cafe Dakretiv?</h2>
-            <div class="why-list">
-                <div class="why-item"><span>✔</span> 100% Biji Kopi Arabika Pilihan</div>
-                <div class="why-item"><span>✔</span> Barista Tersertifikasi</div>
-                <div class="why-item"><span>✔</span> Ambience Mewah & Eksklusif</div>
-                <div class="why-item"><span>✔</span> Parkir Luas & Aman</div>
-            </div>
-        </div>
-    </section>
-
-    <section id="menu" class="section-padding menu-section">
-        <div class="container">
-            <h2 class="section-title">Katalog Menu Andalan</h2>
-            <div class="menu-grid">
-                <div class="menu-card">
-                    <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=500&q=80" alt="Dakretiv Signature Latte" class="menu-img">
-                    <div class="menu-content">
-                        <h3>Dakretiv Signature Latte</h3>
-                        <p>Paduan espresso dan gula aren rahasia</p>
-                        <p class="menu-price">Rp 35.000</p>
+            <div class="reveal-smudge delay-1">
+                <span class="text-gold uppercase tracking-[0.2em] text-[10px] font-bold block mb-4">Sejak 2021</span>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-coffee mb-6 leading-tight">
+                    Seni Meracik <br><span class="italic font-normal text-gold">Ketenangan.</span>
+                </h2>
+                <p class="text-gray-600 font-light mb-8 leading-relaxed">
+                    Dakretiv lahir dari filosofi bahwa secangkir kopi yang baik berhak dinikmati di ruang yang tepat. Kami mengurasi 100% biji kopi Arabika Nusantara, dipanggang dengan profil medium-dark, dan disajikan di ruangan yang memanjakan indera visual dan pendengaran Anda.
+                </p>
+                <div class="grid grid-cols-2 gap-6 pt-6 border-t border-gray-300">
+                    <div>
+                        <h4 class="font-serif text-xl font-bold text-coffee mb-2">Visi.</h4>
+                        <p class="text-xs text-gray-500 font-light">Kenyamanan standar global dengan rasa lokal yang otentik.</p>
                     </div>
-                </div>
-                <div class="menu-card">
-                    <img src="https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?auto=format&fit=crop&w=500&q=80" alt="Premium Matcha Blend" class="menu-img">
-                    <div class="menu-content">
-                        <h3>Premium Matcha Blend</h3>
-                        <p>Matcha asli yang didatangkan dari Jepang</p>
-                        <p class="menu-price">Rp 40.000</p>
-                    </div>
-                </div>
-                <div class="menu-card">
-                    <img src="https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=500&q=80" alt="Truffle French Fries" class="menu-img">
-                    <div class="menu-content">
-                        <h3>Truffle French Fries</h3>
-                        <p>Kentang goreng renyah dengan minyak truffle</p>
-                        <p class="menu-price">Rp 30.000</p>
-                    </div>
-                </div>
-                <div class="menu-card">
-                    <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=80" alt="Wagyu Beef Burger" class="menu-img">
-                    <div class="menu-content">
-                        <h3>Wagyu Beef Burger</h3>
-                        <p>Daging wagyu juicy dengan roti artisan</p>
-                        <p class="menu-price">Rp 65.000</p>
+                    <div>
+                        <h4 class="font-serif text-xl font-bold text-coffee mb-2">Misi.</h4>
+                        <p class="text-xs text-gray-500 font-light">Menciptakan ekosistem positif bagi komunitas kreatif.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="galeri" class="section-padding gallery-section">
-        <div class="container">
-            <h2 class="section-title">Galeri Estetik Kami</h2>
-            <div class="gallery-grid">
-                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80" alt="Suasana Indoor" class="gallery-img"></div>
-                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1525610553991-2bede1a236e2?auto=format&fit=crop&w=800&q=80" alt="Suasana Outdoor" class="gallery-img"></div>
-                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80" alt="Kopi Dakretiv" class="gallery-img"></div>
-                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1522228115018-d838bcce5c3a?auto=format&fit=crop&w=800&q=80" alt="Pelanggan" class="gallery-img"></div>
+    <!-- FASILITAS / RUANG -->
+    <section id="fasilitas" class="py-24 bg-white border-y border-gray-200">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal-smudge">
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-coffee mb-4">Ruang <span class="italic text-gold font-normal">Fokus.</span></h2>
+                <p class="text-gray-500 font-light text-sm max-w-md mx-auto">Dirancang secara arsitektural untuk menunjang produktivitas dan privasi Anda.</p>
             </div>
-        </div>
-    </section>
 
-    <section class="section-padding testimonial-section">
-        <div class="container">
-            <h2 class="section-title">Apa Kata Mereka?</h2>
-            <div class="testimonial-grid">
-                <div class="testi-card">
-                    <div class="quote-icon">"</div>
-                    <p>Tempat paling asyik buat kerja dan meeting klien. Kopinya juara!</p>
-                    <h4 class="testi-author">- Budi, Pengusaha</h4>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- F1 -->
+                <div class="bg-cream p-10 rounded-2xl text-center group reveal-smudge">
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm text-gold group-hover:scale-110 transition-transform duration-500">
+                        <i data-lucide="laptop" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-coffee mb-3">Workspace</h3>
+                    <p class="text-xs text-gray-500 font-light leading-relaxed">Meja ergonomis, colokan melimpah, dan WiFi berkecepatan 100Mbps khusus untuk pelanggan.</p>
                 </div>
-                <div class="testi-card">
-                    <div class="quote-icon">"</div>
-                    <p>Ambiencenya mewah banget tapi harganya affordable. Wajib coba Signature Latte-nya!</p>
-                    <h4 class="testi-author">- Sarah, Desainer</h4>
+                <!-- F2 -->
+                <div class="bg-coffee text-cream p-10 rounded-2xl text-center group reveal-smudge delay-1 shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-gold/10 rounded-bl-full -z-0"></div>
+                    <div class="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-6 text-gold group-hover:scale-110 transition-transform duration-500 relative z-10">
+                        <i data-lucide="users" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-white mb-3 relative z-10">VIP Room</h3>
+                    <p class="text-xs text-gray-300 font-light leading-relaxed relative z-10">Ruangan kedap suara berkapasitas 8 orang, lengkap dengan Smart TV untuk presentasi eksklusif.</p>
+                </div>
+                <!-- F3 -->
+                <div class="bg-cream p-10 rounded-2xl text-center group reveal-smudge delay-2">
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm text-gold group-hover:scale-110 transition-transform duration-500">
+                        <i data-lucide="glass-water" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-coffee mb-3">Event Space</h3>
+                    <p class="text-xs text-gray-500 font-light leading-relaxed">Area semi-outdoor yang teduh, sempurna untuk perayaan ulang tahun atau *intimate gathering*.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="kontak" class="section-padding contact-section">
-        <div class="container">
-            <h2 class="section-title">Kunjungi Kami atau Pesan Sekarang</h2>
-            <p class="contact-info">📍 Jl. Kreatif No. 88, Kota Pusat</p>
-            <div class="map-container">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.666427009761!2d106.8249641147689!3d-6.175392395529188!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f5d2e764b12d%3A0x3d2ad6e1e0e9bcc8!2sMonumen%20Nasional!5e0!3m2!1sen!2sid!4v1628151234567!5m2!1sen!2sid" allowfullscreen="" loading="lazy"></iframe>
+    <!-- MENU / RASA -->
+    <section id="menu" class="py-24 md:py-32 bg-cream">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal-smudge">
+                <div>
+                    <span class="text-gold uppercase tracking-[0.2em] text-[10px] font-bold block mb-2">Katalog Rasa</span>
+                    <h2 class="font-serif text-4xl md:text-5xl font-bold text-coffee">Signature <span class="italic text-gray-400 font-normal">Dakretiv.</span></h2>
+                </div>
+                <a href="#kontak" class="hidden md:block text-[10px] font-bold uppercase tracking-widest border-b border-coffee pb-1 hover:text-gold hover:border-gold transition-colors">Pesan Sekarang</a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- M1 -->
+                <div class="group reveal-smudge">
+                    <div class="img-zoom aspect-[4/5] mb-6 shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80" alt="Latte">
+                    </div>
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-serif text-xl font-bold text-coffee">Signature Latte</h3>
+                        <span class="font-semibold text-gold">35k</span>
+                    </div>
+                    <p class="text-xs text-gray-500 font-light">Espresso medium roast dengan racikan gula aren rahasia.</p>
+                </div>
+                <!-- M2 -->
+                <div class="group reveal-smudge delay-1">
+                    <div class="img-zoom aspect-[4/5] mb-6 shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?auto=format&fit=crop&w=600&q=80" alt="Matcha">
+                    </div>
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-serif text-xl font-bold text-coffee">Kyoto Matcha</h3>
+                        <span class="font-semibold text-gold">40k</span>
+                    </div>
+                    <p class="text-xs text-gray-500 font-light">Seremonial matcha asli Jepang berpadu cream lembut.</p>
+                </div>
+                <!-- M3 -->
+                <div class="group reveal-smudge delay-2">
+                    <div class="img-zoom aspect-[4/5] mb-6 shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=600&q=80" alt="Truffle Fries">
+                    </div>
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-serif text-xl font-bold text-coffee">Truffle Fries</h3>
+                        <span class="font-semibold text-gold">30k</span>
+                    </div>
+                    <p class="text-xs text-gray-500 font-light">Potongan kentang renyah dengan aroma minyak truffle.</p>
+                </div>
+                <!-- M4 -->
+                <div class="group reveal-smudge delay-3">
+                    <div class="img-zoom aspect-[4/5] mb-6 shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80" alt="Burger">
+                    </div>
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-serif text-xl font-bold text-coffee">Artisan Burger</h3>
+                        <span class="font-semibold text-gold">65k</span>
+                    </div>
+                    <p class="text-xs text-gray-500 font-light">Daging wagyu juicy diapit roti brioche panggang segar.</p>
+                </div>
+            </div>
+            
+            <a href="#kontak" class="md:hidden mt-10 inline-block text-[10px] font-bold uppercase tracking-widest border-b border-coffee pb-1">Pesan Sekarang</a>
+        </div>
+    </section>
+
+    <!-- GALERI & TESTIMONI -->
+    <section id="galeri" class="py-24 bg-white border-y border-gray-200">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16">
+                <!-- Gallery Grid -->
+                <div class="reveal-smudge">
+                    <h2 class="font-serif text-4xl font-bold text-coffee mb-8">Momen & <span class="italic text-gold font-normal">Suasana.</span></h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="img-zoom h-48 md:h-64 rounded-2xl"><img src="https://images.unsplash.com/photo-1525610553991-2bede1a236e2?auto=format&fit=crop&w=800&q=80" alt="Indoor"></div>
+                        <div class="img-zoom h-48 md:h-64 rounded-2xl"><img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80" alt="Coffee Details"></div>
+                        <div class="img-zoom h-48 md:h-64 rounded-2xl col-span-2"><img src="https://images.unsplash.com/photo-1522228115018-d838bcce5c3a?auto=format&fit=crop&w=1000&q=80" alt="People gathering"></div>
+                    </div>
+                </div>
+
+                <!-- Testimonials -->
+                <div class="flex flex-col justify-center reveal-smudge delay-1">
+                    <h2 class="font-serif text-4xl font-bold text-coffee mb-8 hidden lg:block">Kata <span class="italic text-gold font-normal">Mereka.</span></h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-cream p-8 rounded-2xl relative overflow-hidden">
+                            <span class="quote-mark">"</span>
+                            <p class="font-serif text-lg italic text-gray-700 mb-4 relative z-10">Tempat paling asyik buat kerja dan meeting klien. Ambience-nya mewah tapi harganya masuk akal. Kopinya juara!</p>
+                            <h4 class="text-xs font-bold uppercase tracking-widest text-coffee relative z-10">— Budi, Entrepreneur</h4>
+                        </div>
+                        <div class="bg-cream p-8 rounded-2xl relative overflow-hidden">
+                            <span class="quote-mark">"</span>
+                            <p class="font-serif text-lg italic text-gray-700 mb-4 relative z-10">Pelayanan baristanya ramah banget. Wajib coba Signature Latte-nya, beda dari kedai kopi lain di kota ini.</p>
+                            <h4 class="text-xs font-bold uppercase tracking-widest text-coffee relative z-10">— Sarah, Desainer</h4>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <footer>
-        <p>Hak Cipta &copy; 2024 Cafe Dakretiv. Didesain oleh Gemini.</p>
+    <!-- KONTAK / FOOTER -->
+    <footer id="kontak" class="bg-coffee text-cream pt-24 pb-10 relative">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 mb-20">
+            <div class="reveal-smudge">
+                <h2 class="font-serif text-5xl md:text-6xl font-bold mb-6">Sapa <span class="italic text-gold font-normal">Kami.</span></h2>
+                <p class="text-gray-400 font-light mb-10 max-w-sm">Jadwalkan pertemuan, reservasi ruang VIP, atau sekadar mampir untuk secangkir kopi hangat.</p>
+                
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="map-pin" class="w-5 h-5 text-gold mt-1"></i>
+                        <div>
+                            <p class="font-bold text-white mb-1">Lokasi Dakretiv</p>
+                            <p class="text-sm font-light text-gray-400">Jl. Skena Kreatif No. 88<br>Distrik Selatan, Kota Kopi</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="clock" class="w-5 h-5 text-gold mt-1"></i>
+                        <div>
+                            <p class="font-bold text-white mb-1">Jam Operasional</p>
+                            <p class="text-sm font-light text-gray-400">Setiap Hari: 08.00 - 23.00 WIB</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal-smudge delay-1 h-64 md:h-auto rounded-2xl overflow-hidden filter grayscale contrast-125 opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.666427009761!2d106.8249641147689!3d-6.175392395529188!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f5d2e764b12d%3A0x3d2ad6e1e0e9bcc8!2sMonumen%20Nasional!5e0!3m2!1sen!2sid!4v1628151234567!5m2!1sen!2sid" class="w-full h-full border-0" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-6 border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-widest text-gray-500">
+            <p>&copy; 2026 CAFE DAKRETIV. ALL RIGHTS RESERVED.</p>
+            <div class="flex gap-4 mt-4 md:mt-0">
+                <a href="#" class="hover:text-gold transition-colors"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+                <a href="#" class="hover:text-gold transition-colors"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+            </div>
+        </div>
     </footer>
 
-    <a href="https://wa.me/6281234567890" target="_blank" class="floating-wa">
-        💬 Hubungi Kami
-    </a>
+    <!-- FLOATING BUTTONS -->
+    <div class="fixed bottom-6 right-6 md:bottom-8 md:right-8 flex flex-col gap-3 z-50">
+        
+        <!-- Back to Top (Appears on scroll) -->
+        <a href="#beranda" id="btn-top" class="w-12 h-12 md:w-14 md:h-14 bg-white text-coffee rounded-full flex justify-center items-center shadow-lg hover:bg-gold hover:text-white transition-all duration-500 opacity-0 translate-y-6 pointer-events-none" aria-label="Kembali ke atas">
+            <i data-lucide="chevron-up" class="w-5 h-5"></i>
+        </a>
 
-    <a href="#top" class="back-to-top" title="Kembali ke Atas">
-        ↑
-    </a>
+        <!-- Elegant WhatsApp Button -->
+        <a href="https://wa.me/6281234567890?text=Halo%20Dakretiv,%20saya%20ingin%20reservasi." target="_blank" class="h-12 md:h-14 bg-coffee text-white px-5 rounded-full flex items-center gap-3 shadow-2xl hover:bg-gold hover:text-white transition-all duration-500 group" aria-label="Hubungi WhatsApp">
+            <div class="w-6 h-6 bg-[#25D366] rounded-full flex items-center justify-center text-white">
+                <i data-lucide="phone" class="w-3 h-3 fill-current"></i>
+            </div>
+            <span class="text-[10px] md:text-xs font-bold uppercase tracking-widest hidden sm:block group-hover:pr-2 transition-all">Reservasi WA</span>
+        </a>
 
+    </div>
+
+    <script>
+        // Init Lucide Icons
+        lucide.createIcons();
+
+        // Navbar Glass & Mobile Menu
+        const navbar = document.getElementById('navbar');
+        const btn = document.getElementById("mobile-btn");
+        const menu = document.getElementById("mobile-menu");
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        btn.addEventListener("click", () => {
+            menu.classList.toggle("hidden");
+            btn.innerHTML = menu.classList.contains("hidden") 
+                ? '<i data-lucide="menu" class="w-6 h-6"></i>' 
+                : '<i data-lucide="x" class="w-6 h-6"></i>';
+            lucide.createIcons();
+        });
+
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+                btn.innerHTML = '<i data-lucide="menu" class="w-6 h-6"></i>';
+                lucide.createIcons();
+            });
+        });
+
+        // Back to Top Visibility
+        const btnTop = document.getElementById("btn-top");
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 500) {
+                btnTop.classList.remove("opacity-0", "translate-y-6", "pointer-events-none");
+                btnTop.classList.add("opacity-100", "translate-y-0", "pointer-events-auto");
+            } else {
+                btnTop.classList.remove("opacity-100", "translate-y-0", "pointer-events-auto");
+                btnTop.classList.add("opacity-0", "translate-y-6", "pointer-events-none");
+            }
+        });
+
+        // Advanced Intersection Observer for "Smudge Slow" Animation
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px 0px -50px 0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-smudge').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
 </body>
 </html>

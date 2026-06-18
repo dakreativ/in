@@ -3,35 +3,36 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CukurHemat – Gaya Premium, Harga Teman</title>
+    <title>CukurHemat | Premium Barbershop</title>
 
+    <!-- Premium Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-
+    <!-- FontAwesome & Tailwind -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
               heading: ['"Playfair Display"', "serif"],
-              sans: ['"Open Sans"', "sans-serif"],
+              sans: ['"Outfit"', "sans-serif"],
             },
             colors: {
-              noir: "#050505", // Almost pure black
-              noirLight: "#111111", // Slightly lighter black for cards
-              gold: "#D4AF37", // Metallic Gold
-              goldHover: "#C49F27", // Darker Gold for interaction
-              bone: "#E5E5E5", // Off-white for text
+              barberBlack: "#0a0a0a",   // Deep pure black
+              barberDark: "#121212",    // Slightly lighter for cards
+              barberGray: "#1a1a1a",    // Borders/Subtle elements
+              gold: "#D4AF37",          // Premium Gold
+              goldHover: "#B5952F",
+              bone: "#F5F5F5",          // Off-white for readability
+              textMuted: "#9CA3AF",
             },
           },
         },
@@ -39,600 +40,413 @@
     </script>
 
     <style>
-      /* Custom UI Interactivity */
-      .faq-answer {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-in-out;
+      body { background-color: #0a0a0a; color: #F5F5F5; overflow-x: hidden; }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: #0a0a0a; }
+      ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
+
+      /* Smudge/Blur Reveal Animation */
+      .reveal-blur {
+        opacity: 0;
+        filter: blur(12px);
+        transform: translateY(30px) scale(0.98);
+        transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
       }
-      .faq-item.active .faq-answer {
-        max-height: 150px;
+      .reveal-blur.active {
+        opacity: 1; filter: blur(0); transform: translateY(0) scale(1);
       }
-      .faq-item.active .faq-icon {
-        transform: rotate(180deg);
+      .delay-1 { transition-delay: 0.15s; }
+      .delay-2 { transition-delay: 0.3s; }
+
+      /* Glassmorphism Navbar */
+      .glass-nav {
+        background: rgba(10, 10, 10, 0.85);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(212, 175, 55, 0.1);
       }
-      /* Soft image hover */
-      .img-hover:hover img {
-        transform: scale(1.05);
-        filter: grayscale(0%);
+
+      /* Hover Image Effects */
+      .img-wrapper { overflow: hidden; position: relative; border-radius: 16px; }
+      .img-wrapper img {
+        width: 100%; height: 100%; object-fit: cover;
+        transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1), filter 1s ease;
+        filter: grayscale(100%) contrast(1.1);
       }
-      /* Distinct Gold Line */
-      .gold-line {
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #d4af37, transparent);
+      .group:hover .img-wrapper img {
+        transform: scale(1.08); filter: grayscale(0%) contrast(1);
       }
+
+      /* Card Hover Glow */
+      .glow-card { transition: all 0.4s ease; border: 1px solid #1a1a1a; }
+      .glow-card:hover {
+        border-color: rgba(212, 175, 55, 0.4);
+        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.05);
+        transform: translateY(-5px);
+      }
+
+      /* Buttons */
+      .btn-gold {
+        background: linear-gradient(135deg, #D4AF37, #B5952F);
+        color: #0a0a0a; transition: all 0.4s ease;
+      }
+      .btn-gold:hover {
+        box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+        transform: translateY(-2px);
+      }
+      .btn-outline {
+        border: 1px solid #D4AF37; color: #D4AF37; transition: all 0.4s ease;
+      }
+      .btn-outline:hover { background: #D4AF37; color: #0a0a0a; }
+
+      /* FAQ Accordion */
+      .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease; opacity: 0; }
+      .faq-item.active .faq-answer { max-height: 200px; opacity: 1; }
+      .faq-item.active .faq-icon { transform: rotate(180deg); color: #D4AF37; }
     </style>
   </head>
-  <body class="font-sans text-bone bg-noir antialiased overflow-x-hidden">
-    <nav
-      class="fixed w-full z-50 transition-all duration-300 bg-transparent py-5"
-      id="navbar"
-    >
+  <body class="font-sans antialiased selection:bg-gold selection:text-barberBlack">
+
+    <!-- NAVBAR -->
+    <nav class="fixed w-full z-50 transition-all duration-300 py-4 bg-transparent" id="navbar">
       <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        <a
-          href="#"
-          class="font-heading italic text-3xl text-gold flex items-center gap-1"
-        >
+        <!-- Logo -->
+        <a href="#beranda" class="font-heading italic text-3xl text-gold flex items-center gap-2">
+          <i class="fa-solid fa-scissors text-xl"></i>
           cukur<span class="font-bold text-bone not-italic">hemat.</span>
         </a>
 
-        <div
-          class="hidden md:flex items-center space-x-8 text-xs uppercase tracking-widest font-semibold"
-        >
-          <a href="#beranda" class="text-bone hover:text-gold transition"
-            >Beranda</a
-          >
-          <a href="#layanan" class="text-bone hover:text-gold transition"
-            >Layanan</a
-          >
-          <a href="#paket" class="text-bone hover:text-gold transition"
-            >Harga</a
-          >
-          <a href="#galeri" class="text-bone hover:text-gold transition"
-            >Galeri</a
-          >
-          <a
-            href="#booking"
-            class="bg-gold text-noir px-6 py-2 rounded-full hover:bg-white hover:text-noir transition duration-300"
-            >Booking</a
-          >
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center space-x-10 text-[11px] uppercase tracking-widest font-semibold">
+          <a href="#beranda" class="text-bone hover:text-gold transition">Beranda</a>
+          <a href="#tentang" class="text-bone hover:text-gold transition">Filosofi</a>
+          <a href="#layanan" class="text-bone hover:text-gold transition">Layanan</a>
+          <a href="#paket" class="text-bone hover:text-gold transition">Harga</a>
+          <a href="#booking" class="btn-gold px-7 py-3 rounded-full font-bold shadow-lg">Amankan Kursi</a>
         </div>
 
-        <button class="md:hidden text-2xl text-gold" onclick="toggleMenu()">
-          <i class="fa-solid fa-ghost"></i>
+        <!-- Mobile Btn -->
+        <button class="md:hidden text-2xl text-gold focus:outline-none" onclick="toggleMenu()" id="mobile-btn">
+          <i data-lucide="menu" class="w-7 h-7"></i>
         </button>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-barberBlack/95 backdrop-blur-md border-t border-barberGray py-6 shadow-2xl">
+        <div class="flex flex-col px-6 space-y-6 text-sm uppercase tracking-widest font-semibold text-center">
+          <a href="#tentang" class="text-bone hover:text-gold block" onclick="toggleMenu()">Filosofi</a>
+          <a href="#layanan" class="text-bone hover:text-gold block" onclick="toggleMenu()">Layanan</a>
+          <a href="#paket" class="text-bone hover:text-gold block" onclick="toggleMenu()">Daftar Harga</a>
+          <a href="#booking" class="btn-gold py-3 rounded-full block" onclick="toggleMenu()">Booking Sekarang</a>
+        </div>
       </div>
     </nav>
 
-    <section
-      id="beranda"
-      class="relative h-screen flex items-center bg-noirLight border-b-2 border-noir"
-    >
-      <div class="absolute inset-0 z-0 grid md:grid-cols-2">
-        <div class="bg-noir"></div>
-        <div class="relative overflow-hidden">
-          <img
-            src="https://media.istockphoto.com/id/1188845667/id/foto/klien-mengunjungi-hairstylist-di-barbershop-gaya-rambut.jpg?s=612x612&w=0&k=20&c=M4OqNhu784H93eWJ3yMV6_NLxaW8-j4AXZrq-e90-RY="
-            alt="Barber"
-            class="w-full h-full object-cover opacity-60 filter grayscale"
-          />
-          <div
-            class="absolute inset-0 bg-noir/50 md:bg-transparent md:bg-gradient-to-r md:from-noirLight md:to-transparent"
-          ></div>
-        </div>
+    <!-- HERO SECTION -->
+    <section id="beranda" class="relative min-h-[100svh] flex items-center justify-center pt-20 overflow-hidden">
+      <!-- Background Image -->
+      <div class="absolute inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1920&q=80" alt="Barber Cutting Hair" class="w-full h-full object-cover filter brightness-[0.3]" />
+        <div class="absolute inset-0 bg-gradient-to-t from-barberBlack via-transparent to-barberBlack"></div>
       </div>
 
-      <div
-        class="relative z-10 max-w-7xl mx-auto px-6 grid md:grid-cols-2 items-center h-full"
-      >
-        <div class="max-w-lg mt-20 md:mt-0 text-center md:text-left">
-          <span
-            class="text-gold font-semibold uppercase tracking-widest text-xs block mb-3 border-l-2 md:border-l-0 border-gold pl-3 md:pl-0"
-            >Gaya Premium, Harga Teman</span
-          >
-          <h1
-            class="font-heading text-5xl md:text-7xl text-bone mb-6 leading-tight"
-          >
-            Tampil <span class="italic text-gold">Stylish</span> Tanpa
-            <span class="font-bold text-white">Bikin Bolong</span> Kantong
-          </h1>
-          <p
-            class="text-gray-400 text-sm md:text-base font-light mb-10 leading-relaxed max-w-md mx-auto md:mx-0"
-          >
-            CukurHemat memberikan layanan potong rambut profesional dengan
-            sentuhan gaya modern dan pelayanan terbaik. Kami buktikan gaya keren
-            tidak harus mahal.
-          </p>
-          <div
-            class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
-          >
-            <a
-              href="#booking"
-              class="bg-bone text-noir font-bold px-10 py-3.5 rounded-full uppercase tracking-wider text-sm hover:bg-gold transition duration-300 shadow-xl"
-              >Booking</a
-            >
-            <a
-              href="#layanan"
-              class="text-gold font-bold px-10 py-3.5 rounded-full uppercase tracking-wider text-sm hover:text-white flex items-center justify-center gap-2 transition"
-            >
-              Lihat Menu <i class="fa-solid fa-arrow-right text-xs"></i>
-            </a>
-          </div>
+      <div class="relative z-10 max-w-4xl mx-auto px-6 text-center reveal-blur">
+        <div class="inline-flex items-center gap-3 mb-6">
+            <span class="w-8 h-[1px] bg-gold"></span>
+            <span class="text-gold font-semibold uppercase tracking-[0.2em] text-[10px]">Gentleman's Grooming</span>
+            <span class="w-8 h-[1px] bg-gold"></span>
         </div>
-      </div>
-    </section>
-
-    <section id="tentang" class="py-28 bg-noir">
-      <div class="max-w-5xl mx-auto px-6 text-center">
-        <i class="fa-solid fa-scissors text-5xl text-gold/30 mb-8"></i>
-        <h2
-          class="font-heading text-4xl md:text-5xl text-bone mb-8 leading-snug"
-        >
-          Definisi <span class="italic text-gold">Hemat</span> yang Sesungguhnya
-        </h2>
-        <div class="gold-line w-1/3 mx-auto mb-10"></div>
-        <p
-          class="text-gray-400 font-light leading-relaxed max-w-3xl mx-auto mb-12 text-lg"
-        >
-          CukurHemat adalah tempat potong rambut modern yang menghadirkan
-          layanan grooming berkualitas untuk pria yang menghargai penampilan
-          namun tetap cerdas dalam pengeluaran. Setiap layanan kami dilakukan
-          oleh barber profesional yang berpengalaman dengan harga yang sangat
-          bersahabat.
+        
+        <h1 class="font-heading text-5xl md:text-7xl lg:text-[80px] text-bone mb-6 leading-[1.1]">
+          Gaya <span class="italic text-gold">Sultan,</span> <br>
+          Harga <span class="font-bold text-white">Teman.</span>
+        </h1>
+        
+        <p class="text-textMuted text-sm md:text-base font-light mb-10 leading-relaxed max-w-lg mx-auto">
+          Eksekusi presisi oleh barber profesional. Kami percaya bahwa potongan rambut premium dan pelayanan eksklusif tidak harus menguras dompet Anda.
         </p>
-        <img
-          src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-          alt="About"
-          class="w-full h-80 object-cover rounded-3xl shadow-2xl border-4 border-noirLight"
-        />
+        
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <a href="#booking" class="w-full sm:w-auto btn-gold px-10 py-4 rounded-full uppercase tracking-widest text-xs font-bold flex justify-center items-center gap-2">
+            <i class="fa-brands fa-whatsapp text-lg"></i> Booking Cepat
+          </a>
+          <a href="#layanan" class="w-full sm:w-auto btn-outline px-10 py-4 rounded-full uppercase tracking-widest text-xs font-bold">
+            Lihat Menu
+          </a>
+        </div>
       </div>
     </section>
 
-    <section id="layanan" class="py-24 bg-noirLight border-y border-noir">
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16">
-          <h2
-            class="font-heading text-4xl md:text-5xl text-bone tracking-wide mb-4"
-          >
-            Layanan Menu
+    <!-- TENTANG / FILOSOFI -->
+    <section id="tentang" class="py-24 lg:py-32 bg-barberBlack">
+      <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+        <div class="group reveal-blur">
+            <div class="img-wrapper h-[400px] md:h-[550px] shadow-2xl border border-barberGray">
+                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80" alt="Classic Barber" />
+            </div>
+        </div>
+
+        <div class="reveal-blur delay-1">
+          <i class="fa-solid fa-scissors text-4xl text-gold mb-6 opacity-80"></i>
+          <h2 class="font-heading text-4xl md:text-5xl text-bone mb-6 leading-tight">
+            Definisi <span class="italic text-gold">Hemat</span> <br>yang Sesungguhnya.
           </h2>
-          <p class="text-gray-500 font-light text-sm">
-            Grooming taktis untuk pria modern.
+          <p class="text-textMuted font-light leading-relaxed mb-8 text-sm md:text-base">
+            CukurHemat hadir untuk mendobrak stigma bahwa *barbershop* bagus harus mahal. Kami mengkurasi barber berpengalaman, menggunakan peralatan higienis berkualitas, dan mendesain ruangan yang nyaman. 
+            <br><br>
+            Hasilnya? Anda mendapatkan *treatment* ala eksekutif dengan harga yang sangat bersahabat untuk rutinitas cukur bulanan Anda.
           </p>
-        </div>
 
-        <div
-          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center"
-        >
-          <div
-            class="bg-noir p-6 rounded-3xl border border-gray-900 group hover:border-gold transition"
-          >
-            <div
-              class="w-16 h-16 bg-noirLight rounded-full flex items-center justify-center mx-auto mb-5 text-gold border border-gold group-hover:bg-gold group-hover:text-noir transition duration-300"
-            >
-              <i class="fa-solid fa-cut text-2xl"></i>
-            </div>
-            <h3
-              class="font-semibold text-bone text-sm mb-1 uppercase tracking-wider"
-            >
-              Haircut
-            </h3>
-            <p class="text-gray-600 text-xs font-light">Gaya Modern</p>
-          </div>
-          <div
-            class="bg-noir p-6 rounded-3xl border border-gray-900 group hover:border-gold transition"
-          >
-            <div
-              class="w-16 h-16 bg-noirLight rounded-full flex items-center justify-center mx-auto mb-5 text-gold border border-gold group-hover:bg-gold group-hover:text-noir transition duration-300"
-            >
-              <i class="fa-solid fa-wind text-2xl"></i>
-            </div>
-            <h3
-              class="font-semibold text-bone text-sm mb-1 uppercase tracking-wider"
-            >
-              Styling
-            </h3>
-            <p class="text-gray-600 text-xs font-light">Pomade/Clay</p>
-          </div>
-          <div
-            class="bg-noir p-6 rounded-3xl border border-gray-900 group hover:border-gold transition"
-          >
-            <div
-              class="w-16 h-16 bg-noirLight rounded-full flex items-center justify-center mx-auto mb-5 text-gold border border-gold group-hover:bg-gold group-hover:text-noir transition duration-300"
-            >
-              <i class="fa-solid fa-leaf text-2xl"></i>
-            </div>
-            <h3
-              class="font-semibold text-bone text-sm mb-1 uppercase tracking-wider"
-            >
-              Beard
-            </h3>
-            <p class="text-gray-600 text-xs font-light">Trim & Shave</p>
-          </div>
-          <div
-            class="bg-noir p-6 rounded-3xl border border-gray-900 group hover:border-gold transition"
-          >
-            <div
-              class="w-16 h-16 bg-noirLight rounded-full flex items-center justify-center mx-auto mb-5 text-gold border border-gold group-hover:bg-gold group-hover:text-noir transition duration-300"
-            >
-              <i class="fa-solid fa-shower text-2xl"></i>
-            </div>
-            <h3
-              class="font-semibold text-bone text-sm mb-1 uppercase tracking-wider"
-            >
-              Hair Wash
-            </h3>
-            <p class="text-gray-600 text-xs font-light">Relaksasi</p>
-          </div>
-          <div
-            class="bg-noir p-6 rounded-3xl border border-gray-900 group hover:border-gold transition"
-          >
-            <div
-              class="w-16 h-16 bg-noirLight rounded-full flex items-center justify-center mx-auto mb-5 text-gold border border-gold group-hover:bg-gold group-hover:text-noir transition duration-300"
-            >
-              <i class="fa-solid fa-palette text-2xl"></i>
-            </div>
-            <h3
-              class="font-semibold text-bone text-sm mb-1 uppercase tracking-wider"
-            >
-              Coloring
-            </h3>
-            <p class="text-gray-600 text-xs font-light">Fashion Color</p>
-          </div>
-          <div
-            class="bg-noir p-6 rounded-3xl border border-gray-900 group hover:border-gold transition"
-          >
-            <div
-              class="w-16 h-16 bg-noirLight rounded-full flex items-center justify-center mx-auto mb-5 text-gold border border-gold group-hover:bg-gold group-hover:text-noir transition duration-300"
-            >
-              <i class="fa-solid fa-baby text-2xl"></i>
-            </div>
-            <h3
-              class="font-semibold text-bone text-sm mb-1 uppercase tracking-wider"
-            >
-              Kids
-            </h3>
-            <p class="text-gray-600 text-xs font-light">Di bawah 10 Thn</p>
+          <div class="grid grid-cols-2 gap-8 border-t border-barberGray pt-8 mt-8">
+              <div>
+                  <h4 class="font-heading text-4xl text-gold mb-1">10K+</h4>
+                  <p class="text-[10px] text-textMuted uppercase tracking-widest font-bold">Kepala Tercukur</p>
+              </div>
+              <div>
+                  <h4 class="font-heading text-4xl text-gold mb-1">4.9/5</h4>
+                  <p class="text-[10px] text-textMuted uppercase tracking-widest font-bold">Rating Pelanggan</p>
+              </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="paket" class="py-24 bg-noir">
+    <!-- LAYANAN -->
+    <section id="layanan" class="py-24 bg-barberDark border-y border-barberGray">
       <div class="max-w-7xl mx-auto px-6">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
-          <div class="lg:col-span-1 text-center lg:text-left">
-            <h2
-              class="font-heading text-5xl text-bone tracking-wide mb-6leading-tight"
-            >
-              Harga <br /><span class="text-gold italic">Transparan</span>
-            </h2>
-            <p class="text-gray-400 font-light mb-8 max-w-sm mx-auto lg:mx-0">
-              Pilih paket taktis kami. Jaminan harga hemat dengan hasil premium.
+        <div class="text-center mb-16 reveal-blur">
+          <span class="text-gold font-semibold uppercase tracking-[0.2em] text-[10px] block mb-3">Menu Taktis</span>
+          <h2 class="font-heading text-4xl md:text-5xl text-bone tracking-wide">Layanan <span class="italic text-gold">Grooming.</span></h2>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <!-- Item 1 -->
+          <div class="bg-barberBlack p-8 rounded-2xl glow-card text-center group reveal-blur">
+            <i class="fa-solid fa-cut text-3xl text-gold mb-5 group-hover:scale-110 transition-transform"></i>
+            <h3 class="font-semibold text-bone text-base mb-2 uppercase tracking-wide">Haircut</h3>
+            <p class="text-textMuted text-xs font-light">Potongan presisi, pudar (fade) rapi, gaya klasik & modern.</p>
+          </div>
+          <!-- Item 2 -->
+          <div class="bg-barberBlack p-8 rounded-2xl glow-card text-center group reveal-blur delay-1">
+            <i class="fa-solid fa-leaf text-3xl text-gold mb-5 group-hover:scale-110 transition-transform"></i>
+            <h3 class="font-semibold text-bone text-base mb-2 uppercase tracking-wide">Beard Trim</h3>
+            <p class="text-textMuted text-xs font-light">Rapikan brewok & kumis dengan handuk hangat (hot towel).</p>
+          </div>
+          <!-- Item 3 -->
+          <div class="bg-barberBlack p-8 rounded-2xl glow-card text-center group reveal-blur delay-2">
+            <i class="fa-solid fa-shower text-3xl text-gold mb-5 group-hover:scale-110 transition-transform"></i>
+            <h3 class="font-semibold text-bone text-base mb-2 uppercase tracking-wide">Hair Wash</h3>
+            <p class="text-textMuted text-xs font-light">Pencucian rambut plus pijat kepala ringan yang relaks.</p>
+          </div>
+          <!-- Item 4 -->
+          <div class="bg-barberBlack p-8 rounded-2xl glow-card text-center group reveal-blur delay-1">
+            <i class="fa-solid fa-wind text-3xl text-gold mb-5 group-hover:scale-110 transition-transform"></i>
+            <h3 class="font-semibold text-bone text-base mb-2 uppercase tracking-wide">Styling</h3>
+            <p class="text-textMuted text-xs font-light">Finishing paripurna menggunakan pomade/clay premium.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HARGA / PAKET -->
+    <section id="paket" class="py-24 lg:py-32 bg-barberBlack">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16 reveal-blur">
+          <span class="text-gold font-semibold uppercase tracking-[0.2em] text-[10px] block mb-3">Investasi Ketampanan</span>
+          <h2 class="font-heading text-4xl md:text-5xl text-bone tracking-wide">Harga <span class="italic text-gold">Transparan.</span></h2>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8 items-center max-w-5xl mx-auto">
+          <!-- Paket 1 -->
+          <div class="bg-barberDark p-8 rounded-3xl border border-barberGray hover:border-gold/30 transition-colors reveal-blur">
+            <h4 class="font-bold text-xl text-bone mb-1">PAKET REGULER</h4>
+            <p class="text-textMuted text-[10px] uppercase tracking-widest mb-6">Haircut + Styling</p>
+            <div class="text-4xl font-bold text-gold mb-8">35K</div>
+            <ul class="space-y-4 mb-8 text-sm font-light text-textMuted">
+              <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold text-xs"></i> Konsultasi Gaya</li>
+              <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold text-xs"></i> Potong Presisi</li>
+              <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold text-xs"></i> Hair Tonic & Styling</li>
+            </ul>
+            <a href="#booking" class="block text-center border border-gold text-gold py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-gold hover:text-barberBlack transition-colors">Pilih Reguler</a>
+          </div>
+
+          <!-- Paket 2 (Highlight) -->
+          <div class="bg-gradient-to-b from-[#1a1508] to-barberDark p-10 rounded-3xl border border-gold shadow-[0_0_30px_rgba(212,175,55,0.15)] relative transform lg:-translate-y-4 reveal-blur delay-1">
+            <div class="absolute top-0 right-8 bg-gold text-barberBlack text-[9px] font-bold px-3 py-1 rounded-b-md uppercase tracking-widest">Terlaris</div>
+            <h4 class="font-bold text-2xl text-bone mb-1">PAKET GANTENG</h4>
+            <p class="text-gold text-[10px] uppercase tracking-widest mb-6">Haircut + Wash + Styling</p>
+            <div class="text-5xl font-bold text-bone mb-8">50K</div>
+            <ul class="space-y-4 mb-8 text-sm font-light text-bone/80">
+              <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold text-xs"></i> Konsultasi Gaya</li>
+              <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold text-xs"></i> Potong Presisi</li>
+              <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold text-xs"></i> Cuci Rambut (Hot/Cold)</li>
+              <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold text-xs"></i> Pijat Kepala Relaksasi</li>
+              <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold text-xs"></i> Pomade Premium</li>
+            </ul>
+            <a href="#booking" class="block text-center btn-gold py-4 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg">Amankan Kursi</a>
+          </div>
+
+          <!-- Paket 3 -->
+          <div class="bg-barberDark p-8 rounded-3xl border border-barberGray hover:border-gold/30 transition-colors reveal-blur delay-2">
+            <h4 class="font-bold text-xl text-bone mb-1">PAKET SULTAN</h4>
+            <p class="text-textMuted text-[10px] uppercase tracking-widest mb-6">Lengkap + Beard Trim</p>
+            <div class="text-4xl font-bold text-gold mb-8">75K</div>
+            <ul class="space-y-4 mb-8 text-sm font-light text-textMuted">
+              <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold text-xs"></i> Semua Layanan "Ganteng"</li>
+              <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold text-xs"></i> Cukur Kumis & Brewok</li>
+              <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold text-xs"></i> Hot Towel Treatment</li>
+            </ul>
+            <a href="#booking" class="block text-center border border-gold text-gold py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-gold hover:text-barberBlack transition-colors">Pilih Sultan</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ & TESTIMONIAL -->
+    <section class="py-24 bg-barberDark border-y border-barberGray">
+      <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16">
+        
+        <!-- Testimonial -->
+        <div class="reveal-blur">
+            <i class="fa-solid fa-quote-left text-4xl text-gold/40 mb-6 block"></i>
+            <h2 class="font-heading text-4xl text-bone mb-8">Kata <span class="italic text-gold">Mereka.</span></h2>
+            <p class="text-xl text-bone font-light italic leading-relaxed mb-6">
+                "Gak nyangka harganya segini tapi dapet pelayanan & potongan serapi ini. Barbernnya ngerti banget model rambut yang cocok sama bentuk muka. Fix jadi langganan!"
             </p>
-          </div>
-
-          <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div
-              class="bg-noirLight p-8 rounded-2xl border-t-2 border-gold flex items-center justify-between shadow-lg"
-            >
-              <div>
-                <h4 class="font-heading text-2xl text-bone mb-1">
-                  PAKET HEMAT
-                </h4>
-                <p class="text-gray-500 text-xs uppercase tracking-widest mb-4">
-                  Haircut + Wash
-                </p>
-                <a
-                  href="#booking"
-                  class="text-gold font-bold text-sm flex items-center gap-1 hover:text-white transition"
-                  >Booking <i class="fa-solid fa-chevron-right text-xs"></i
-                ></a>
-              </div>
-              <p class="text-5xl font-light text-bone tracking-tighter">
-                Rp <span class="font-bold">40K</span>
-              </p>
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-barberGray rounded-full overflow-hidden border border-gold">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Client" class="w-full h-full object-cover grayscale">
+                </div>
+                <div>
+                    <h5 class="text-bone font-bold text-sm">Andi Saputra</h5>
+                    <p class="text-[10px] text-textMuted uppercase tracking-widest">Pelanggan Setia</p>
+                </div>
             </div>
-            <div
-              class="bg-noirLight p-8 rounded-2xl border-t-2 border-gold flex items-center justify-between shadow-lg"
-            >
-              <div>
-                <h4 class="font-heading text-2xl text-bone mb-1">
-                  PAKET GANTENG
-                </h4>
-                <p class="text-gray-500 text-xs uppercase tracking-widest mb-4">
-                  Haircut + Styling
-                </p>
-                <a
-                  href="#booking"
-                  class="text-gold font-bold text-sm flex items-center gap-1 hover:text-white transition"
-                  >Booking <i class="fa-solid fa-chevron-right text-xs"></i
-                ></a>
-              </div>
-              <p class="text-5xl font-light text-bone tracking-tighter">
-                Rp <span class="font-bold">55K</span>
-              </p>
-            </div>
-            <div
-              class="bg-noirLight p-8 rounded-2xl border-t-2 border-gold flex items-center justify-between shadow-lg"
-            >
-              <div>
-                <h4 class="font-heading text-2xl text-bone mb-1">
-                  PAKET LENGKAP
-                </h4>
-                <p class="text-gray-500 text-xs uppercase tracking-widest mb-4">
-                  Haircut + Wash + Beard
-                </p>
-                <a
-                  href="#booking"
-                  class="text-gold font-bold text-sm flex items-center gap-1 hover:text-white transition"
-                  >Booking <i class="fa-solid fa-chevron-right text-xs"></i
-                ></a>
-              </div>
-              <p class="text-5xl font-light text-bone tracking-tighter">
-                Rp <span class="font-bold">70K</span>
-              </p>
-            </div>
-            <div
-              class="bg-noirLight p-8 rounded-2xl border-t-2 border-bone flex items-center justify-between shadow-lg"
-            >
-              <div>
-                <h4 class="font-heading text-2xl text-bone mb-1">KIDS HEMAT</h4>
-                <p class="text-gray-500 text-xs uppercase tracking-widest mb-4">
-                  Potong Rambut Anak
-                </p>
-                <a
-                  href="#booking"
-                  class="text-gold font-bold text-sm flex items-center gap-1 hover:text-white transition"
-                  >Booking <i class="fa-solid fa-chevron-right text-xs"></i
-                ></a>
-              </div>
-              <p class="text-5xl font-light text-bone tracking-tighter">
-                Rp <span class="font-bold">35K</span>
-              </p>
-            </div>
-          </div>
         </div>
+
+        <!-- FAQ -->
+        <div class="reveal-blur delay-1">
+            <h2 class="font-heading text-4xl text-bone mb-8">Pertanyaan <span class="italic text-gold">Umum.</span></h2>
+            <div class="space-y-4">
+                <div class="faq-item bg-barberBlack border border-barberGray rounded-xl cursor-pointer hover:border-gold/50 transition">
+                    <div class="px-6 py-5 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <h4 class="font-semibold text-bone text-sm">Apakah wajib booking dulu?</h4>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-gold faq-icon transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer px-6 text-textMuted text-sm font-light">
+                        <p class="pb-5">Anda bisa datang langsung (walk-in), namun kami sangat menyarankan booking via WhatsApp agar Anda tidak perlu mengantre lama.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item bg-barberBlack border border-barberGray rounded-xl cursor-pointer hover:border-gold/50 transition">
+                    <div class="px-6 py-5 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <h4 class="font-semibold text-bone text-sm">Ada garansi potongan rambut?</h4>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-gold faq-icon transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer px-6 text-textMuted text-sm font-light">
+                        <p class="pb-5">Kepuasan Anda prioritas kami. Jika potongan dirasa kurang pas, beri tahu barber kami di tempat untuk disesuaikan secara gratis sebelum *styling*.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
       </div>
     </section>
 
-    <section id="galeri" class="py-24 bg-noirLight border-y border-noir">
+    <!-- FOOTER / BOOKING -->
+    <footer id="booking" class="bg-barberBlack pt-24 pb-12 relative overflow-hidden">
+      <div class="absolute bottom-0 right-0 w-96 h-96 bg-gold/5 rounded-full blur-[100px] pointer-events-none"></div>
+
       <div class="max-w-7xl mx-auto px-6">
-        <h2
-          class="font-heading text-4xl md:text-5xl text-bone tracking-wide text-center mb-16"
-        >
-          Galeri Gaya
-        </h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div
-            class="aspect-square rounded-3xl overflow-hidden img-hover border border-gray-800"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-              alt="Gaya 1"
-              class="w-full h-full object-cover transition duration-500 grayscale filter"
-            />
-          </div>
-          <div
-            class="aspect-square rounded-3xl overflow-hidden img-hover border border-gray-800"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-              alt="Gaya 2"
-              class="w-full h-full object-cover transition duration-500 grayscale filter"
-            />
-          </div>
-          <div
-            class="aspect-square rounded-3xl overflow-hidden img-hover border border-gray-800 md:translate-y-6"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-              alt="Gaya 3"
-              class="w-full h-full object-cover transition duration-500 grayscale filter"
-            />
-          </div>
-          <div
-            class="aspect-square rounded-3xl overflow-hidden img-hover border border-gray-800 md:translate-y-6"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-              alt="Gaya 4"
-              class="w-full h-full object-cover transition duration-500 grayscale filter"
-            />
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="py-24 bg-noir border-b border-noirLight">
-      <div class="max-w-3xl mx-auto px-6 text-center">
-        <i class="fa-solid fa-quote-left text-3xl text-gold mb-8 block"></i>
-        <p
-          class="text-2xl text-gray-300 font-light italic leading-relaxed mb-8"
-        >
-          "Gak nyangka harganya segini dapet pelayanan & potongan serapi ini.
-          Tempatnya juga nyaman. Bakal jadi langganan."
-        </p>
-        <h5 class="text-bone font-bold tracking-widest uppercase text-xs">
-          — Andi, Bandung
-        </h5>
-      </div>
-    </section>
-
-    <section class="py-24 bg-noirLight border-b border-noir">
-      <div class="max-w-3xl mx-auto px-6 flex flex-col items-center">
-        <h2 class="font-heading text-4xl text-bone tracking-wide mb-12">FAQ</h2>
-        <div class="space-y-4 w-full">
-          <div
-            class="faq-item bg-noir border border-gray-900 rounded-xl cursor-pointer hover:border-gold transition"
-          >
-            <div
-              class="px-6 py-5 flex justify-between items-center"
-              onclick="toggleFaq(this)"
-            >
-              <h4
-                class="font-semibold text-bone text-xs uppercase tracking-widest"
-              >
-                Apakah harus booking?
-              </h4>
-              <i
-                class="fa-solid fa-plus text-gold faq-icon transition-transform duration-300 text-sm"
-              ></i>
-            </div>
-            <div class="faq-answer px-6 text-gray-500 text-sm font-light">
-              <p class="pb-5">
-                Bisa walk-in, tapi disarankan booking WhatsApp dulu biar gak
-                antre kelamaan. Cek jadwal di menu Booking.
-              </p>
-            </div>
-          </div>
-          <div
-            class="faq-item bg-noir border border-gray-900 rounded-xl cursor-pointer hover:border-gold transition"
-          >
-            <div
-              class="px-6 py-5 flex justify-between items-center"
-              onclick="toggleFaq(this)"
-            >
-              <h4
-                class="font-semibold text-bone text-xs uppercase tracking-widest"
-              >
-                Harganya beneran hemat?
-              </h4>
-              <i
-                class="fa-solid fa-plus text-gold faq-icon transition-transform duration-300 text-sm"
-              ></i>
-            </div>
-            <div class="faq-answer px-6 text-gray-500 text-sm font-light">
-              <p class="pb-5">
-                Seratus persen! Cek menu harga kami. Gak ada biaya tersembunyi.
-                Gaya premium, harga temen.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <footer id="booking" class="bg-noir pt-24 pb-12">
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-16">
-          <div class="text-center lg:text-left">
+        <div class="grid lg:grid-cols-2 gap-16 items-center mb-20 reveal-blur">
+          
+          <div>
             <h2 class="font-heading text-5xl md:text-6xl text-bone mb-6">
-              Amankan Slot <span class="italic text-gold">Gantengmu</span>
+              Amankan <br><span class="italic text-gold">Kursimu.</span>
             </h2>
-            <p class="text-gray-500 font-light mb-10 max-w-sm mx-auto lg:mx-0">
-              Hubungi kami via WhatsApp untuk booking taktis. Cepat, gampang,
-              langsung ganteng.
+            <p class="text-textMuted font-light mb-10 max-w-sm">
+              Jangan buang waktu mengantre. Hubungi kami via WhatsApp, pilih jadwal, dan datang langsung potong.
             </p>
-            <a
-              href="https://wa.me/6281234567890"
-              target="_blank"
-              class="inline-flex items-center gap-3 bg-gold text-noir font-bold px-12 py-4 rounded-full uppercase tracking-wider text-sm hover:bg-white transition duration-300 shadow-xl"
-            >
-              <i class="fa-brands fa-whatsapp text-xl"></i> WhatsApp Booking
+            <a href="https://wa.me/6281234567890?text=Halo%20CukurHemat,%20saya%20mau%20booking%20jadwal." target="_blank" class="inline-flex items-center gap-3 btn-gold px-10 py-4 rounded-full uppercase tracking-widest text-xs font-bold shadow-xl">
+              <i class="fa-brands fa-whatsapp text-lg"></i> WhatsApp Booking
             </a>
           </div>
 
-          <div class="grid grid-cols-2 gap-8 text-sm text-center lg:text-left">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-10 p-8 md:p-10 bg-barberDark rounded-3xl border border-barberGray">
             <div>
-              <h5
-                class="text-gold font-bold uppercase tracking-widest text-xs mb-4"
-              >
-                Lokasi Taktis
-              </h5>
-              <p class="text-gray-500 font-light">
-                Jl. Pasteur No. 123, Bandung<br />Jawa Barat (Depan BTC)
+              <div class="w-10 h-10 bg-barberBlack rounded-full flex items-center justify-center text-gold mb-4 border border-barberGray"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
+              <h5 class="text-bone font-bold text-sm mb-2">Lokasi Taktis</h5>
+              <p class="text-textMuted text-sm font-light leading-relaxed">
+                Jl. Pasteur No. 123<br />Bandung, Jawa Barat<br>(Depan BTC Mall)
               </p>
             </div>
             <div>
-              <h5
-                class="text-gold font-bold uppercase tracking-widest text-xs mb-4"
-              >
-                Operasional
-              </h5>
-              <p class="text-gray-500 font-light">
+              <div class="w-10 h-10 bg-barberBlack rounded-full flex items-center justify-center text-gold mb-4 border border-barberGray"><i data-lucide="clock" class="w-4 h-4"></i></div>
+              <h5 class="text-bone font-bold text-sm mb-2">Jam Operasional</h5>
+              <p class="text-textMuted text-sm font-light leading-relaxed">
                 Senin – Minggu<br />10.00 – 21.00 WIB
               </p>
             </div>
           </div>
+          
         </div>
 
-        <div
-          class="border-t border-gray-900 pt-8 text-center text-xs text-gray-700 uppercase tracking-widest"
-        >
-          © 2026 CukurHemat Taktis. Semua Hak Ganteng Dilindungi.
+        <div class="border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center text-[10px] text-textMuted uppercase tracking-widest font-semibold text-center md:text-left">
+          <p>© 2026 CUKURHEMAT BARBERSHOP. ALL RIGHTS RESERVED.</p>
+          <div class="flex gap-6 mt-4 md:mt-0">
+              <a href="#" class="hover:text-gold transition"><i class="fa-brands fa-instagram text-lg"></i></a>
+              <a href="#" class="hover:text-gold transition"><i class="fa-brands fa-tiktok text-lg"></i></a>
+          </div>
         </div>
       </div>
     </footer>
 
-    <div
-      id="mobile-menu"
-      class="hidden fixed inset-0 z-40 bg-noir/95 backdrop-blur-sm flex items-center justify-center"
-    >
-      <button
-        class="absolute top-6 right-6 text-3xl text-gold"
-        onclick="toggleMenu()"
-      >
-        <i class="fa-solid fa-times"></i>
-      </button>
-      <div
-        class="text-center space-y-8 uppercase text-sm font-semibold tracking-widest"
-      >
-        <a
-          href="#beranda"
-          class="block text-bone hover:text-gold"
-          onclick="toggleMenu()"
-          >Beranda</a
-        >
-        <a
-          href="#layanan"
-          class="block text-bone hover:text-gold"
-          onclick="toggleMenu()"
-          >Layanan</a
-        >
-        <a
-          href="#paket"
-          class="block text-bone hover:text-gold"
-          onclick="toggleMenu()"
-          >Harga</a
-        >
-        <a
-          href="#booking"
-          class="block text-noir bg-gold px-8 py-3 rounded-full"
-          onclick="toggleMenu()"
-          >Booking</a
-        >
-      </div>
+    <!-- FLOATING ACTION BUTTONS -->
+    <div class="fixed bottom-6 right-6 md:bottom-8 md:right-8 flex flex-col gap-3 z-50">
+        <!-- Back to Top -->
+        <button id="btn-top" class="w-12 h-12 md:w-14 md:h-14 bg-barberDark border border-barberGray text-bone rounded-full flex justify-center items-center hover:border-gold hover:text-barberBlack transition-all duration-500 opacity-0 translate-y-6 pointer-events-none shadow-lg" aria-label="Scroll Top">
+            <i data-lucide="arrow-up" class="w-5 h-5"></i>
+        </button>
+
+        <!-- Elegant WhatsApp Button -->
+        <a href="https://wa.me/6281234567890?text=Halo%20CukurHemat,%20saya%20mau%20booking." target="_blank" class="h-12 md:h-14 bg-barberDark border border-barberGray text-bone px-4 rounded-full flex items-center gap-3 hover:bg-gold hover:text-barberBlack transition-all duration-500 group shadow-[0_0_20px_rgba(0,0,0,0.5)]" aria-label="Booking via WhatsApp">
+            <i class="fa-brands fa-whatsapp text-xl md:text-2xl text-[#25D366] group-hover:text-barberBlack transition-colors"></i>
+            <span class="text-[10px] md:text-xs font-bold uppercase tracking-widest hidden sm:block pr-2">Booking</span>
+        </a>
     </div>
 
+    <!-- Scripts -->
     <script>
+      // Init Lucide Icons
+      lucide.createIcons();
+
       // Mobile Menu Toggle
+      const btn = document.getElementById("mobile-btn");
+      const menu = document.getElementById("mobile-menu");
+
       function toggleMenu() {
-        const menu = document.getElementById("mobile-menu");
         menu.classList.toggle("hidden");
+        if(menu.classList.contains("hidden")) {
+            btn.innerHTML = '<i data-lucide="menu" class="w-7 h-7"></i>';
+            document.body.style.overflow = "auto";
+        } else {
+            btn.innerHTML = '<i data-lucide="x" class="w-7 h-7"></i>';
+            document.body.style.overflow = "hidden"; // Prevent background scrolling
+        }
+        lucide.createIcons();
       }
 
-      // Navbar Scroll Effect (Slight darken)
+      // Navbar Glass Effect on Scroll
       const navbar = document.getElementById("navbar");
       window.addEventListener("scroll", () => {
         if (window.scrollY > 50) {
-          navbar.classList.add(
-            "bg-noir/90",
-            "backdrop-blur-sm",
-            "border-b",
-            "border-gray-900",
-            "py-3",
-          );
-          navbar.classList.remove("bg-transparent", "py-5");
+          navbar.classList.add("glass-nav");
+          navbar.classList.remove("bg-transparent", "py-4");
+          navbar.classList.add("py-3");
         } else {
-          navbar.classList.add("bg-transparent", "py-5");
-          navbar.classList.remove(
-            "bg-noir/90",
-            "backdrop-blur-sm",
-            "border-b",
-            "border-gray-900",
-            "py-3",
-          );
+          navbar.classList.add("bg-transparent", "py-4");
+          navbar.classList.remove("glass-nav", "py-3");
         }
       });
 
@@ -645,20 +459,47 @@
         document.querySelectorAll(".faq-item").forEach((faq) => {
           if (faq !== item) {
             faq.classList.remove("active");
-            faq
-              .querySelector(".faq-icon")
-              .classList.replace("fa-minus", "fa-plus");
           }
         });
 
         // Toggle current
         item.classList.toggle("active");
-        if (item.classList.contains("active")) {
-          icon.classList.replace("fa-plus", "fa-minus");
-        } else {
-          icon.classList.replace("fa-minus", "fa-plus");
-        }
       }
+
+      // Back to Top Button Visibility
+      const btnTop = document.getElementById("btn-top");
+      window.addEventListener("scroll", () => {
+          if (window.scrollY > 500) {
+              btnTop.classList.remove("opacity-0", "translate-y-6", "pointer-events-none");
+              btnTop.classList.add("opacity-100", "translate-y-0", "pointer-events-auto");
+          } else {
+              btnTop.classList.remove("opacity-100", "translate-y-0", "pointer-events-auto");
+              btnTop.classList.add("opacity-0", "translate-y-6", "pointer-events-none");
+          }
+      });
+      btnTop.addEventListener("click", () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // Custom Smudge Slow/Blur Reveal Animation Observer
+      const observerOptions = {
+          root: null,
+          rootMargin: '0px 0px -50px 0px',
+          threshold: 0.15
+      };
+
+      const observer = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('active');
+                  observer.unobserve(entry.target); 
+              }
+          });
+      }, observerOptions);
+
+      document.querySelectorAll('.reveal-blur').forEach(el => {
+          observer.observe(el);
+      });
     </script>
   </body>
 </html>

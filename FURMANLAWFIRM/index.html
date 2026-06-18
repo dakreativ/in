@@ -1,446 +1,538 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Furman Law Firm | Corporate & Litigation Lawyers</title>
 
+    <!-- Premium Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Icons & Animation -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 
     <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ["'Plus Jakarta Sans'", "sans-serif"],
-              serif: ["'Playfair Display'", "serif"],
-            },
-            colors: {
-              primary: "#071A10", // Ultra Dark Forest Green
-              primaryLight: "#0F2E1E", // Dark Green
-              secondary: "#D4AF37", // Premium Gold
-              secondaryHover: "#B5952F", // Deep Gold
-              lightBg: "#F8FAFC",
-            },
-            boxShadow: {
-              'elegant': '0 20px 40px -15px rgba(7, 26, 16, 0.05)',
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ["'Plus Jakarta Sans'", "sans-serif"],
+                        serif: ["'Playfair Display'", "serif"],
+                    },
+                    colors: {
+                        brandDark: "#0a0c10",      /* Midnight Onyx */
+                        brandNavy: "#111827",      /* Deep Slate */
+                        brandGold: "#D4AF37",      /* Classic Gold */
+                        brandGoldLight: "#F3E5AB", /* Vanilla Gold */
+                        brandLight: "#FAFAFA",     /* Premium White */
+                    },
+                    backgroundImage: {
+                        'gold-gradient': 'linear-gradient(to right, #D4AF37, #F3E5AB, #D4AF37)',
+                        'dark-gradient': 'linear-gradient(135deg, #0a0c10 0%, #111827 100%)',
+                    }
+                }
             }
-          },
-        },
-      };
+        };
     </script>
 
     <style>
-      body {
-        -webkit-font-smoothing: antialiased;
-        color: #334155;
-      }
-      
-      /* Premium Scrollbar */
-      ::-webkit-scrollbar { width: 6px; }
-      ::-webkit-scrollbar-track { background: #F8FAFC; }
-      ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
+        body { background-color: #FAFAFA; color: #111827; overflow-x: hidden; }
 
-      /* Glass Nav */
-      .glass-nav {
-        background: rgba(7, 26, 16, 0.95);
-        backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-      }
+        /* Elegant Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0c10; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
 
-      /* Hover Dynamics */
-      .hover-card {
-        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-      }
-      .hover-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 25px 50px -12px rgba(7, 26, 16, 0.08);
-      }
+        /* Custom Reveal Animation (Smudge Blur) */
+        .reveal-blur {
+            opacity: 0; filter: blur(12px); transform: translateY(30px);
+            transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 1.5s cubic-bezier(0.16, 1, 0.3, 1),
+                        filter 1.5s ease;
+        }
+        .reveal-blur.active { opacity: 1; filter: blur(0); transform: translateY(0); }
+        .delay-1 { transition-delay: 0.15s; }
+        .delay-2 { transition-delay: 0.3s; }
+        .delay-3 { transition-delay: 0.45s; }
 
-      /* FAQ Accordion */
-      .faq-answer {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.5s ease-out, opacity 0.3s ease;
-        opacity: 0;
-      }
-      .faq-item.active .faq-answer {
-        max-height: 250px;
-        opacity: 1;
-      }
-      .faq-item.active .faq-icon {
-        transform: rotate(180deg);
-        color: #D4AF37;
-      }
+        /* Glassmorphism Navbar */
+        .glass-nav {
+            background: rgba(10, 12, 16, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+            padding-top: 12px; padding-bottom: 12px;
+        }
+
+        /* Gold Text Clip */
+        .text-gold-grad {
+            background: linear-gradient(to right, #D4AF37, #F3E5AB, #D4AF37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Hover Dynamics for Cards */
+        .hover-card {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+        .hover-card::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 2px;
+            background: linear-gradient(to right, #D4AF37, #F3E5AB);
+            transition: width 0.5s ease;
+        }
+        .hover-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1);
+        }
+        .hover-card:hover::after { width: 100%; }
+
+        /* Image Slow Zoom & Grayscale effect */
+        .img-editorial { overflow: hidden; position: relative; border-radius: 4px; }
+        .img-editorial img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 2s cubic-bezier(0.16, 1, 0.3, 1), filter 1s ease;
+            filter: grayscale(100%) contrast(1.1);
+        }
+        .group:hover .img-editorial img {
+            transform: scale(1.05);
+            filter: grayscale(0%) contrast(1);
+        }
+
+        /* Button Hover Fill */
+        .btn-gold-outline {
+            position: relative; overflow: hidden; z-index: 1;
+            transition: color 0.4s ease; border: 1px solid rgba(212, 175, 55, 0.5);
+        }
+        .btn-gold-outline::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to right, #D4AF37, #F3E5AB, #D4AF37);
+            z-index: -1; transform: scaleX(0); transform-origin: left;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-gold-outline:hover { color: #0a0c10; border-color: transparent; }
+        .btn-gold-outline:hover::before { transform: scaleX(1); }
+
+        /* FAQ Accordion */
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease; opacity: 0; }
+        .faq-item.active .faq-answer { max-height: 300px; opacity: 1; }
+        .faq-item.active .faq-icon { transform: rotate(180deg); color: #D4AF37; }
     </style>
-  </head>
-  <body class="bg-white">
-    
-    <!-- Navbar -->
-    <nav class="fixed w-full z-50 transition-all duration-500 py-2 bg-primary" id="navbar">
-      <div class="max-w-7xl mx-auto px-5 lg:px-8">
-        <div class="flex justify-between items-center h-20">
-          <a href="#beranda" class="font-serif text-2xl font-bold tracking-widest text-secondary flex items-center gap-3">
-            <i data-lucide="scale" class="w-7 h-7"></i> FURMAN.
-          </a>
+</head>
+<body class="font-sans">
 
-          <!-- Desktop Menu -->
-          <div class="hidden lg:flex items-center space-x-8 text-sm font-medium text-gray-300">
-            <a href="#tentang" class="hover:text-secondary transition">Firma</a>
-            <a href="#praktik" class="hover:text-secondary transition">Ekspertise</a>
-            <a href="#tim" class="hover:text-secondary transition">Advokat</a>
-            <a href="#insight" class="hover:text-secondary transition">Publikasi</a>
-            <a href="#kontak" class="bg-secondary text-primary px-7 py-2.5 rounded-sm hover:bg-white transition-colors font-semibold tracking-wide">
-              Evaluasi Kasus
-            </a>
-          </div>
+    <!-- NAVBAR -->
+    <nav class="fixed w-full z-50 transition-all duration-500 py-4 bg-brandDark" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <a href="#beranda" class="font-serif text-2xl font-bold tracking-[0.15em] text-brandLight flex items-center gap-3">
+                    <i data-lucide="scale" class="w-7 h-7 text-brandGold"></i> 
+                    FURMAN<span class="text-gold-grad">.</span>
+                </a>
 
-          <!-- Mobile Toggle -->
-          <button id="mobile-menu-btn" class="lg:hidden text-secondary p-2">
-            <i data-lucide="menu" class="w-6 h-6"></i>
-          </button>
+                <!-- Desktop Menu -->
+                <div class="hidden lg:flex items-center space-x-10 text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
+                    <a href="#tentang" class="hover:text-brandGoldLight transition-colors duration-300">Firma</a>
+                    <a href="#praktik" class="hover:text-brandGoldLight transition-colors duration-300">Ekspertise</a>
+                    <a href="#tim" class="hover:text-brandGoldLight transition-colors duration-300">Advokat</a>
+                    <a href="#kontak" class="btn-gold-outline text-brandGoldLight px-8 py-3 rounded-sm hover:text-brandDark transition-colors">
+                        Evaluasi Kasus
+                    </a>
+                </div>
+
+                <!-- Mobile Toggle -->
+                <button id="mobile-menu-btn" class="lg:hidden text-brandGold p-2 focus:outline-none">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
         </div>
-      </div>
 
-      <!-- Mobile Menu -->
-      <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-primary/95 backdrop-blur-md border-t border-white/10 shadow-2xl">
-        <div class="flex flex-col px-6 py-6 space-y-4 text-gray-300 text-sm tracking-wide">
-          <a href="#tentang" class="border-b border-white/10 pb-3 hover:text-secondary">Firma</a>
-          <a href="#praktik" class="border-b border-white/10 pb-3 hover:text-secondary">Ekspertise</a>
-          <a href="#tim" class="border-b border-white/10 pb-3 hover:text-secondary">Advokat</a>
-          <a href="#insight" class="border-b border-white/10 pb-3 hover:text-secondary">Publikasi</a>
-          <a href="#kontak" class="bg-secondary text-primary text-center py-3 rounded-sm font-bold mt-2">Evaluasi Kasus (Gratis)</a>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full h-[100svh] bg-brandDark border-t border-white/10 shadow-2xl">
+            <div class="flex flex-col px-6 py-8 space-y-6 text-gray-300 text-sm tracking-widest uppercase font-semibold">
+                <a href="#tentang" class="border-b border-white/10 pb-4 hover:text-brandGold">Firma</a>
+                <a href="#praktik" class="border-b border-white/10 pb-4 hover:text-brandGold">Ekspertise</a>
+                <a href="#tim" class="border-b border-white/10 pb-4 hover:text-brandGold">Advokat</a>
+                <a href="#kontak" class="bg-gold-gradient text-brandDark text-center py-4 rounded-sm mt-4">Konsultasi Gratis</a>
+            </div>
         </div>
-      </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section id="beranda" class="relative min-h-[100svh] flex items-center pt-24 pb-20">
-      <div class="absolute inset-0 z-0">
-        <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80" alt="Law Firm Architecture" class="w-full h-full object-cover object-center" />
-        <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/95 to-primary/40"></div>
-      </div>
-      
-      <div class="relative z-10 max-w-7xl mx-auto px-5 lg:px-8 w-full">
-        <div class="max-w-2xl" data-aos="fade-up" data-aos-duration="1000">
-          <div class="inline-flex items-center gap-3 mb-6">
-            <span class="w-8 h-[1px] bg-secondary"></span>
-            <span class="text-secondary font-semibold tracking-[0.2em] uppercase text-xs">Furman Law Firm</span>
-          </div>
-          
-          <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] mb-6">
-            Keadilan Melalui <br>
-            <span class="text-secondary italic font-medium">Presisi Hukum.</span>
-          </h1>
-          
-          <p class="text-base text-gray-400 mb-10 leading-relaxed font-light max-w-lg">
-            Melindungi aset, hak, dan reputasi bisnis Anda melalui strategi litigasi yang tajam dan mitigasi risiko korporasi tanpa kompromi.
-          </p>
-          
-          <div class="flex flex-col sm:flex-row gap-4">
-            <a href="#kontak" class="bg-secondary text-primary font-bold px-8 py-4 rounded-sm hover:bg-white transition-colors text-center text-sm tracking-wide">
-              Konsultasi Strategi
-            </a>
-            <a href="#praktik" class="border border-secondary/50 text-white font-medium px-8 py-4 rounded-sm hover:border-secondary hover:text-secondary transition-colors text-center flex items-center justify-center gap-2 text-sm tracking-wide group">
-              Area Praktik <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="tentang" class="py-24 bg-white relative">
-      <div class="max-w-7xl mx-auto px-5 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-          <div class="relative" data-aos="fade-right">
-            <div class="absolute -inset-4 border border-secondary/30 rounded-sm translate-x-4 translate-y-4"></div>
-            <img src="https://plus.unsplash.com/premium_photo-1698084059560-9a53de7b816b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bGF3JTIwZmlybXxlbnwwfHwwfHx8MA%3D%3D?auto=format&fit=crop&w=800&q=80" alt="Firma Kami" class="relative z-10 w-full h-[500px] object-cover rounded-sm grayscale hover:grayscale-0 transition-all duration-700" />
-          </div>
-          
-          <div data-aos="fade-left">
-            <h2 class="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-6 leading-tight">
-              Kredibilitas. <br>Integritas. Hasil.
-            </h2>
-            <p class="text-slate-500 mb-8 font-light leading-relaxed text-lg">
-              Kami tidak sekadar berteori. Tim Furman Law Firm hadir untuk memberikan eksekusi penyelesaian hukum yang *business-oriented*, efisien, dan tuntas. 
-            </p>
-
-            <div class="grid grid-cols-2 gap-8 mb-8 border-t border-slate-100 pt-8">
-              <div>
-                <h4 class="text-4xl font-serif text-secondary mb-2">98%</h4>
-                <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Tingkat Keberhasilan Mediasi</p>
-              </div>
-              <div>
-                <h4 class="text-4xl font-serif text-secondary mb-2">250+</h4>
-                <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Klien Korporasi Nasional</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Practice Areas -->
-    <section id="praktik" class="py-24 bg-lightBg">
-      <div class="max-w-7xl mx-auto px-5 lg:px-8">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6" data-aos="fade-up">
-          <div>
-            <span class="text-secondary font-semibold uppercase tracking-wider text-xs block mb-3">Ekspertise Firma</span>
-            <h2 class="font-serif text-3xl md:text-4xl font-bold text-primary">Fokus Praktik Hukum</h2>
-          </div>
-          <p class="text-slate-500 font-light max-w-md text-sm leading-relaxed">
-            Spesialisasi mendalam di berbagai sektor krusial untuk memberikan Anda *legal cover* yang tak tertembus.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="bg-white p-8 rounded-sm shadow-elegant hover-card border border-transparent" data-aos="fade-up" data-aos-delay="0">
-            <i data-lucide="building-2" class="w-8 h-8 text-secondary mb-6 stroke-[1.5]"></i>
-            <h3 class="font-serif text-xl font-bold text-primary mb-3">Hukum Korporasi</h3>
-            <p class="text-slate-500 text-sm font-light leading-relaxed">
-              Merger, akuisisi, *due diligence*, hingga tata kelola (*Good Corporate Governance*) untuk keamanan operasional bisnis.
-            </p>
-          </div>
-          
-          <div class="bg-white p-8 rounded-sm shadow-elegant hover-card border border-transparent" data-aos="fade-up" data-aos-delay="100">
-            <i data-lucide="briefcase" class="w-8 h-8 text-secondary mb-6 stroke-[1.5]"></i>
-            <h3 class="font-serif text-xl font-bold text-primary mb-3">Sengketa Komersial</h3>
-            <p class="text-slate-500 text-sm font-light leading-relaxed">
-              Litigasi maupun arbitrase terkait wanprestasi kontrak dan perselisihan pemegang saham.
-            </p>
-          </div>
-          
-          <div class="bg-white p-8 rounded-sm shadow-elegant hover-card border border-transparent" data-aos="fade-up" data-aos-delay="200">
-            <i data-lucide="landmark" class="w-8 h-8 text-secondary mb-6 stroke-[1.5]"></i>
-            <h3 class="font-serif text-xl font-bold text-primary mb-3">Tindak Pidana Bisnis</h3>
-            <p class="text-slate-500 text-sm font-light leading-relaxed">
-              Pembelaan hukum taktis untuk tuduhan penggelapan, penipuan perusahaan, dan kejahatan kerah putih (*white-collar crime*).
-            </p>
-          </div>
-          
-          <div class="bg-white p-8 rounded-sm shadow-elegant hover-card border border-transparent" data-aos="fade-up" data-aos-delay="0">
-            <i data-lucide="map" class="w-8 h-8 text-secondary mb-6 stroke-[1.5]"></i>
-            <h3 class="font-serif text-xl font-bold text-primary mb-3">Properti & Agraria</h3>
-            <p class="text-slate-500 text-sm font-light leading-relaxed">
-              Audit sengketa lahan, legalitas proyek properti komersial, dan pembebasan hak atas tanah.
-            </p>
-          </div>
-          
-          <div class="bg-white p-8 rounded-sm shadow-elegant hover-card border border-transparent" data-aos="fade-up" data-aos-delay="100">
-            <i data-lucide="users" class="w-8 h-8 text-secondary mb-6 stroke-[1.5]"></i>
-            <h3 class="font-serif text-xl font-bold text-primary mb-3">Hubungan Industrial</h3>
-            <p class="text-slate-500 text-sm font-light leading-relaxed">
-              Penyelesaian perselisihan ketenagakerjaan, PHK massal, dan penyusunan Peraturan Perusahaan.
-            </p>
-          </div>
-          
-          <div class="bg-white p-8 rounded-sm shadow-elegant hover-card border border-transparent" data-aos="fade-up" data-aos-delay="200">
-            <i data-lucide="shield-alert" class="w-8 h-8 text-secondary mb-6 stroke-[1.5]"></i>
-            <h3 class="font-serif text-xl font-bold text-primary mb-3">Kepailitan & PKPU</h3>
-            <p class="text-slate-500 text-sm font-light leading-relaxed">
-              Restrukturisasi hutang, perlindungan aset, dan pendampingan di Pengadilan Niaga.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Team Section -->
-    <section id="tim" class="py-24 bg-white border-y border-slate-100">
-      <div class="max-w-7xl mx-auto px-5 lg:px-8">
-        <div class="text-center max-w-2xl mx-auto mb-16" data-aos="fade-up">
-          <span class="text-secondary font-semibold uppercase tracking-wider text-xs block mb-3">Partners</span>
-          <h2 class="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">Ujung Tombak Eksekusi</h2>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="group" data-aos="fade-up" data-aos-delay="0">
-            <div class="overflow-hidden rounded-sm mb-5">
-              <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80" alt="Furman Pratama" class="w-full h-[450px] object-cover grayscale group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700" />
-            </div>
-            <h3 class="font-serif text-xl font-bold text-primary">Furman Pratama, S.H., M.H.</h3>
-            <p class="text-secondary font-medium text-xs uppercase tracking-widest mt-1 mb-3">Managing Partner</p>
-            <p class="text-slate-500 font-light text-sm">Pakar strukturisasi korporasi dan mitigasi sengketa lintas yurisdiksi.</p>
-          </div>
-          
-          <div class="group" data-aos="fade-up" data-aos-delay="100">
-            <div class="overflow-hidden rounded-sm mb-5">
-              <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80" alt="Nadia Putri" class="w-full h-[450px] object-cover grayscale group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700" />
-            </div>
-            <h3 class="font-serif text-xl font-bold text-primary">Nadia Putri, S.H.</h3>
-            <p class="text-secondary font-medium text-xs uppercase tracking-widest mt-1 mb-3">Head of Litigation</p>
-            <p class="text-slate-500 font-light text-sm">Spesialis di Pengadilan Niaga dan Hubungan Industrial dengan rekam jejak agresif.</p>
-          </div>
-          
-          <div class="group" data-aos="fade-up" data-aos-delay="200">
-            <div class="overflow-hidden rounded-sm mb-5">
-              <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80" alt="Ardiansyah" class="w-full h-[450px] object-cover grayscale group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700" />
-            </div>
-            <h3 class="font-serif text-xl font-bold text-primary">Ardiansyah, S.H., M.Kn.</h3>
-            <p class="text-secondary font-medium text-xs uppercase tracking-widest mt-1 mb-3">Corporate Counsel</p>
-            <p class="text-slate-500 font-light text-sm">Mantan penasihat internal multinasional. Ahli di bidang *contract drafting* dan investasi.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="py-24 bg-lightBg">
-      <div class="max-w-3xl mx-auto px-5 lg:px-8">
-        <div class="text-center mb-16" data-aos="fade-up">
-          <h2 class="font-serif text-3xl font-bold text-primary mb-4">Informasi Operasional</h2>
+    <!-- HERO SECTION -->
+    <section id="beranda" class="relative min-h-[100svh] flex items-center pt-24 pb-20 overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=80" alt="Premium Law Office" class="w-full h-full object-cover object-center filter brightness-[0.3]" />
+            <div class="absolute inset-0 bg-gradient-to-r from-brandDark via-brandDark/80 to-transparent"></div>
         </div>
         
-        <div class="space-y-3" data-aos="fade-up" data-aos-delay="100">
-          <div class="faq-item bg-white border border-slate-100 rounded-sm cursor-pointer hover:border-secondary/30 transition-colors">
-            <button class="w-full px-6 py-5 flex justify-between items-center text-left focus:outline-none" onclick="toggleFaq(this)">
-              <h4 class="font-semibold text-primary text-sm">Apakah melayani status "Retained Lawyer" untuk Perusahaan?</h4>
-              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 faq-icon transition-transform duration-300"></i>
-            </button>
-            <div class="faq-answer px-6 text-slate-500 font-light text-sm">
-              <p class="pb-5">Ya. Mayoritas klien kami adalah perusahaan yang mengikat kontrak Retainer Bulanan/Tahunan untuk memastikan keamanan seluruh *legal action* perusahaan dari hari ke hari.</p>
+        <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 w-full">
+            <div class="max-w-3xl reveal-blur">
+                <div class="inline-flex items-center gap-4 mb-6">
+                    <span class="w-12 h-[1px] bg-brandGold"></span>
+                    <span class="text-brandGoldLight font-semibold tracking-[0.3em] uppercase text-xs">Furman Law Firm</span>
+                </div>
+                
+                <h1 class="font-serif text-5xl md:text-7xl lg:text-[80px] font-bold text-white leading-[1.05] mb-8">
+                    Keadilan Melalui <br>
+                    <span class="text-gold-grad italic font-normal">Presisi Hukum.</span>
+                </h1>
+                
+                <p class="text-base md:text-lg text-gray-400 mb-12 leading-relaxed font-light max-w-xl">
+                    Melindungi aset, hak, dan reputasi bisnis Anda melalui strategi litigasi yang tajam dan mitigasi risiko korporasi tanpa kompromi.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-5">
+                    <a href="#kontak" class="bg-gold-gradient text-brandDark font-bold px-8 py-4 rounded-sm text-center text-xs uppercase tracking-widest hover:brightness-110 transition-all shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+                        Konsultasi Strategi
+                    </a>
+                    <a href="#praktik" class="border border-white/20 text-white font-bold px-8 py-4 rounded-sm hover:border-brandGold hover:text-brandGold transition-colors text-center flex items-center justify-center gap-3 text-xs uppercase tracking-widest group">
+                        Area Praktik <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-2"></i>
+                    </a>
+                </div>
             </div>
-          </div>
-          
-          <div class="faq-item bg-white border border-slate-100 rounded-sm cursor-pointer hover:border-secondary/30 transition-colors">
-            <button class="w-full px-6 py-5 flex justify-between items-center text-left focus:outline-none" onclick="toggleFaq(this)">
-              <h4 class="font-semibold text-primary text-sm">Bagaimana struktur penetapan biaya (Fee) di Furman?</h4>
-              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 faq-icon transition-transform duration-300"></i>
-            </button>
-            <div class="faq-answer px-6 text-slate-500 font-light text-sm">
-              <p class="pb-5">Kami mengedepankan transparansi. Biaya dapat bersifat *Lump Sum* (dibayar di muka sesuai kontrak), *Hourly Rate* (per jam kerja), atau *Success Fee* (persentase jika kasus menang) tergantung kerumitan kasus.</p>
-            </div>
-          </div>
-          
-          <div class="faq-item bg-white border border-slate-100 rounded-sm cursor-pointer hover:border-secondary/30 transition-colors">
-            <button class="w-full px-6 py-5 flex justify-between items-center text-left focus:outline-none" onclick="toggleFaq(this)">
-              <h4 class="font-semibold text-primary text-sm">Apakah konsultasi wajib dilakukan secara tatap muka?</h4>
-              <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 faq-icon transition-transform duration-300"></i>
-            </button>
-            <div class="faq-answer px-6 text-slate-500 font-light text-sm">
-              <p class="pb-5">Tidak. Kami menyediakan ruang rapat virtual terenkripsi bagi klien-klien ekspatriat atau eksekutif yang berada di luar kota Jakarta/Bandung.</p>
-            </div>
-          </div>
         </div>
-      </div>
     </section>
 
-    <!-- Footer / Contact -->
-    <footer id="kontak" class="bg-primary text-white pt-24 pb-10 border-t border-secondary">
-      <div class="max-w-7xl mx-auto px-5 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-16">
-          <div data-aos="fade-right">
-            <h2 class="font-serif text-3xl font-bold text-white mb-4">Mari Bicara Kasus Anda.</h2>
-            <p class="text-gray-400 font-light text-sm mb-10 max-w-md leading-relaxed">
-              Keterlambatan bertindak seringkali menjadi akar kerugian legal. Jadwalkan rapat strategis dengan representatif kami hari ini.
-            </p>
+    <!-- ABOUT SECTION -->
+    <section id="tentang" class="py-24 lg:py-32 bg-brandLight relative">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
+                
+                <div class="lg:col-span-5 relative group reveal-blur">
+                    <div class="absolute -inset-4 border border-brandGold/30 rounded-sm translate-x-4 translate-y-4 transition-transform duration-700 group-hover:translate-x-6 group-hover:translate-y-6"></div>
+                    <div class="img-editorial h-[500px] md:h-[600px] shadow-2xl relative z-10">
+                        <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=800&q=80" alt="Gavel and Scales" />
+                    </div>
+                </div>
+                
+                <div class="lg:col-span-7 reveal-blur delay-1">
+                    <span class="text-brandGold font-semibold tracking-[0.2em] uppercase text-[10px] mb-4 block">Firma Kami</span>
+                    <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-brandNavy mb-8 leading-tight">
+                        Kredibilitas. <br><span class="italic font-normal text-gold-grad">Integritas. Hasil.</span>
+                    </h2>
+                    <p class="text-gray-500 mb-6 font-light leading-relaxed text-base md:text-lg">
+                        Kami tidak sekadar berteori. Tim Furman Law Firm hadir untuk memberikan eksekusi penyelesaian hukum yang *business-oriented*, efisien, dan tuntas. Pendekatan kami bertumpu pada perlindungan klien secara agresif di dalam maupun di luar pengadilan.
+                    </p>
 
-            <div class="space-y-6">
-              <div class="flex items-start gap-4">
-                <i data-lucide="map-pin" class="w-5 h-5 text-secondary mt-1 shrink-0"></i>
-                <div>
-                  <h5 class="font-bold text-white text-sm mb-1">Headquarters</h5>
-                  <p class="text-gray-400 text-sm font-light">Gedung Sudirman Center Lt. 12<br>Jl. Jend. Sudirman No. 45, Jakarta 12190</p>
+                    <div class="grid grid-cols-2 gap-10 mt-12 border-t border-gray-200 pt-10">
+                        <div>
+                            <h4 class="text-5xl font-serif text-brandNavy mb-2">98<span class="text-brandGold">%</span></h4>
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Keberhasilan Mediasi</p>
+                        </div>
+                        <div>
+                            <h4 class="text-5xl font-serif text-brandNavy mb-2">250<span class="text-brandGold">+</span></h4>
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Klien Korporasi</p>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              
-              <div class="flex items-start gap-4">
-                <i data-lucide="mail" class="w-5 h-5 text-secondary mt-1 shrink-0"></i>
-                <div>
-                  <h5 class="font-bold text-white text-sm mb-1">Korespodensi Formal</h5>
-                  <p class="text-gray-400 text-sm font-light">inquiry@furmanlaw.com</p>
-                </div>
-              </div>
-              
-              <div class="flex items-start gap-4">
-                <i data-lucide="phone" class="w-5 h-5 text-secondary mt-1 shrink-0"></i>
-                <div>
-                  <h5 class="font-bold text-white text-sm mb-1">Direct Line</h5>
-                  <p class="text-gray-400 text-sm font-light">+62 811-2233-4455 <span class="text-secondary">(Fast Response)</span></p>
-                </div>
-              </div>
+
             </div>
-          </div>
-
-          <div class="h-96 w-full grayscale rounded-sm overflow-hidden border border-white/10" data-aos="fade-left">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126920.24009714856!2d106.74124316629986!3d-6.229746487146566!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3e945e34b9d%3A0x100c5e82dd4b820!2sJakarta%20Selatan%2C%20Kota%20Jakarta%20Selatan%2C%20Daerah%20Khusus%20Ibukota%20Jakarta!5e0!3m2!1sid!2sid!4v1710400000000!5m2!1sid!2sid"
-              width="100%" height="100%" style="border: 0" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-            </iframe>
-          </div>
         </div>
+    </section>
 
-        <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-xs font-light">
-          <p>&copy; 2026 Furman Law Firm & Partners. Seluruh Hak Cipta Dilindungi.</p>
-          <div class="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" class="hover:text-secondary transition">Disclaimer</a>
-            <a href="#" class="hover:text-secondary transition">Kebijakan Privasi</a>
-          </div>
+    <!-- PRACTICE AREAS -->
+    <section id="praktik" class="py-24 lg:py-32 bg-dark-gradient text-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-6 reveal-blur">
+                <div>
+                    <span class="text-brandGoldLight font-semibold uppercase tracking-[0.2em] text-[10px] block mb-4">Ekspertise Firma</span>
+                    <h2 class="font-serif text-4xl md:text-5xl font-bold">Fokus Praktik <span class="italic font-normal text-gold-grad">Hukum.</span></h2>
+                </div>
+                <p class="text-gray-400 font-light max-w-sm text-sm leading-relaxed">
+                    Spesialisasi mendalam di berbagai sektor krusial untuk memberikan Anda perlindungan legal yang tak tertembus.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-brandNavy/50 border border-white/5 p-10 rounded-sm hover-card reveal-blur">
+                    <i data-lucide="building-2" class="w-10 h-10 text-brandGold mb-8 stroke-[1]"></i>
+                    <h3 class="font-serif text-2xl font-bold text-white mb-4">Hukum Korporasi</h3>
+                    <p class="text-gray-400 text-sm font-light leading-relaxed">Merger, akuisisi, due diligence, hingga tata kelola perusahaan (GCG) untuk keamanan operasional bisnis.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-brandNavy/50 border border-white/5 p-10 rounded-sm hover-card reveal-blur delay-1">
+                    <i data-lucide="briefcase" class="w-10 h-10 text-brandGold mb-8 stroke-[1]"></i>
+                    <h3 class="font-serif text-2xl font-bold text-white mb-4">Sengketa Komersial</h3>
+                    <p class="text-gray-400 text-sm font-light leading-relaxed">Litigasi dan arbitrase tingkat tinggi terkait wanprestasi kontrak serta perselisihan pemegang saham.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-brandNavy/50 border border-white/5 p-10 rounded-sm hover-card reveal-blur delay-2">
+                    <i data-lucide="landmark" class="w-10 h-10 text-brandGold mb-8 stroke-[1]"></i>
+                    <h3 class="font-serif text-2xl font-bold text-white mb-4">Pidana Bisnis</h3>
+                    <p class="text-gray-400 text-sm font-light leading-relaxed">Pembelaan hukum taktis untuk tuduhan penggelapan, penipuan perusahaan, dan kejahatan kerah putih.</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="bg-brandNavy/50 border border-white/5 p-10 rounded-sm hover-card reveal-blur">
+                    <i data-lucide="map" class="w-10 h-10 text-brandGold mb-8 stroke-[1]"></i>
+                    <h3 class="font-serif text-2xl font-bold text-white mb-4">Properti & Agraria</h3>
+                    <p class="text-gray-400 text-sm font-light leading-relaxed">Audit sengketa lahan, legalitas proyek properti komersial, dan penyelesaian sengketa hak atas tanah.</p>
+                </div>
+                <!-- Card 5 -->
+                <div class="bg-brandNavy/50 border border-white/5 p-10 rounded-sm hover-card reveal-blur delay-1">
+                    <i data-lucide="users" class="w-10 h-10 text-brandGold mb-8 stroke-[1]"></i>
+                    <h3 class="font-serif text-2xl font-bold text-white mb-4">Industrial & SDM</h3>
+                    <p class="text-gray-400 text-sm font-light leading-relaxed">Penyelesaian perselisihan ketenagakerjaan, eksekusi PHK massal, dan penyusunan Peraturan Perusahaan.</p>
+                </div>
+                <!-- Card 6 -->
+                <div class="bg-brandNavy/50 border border-white/5 p-10 rounded-sm hover-card reveal-blur delay-2">
+                    <i data-lucide="shield-alert" class="w-10 h-10 text-brandGold mb-8 stroke-[1]"></i>
+                    <h3 class="font-serif text-2xl font-bold text-white mb-4">Kepailitan & PKPU</h3>
+                    <p class="text-gray-400 text-sm font-light leading-relaxed">Strategi restrukturisasi hutang, perlindungan aset, dan pendampingan profesional di Pengadilan Niaga.</p>
+                </div>
+            </div>
         </div>
-      </div>
+    </section>
+
+    <!-- TEAM SECTION -->
+    <section id="tim" class="py-24 lg:py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-20 reveal-blur">
+                <span class="text-brandGold font-semibold uppercase tracking-[0.2em] text-[10px] block mb-4">Partners</span>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-brandNavy">Ujung Tombak <span class="italic font-normal text-gold-grad">Eksekusi.</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <!-- Team 1 -->
+                <div class="group reveal-blur">
+                    <div class="img-editorial h-[500px] mb-6 shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80" alt="Furman Pratama" />
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-brandNavy">Furman P., S.H., LL.M.</h3>
+                    <p class="text-brandGold font-bold text-[10px] uppercase tracking-widest mt-2 mb-4">Managing Partner</p>
+                    <p class="text-gray-500 font-light text-sm leading-relaxed border-t border-gray-200 pt-4">Pakar strukturisasi korporasi dan mitigasi sengketa lintas yurisdiksi dengan pengalaman 20+ tahun.</p>
+                </div>
+                <!-- Team 2 -->
+                <div class="group reveal-blur delay-1">
+                    <div class="img-editorial h-[500px] mb-6 shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80" alt="Nadia Putri" />
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-brandNavy">Nadia Putri, S.H.</h3>
+                    <p class="text-brandGold font-bold text-[10px] uppercase tracking-widest mt-2 mb-4">Head of Litigation</p>
+                    <p class="text-gray-500 font-light text-sm leading-relaxed border-t border-gray-200 pt-4">Spesialis tangguh di Pengadilan Niaga dan Hubungan Industrial dengan rekam jejak litigasi agresif.</p>
+                </div>
+                <!-- Team 3 -->
+                <div class="group reveal-blur delay-2">
+                    <div class="img-editorial h-[500px] mb-6 shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=80" alt="Ardiansyah" />
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-brandNavy">Ardiansyah, S.H., M.Kn.</h3>
+                    <p class="text-brandGold font-bold text-[10px] uppercase tracking-widest mt-2 mb-4">Corporate Counsel</p>
+                    <p class="text-gray-500 font-light text-sm leading-relaxed border-t border-gray-200 pt-4">Mantan penasihat internal multinasional. Ahli utama di bidang *contract drafting* dan hukum investasi.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="py-24 bg-brandLight border-y border-gray-200">
+        <div class="max-w-4xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16 reveal-blur">
+                <h2 class="font-serif text-3xl md:text-4xl font-bold text-brandNavy mb-4">Informasi Operasional</h2>
+            </div>
+            
+            <div class="space-y-4 reveal-blur delay-1">
+                <div class="faq-item bg-white border border-gray-200 rounded-sm cursor-pointer hover:border-brandGold/50 transition-colors shadow-sm">
+                    <button class="w-full px-8 py-6 flex justify-between items-center text-left focus:outline-none" onclick="toggleFaq(this)">
+                        <h4 class="font-bold text-brandNavy text-base">Apakah melayani status "Retained Lawyer" untuk Perusahaan?</h4>
+                        <i data-lucide="plus" class="w-5 h-5 text-brandGold faq-icon transition-transform duration-500"></i>
+                    </button>
+                    <div class="faq-answer px-8 text-gray-500 font-light text-sm">
+                        <p class="pb-8 leading-relaxed">Ya. Mayoritas klien kami adalah perusahaan yang mengikat kontrak Retainer Bulanan/Tahunan untuk memastikan keamanan seluruh *legal action* perusahaan dari hari ke hari, mencakup review kontrak hingga somasi.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item bg-white border border-gray-200 rounded-sm cursor-pointer hover:border-brandGold/50 transition-colors shadow-sm">
+                    <button class="w-full px-8 py-6 flex justify-between items-center text-left focus:outline-none" onclick="toggleFaq(this)">
+                        <h4 class="font-bold text-brandNavy text-base">Bagaimana struktur penetapan biaya (Fee) di Furman?</h4>
+                        <i data-lucide="plus" class="w-5 h-5 text-brandGold faq-icon transition-transform duration-500"></i>
+                    </button>
+                    <div class="faq-answer px-8 text-gray-500 font-light text-sm">
+                        <p class="pb-8 leading-relaxed">Kami mengedepankan transparansi. Biaya dapat bersifat *Lump Sum* (dibayar sesuai kontrak), *Hourly Rate* (per jam kerja), atau *Success Fee* (persentase jika kasus menang) yang disesuaikan dengan kerumitan kasus hukum Anda.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item bg-white border border-gray-200 rounded-sm cursor-pointer hover:border-brandGold/50 transition-colors shadow-sm">
+                    <button class="w-full px-8 py-6 flex justify-between items-center text-left focus:outline-none" onclick="toggleFaq(this)">
+                        <h4 class="font-bold text-brandNavy text-base">Apakah konsultasi wajib dilakukan secara tatap muka?</h4>
+                        <i data-lucide="plus" class="w-5 h-5 text-brandGold faq-icon transition-transform duration-500"></i>
+                    </button>
+                    <div class="faq-answer px-8 text-gray-500 font-light text-sm">
+                        <p class="pb-8 leading-relaxed">Tidak. Kami menyediakan ruang rapat virtual terenkripsi bagi klien-klien ekspatriat atau jajaran eksekutif yang memiliki mobilitas tinggi atau berada di luar yurisdiksi Jakarta.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER / CONTACT -->
+    <footer id="kontak" class="bg-brandDark text-white pt-32 pb-10 border-t-4 border-brandGold relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-brandGold/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 mb-20">
+                
+                <div class="lg:col-span-5 reveal-blur">
+                    <h2 class="font-serif text-5xl md:text-6xl font-bold text-white mb-6">Mari Bicara <br><span class="italic text-gold-grad font-normal">Kasus Anda.</span></h2>
+                    <p class="text-gray-400 font-light text-sm mb-12 max-w-sm leading-relaxed">
+                        Keterlambatan bertindak seringkali menjadi akar kerugian legal. Jadwalkan rapat strategis dengan representatif kami hari ini.
+                    </p>
+
+                    <div class="space-y-8">
+                        <div class="flex items-start gap-5">
+                            <i data-lucide="map-pin" class="w-5 h-5 text-brandGold mt-1 shrink-0"></i>
+                            <div>
+                                <h5 class="font-bold text-white text-xs uppercase tracking-widest mb-2">Headquarters</h5>
+                                <p class="text-gray-400 text-sm font-light leading-relaxed">Sudirman Center 12th Floor<br>Jl. Jend. Sudirman No. 45, Jakarta 12190</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-5">
+                            <i data-lucide="mail" class="w-5 h-5 text-brandGold mt-1 shrink-0"></i>
+                            <div>
+                                <h5 class="font-bold text-white text-xs uppercase tracking-widest mb-2">Korespodensi</h5>
+                                <p class="text-gray-400 text-sm font-light">inquiry@furmanlaw.com</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-5">
+                            <i data-lucide="phone" class="w-5 h-5 text-brandGold mt-1 shrink-0"></i>
+                            <div>
+                                <h5 class="font-bold text-white text-xs uppercase tracking-widest mb-2">Direct Line</h5>
+                                <p class="text-gray-400 text-sm font-light">+62 811-2233-4455 <span class="text-brandGold ml-2 text-xs italic">Fast Response</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 h-80 lg:h-auto w-full grayscale hover:grayscale-0 rounded-sm overflow-hidden border border-white/10 transition-all duration-700 reveal-blur delay-1">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126920.24009714856!2d106.74124316629986!3d-6.229746487146566!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3e945e34b9d%3A0x100c5e82dd4b820!2sJakarta%20Selatan%2C%20Kota%20Jakarta%20Selatan%2C%20Daerah%20Khusus%20Ibukota%20Jakarta!5e0!3m2!1sid!2sid!4v1710400000000!5m2!1sid!2sid"
+                        width="100%" height="100%" style="border: 0" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-[10px] uppercase tracking-widest font-bold">
+                <p>&copy; 2026 FURMAN LAW FIRM & PARTNERS.</p>
+                <div class="flex space-x-8 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-brandGold transition-colors">Disclaimer</a>
+                    <a href="#" class="hover:text-brandGold transition-colors">Privacy Policy</a>
+                </div>
+            </div>
+        </div>
     </footer>
 
-    <!-- Back to Top -->
-    <button id="scrollTopBtn" onclick="scrollToTop()" class="fixed bottom-8 right-8 bg-secondary text-primary w-12 h-12 rounded-sm shadow-2xl flex items-center justify-center opacity-0 invisible translate-y-4 transition-all duration-500 hover:bg-white z-50">
-      <i data-lucide="arrow-up" class="w-5 h-5"></i>
-    </button>
+    <!-- FLOATING BUTTONS (Premium Look) -->
+    <div class="fixed bottom-6 right-6 md:bottom-8 md:right-8 flex flex-col gap-3 z-50">
+        <!-- Back to Top -->
+        <button id="scrollTopBtn" onclick="scrollToTop()" class="w-12 h-12 md:w-14 md:h-14 bg-brandDark border border-brandGold/30 text-brandGold rounded-sm flex justify-center items-center hover:bg-brandGold hover:text-brandDark transition-all duration-500 opacity-0 translate-y-6 pointer-events-none shadow-2xl" aria-label="Scroll Top">
+            <i data-lucide="chevron-up" class="w-5 h-5"></i>
+        </button>
 
+        <!-- Premium WhatsApp -->
+        <a href="https://wa.me/6281122334455?text=Halo%20Furman%20Law%20Firm,%20saya%20membutuhkan%20konsultasi%20hukum." target="_blank" class="h-12 md:h-14 bg-brandDark border border-brandGold/30 text-brandGold px-4 rounded-sm flex items-center gap-3 hover:bg-brandGold hover:text-brandDark transition-all duration-500 group shadow-2xl" aria-label="WhatsApp Consult">
+            <i data-lucide="message-circle" class="w-5 h-5"></i>
+            <span class="text-[10px] md:text-xs font-bold uppercase tracking-widest hidden sm:block pr-2">Priority Consult</span>
+        </a>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-      // Init Icons
-      lucide.createIcons();
+        // Init Lucide
+        lucide.createIcons();
 
-      // Premium Animation Config
-      AOS.init({ duration: 1000, easing: 'ease-out-cubic', once: true, offset: 50 });
-
-      // Clean Mobile Menu Logic
-      const btn = document.getElementById("mobile-menu-btn");
-      const menu = document.getElementById("mobile-menu");
-      
-      btn.addEventListener("click", () => { menu.classList.toggle("hidden"); });
-      menu.querySelectorAll("a").forEach(link => { 
-        link.addEventListener("click", () => menu.classList.add("hidden")); 
-      });
-
-      // Smooth Accordion
-      function toggleFaq(button) {
-        const item = button.parentElement;
-        document.querySelectorAll(".faq-item").forEach(faq => {
-          if (faq !== item) faq.classList.remove("active");
+        // Mobile Menu
+        const btn = document.getElementById("mobile-menu-btn");
+        const menu = document.getElementById("mobile-menu");
+        
+        btn.addEventListener("click", () => {
+            menu.classList.toggle("hidden");
+            btn.innerHTML = menu.classList.contains("hidden") 
+                ? '<i data-lucide="menu" class="w-6 h-6"></i>' 
+                : '<i data-lucide="x" class="w-6 h-6"></i>';
+            lucide.createIcons();
+            document.body.style.overflow = menu.classList.contains("hidden") ? "auto" : "hidden";
         });
-        item.classList.toggle("active");
-      }
 
-      // Dynamic Glass Navbar & Back to Top
-      const navbar = document.getElementById("navbar");
-      const scrollTopBtn = document.getElementById("scrollTopBtn");
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+                btn.innerHTML = '<i data-lucide="menu" class="w-6 h-6"></i>';
+                lucide.createIcons();
+                document.body.style.overflow = "auto";
+            });
+        });
 
-      window.addEventListener("scroll", () => {
-        if (window.scrollY > 50) {
-          navbar.classList.add("glass-nav");
-          navbar.classList.remove("bg-primary", "py-2");
-        } else {
-          navbar.classList.remove("glass-nav");
-          navbar.classList.add("bg-primary", "py-2");
+        // Dynamic Glass Navbar & Back to Top
+        const navbar = document.getElementById("navbar");
+        const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add("glass-nav");
+                navbar.classList.remove("bg-brandDark", "py-4");
+            } else {
+                navbar.classList.remove("glass-nav");
+                navbar.classList.add("bg-brandDark", "py-4");
+            }
+
+            if (window.scrollY > 500) {
+                scrollTopBtn.classList.remove("opacity-0", "translate-y-6", "pointer-events-none");
+                scrollTopBtn.classList.add("opacity-100", "translate-y-0", "pointer-events-auto");
+            } else {
+                scrollTopBtn.classList.remove("opacity-100", "translate-y-0", "pointer-events-auto");
+                scrollTopBtn.classList.add("opacity-0", "translate-y-6", "pointer-events-none");
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
-        if (window.scrollY > 400) {
-          scrollTopBtn.classList.remove("opacity-0", "invisible", "translate-y-4");
-        } else {
-          scrollTopBtn.classList.add("opacity-0", "invisible", "translate-y-4");
+        // Smooth Accordion
+        function toggleFaq(button) {
+            const item = button.parentElement;
+            const icon = button.querySelector('.faq-icon');
+            
+            document.querySelectorAll(".faq-item").forEach(faq => {
+                if (faq !== item) {
+                    faq.classList.remove("active");
+                    const otherIcon = faq.querySelector('.faq-icon');
+                    if(otherIcon) {
+                        otherIcon.classList.remove('fa-minus');
+                        otherIcon.classList.add('fa-plus');
+                    }
+                }
+            });
+            item.classList.toggle("active");
         }
-      });
 
-      function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
+        // Custom Smudge Slow Animation Observer
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px 0px -50px 0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-blur').forEach(el => {
+            observer.observe(el);
+        });
     </script>
-  </body>
+</body>
 </html>

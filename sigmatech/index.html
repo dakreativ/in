@@ -12,193 +12,282 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- DESIGN TOKENS (Minimalist Palette) --- */
+        /* --- DESIGN TOKENS (Premium Green, White, Orange Palette) --- */
         :root {
-            --mint-light: #f2fcf8;
-            --mint-primary: #8abeb0;
-            --teal-dark: #0a251f; 
-            --dark-bg: #111111;
-            --text-dark: #1e293b;
-            --text-gray: #64748b;
-            --white: #ffffff;
-            --border-light: #e2e8f0;
+            /* Green Palette */
+            --green-dark: #022c22;    /* Sangat gelap, mendekati hitam untuk teks/bg */
+            --green-main: #064e3b;    /* Hijau Emerald Premium */
+            --green-light: #ecfdf5;   /* Hijau super muda untuk background section */
+            
+            /* Orange Palette */
+            --orange-main: #f97316;
+            --orange-dark: #ea580c;
+            --orange-light: #fff7ed;
+            
+            /* Gradients */
+            --grad-orange: linear-gradient(135deg, #fb923c, #ea580c);
+            --grad-green: linear-gradient(135deg, #064e3b, #047857);
+            
+            /* Neutrals */
+            --bg-white: #ffffff;
+            --bg-gray: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-subtle: #e2e8f0;
+            
+            /* Utils */
             --wa-color: #25d366;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-fast: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-premium: 0 20px 40px rgba(6, 78, 59, 0.08);
         }
 
         /* --- GLOBAL --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         html { scroll-behavior: smooth; }
-        body { background-color: var(--white); color: var(--text-dark); overflow-x: hidden; line-height: 1.6; }
+        body { background-color: var(--bg-white); color: var(--text-main); overflow-x: hidden; line-height: 1.6; }
         a { text-decoration: none; color: inherit; }
         ul { list-style: none; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
         
-        /* --- UTILITIES (Scroll Reveal) --- */
-        .reveal { opacity: 0; transform: translateY(30px); transition: var(--transition); transition-duration: 0.8s; }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-        .reveal-delay-1 { transition-delay: 0.1s; }
-        .reveal-delay-2 { transition-delay: 0.2s; }
-        .reveal-delay-3 { transition-delay: 0.3s; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-gray); }
+        ::-webkit-scrollbar-thumb { background: var(--orange-main); border-radius: 10px; }
 
-        .section-header { text-align: center; margin-bottom: 50px; }
-        .section-header h2 { font-size: 2.2rem; color: var(--teal-dark); font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px; }
-        .section-header p { color: var(--text-gray); font-size: 1.05rem; max-width: 500px; margin: 0 auto; }
+        /* --- TEXT GRADIENTS --- */
+        .text-gradient-orange {
+            background: var(--grad-orange);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
 
-        /* --- NAVBAR (Clean & Mobile Ready) --- */
+        /* --- UTILITIES (Premium Scroll Reveal with Blur) --- */
+        .reveal { 
+            opacity: 0; 
+            transform: translateY(40px) scale(0.98); 
+            filter: blur(10px);
+            transition: var(--transition-slow); 
+        }
+        .reveal.active { 
+            opacity: 1; 
+            transform: translateY(0) scale(1); 
+            filter: blur(0);
+        }
+        .reveal-delay-1 { transition-delay: 0.15s; }
+        .reveal-delay-2 { transition-delay: 0.3s; }
+        .reveal-delay-3 { transition-delay: 0.45s; }
+
+        /* Premium Image Wrapper (Slow Zoom Effect) */
+        .img-wrapper {
+            overflow: hidden;
+            position: relative;
+            border-radius: 16px;
+            background: var(--bg-gray);
+        }
+        .img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-slow);
+            filter: brightness(0.95);
+        }
+        .service-card:hover .img-wrapper img,
+        .hero-image:hover .img-wrapper img,
+        .about-img:hover .img-wrapper img {
+            transform: scale(1.08);
+            filter: brightness(1);
+        }
+
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 2.5rem; color: var(--green-dark); font-weight: 800; margin-bottom: 16px; letter-spacing: -1px; }
+        .section-header p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; font-weight: 400; }
+
+        /* --- NAVBAR (Glassmorphism Minimal) --- */
         nav {
             position: fixed; width: 100%; top: 0; z-index: 1000;
-            padding: 20px 0; transition: var(--transition);
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(8px);
+            padding: 24px 0; transition: var(--transition-fast);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
             border-bottom: 1px solid transparent;
         }
         nav.scrolled {
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border-light);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            padding: 16px 0;
+            background: rgba(255, 255, 255, 0.98);
+            border-bottom: 1px solid var(--border-subtle);
+            box-shadow: 0 10px 30px rgba(6, 78, 59, 0.05);
         }
         .nav-content { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.4rem; font-weight: 800; color: var(--teal-dark); display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
-        .logo i { color: var(--mint-primary); font-size: 1.4rem; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--green-dark); display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
+        .logo i { background: var(--grad-orange); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.4rem; }
         
         /* Desktop Menu */
-        .nav-links { display: flex; gap: 35px; align-items: center; }
-        .nav-links a { font-weight: 600; font-size: 0.95rem; color: var(--text-gray); transition: var(--transition); }
-        .nav-links a:hover { color: var(--teal-dark); }
-        .nav-cta { background: var(--teal-dark); color: var(--white) !important; padding: 10px 22px; border-radius: 8px; font-weight: 600; transition: var(--transition); }
-        .nav-cta:hover { background: var(--mint-primary); color: var(--teal-dark) !important; }
+        .nav-links { display: flex; gap: 40px; align-items: center; }
+        .nav-links a { font-weight: 600; font-size: 0.9rem; color: var(--text-muted); transition: var(--transition-fast); }
+        .nav-links a:hover { color: var(--orange-main); }
+        .nav-cta { background: var(--grad-orange); color: var(--bg-white) !important; padding: 12px 28px; border-radius: 50px; font-weight: 700; transition: var(--transition-fast); box-shadow: 0 10px 20px rgba(234, 88, 12, 0.2); }
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(234, 88, 12, 0.3); }
 
         /* Mobile Menu Toggle */
-        .menu-toggle { display: none; font-size: 1.5rem; color: var(--teal-dark); cursor: pointer; }
+        .menu-toggle { display: none; font-size: 1.5rem; color: var(--green-dark); cursor: pointer; }
 
         /* --- HERO SECTION --- */
         .hero {
             position: relative; min-height: 100vh;
             display: flex; align-items: center;
-            background: var(--white);
-            padding-top: 80px; 
+            background: var(--bg-white);
+            padding-top: 100px; 
+            overflow: hidden;
         }
-        .hero-grid {
-            display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center;
+        /* Background subtle gradient mesh */
+        .hero::before {
+            content: ''; position: absolute; top: -20%; right: -10%; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(234,88,12,0.08) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%; z-index: 0; pointer-events: none;
         }
-        .hero-content { position: relative; z-index: 1; }
-        .hero-badge {
-            display: inline-block; background: var(--mint-light);
-            color: var(--teal-dark); padding: 6px 16px; border-radius: 50px;
-            font-weight: 700; font-size: 0.85rem; margin-bottom: 24px; letter-spacing: 0.5px;
+        .hero::after {
+            content: ''; position: absolute; bottom: -10%; left: -10%; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(6,78,59,0.05) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%; z-index: 0; pointer-events: none;
         }
-        .hero h1 { font-size: 3.8rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; color: var(--teal-dark); letter-spacing: -1px; }
-        .hero h1 span { color: var(--mint-primary); }
-        .hero p { font-size: 1.1rem; line-height: 1.7; color: var(--text-gray); margin-bottom: 40px; max-width: 90%; }
-        .hero-btns { display: flex; gap: 16px; }
-        .btn-primary { background: var(--teal-dark); color: var(--white); padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 1rem; transition: var(--transition); border: 1px solid var(--teal-dark); }
-        .btn-primary:hover { background: var(--mint-primary); border-color: var(--mint-primary); color: var(--teal-dark); }
-        .btn-outline { border: 1px solid var(--border-light); color: var(--teal-dark); padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 1rem; transition: var(--transition); }
-        .btn-outline:hover { border-color: var(--teal-dark); background: var(--mint-light); }
 
-        .hero-image { position: relative; }
-        .hero-image img { width: 100%; border-radius: 20px; object-fit: cover; height: 600px; box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
+        .hero-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 1; }
+        
+        .hero-badge {
+            display: inline-block; background: var(--orange-light); border: 1px solid rgba(234, 88, 12, 0.2);
+            color: var(--orange-dark); padding: 8px 24px; border-radius: 50px;
+            font-weight: 700; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 24px; letter-spacing: 1px;
+        }
+        .hero h1 { font-size: 4.2rem; font-weight: 800; line-height: 1.1; margin-bottom: 24px; color: var(--green-dark); letter-spacing: -1.5px; }
+        .hero p { font-size: 1.15rem; font-weight: 400; line-height: 1.8; color: var(--text-muted); margin-bottom: 40px; max-width: 90%; }
+        
+        .hero-btns { display: flex; gap: 16px; }
+        
+        .btn-primary { background: var(--grad-orange); color: var(--bg-white); padding: 16px 36px; border-radius: 50px; font-weight: 700; font-size: 1rem; transition: var(--transition-fast); box-shadow: 0 10px 25px rgba(234, 88, 12, 0.25); border: none; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(234, 88, 12, 0.35); color: var(--bg-white); }
+        
+        .btn-outline { border: 2px solid var(--border-subtle); color: var(--green-dark); padding: 14px 36px; border-radius: 50px; font-weight: 700; font-size: 1rem; transition: var(--transition-fast); background: transparent; }
+        .btn-outline:hover { border-color: var(--green-main); background: var(--green-light); color: var(--green-main); }
+
+        .hero-image .img-wrapper { height: 600px; border-radius: 30px; box-shadow: var(--shadow-premium); border: 8px solid var(--bg-white); }
 
         /* --- KATALOG LAYANAN --- */
-        .services { padding: 100px 0; background-color: #fafbfc; }
-        .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+        .services { padding: 120px 0; background-color: var(--bg-gray); }
+        .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; }
         .service-card {
-            background: var(--white); border-radius: 16px; padding: 16px;
-            border: 1px solid var(--border-light);
-            transition: var(--transition); position: relative;
+            background: var(--bg-white); padding: 20px; border-radius: 24px;
+            border: 1px solid var(--border-subtle);
+            transition: var(--transition-fast); position: relative;
         }
-        .service-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(10,37,31,0.06); border-color: transparent; }
-        .service-img { width: 100%; height: 200px; border-radius: 12px; object-fit: cover; margin-bottom: 20px; }
-        .category { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--mint-primary); letter-spacing: 1px; }
-        .service-card h3 { font-size: 1.25rem; color: var(--teal-dark); margin: 8px 0; font-weight: 700; }
-        .service-card p { color: var(--text-gray); font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px; }
-        .price-wrap { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light); padding-top: 16px; }
-        .price { font-size: 1.1rem; font-weight: 800; color: var(--teal-dark); }
-        .price span { font-size: 0.8rem; font-weight: 500; color: var(--text-gray); }
-        .service-card a { color: var(--teal-dark); font-size: 1.2rem; transition: var(--transition); }
-        .service-card a:hover { color: var(--mint-primary); transform: translateX(5px); }
+        .service-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-premium); border-color: transparent; }
+        .service-card .img-wrapper { height: 220px; margin-bottom: 24px; border-radius: 16px; }
+        
+        .category { display: inline-block; padding: 4px 12px; background: var(--green-light); color: var(--green-main); border-radius: 8px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .service-card h3 { font-size: 1.4rem; color: var(--green-dark); margin-bottom: 12px; font-weight: 800; letter-spacing: -0.5px; }
+        .service-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px; }
+        
+        .price-wrap { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border-subtle); padding-top: 20px; }
+        .price { font-size: 1.25rem; font-weight: 800; color: var(--orange-main); }
+        .price span { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); }
+        .service-card a { width: 40px; height: 40px; background: var(--bg-gray); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--green-dark); font-size: 1.1rem; transition: var(--transition-fast); }
+        .service-card a:hover { background: var(--grad-orange); color: var(--bg-white); transform: rotate(-45deg); }
 
         /* --- TENTANG KAMI --- */
-        .about { padding: 100px 0; background: var(--white); }
-        .about-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center; }
-        .about-img img { width: 100%; border-radius: 16px; }
-        .about-text h2 { font-size: 2.5rem; color: var(--teal-dark); font-weight: 800; line-height: 1.2; margin-bottom: 20px; letter-spacing: -0.5px; }
-        .about-text p { color: var(--text-gray); font-size: 1.05rem; line-height: 1.8; margin-bottom: 30px; }
+        .about { padding: 120px 0; background: var(--bg-white); }
+        .about-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: center; }
+        .about-img .img-wrapper { height: 550px; border-radius: 30px; box-shadow: var(--shadow-premium); }
         
-        .stats-container { display: flex; gap: 40px; border-top: 1px solid var(--border-light); padding-top: 30px; }
-        .stat-item h4 { font-size: 2rem; color: var(--teal-dark); font-weight: 800; margin-bottom: 4px; }
-        .stat-item p { color: var(--text-gray); font-weight: 500; font-size: 0.9rem; }
+        .about-text h2 { font-size: 3rem; color: var(--green-dark); font-weight: 800; line-height: 1.15; margin-bottom: 24px; letter-spacing: -1px; }
+        .about-text p { color: var(--text-muted); font-size: 1.1rem; line-height: 1.8; margin-bottom: 30px; }
+        
+        .stats-container { display: flex; gap: 48px; border-top: 2px solid var(--bg-gray); padding-top: 40px; }
+        .stat-item h4 { font-size: 2.5rem; background: var(--grad-green); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; margin-bottom: 4px; letter-spacing: -1px; }
+        .stat-item p { color: var(--text-main); font-weight: 700; font-size: 0.9rem; }
 
         /* --- KEUNGGULAN --- */
-        .features { padding: 100px 0; background: var(--mint-light); }
-        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 30px; }
-        .feature-card { background: var(--white); padding: 30px; border-radius: 16px; border: 1px solid var(--border-light); transition: var(--transition); }
-        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
-        .feature-icon { width: 50px; height: 50px; background: var(--teal-dark); color: var(--white); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 20px; }
-        .feature-card h3 { font-size: 1.1rem; margin-bottom: 12px; font-weight: 700; color: var(--teal-dark); }
-        .feature-card p { color: var(--text-gray); font-size: 0.9rem; line-height: 1.6; }
+        .features { padding: 120px 0; background: var(--green-main); position: relative; overflow: hidden; }
+        .features::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--green-dark) 0%, transparent 100%); opacity: 0.8;
+        }
+        .features .container { position: relative; z-index: 1; }
+        .features .section-header h2 { color: var(--bg-white); }
+        .features .section-header p { color: #d1fae5; }
+        
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 32px; }
+        .feature-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 40px 32px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); transition: var(--transition-fast); }
+        .feature-card:hover { transform: translateY(-8px); background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+        
+        .feature-icon { width: 60px; height: 60px; background: var(--grad-orange); color: var(--bg-white); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 24px; box-shadow: 0 10px 20px rgba(234, 88, 12, 0.3); }
+        .feature-card h3 { font-size: 1.25rem; margin-bottom: 16px; font-weight: 800; color: var(--bg-white); }
+        .feature-card p { color: #d1fae5; font-size: 0.95rem; line-height: 1.6; }
 
         /* --- FOOTER --- */
-        footer { background: var(--dark-bg); color: var(--white); padding: 80px 0 30px; }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 40px; margin-bottom: 60px; }
-        .footer-brand h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 16px; color: var(--white); }
-        .footer-brand h2 span { color: var(--mint-primary); }
-        .footer-brand p { color: #888; font-size: 0.95rem; line-height: 1.7; margin-bottom: 24px; max-width: 300px; }
+        footer { background: var(--green-dark); color: var(--bg-white); padding: 100px 0 30px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 60px; margin-bottom: 80px; }
         
-        .footer-col h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 20px; color: var(--white); }
-        .footer-col ul li { margin-bottom: 12px; }
-        .footer-col ul li a { color: #888; font-size: 0.95rem; transition: var(--transition); }
-        .footer-col ul li a:hover { color: var(--mint-primary); }
+        .footer-brand h2 { font-size: 2rem; font-weight: 800; margin-bottom: 20px; color: var(--bg-white); letter-spacing: -1px;}
+        .footer-brand h2 span { color: var(--orange-main); }
+        .footer-brand p { color: #94a3b8; font-size: 1rem; line-height: 1.7; margin-bottom: 24px; max-width: 320px; }
         
-        .contact-info li { display: flex; gap: 12px; margin-bottom: 16px; color: #888; font-size: 0.95rem; line-height: 1.6; }
-        .contact-info i { color: var(--mint-primary); font-size: 1.1rem; margin-top: 3px; }
+        .footer-col h4 { font-size: 1rem; font-weight: 700; margin-bottom: 24px; color: var(--bg-white); }
+        .footer-col ul li { margin-bottom: 16px; }
+        .footer-col ul li a { color: #94a3b8; font-size: 0.95rem; transition: var(--transition-fast); }
+        .footer-col ul li a:hover { color: var(--orange-main); padding-left: 5px; }
         
-        .footer-bottom { text-align: center; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); color: #666; font-size: 0.85rem; }
+        .contact-info li { display: flex; gap: 16px; margin-bottom: 20px; color: #94a3b8; font-size: 0.95rem; line-height: 1.6; }
+        .contact-info i { color: var(--orange-main); font-size: 1.2rem; margin-top: 4px; }
+        
+        .footer-bottom { text-align: center; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); color: #64748b; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.5px; }
 
         /* --- FLOATING WHATSAPP --- */
         .wa-btn {
-            position: fixed; bottom: 24px; right: 24px;
+            position: fixed; bottom: 32px; right: 32px;
             background: var(--wa-color); color: white;
-            width: 60px; height: 60px; border-radius: 50%;
+            width: 64px; height: 64px; border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            font-size: 32px; z-index: 1000;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
-            transition: var(--transition);
+            font-size: 36px; z-index: 1000;
+            box-shadow: 0 15px 30px rgba(37, 211, 102, 0.3);
+            transition: var(--transition-fast);
         }
-        .wa-btn:hover { transform: scale(1.05); color: white; }
+        .wa-btn:hover { transform: scale(1.1) translateY(-5px); }
 
         /* --- RESPONSIVE DESIGN --- */
         @media (max-width: 992px) {
-            .hero h1 { font-size: 3rem; }
-            .hero-image img { height: 400px; }
-            .about-grid { grid-template-columns: 1fr; gap: 40px; }
-            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .hero h1 { font-size: 3.2rem; }
+            .hero-grid { gap: 40px; }
+            .hero-image .img-wrapper { height: 450px; }
+            .about-grid { grid-template-columns: 1fr; gap: 60px; }
+            .about-img .img-wrapper { height: 400px; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
         }
 
         @media (max-width: 768px) {
-            .section-header h2 { font-size: 1.8rem; }
-            .hero { padding-top: 100px; min-height: auto; padding-bottom: 50px; }
-            .hero-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
+            .section-header h2 { font-size: 2rem; }
+            .hero { padding-top: 120px; min-height: auto; padding-bottom: 60px; text-align: center; }
+            .hero-grid { grid-template-columns: 1fr; gap: 40px; }
             .hero p { margin: 0 auto 30px; }
             .hero-btns { justify-content: center; flex-direction: column; }
-            .hero-image img { height: 350px; }
-            .stats-container { justify-content: center; flex-wrap: wrap; text-align: center; }
-            .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+            .hero-image .img-wrapper { height: 350px; border-radius: 20px; }
+            .stats-container { justify-content: center; flex-wrap: wrap; text-align: center; gap: 30px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 40px; }
             
             .menu-toggle { display: block; }
             .nav-links {
                 position: absolute; top: 100%; left: 0; width: 100%;
-                background: var(--white); flex-direction: column;
-                padding: 0; gap: 0; overflow: hidden; max-height: 0;
-                box-shadow: 0 10px 15px rgba(0,0,0,0.05);
-                transition: max-height 0.4s ease-out;
+                background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px);
+                flex-direction: column; padding: 0; gap: 0; overflow: hidden; max-height: 0;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+                transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             }
-            .nav-links.active { max-height: 400px; border-bottom: 1px solid var(--border-light); }
-            .nav-links a { display: block; padding: 16px 24px; border-top: 1px solid var(--border-light); width: 100%; color: var(--text-dark); }
-            .nav-cta { border-radius: 0; padding: 16px 24px; text-align: center; }
+            .nav-links.active { max-height: 500px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px; }
+            .nav-links a { display: block; padding: 16px 24px; border-top: 1px solid var(--border-subtle); width: 100%; color: var(--text-main); }
+            .nav-cta { border-radius: 0; box-shadow: none; width: 100%; text-align: center; margin-top: 10px; }
             
-            .services, .about, .features { padding: 60px 0; }
+            .services, .about, .features { padding: 80px 0; }
+            .wa-btn { bottom: 20px; right: 20px; width: 56px; height: 56px; font-size: 30px; }
         }
     </style>
 </head>
@@ -212,7 +301,7 @@
             </div>
             
             <div class="menu-toggle" id="mobile-menu">
-                <i class="fa-solid fa-bars"></i>
+                <i class="fa-solid fa-bars-staggered"></i>
             </div>
 
             <div class="nav-links" id="nav-links">
@@ -229,7 +318,7 @@
         <div class="container hero-grid">
             <div class="hero-content reveal">
                 <div class="hero-badge">Pelapisan Logam Premium</div>
-                <h1>Perlindungan Presisi untuk <span>Aset Industrial.</span></h1>
+                <h1>Perlindungan Presisi untuk <span class="text-gradient-orange">Aset Industrial.</span></h1>
                 <p>Spesialis powder coating dengan ketahanan maksimal, hasil akhir halus tanpa celah, dan efisiensi waktu untuk kebutuhan industri hingga arsitektural Anda.</p>
                 <div class="hero-btns">
                     <a href="#katalog" class="btn-primary">Lihat Katalog</a>
@@ -237,7 +326,9 @@
                 </div>
             </div>
             <div class="hero-image reveal reveal-delay-2">
-                <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Detail Proses Pelapisan Logam">
+                <div class="img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&w=1200&q=80" alt="Detail Proses Pelapisan Logam">
+                </div>
             </div>
         </div>
     </section>
@@ -246,68 +337,91 @@
         <div class="container">
             <div class="section-header reveal">
                 <h2>Layanan & Aplikasi</h2>
-                <p>Kami melayani berbagai dimensi dan jenis logam dengan formula coating yang disesuaikan untuk hasil yang presisi.</p>
+                <p>Kami melayani berbagai dimensi dan jenis logam dengan formula coating yang disesuaikan untuk hasil akhir yang absolut dan presisi.</p>
             </div>
             
             <div class="service-grid">
+                <!-- Item 1 -->
                 <div class="service-card reveal">
-                    <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Material Besi dan Baja" class="service-img">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80" alt="Material Besi dan Baja">
+                    </div>
                     <span class="category">General Coating</span>
                     <h3>Besi & Alumunium</h3>
                     <p>Pelapisan standar untuk aneka plat besi, baja ringan, dan ekstrusi alumunium dengan ketebalan mikron yang konsisten.</p>
                     <div class="price-wrap">
-                        <div class="price">Rp 58.500<span>/M²</span></div>
-                        <a href="#kontak"><i class="fa-solid fa-arrow-right-long"></i></a>
+                        <div class="price">Rp 58.500<span> / M²</span></div>
+                        <a href="#kontak"><i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
+                
+                <!-- Item 2 -->
                 <div class="service-card reveal reveal-delay-1">
-                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Mesin dan Laci Pabrik" class="service-img">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80" alt="Mesin dan Laci Pabrik">
+                    </div>
                     <span class="category">Industrial</span>
-                    <h3>Rak, Mesin & Laci Pabrik</h3>
+                    <h3>Rak & Mesin Pabrik</h3>
                     <p>Coating heavy-duty yang tahan terhadap cairan kimia, gesekan tinggi, dan suhu ekstrem di lingkungan pabrik.</p>
                     <div class="price-wrap">
-                        <div class="price">Custom<span>/Proyek</span></div>
-                        <a href="#kontak"><i class="fa-solid fa-arrow-right-long"></i></a>
+                        <div class="price">Custom<span> / Proyek</span></div>
+                        <a href="#kontak"><i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
+
+                <!-- Item 3 -->
                 <div class="service-card reveal reveal-delay-2">
-                    <img src="https://images.unsplash.com/photo-1600705722908-bab1e619b52b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Velg Mobil Powder Coating" class="service-img">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=800&q=80" alt="Velg Mobil Powder Coating">
+                    </div>
                     <span class="category">Otomotif</span>
-                    <h3>Custom Velg & Engine Part</h3>
+                    <h3>Custom Velg & Engine</h3>
                     <p>Warna spesifik dengan finishing glossy, matte, atau tekstur pasir untuk velg mobil/motor dan blok mesin.</p>
                     <div class="price-wrap">
-                        <div class="price">Mulai Rp 350k<span>/Pcs</span></div>
-                        <a href="#kontak"><i class="fa-solid fa-arrow-right-long"></i></a>
+                        <div class="price">Mulai Rp 350k<span> / Pcs</span></div>
+                        <a href="#kontak"><i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
+
+                <!-- Item 4 -->
                 <div class="service-card reveal">
-                    <img src="https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rangka Sepeda" class="service-img">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=800&q=80" alt="Rangka Sepeda">
+                    </div>
                     <span class="category">Hobi & Olahraga</span>
                     <h3>Repaint Rangka Sepeda</h3>
                     <p>Detail pengerjaan tinggi untuk frame sepeda statis, lipat, hingga BMX dengan variasi warna candy atau neon.</p>
                     <div class="price-wrap">
-                        <div class="price">Mulai Rp 400k<span>/Frame</span></div>
-                        <a href="#kontak"><i class="fa-solid fa-arrow-right-long"></i></a>
+                        <div class="price">Mulai Rp 400k<span> / Frame</span></div>
+                        <a href="#kontak"><i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
+
+                <!-- Item 5 -->
                 <div class="service-card reveal reveal-delay-1">
-                    <img src="https://images.unsplash.com/photo-1605810756779-37c2292f7c0d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Pagar Logam Arsitektur" class="service-img">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80" alt="Pagar Logam Arsitektur">
+                    </div>
                     <span class="category">Arsitektural</span>
                     <h3>Pagar, Kanopi & Teralis</h3>
                     <p>Coating outdoor dengan perlindungan ekstra dari sinar UV (UV-Resistant) agar warna tidak kusam terkena cuaca luar.</p>
                     <div class="price-wrap">
-                        <div class="price">Rp 65.000<span>/M²</span></div>
-                        <a href="#kontak"><i class="fa-solid fa-arrow-right-long"></i></a>
+                        <div class="price">Rp 65.000<span> / M²</span></div>
+                        <a href="#kontak"><i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
+
+                <!-- Item 6 -->
                 <div class="service-card reveal reveal-delay-2">
-                    <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Proses Sandblasting dan Grinding" class="service-img">
+                    <div class="img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1533743983669-94fa5c4338ec?auto=format&fit=crop&w=800&q=80" alt="Proses Sandblasting">
+                    </div>
                     <span class="category">Pre-Treatment</span>
                     <h3>Jasa Sandblasting</h3>
                     <p>Membersihkan karat tebal dan sisa cat lama pada pori-pori besi sebelum proses coating untuk lekatan yang sempurna.</p>
                     <div class="price-wrap">
-                        <div class="price">Rp 45.000<span>/M²</span></div>
-                        <a href="#kontak"><i class="fa-solid fa-arrow-right-long"></i></a>
+                        <div class="price">Rp 45.000<span> / M²</span></div>
+                        <a href="#kontak"><i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -317,7 +431,7 @@
     <section id="tentang" class="about">
         <div class="container about-grid">
             <div class="about-text reveal">
-                <h2>Lebih dari Sekadar Pelapis Logam.</h2>
+                <h2>Lebih dari Sekadar <span class="text-gradient-orange">Pelapis Logam.</span></h2>
                 <p>PT. Sigma Techno berlokasi di pusat industri Jawa Barat. Kami hadir untuk menjawab kebutuhan industri akan jasa pengecatan yang bebas karat, ramah lingkungan, dan memiliki nilai estetika tinggi.</p>
                 <p>Fasilitas kami dilengkapi oven berkapasitas besar dan sistem spray gun otomatis yang menjamin ketebalan cat yang presisi di setiap lekukan material Anda.</p>
                 
@@ -337,7 +451,9 @@
                 </div>
             </div>
             <div class="about-img reveal reveal-delay-1">
-                <img src="https://images.unsplash.com/photo-1612601297597-d8eb8766c6de?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Fasilitas Oven dan Pabrik Coating Modern">
+                <div class="img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1565043589221-b3f4d4ead48b?auto=format&fit=crop&w=1000&q=80" alt="Fasilitas Oven dan Pabrik Coating Modern">
+                </div>
             </div>
         </div>
     </section>
@@ -378,7 +494,7 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand reveal">
-                    <h2>Sigma<span>.</span></h2>
+                    <h2>Sigma<span class="text-gradient-orange">.</span></h2>
                     <p>Industrial Powder Coating Services & Pre-treatment Solutions.</p>
                 </div>
                 
@@ -421,16 +537,17 @@
             </div>
             
             <div class="footer-bottom">
-                &copy; 2026 PT. Sigma Techno. Clean & Responsive Interface.
+                &copy; 2026 PT. Sigma Techno. CRAFTED BY PT DAKREATIV DIGITAL MEDIA.
             </div>
         </div>
     </footer>
 
-    <a href="https://wa.me/6282199887766?text=Halo%20PT.%20Sigma,%20saya%20ingin%20bertanya%20tentang%20jasa%20powder%20coating." class="wa-btn" target="_blank">
+    <a href="https://wa.me/6282199887766?text=Halo%20PT.%20Sigma,%20saya%20ingin%20bertanya%20tentang%20jasa%20powder%20coating." class="wa-btn" target="_blank" aria-label="Hubungi via WhatsApp">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
 
     <script>
+        // Mobile Menu Logic
         const mobileMenuBtn = document.getElementById('mobile-menu');
         const navLinks = document.getElementById('nav-links');
         
@@ -439,17 +556,18 @@
             if(navLinks.classList.contains('active')) {
                 mobileMenuBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
             } else {
-                mobileMenuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+                mobileMenuBtn.innerHTML = '<i class="fa-solid fa-bars-staggered"></i>';
             }
         });
 
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', () => {
                 navLinks.classList.remove('active');
-                mobileMenuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+                mobileMenuBtn.innerHTML = '<i class="fa-solid fa-bars-staggered"></i>';
             });
         });
 
+        // Navbar Scrolled Effect
         const navbar = document.getElementById('navbar');
         window.addEventListener('scroll', () => {
             if (window.scrollY > 30) {
@@ -459,6 +577,7 @@
             }
         });
 
+        // Advanced Reveal Observer
         const revealElements = document.querySelectorAll('.reveal');
         const revealObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
@@ -471,6 +590,7 @@
 
         revealElements.forEach(el => revealObserver.observe(el));
 
+        // Counter Logic
         const counters = document.querySelectorAll('.counter');
         let hasCounted = false;
 

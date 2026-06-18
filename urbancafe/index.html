@@ -1,29 +1,29 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Urban Cafe | Modern Hangout & Specialty Coffee</title>
+    <title>Urban Cafe | Esensi Kopi Modern</title>
 
+    <!-- Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@300;500;700;800&display=swap"
       rel="stylesheet"
     />
 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
               brandBlack: "#0a0a0a",
-              brandWhite: "#ffffff",
-              brandGray: "#f4f4f5",
-              brandDarkGray: "#27272a",
-              textMuted: "#71717a",
+              brandWhite: "#fafafa",
+              brandSand: "#f5f3f0", // Premium minimal cafe tone
+              textMuted: "#6b7280",
             },
             fontFamily: {
               sans: ['"Inter"', "sans-serif"],
@@ -34,1016 +34,438 @@
       };
     </script>
 
+    <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
-
+    <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
       body {
-        background-color: #ffffff;
+        background-color: #fafafa;
         color: #0a0a0a;
         overflow-x: hidden;
       }
 
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #ffffff;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #0a0a0a;
-        border-radius: 10px;
-      }
+      /* Custom Scrollbar Minimal */
+      ::-webkit-scrollbar { width: 4px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #0a0a0a; }
 
-      /* Glassmorphism Navbar Minimalist */
+      /* Glassmorphism Navbar */
       .glass-nav {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(8px);
-        border-bottom: 1px solid #f4f4f5;
+        background: rgba(250, 250, 250, 0.9);
+        backdrop-filter: blur(12px);
       }
 
-      /* Monochrome Image Hover Effect */
-      .img-mono {
-        filter: grayscale(100%);
-        transition: all 0.5s ease;
-      }
-      .group:hover .img-mono {
-        filter: grayscale(0%);
-        transform: scale(1.05);
-      }
-
-      /* Outline Button Animation */
-      .btn-outline {
-        position: relative;
-        background: transparent;
-        z-index: 1;
+      /* Premium Image Hover Effect (Slow Motion Zoom + Blur) */
+      .img-wrapper {
         overflow: hidden;
-        transition: color 0.4s ease;
+        position: relative;
       }
-      .btn-outline::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+      .img-wrapper img {
+        transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1), filter 1.5s ease;
+        filter: brightness(0.9) grayscale(20%);
+      }
+      .img-wrapper:hover img {
+        transform: scale(1.08);
+        filter: brightness(1) grayscale(0%);
+      }
+
+      /* Custom AOS Animation: Slow Motion Slide Up + Blur + Zoom */
+      [data-aos="blur-up"] {
+        opacity: 0;
+        transform: translateY(40px) scale(0.98);
+        filter: blur(12px);
+        transition-property: transform, opacity, filter;
+      }
+      [data-aos="blur-up"].aos-animate {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+
+      /* Buttons Hover */
+      .btn-primary {
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .btn-primary:hover {
+        background-color: #ffffff;
+        color: #0a0a0a;
+        box-shadow: inset 0 0 0 1px #0a0a0a;
+      }
+
+      /* Marquee */
+      .marquee-container {
+        overflow: hidden;
+        white-space: nowrap;
         background: #0a0a0a;
-        z-index: -1;
-        transform: scaleY(0);
-        transform-origin: bottom;
-        transition: transform 0.4s ease;
+        color: #fff;
       }
-      .btn-outline:hover {
-        color: #ffffff;
+      .marquee-content {
+        display: inline-block;
+        animation: marquee 25s linear infinite;
       }
-      .btn-outline:hover::before {
-        transform: scaleY(1);
+      @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
       }
 
       /* FAQ Accordion */
       .faq-answer {
         max-height: 0;
         overflow: hidden;
-        transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
+        transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
       }
       .faq-active .faq-answer {
-        max-height: 1000px;
-        transition: max-height 0.4s ease-in-out;
+        max-height: 300px;
       }
       .faq-active .faq-icon {
-        transform: rotate(180deg);
+        transform: rotate(45deg);
       }
 
-      button:focus,
-      a:focus {
-        outline: none !important;
-        -webkit-tap-highlight-color: transparent;
+      /* Mobile Menu Animation */
+      #mobile-menu {
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
       }
-
-      .marquee-container {
-        overflow: hidden;
-        white-space: nowrap;
-        width: 100%;
-        background-color: #0a0a0a;
-        color: white;
-        padding: 1rem 0;
+      .menu-open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
       }
-      .marquee-content {
-        display: inline-block;
-        animation: marquee 20s linear infinite;
-      }
-      @keyframes marquee {
-        0% {
-          transform: translateX(0);
-        }
-        100% {
-          transform: translateX(-50%);
-        }
+      .menu-closed {
+        transform: translateY(-100%);
+        opacity: 0;
+        pointer-events: none;
       }
     </style>
   </head>
-  <body
-    class="font-sans antialiased text-brandBlack selection:bg-brandBlack selection:text-white"
-  >
-    <nav class="fixed w-full z-50 glass-nav transition-all duration-300">
-      <div
-        class="max-w-7xl mx-auto px-6 py-4 relative flex items-center justify-between"
-      >
-        <div class="flex-none z-20">
-          <a
-            href="#beranda"
-            class="text-2xl font-display font-bold tracking-tight text-brandBlack flex items-center gap-2"
-          >
-            URBAN <span class="font-light">CAFE</span>
+
+  <body class="font-sans antialiased selection:bg-brandBlack selection:text-white">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300 border-b border-gray-200/50">
+      <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+        <a href="#beranda" class="text-2xl font-display font-bold tracking-tighter z-50 relative">
+          URBAN<span class="font-light text-textMuted">CAFE.</span>
+        </a>
+
+        <div class="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 space-x-10 text-xs font-medium uppercase tracking-widest text-textMuted">
+          <a href="#tentang" class="hover:text-brandBlack transition-colors">Cerita</a>
+          <a href="#menu" class="hover:text-brandBlack transition-colors">Menu</a>
+          <a href="#suasana" class="hover:text-brandBlack transition-colors">Ruang</a>
+          <a href="#kontak" class="hover:text-brandBlack transition-colors">Kontak</a>
+        </div>
+
+        <div class="hidden lg:flex items-center z-20">
+          <a href="#menu" class="bg-brandBlack text-white px-6 py-3 text-xs font-bold uppercase tracking-widest btn-primary">
+            Lihat Katalog
           </a>
         </div>
 
-        <div
-          class="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 space-x-8 text-sm font-medium tracking-wide"
-        >
-          <a href="#beranda" class="hover:text-textMuted transition">Beranda</a>
-          <a href="#tentang-kami" class="hover:text-textMuted transition"
-            >Tentang</a
-          >
-          <a href="#menu" class="hover:text-textMuted transition">Menu</a>
-          <a href="#signature" class="hover:text-textMuted transition"
-            >Signature</a
-          >
-          <a href="#suasana" class="hover:text-textMuted transition">Suasana</a>
-          <a href="#promo" class="hover:text-textMuted transition">Promo</a>
-        </div>
-
-        <div class="hidden lg:flex flex-none z-20 gap-4 items-center">
-          <a
-            href="#kontak"
-            class="text-sm font-semibold hover:text-textMuted transition"
-            >Kontak & FAQ</a
-          >
-          <a
-            href="#menu"
-            class="bg-brandBlack text-white px-5 py-2.5 rounded-none text-sm font-semibold hover:bg-brandDarkGray transition duration-300"
-            >Pesan Sekarang</a
-          >
-        </div>
-
-        <div class="lg:hidden z-20">
-          <button
-            id="mobile-menu-btn"
-            class="text-brandBlack p-2 focus:outline-none"
-          >
-            <i data-lucide="menu" class="w-6 h-6"></i>
-          </button>
-        </div>
+        <!-- Mobile Toggle Button -->
+        <button id="mobile-btn" class="lg:hidden z-50 relative focus:outline-none text-brandBlack">
+          <i data-lucide="menu" class="w-7 h-7"></i>
+        </button>
       </div>
 
-      <div
-        id="mobile-menu"
-        class="hidden lg:hidden bg-white border-t border-brandGray absolute w-full left-0 py-4 px-6 shadow-2xl flex flex-col space-y-1"
-      >
-        <a
-          href="#beranda"
-          class="block py-3 text-brandBlack font-medium border-b border-brandGray"
-          >Beranda</a
-        >
-        <a
-          href="#tentang-kami"
-          class="block py-3 text-brandBlack font-medium border-b border-brandGray"
-          >Tentang Kami</a
-        >
-        <a
-          href="#menu"
-          class="block py-3 text-brandBlack font-medium border-b border-brandGray"
-          >Menu Utama</a
-        >
-        <a
-          href="#signature"
-          class="block py-3 text-brandBlack font-medium border-b border-brandGray"
-          >Signature Menu</a
-        >
-        <a
-          href="#suasana"
-          class="block py-3 text-brandBlack font-medium border-b border-brandGray"
-          >Suasana & Event</a
-        >
-        <a
-          href="#promo"
-          class="block py-3 text-brandBlack font-medium border-b border-brandGray"
-          >Promo</a
-        >
-        <a href="#kontak" class="block py-4 text-brandBlack font-bold"
-          >Kontak Kami &rarr;</a
-        >
+      <!-- Mobile Menu Overlay -->
+      <div id="mobile-menu" class="fixed top-0 left-0 w-full h-screen bg-brandWhite pt-28 px-6 flex flex-col space-y-8 text-3xl sm:text-4xl font-display font-bold z-40 menu-closed">
+        <a href="#tentang" class="mobile-link border-b border-gray-200 pb-4 hover:text-textMuted transition-colors">Cerita Kami</a>
+        <a href="#menu" class="mobile-link border-b border-gray-200 pb-4 hover:text-textMuted transition-colors">Katalog Menu</a>
+        <a href="#suasana" class="mobile-link border-b border-gray-200 pb-4 hover:text-textMuted transition-colors">Ruang & Suasana</a>
+        <a href="#kontak" class="mobile-link border-b border-gray-200 pb-4 hover:text-textMuted transition-colors">Kontak & Lokasi</a>
       </div>
     </nav>
 
-    <section id="beranda" class="relative min-h-screen flex items-center pt-20">
-      <div class="absolute inset-0 z-0"></div>
-      <div
-        class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10 w-full"
-      >
-        <div data-aos="fade-up" data-aos-duration="1000" class="pt-10 lg:pt-0">
-          <h1
-            class="text-5xl md:text-7xl font-display font-bold text-brandBlack leading-[1.1] mb-6"
-          >
-            Tempat Nongkrong <br /><span
-              class="text-transparent bg-clip-text bg-gradient-to-r from-brandBlack to-textMuted"
-              >Modern</span
-            >
-            dengan Rasa Kopi Terbaik.
+    <!-- Hero Section -->
+    <section id="beranda" class="min-h-[100svh] flex items-center pt-28 pb-12 bg-brandWhite">
+      <div class="max-w-7xl mx-auto px-6 w-full grid lg:grid-cols-2 gap-10 lg:gap-24 items-center">
+        <div data-aos="blur-up" data-aos-duration="1500" class="z-10 order-2 lg:order-1 pt-6 lg:pt-0">
+          <span class="uppercase tracking-[0.3em] text-[10px] md:text-xs font-bold text-textMuted block mb-4 md:mb-6">Est. 2026</span>
+          <h1 class="text-5xl min-[375px]:text-6xl md:text-8xl font-display font-bold leading-[0.95] tracking-tight mb-6 md:mb-8">
+            Ruang.<br />Kopi.<br />Inspirasi.
           </h1>
-          <p
-            class="text-base md:text-lg text-textMuted mb-10 font-light leading-relaxed max-w-lg"
-          >
-            Urban Cafe menghadirkan pengalaman menikmati kopi dan hidangan
-            berkualitas dalam suasana yang modern, nyaman, dan penuh inspirasi.
-            Tempat sempurna untuk bekerja, bersantai, atau berkumpul.
+          <p class="text-base md:text-lg text-textMuted font-light leading-relaxed max-w-md mb-8 md:mb-10">
+            Kopi specialty diseduh dengan presisi. Ruang bernuansa minimalis dirancang untuk fokus dan relaksasi Anda.
           </p>
-          <div class="flex flex-col sm:flex-row gap-4">
-            <a
-              href="#menu"
-              class="bg-brandBlack text-white border border-brandBlack px-8 py-4 text-sm font-bold tracking-widest uppercase text-center hover:bg-white hover:text-brandBlack transition-all"
-              >Lihat Menu</a
-            >
-            <a
-              href="#kontak"
-              class="btn-outline border border-brandBlack text-brandBlack px-8 py-4 text-sm font-bold tracking-widest uppercase text-center"
-              >Kunjungi Kami</a
-            >
+          <div class="flex gap-4">
+            <a href="#menu" class="bg-brandBlack text-white px-6 md:px-8 py-4 text-[10px] md:text-xs font-bold tracking-widest uppercase btn-primary w-full sm:w-auto text-center">
+              Lihat Menu
+            </a>
           </div>
         </div>
 
-        <div
-          class="group cursor-pointer relative h-[60vh] lg:h-[80vh] w-full"
-          data-aos="fade-left"
-          data-aos-duration="1200"
-        >
-          <img
-            src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80"
-            alt="Suasana Cafe"
-            class="w-full h-full object-cover grayscale img-mono"
-          />
-          <div
-            class="absolute -bottom-6 -left-6 w-48 h-48 border border-brandBlack hidden md:block z-[-1]"
-          ></div>
+        <div class="img-wrapper h-[45vh] lg:h-[80vh] w-full order-1 lg:order-2" data-aos="blur-up" data-aos-duration="1500" data-aos-delay="200">
+          <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=80" alt="Suasana Kafe Minimalis" class="w-full h-full object-cover" />
         </div>
       </div>
     </section>
 
-    <div class="marquee-container border-y border-brandDarkGray">
-      <div
-        class="marquee-content font-display font-bold text-xl md:text-3xl tracking-widest uppercase"
-      >
-        COFFEE • EAT • WORK • REPEAT • URBAN CAFE • SPECIALTY COFFEE • COMFORT
-        ZONE • COFFEE • EAT • WORK • REPEAT • URBAN CAFE • SPECIALTY COFFEE •
-        COMFORT ZONE •
+    <!-- Marquee -->
+    <div class="marquee-container py-4 md:py-5">
+      <div class="marquee-content font-display font-bold text-xs md:text-sm tracking-[0.2em] uppercase">
+        SPECIALTY COFFEE • MINIMALIST SPACE • HIGH-SPEED WIFI • CREATIVE HUB • URBAN CAFE • SPECIALTY COFFEE • MINIMALIST SPACE • HIGH-SPEED WIFI • CREATIVE HUB •
       </div>
     </div>
 
-    <section id="tentang-kami" class="py-24 bg-white">
-      <div
-        class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center"
-      >
-        <div
-          class="order-2 md:order-1 relative group overflow-hidden h-[500px]"
-          data-aos="fade-right"
-        >
-          <img
-            src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=80"
-            alt="Pembuatan Kopi"
-            class="w-full h-full object-cover img-mono"
-          />
+    <!-- Tentang Kami -->
+    <section id="tentang" class="py-20 md:py-32 bg-brandSand">
+      <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 lg:gap-32 items-center">
+        <div class="img-wrapper aspect-[4/5] md:aspect-[3/4] w-full" data-aos="blur-up" data-aos-duration="1500">
+          <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=1000&q=80" alt="Pembuatan Kopi" class="w-full h-full object-cover" />
         </div>
-        <div class="order-1 md:order-2" data-aos="fade-left">
-          <span
-            class="uppercase tracking-[0.2em] text-xs font-bold text-textMuted block mb-4"
-            >Cerita Kami</span
-          >
-          <h2 class="text-3xl md:text-5xl font-display font-bold mb-6">
-            Lebih Dari Sekadar Kopi.
-          </h2>
-          <div class="space-y-4 text-textMuted font-light leading-relaxed">
-            <p>
-              Urban Cafe lahir dari kecintaan terhadap kopi, suasana hangout
-              yang nyaman, dan pengalaman kuliner yang berkualitas tinggi.
-            </p>
-            <p>
-              Kami menghadirkan berbagai pilihan kopi spesial, minuman segar,
-              dan makanan lezat yang disiapkan dengan bahan berkualitas dan
-              proses terbaik oleh barista dan chef handal kami.
-            </p>
-            <p>
-              Dengan desain interior yang modern dan atmosfer yang santai, Urban
-              Cafe menjadi tempat yang tepat untuk bekerja, berdiskusi, maupun
-              menikmati waktu berharga bersama orang terdekat.
-            </p>
+        <div data-aos="blur-up" data-aos-duration="1500" data-aos-delay="200">
+          <span class="uppercase tracking-[0.3em] text-[10px] md:text-xs font-bold text-textMuted block mb-4">Filosofi Kami</span>
+          <h2 class="text-4xl md:text-6xl font-display font-bold mb-6 md:mb-8 leading-tight tracking-tight">Diseduh Dengan<br/>Presisi.</h2>
+          <div class="space-y-4 md:space-y-6 text-textMuted font-light leading-relaxed text-base md:text-lg">
+            <p>Kami percaya kopi yang baik lahir dari keseimbangan. Perpaduan biji kopi pilihan, suhu yang tepat, dan teknik ekstraksi yang terukur.</p>
+            <p>Urban Cafe bukan sekadar tempat singgah. Ini adalah kanvas bagi ide-ide kreatif Anda, ditemani sajian kuliner yang dikurasi secara ketat oleh tim kami.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="menu" class="py-24 bg-brandGray/30 border-y border-brandGray">
+    <!-- Menu Signature -->
+    <section id="menu" class="py-20 md:py-32 bg-brandBlack text-white">
       <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-20" data-aos="fade-up">
-          <span
-            class="uppercase tracking-[0.2em] text-xs font-bold text-textMuted block mb-4"
-            >Katalog Rasa</span
-          >
-          <h2 class="text-3xl md:text-5xl font-display font-bold">
-            Pilihan Menu Kami
-          </h2>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-12 lg:gap-20">
-          <div data-aos="fade-up" data-aos-delay="0">
-            <div
-              class="flex items-center gap-3 mb-8 border-b border-brandBlack pb-4"
-            >
-              <i data-lucide="coffee" class="w-6 h-6"></i>
-              <h3 class="text-2xl font-display font-bold">Coffee</h3>
-            </div>
-            <ul class="space-y-6">
-              <li
-                class="flex justify-between items-end border-b border-brandGray border-dashed pb-2"
-              >
-                <span class="font-medium text-lg">Espresso</span>
-                <span class="font-light text-textMuted">20k</span>
-              </li>
-              <li
-                class="flex justify-between items-end border-b border-brandGray border-dashed pb-2"
-              >
-                <span class="font-medium text-lg">Americano</span>
-                <span class="font-light text-textMuted">25k</span>
-              </li>
-              <li
-                class="flex justify-between items-end border-b border-brandGray border-dashed pb-2"
-              >
-                <span class="font-medium text-lg">Cappuccino</span>
-                <span class="font-light text-textMuted">30k</span>
-              </li>
-              <li
-                class="flex justify-between items-end border-b border-brandGray border-dashed pb-2"
-              >
-                <span class="font-medium text-lg">Latte</span>
-                <span class="font-light text-textMuted">32k</span>
-              </li>
-              <li
-                class="flex justify-between items-end border-b border-brandGray border-dashed pb-2"
-              >
-                <span class="font-medium text-lg">Caramel Latte</span>
-                <span class="font-light text-textMuted">35k</span>
-              </li>
-            </ul>
-          </div>
-
-          <div data-aos="fade-up" data-aos-delay="100">
-            <div
-              class="flex items-center gap-3 mb-8 border-b border-brandBlack pb-4"
-            >
-              <i data-lucide="cup-soda" class="w-6 h-6"></i>
-              <h3 class="text-2xl font-display font-bold">Non Coffee</h3>
-            </div>
-            <ul class="space-y-6">
-              <li
-                class="flex justify-between items-end border-b border-brandGray border-dashed pb-2"
-              >
-                <span class="font-medium text-lg">Matcha Latte</span>
-                <span class="font-light text-textMuted">35k</span>
-              </li>
-              <li
-                class="flex justify-between items-end border-b border-brandGray border-dashed pb-2"
-              >
-                <span class="font-medium text-lg">Chocolate</span>
-                <span class="font-light text-textMuted">32k</span>
-              </li>
-              <li
-                class="flex justify-between items-end border-b border-brandGray border-dashed pb-2"
-              >
-                <span class="font-medium text-lg">Fresh Tea</span>
-                <span class="font-light text-textMuted">20k</span>
-              </li>
-              <li
-                class="flex justify-between items-end border-b border-brandGray border-dashed pb-2"
-              >
-                <span class="font-medium text-lg">Lemon Tea</span>
-                <span class="font-light text-textMuted">25k</span>
-              </li>
-            </ul>
-          </div>
-
-          <div data-aos="fade-up" data-aos-delay="200">
-            <div
-              class="flex items-center gap-3 mb-8 border-b border-brandBlack pb-4"
-            >
-              <i data-lucide="utensils-crossed" class="w-6 h-6"></i>
-              <h3 class="text-2xl font-display font-bold">Food</h3>
-            </div>
-            <ul class="space-y-6">
-              <li
-                class="flex justify-between items-end border-b border-brandGray border-dashed pb-2"
-              >
-                <span class="font-medium text-lg">Croissant</span>
-                <span class="font-light text-textMuted">28k</span>
-              </li>
-              <li
-                class="flex justify-between items-end border-b border-brandGray border-dashed pb-2"
-              >
-                <span class="font-medium text-lg">Sandwich</span>
-                <span class="font-light text-textMuted">45k</span>
-              </li>
-              <li
-                class="flex justify-between items-end border-b border-brandGray border-dashed pb-2"
-              >
-                <span class="font-medium text-lg">Pasta</span>
-                <span class="font-light text-textMuted">55k</span>
-              </li>
-              <li
-                class="flex justify-between items-end border-b border-brandGray border-dashed pb-2"
-              >
-                <span class="font-medium text-lg">Rice Bowl</span>
-                <span class="font-light text-textMuted">48k</span>
-              </li>
-              <li
-                class="flex justify-between items-end border-b border-brandGray border-dashed pb-2"
-              >
-                <span class="font-medium text-lg">French Fries</span>
-                <span class="font-light text-textMuted">25k</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="signature" class="py-24 bg-brandBlack text-white">
-      <div class="max-w-7xl mx-auto px-6">
-        <div
-          class="flex flex-col md:flex-row justify-between items-end mb-16"
-          data-aos="fade-up"
-        >
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-20" data-aos="blur-up" data-aos-duration="1200">
           <div>
-            <span
-              class="uppercase tracking-[0.2em] text-xs font-bold text-gray-400 block mb-4"
-              >Masterpiece Kami</span
-            >
-            <h2 class="text-3xl md:text-5xl font-display font-bold">
-              Signature Menu
-            </h2>
+            <span class="uppercase tracking-[0.3em] text-[10px] md:text-xs font-bold text-gray-400 block mb-3 md:mb-4">Masterpiece</span>
+            <h2 class="text-4xl md:text-6xl font-display font-bold tracking-tight">Menu Andalan</h2>
           </div>
-          <p
-            class="text-gray-400 font-light max-w-sm mt-4 md:mt-0 text-sm md:text-right"
-          >
-            Kurasi hidangan dan minuman terbaik yang wajib Anda coba saat
-            berkunjung.
-          </p>
+          <a href="#kontak" class="text-[10px] md:text-xs font-bold tracking-widest uppercase border-b border-white pb-1 mt-6 md:mt-0 hover:text-gray-400 hover:border-gray-400 transition-colors">Reservasi Meja &rarr;</a>
         </div>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div
-            class="group cursor-pointer"
-            data-aos="fade-up"
-            data-aos-delay="0"
-          >
-            <div class="overflow-hidden bg-brandDarkGray aspect-[4/5] mb-4">
-              <img
-                src="https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGxhdHRlfGVufDB8MXwwfHx8MA%3D%3D"
-                alt="Urban Signature Latte"
-                class="w-full h-full object-cover img-mono opacity-80 group-hover:opacity-100"
-              />
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+          <!-- Item 1 -->
+          <div class="group" data-aos="blur-up" data-aos-duration="1500" data-aos-delay="0">
+            <div class="img-wrapper aspect-[4/5] mb-5 md:mb-6">
+              <img src="https://images.unsplash.com/photo-1561882468-9110e03e0f78?auto=format&fit=crop&w=800&q=80" alt="Urban Latte" class="w-full h-full object-cover" />
             </div>
-            <h3 class="text-xl font-display font-bold mb-2">
-              Urban Signature Latte
-            </h3>
-            <p class="text-gray-400 text-sm font-light">
-              Kopi susu dengan racikan khas yang sangat lembut dan creamy.
-            </p>
+            <h3 class="text-xl md:text-2xl font-display font-bold mb-2">Urban Signature Latte</h3>
+            <p class="text-gray-400 font-light text-xs md:text-sm mb-3 md:mb-4">Kopi susu lembut dengan racikan *creamer* nabati rahasia.</p>
+            <p class="text-base md:text-lg font-medium">35k</p>
           </div>
-          <div
-            class="group cursor-pointer"
-            data-aos="fade-up"
-            data-aos-delay="100"
-          >
-            <div class="overflow-hidden bg-brandDarkGray aspect-[4/5] mb-4">
-              <img
-                src="https://plus.unsplash.com/premium_photo-1663853490334-f5da959b4bc9?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bWF0Y2hhJTIwY3JlYW18ZW58MHwxfDB8fHww"
-                alt="Matcha Cream"
-                class="w-full h-full object-cover img-mono opacity-80 group-hover:opacity-100"
-              />
+          <!-- Item 2 -->
+          <div class="group" data-aos="blur-up" data-aos-duration="1500" data-aos-delay="150">
+            <div class="img-wrapper aspect-[4/5] mb-5 md:mb-6">
+              <img src="https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?auto=format&fit=crop&w=800&q=80" alt="Matcha" class="w-full h-full object-cover" />
             </div>
-            <h3 class="text-xl font-display font-bold mb-2">Matcha Cream</h3>
-            <p class="text-gray-400 text-sm font-light">
-              Minuman matcha premium dengan tekstur creamy yang menyegarkan.
-            </p>
+            <h3 class="text-xl md:text-2xl font-display font-bold mb-2">Kyoto Matcha Cream</h3>
+            <p class="text-gray-400 font-light text-xs md:text-sm mb-3 md:mb-4">Matcha seremonial asli Jepang berpadu dengan susu gandum.</p>
+            <p class="text-base md:text-lg font-medium">40k</p>
           </div>
-          <div
-            class="group cursor-pointer"
-            data-aos="fade-up"
-            data-aos-delay="200"
-          >
-            <div class="overflow-hidden bg-brandDarkGray aspect-[4/5] mb-4">
-              <img
-                src="https://images.unsplash.com/photo-1609501676725-7186f017a4b7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cmljZSUyMGJvd2x8ZW58MHwxfDB8fHww"
-                alt="Chicken Rice Bowl"
-                class="w-full h-full object-cover img-mono opacity-80 group-hover:opacity-100"
-              />
+          <!-- Item 3 -->
+          <div class="group" data-aos="blur-up" data-aos-duration="1500" data-aos-delay="300">
+            <div class="img-wrapper aspect-[4/5] mb-5 md:mb-6">
+              <img src="https://images.unsplash.com/photo-1612366747681-e4ca6992b1e9?auto=format&fit=crop&w=800&q=80" alt="Croissant" class="w-full h-full object-cover" />
             </div>
-            <h3 class="text-xl font-display font-bold mb-2">
-              Chicken Rice Bowl
-            </h3>
-            <p class="text-gray-400 text-sm font-light">
-              Nasi hangat dengan ayam crispy dan saus spesial racikan chef.
-            </p>
-          </div>
-          <div
-            class="group cursor-pointer"
-            data-aos="fade-up"
-            data-aos-delay="300"
-          >
-            <div class="overflow-hidden bg-brandDarkGray aspect-[4/5] mb-4">
-              <img
-                src="https://images.unsplash.com/photo-1612366747681-e4ca6992b1e9?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y3JvaXNzYW50fGVufDB8MXwwfHx8MA%3D%3D"
-                alt="Urban Croissant"
-                class="w-full h-full object-cover img-mono opacity-80 group-hover:opacity-100"
-              />
-            </div>
-            <h3 class="text-xl font-display font-bold mb-2">Urban Croissant</h3>
-            <p class="text-gray-400 text-sm font-light">
-              Croissant renyah dengan isian premium yang dipanggang segar.
-            </p>
+            <h3 class="text-xl md:text-2xl font-display font-bold mb-2">Butter Croissant</h3>
+            <p class="text-gray-400 font-light text-xs md:text-sm mb-3 md:mb-4">Dipanggang segar setiap pagi dengan *French butter* premium.</p>
+            <p class="text-base md:text-lg font-medium">28k</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="suasana" class="py-24 bg-white">
-      <div
-        class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center"
-      >
-        <div data-aos="fade-right">
-          <span
-            class="uppercase tracking-[0.2em] text-xs font-bold text-textMuted block mb-4"
-            >Vibe & Community</span
-          >
-          <h2 class="text-3xl md:text-5xl font-display font-bold mb-6">
-            Ruang Kreatif & <br />Tempat Nyaman.
-          </h2>
-          <p class="text-textMuted font-light leading-relaxed mb-8">
-            Urban Cafe dirancang dengan konsep minimalis modern yang
-            menghadirkan suasana hangat. Selain untuk bersantai, kami juga
-            menjadi titik kumpul berbagai komunitas kreatif.
-          </p>
+    <!-- Suasana / Ruang -->
+    <section id="suasana" class="py-20 md:py-32 bg-brandWhite">
+      <div class="max-w-7xl mx-auto px-6 text-center mb-12 md:mb-20" data-aos="blur-up" data-aos-duration="1200">
+        <span class="uppercase tracking-[0.3em] text-[10px] md:text-xs font-bold text-textMuted block mb-3 md:mb-4">Atmosfer</span>
+        <h2 class="text-4xl md:text-5xl font-display font-bold tracking-tight">Rancang Bangun Kenyamanan</h2>
+      </div>
 
-          <div class="grid grid-cols-2 gap-6 mb-8">
-            <ul class="space-y-3 text-sm font-medium">
-              <li class="flex items-center gap-2">
-                <i data-lucide="wifi" class="w-4 h-4"></i> WiFi Kecepatan Tinggi
-              </li>
-              <li class="flex items-center gap-2">
-                <i data-lucide="laptop" class="w-4 h-4"></i> Laptop Friendly
-                Area
-              </li>
-              <li class="flex items-center gap-2">
-                <i data-lucide="plug" class="w-4 h-4"></i> Stop Kontak Banyak
-              </li>
-            </ul>
-            <ul class="space-y-3 text-sm font-medium">
-              <li class="flex items-center gap-2">
-                <i data-lucide="music" class="w-4 h-4"></i> Live Music Session
-              </li>
-              <li class="flex items-center gap-2">
-                <i data-lucide="users" class="w-4 h-4"></i> Meet Up Komunitas
-              </li>
-              <li class="flex items-center gap-2">
-                <i data-lucide="sun" class="w-4 h-4"></i> Area Indoor & Outdoor
-              </li>
-            </ul>
-          </div>
+      <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-4">
+        <div class="img-wrapper h-[300px] md:h-[400px]" data-aos="blur-up" data-aos-duration="1500">
+          <img src="https://images.unsplash.com/photo-1525610553991-2bede1a236e2?auto=format&fit=crop&w=1000&q=80" alt="Interior Area Kerja" class="w-full h-full object-cover" />
         </div>
-
-        <div class="grid grid-cols-2 gap-4" data-aos="fade-left">
-          <div class="space-y-4">
-            <div class="overflow-hidden h-48 group bg-brandGray">
-              <img
-                src="https://images.unsplash.com/photo-1525610553991-2bede1a236e2?auto=format&fit=crop&q=80"
-                alt="Interior Cafe"
-                class="w-full h-full object-cover img-mono"
-              />
-            </div>
-            <div class="overflow-hidden h-64 group bg-brandGray">
-              <img
-                src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80"
-                alt="Live Music"
-                class="w-full h-full object-cover img-mono"
-              />
-            </div>
-          </div>
-          <div class="space-y-4 mt-8">
-            <div class="overflow-hidden h-64 group bg-brandGray">
-              <img
-                src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80"
-                alt="Area Kerja"
-                class="w-full h-full object-cover img-mono"
-              />
-            </div>
-            <div class="overflow-hidden h-48 group bg-brandGray">
-              <img
-                src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80"
-                alt="Kopi Outdoor"
-                class="w-full h-full object-cover img-mono"
-              />
-            </div>
-          </div>
+        <div class="img-wrapper h-[300px] md:h-[400px]" data-aos="blur-up" data-aos-duration="1500" data-aos-delay="150">
+          <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1000&q=80" alt="Outdoor Cafe" class="w-full h-full object-cover" />
         </div>
+      </div>
+      
+      <div class="max-w-3xl mx-auto px-6 mt-10 md:mt-16 text-center" data-aos="blur-up" data-aos-duration="1200">
+        <p class="text-base md:text-lg text-textMuted font-light">Fasilitas lengkap untuk mendukung produktivitas Anda: <strong class="text-brandBlack">High-speed WiFi (100Mbps)</strong>, ketersediaan stop kontak di setiap meja, dan area bebas asap rokok yang kedap suara.</p>
       </div>
     </section>
 
-    <section id="promo" class="py-24 bg-brandGray/50 border-y border-brandGray">
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16" data-aos="fade-up">
-          <h2 class="text-3xl md:text-5xl font-display font-bold mb-4">
-            Promo Spesial
-          </h2>
-          <p class="text-textMuted max-w-md mx-auto">
-            Penawaran terbaik untuk pengalaman bersantap yang lebih hemat.
-          </p>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-8">
-          <div
-            class="bg-white border border-brandBlack p-8 hover:-translate-y-2 transition-transform duration-300"
-            data-aos="fade-up"
-            data-aos-delay="0"
-          >
-            <div
-              class="w-12 h-12 bg-brandBlack text-white flex items-center justify-center mb-6"
-            >
-              <i data-lucide="clock" class="w-6 h-6"></i>
-            </div>
-            <h3 class="text-xl font-display font-bold mb-2">Coffee Time</h3>
-            <p class="text-textMuted text-sm font-light mb-6">
-              Diskon 20% untuk semua menu kopi pada jam 08.00 - 11.00 WIB setiap
-              hari.
-            </p>
-            <a
-              href="#kontak"
-              class="text-sm font-bold border-b border-brandBlack pb-1 uppercase tracking-wider"
-              >Klaim Promo</a
-            >
-          </div>
-
-          <div
-            class="bg-brandBlack border border-brandBlack text-white p-8 hover:-translate-y-2 transition-transform duration-300 shadow-xl"
-            data-aos="fade-up"
-            data-aos-delay="100"
-          >
-            <div
-              class="w-12 h-12 bg-white text-brandBlack flex items-center justify-center mb-6"
-            >
-              <i data-lucide="users" class="w-6 h-6"></i>
-            </div>
-            <h3 class="text-xl font-display font-bold mb-2">Paket Nongkrong</h3>
-            <p class="text-gray-400 text-sm font-light mb-6">
-              Nikmati 2 pilihan minuman bebas + 1 snack (Fries/Croissant) dengan
-              harga jauh lebih hemat.
-            </p>
-            <a
-              href="#kontak"
-              class="text-sm font-bold border-b border-white pb-1 uppercase tracking-wider text-white"
-              >Klaim Promo</a
-            >
-          </div>
-
-          <div
-            class="bg-white border border-brandBlack p-8 hover:-translate-y-2 transition-transform duration-300"
-            data-aos="fade-up"
-            data-aos-delay="200"
-          >
-            <div
-              class="w-12 h-12 bg-brandBlack text-white flex items-center justify-center mb-6"
-            >
-              <i data-lucide="graduation-cap" class="w-6 h-6"></i>
-            </div>
-            <h3 class="text-xl font-display font-bold mb-2">Student Promo</h3>
-            <p class="text-textMuted text-sm font-light mb-6">
-              Diskon khusus sebesar 15% untuk semua mahasiswa cukup dengan
-              menunjukkan kartu pelajar.
-            </p>
-            <a
-              href="#kontak"
-              class="text-sm font-bold border-b border-brandBlack pb-1 uppercase tracking-wider"
-              >Klaim Promo</a
-            >
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="py-24 bg-white">
-      <div class="max-w-7xl mx-auto px-6">
-        <h2
-          class="text-3xl md:text-5xl font-display font-bold text-center mb-16"
-          data-aos="fade-up"
-        >
-          Kata Pengunjung
-        </h2>
-
-        <div
-          class="grid md:grid-cols-3 gap-8 border-t border-b border-brandBlack py-12"
-        >
-          <div
-            class="text-center px-4 border-b md:border-b-0 md:border-r border-brandGray pb-8 md:pb-0"
-            data-aos="fade-up"
-            data-aos-delay="0"
-          >
-            <i
-              data-lucide="quote"
-              class="w-8 h-8 mx-auto mb-6 text-brandGray fill-current"
-            ></i>
-            <p class="text-lg font-display mb-6">
-              "Tempatnya nyaman banget buat kerja sambil ngopi. WiFi kenceng dan
-              colokan banyak."
-            </p>
-            <p class="text-sm font-bold">— Rafi</p>
-          </div>
-          <div
-            class="text-center px-4 border-b md:border-b-0 md:border-r border-brandGray pb-8 md:pb-0"
-            data-aos="fade-up"
-            data-aos-delay="100"
-          >
-            <i
-              data-lucide="quote"
-              class="w-8 h-8 mx-auto mb-6 text-brandGray fill-current"
-            ></i>
-            <p class="text-lg font-display mb-6">
-              "Kopinya enak, khas banget rasanya. Suasananya modern dan
-              minimalis, cocok buat foto-foto."
-            </p>
-            <p class="text-sm font-bold">— Anisa</p>
-          </div>
-          <div class="text-center px-4" data-aos="fade-up" data-aos-delay="200">
-            <i
-              data-lucide="quote"
-              class="w-8 h-8 mx-auto mb-6 text-brandGray fill-current"
-            ></i>
-            <p class="text-lg font-display mb-6">
-              "Menu makanannya enak, terutama Rice Bowl-nya. Recommended buat
-              nongkrong lama."
-            </p>
-            <p class="text-sm font-bold">— Daniel</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="py-24 bg-brandGray/30 border-y border-brandGray">
+    <!-- FAQ -->
+    <section class="py-20 md:py-32 bg-brandSand">
       <div class="max-w-3xl mx-auto px-6">
-        <div class="text-center mb-16" data-aos="fade-up">
-          <span
-            class="uppercase tracking-[0.2em] text-xs font-bold text-textMuted block mb-4"
-            >Informasi</span
-          >
-          <h2 class="text-3xl md:text-4xl font-display font-bold">
-            Frequently Asked Questions
-          </h2>
+        <div class="text-center mb-10 md:mb-16" data-aos="blur-up" data-aos-duration="1200">
+          <h2 class="text-3xl md:text-4xl font-display font-bold">Informasi Esensial</h2>
         </div>
 
-        <div class="space-y-2" data-aos="fade-up">
-          <div class="faq-item border-b border-brandBlack">
-            <button
-              class="w-full text-left py-6 flex justify-between items-center bg-transparent"
-              onclick="toggleFaq(this)"
-            >
-              <span class="font-bold text-lg">Apakah tersedia WiFi?</span>
-              <i
-                data-lucide="plus"
-                class="faq-icon w-5 h-5 transition-transform duration-300"
-              ></i>
+        <div class="space-y-2" data-aos="blur-up" data-aos-duration="1500" data-aos-delay="200">
+          <!-- FAQ 1 -->
+          <div class="faq-item border-b border-gray-300">
+            <button class="w-full text-left py-5 md:py-6 flex justify-between items-center focus:outline-none" onclick="toggleFaq(this)">
+              <span class="font-medium text-base md:text-lg pr-4">Apakah tempat ini cocok untuk Work From Cafe (WFC)?</span>
+              <i data-lucide="plus" class="faq-icon w-5 h-5 flex-shrink-0 transition-transform duration-500"></i>
             </button>
             <div class="faq-answer">
-              <p class="text-textMuted font-light pb-6">
-                Ya, Urban Cafe menyediakan koneksi WiFi berkecepatan tinggi
-                secara gratis untuk seluruh pelanggan kami.
-              </p>
+              <p class="text-textMuted font-light pb-5 md:pb-6 text-sm md:text-base">Sangat cocok. Kami mendesain meja dengan ergonomi yang tepat, WiFi super cepat, dan colokan listrik mumpuni di seluruh area *indoor*.</p>
             </div>
           </div>
-
-          <div class="faq-item border-b border-brandBlack">
-            <button
-              class="w-full text-left py-6 flex justify-between items-center bg-transparent"
-              onclick="toggleFaq(this)"
-            >
-              <span class="font-bold text-lg"
-                >Apakah bisa bekerja menggunakan laptop?</span
-              >
-              <i
-                data-lucide="plus"
-                class="faq-icon w-5 h-5 transition-transform duration-300"
-              ></i>
+          <!-- FAQ 2 -->
+          <div class="faq-item border-b border-gray-300">
+            <button class="w-full text-left py-5 md:py-6 flex justify-between items-center focus:outline-none" onclick="toggleFaq(this)">
+              <span class="font-medium text-base md:text-lg pr-4">Bagaimana cara reservasi untuk grup?</span>
+              <i data-lucide="plus" class="faq-icon w-5 h-5 flex-shrink-0 transition-transform duration-500"></i>
             </button>
             <div class="faq-answer">
-              <p class="text-textMuted font-light pb-6">
-                Tentu. Kami mendesain area kami menjadi *laptop-friendly* dengan
-                meja yang nyaman dan stop kontak di hampir setiap sudut meja.
-              </p>
+              <p class="text-textMuted font-light pb-5 md:pb-6 text-sm md:text-base">Anda dapat menghubungi WhatsApp resmi kami minimal h-1. Kami menyediakan meja besar untuk rapat atau *gathering* maksimal 10 orang.</p>
             </div>
           </div>
-
-          <div class="faq-item border-b border-brandBlack">
-            <button
-              class="w-full text-left py-6 flex justify-between items-center bg-transparent"
-              onclick="toggleFaq(this)"
-            >
-              <span class="font-bold text-lg"
-                >Apakah bisa reservasi tempat?</span
-              >
-              <i
-                data-lucide="plus"
-                class="faq-icon w-5 h-5 transition-transform duration-300"
-              ></i>
+          <!-- FAQ 3 -->
+          <div class="faq-item border-b border-gray-300">
+            <button class="w-full text-left py-5 md:py-6 flex justify-between items-center focus:outline-none" onclick="toggleFaq(this)">
+              <span class="font-medium text-base md:text-lg pr-4">Apakah tersedia parkir mobil?</span>
+              <i data-lucide="plus" class="faq-icon w-5 h-5 flex-shrink-0 transition-transform duration-500"></i>
             </button>
             <div class="faq-answer">
-              <p class="text-textMuted font-light pb-6">
-                Ya, reservasi untuk grup, acara, atau *meeting* bisa dilakukan
-                dengan mudah melalui kontak WhatsApp resmi kami.
-              </p>
-            </div>
-          </div>
-
-          <div class="faq-item border-b border-brandBlack">
-            <button
-              class="w-full text-left py-6 flex justify-between items-center bg-transparent"
-              onclick="toggleFaq(this)"
-            >
-              <span class="font-bold text-lg"
-                >Apakah tersedia area outdoor?</span
-              >
-              <i
-                data-lucide="plus"
-                class="faq-icon w-5 h-5 transition-transform duration-300"
-              ></i>
-            </button>
-            <div class="faq-answer">
-              <p class="text-textMuted font-light pb-6">
-                Ya, kami memiliki dua area yaitu indoor ber-AC yang tenang, dan
-                outdoor yang sejuk khusus untuk *smoking area*.
-              </p>
+              <p class="text-textMuted font-light pb-5 md:pb-6 text-sm md:text-base">Tersedia area parkir yang aman dengan layanan *valet* gratis untuk kenyamanan Anda.</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="kontak" class="pt-24 bg-brandBlack text-white">
-      <div class="max-w-7xl mx-auto px-6 mb-20">
-        <div class="grid lg:grid-cols-2 gap-16">
-          <div data-aos="fade-right">
-            <h2
-              class="text-4xl md:text-6xl font-display font-bold mb-8 leading-tight"
-            >
-              Mampir ke <br />Urban Cafe.
-            </h2>
-
-            <div class="space-y-8 font-light text-gray-400">
-              <div>
-                <p
-                  class="uppercase text-xs font-bold tracking-widest text-white mb-2"
-                >
-                  Lokasi Kami
-                </p>
-                <p class="text-lg">
-                  Jl. Skena Kopi Modern No. 45<br />Distrik Selatan, Kota
-                  Kreatif
-                </p>
-              </div>
-
-              <div>
-                <p
-                  class="uppercase text-xs font-bold tracking-widest text-white mb-2"
-                >
-                  Jam Operasional
-                </p>
-                <p class="text-lg">Senin – Minggu<br />08.00 – 23.00 WIB</p>
-              </div>
-
-              <div class="flex flex-col sm:flex-row gap-6 pt-4">
-                <a
-                  href="#"
-                  class="flex items-center gap-3 hover:text-white transition-colors"
-                >
-                  <i data-lucide="phone" class="w-5 h-5"></i>
-                  <span>(021) 123-4567</span>
-                </a>
-                <a
-                  href="#"
-                  class="flex items-center gap-3 hover:text-white transition-colors"
-                >
-                  <i data-lucide="message-circle" class="w-5 h-5"></i>
-                  <span>0812-3344-5566 (WA)</span>
-                </a>
-                <a
-                  href="#"
-                  class="flex items-center gap-3 hover:text-white transition-colors"
-                >
-                  <i data-lucide="instagram" class="w-5 h-5"></i>
-                  <span>@urbancafe.id</span>
-                </a>
-              </div>
+    <!-- Footer / Kontak -->
+    <footer id="kontak" class="pt-20 md:pt-32 pb-10 bg-brandWhite border-t border-gray-200">
+      <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 md:gap-16 mb-16 md:mb-20" data-aos="blur-up" data-aos-duration="1500">
+        <div>
+          <h2 class="text-5xl md:text-7xl font-display font-bold tracking-tight mb-8 md:mb-10">Sapa Kami.</h2>
+          <div class="space-y-6 md:space-y-8 font-light text-textMuted">
+            <div>
+              <p class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-brandBlack mb-1">Lokasi</p>
+              <p class="text-base md:text-lg">Jl. Skena Kopi Minimalis No. 45<br />Bandung, Jawa Barat</p>
+            </div>
+            <div>
+              <p class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-brandBlack mb-1">Operasional</p>
+              <p class="text-base md:text-lg">Setiap Hari<br />08:00 - 22:00 WIB</p>
             </div>
           </div>
+        </div>
 
-          <div
-            data-aos="fade-left"
-            class="h-[400px] bg-brandDarkGray w-full relative group"
-          >
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d18430.165045196874!2d106.81197084755902!3d-6.397247385827097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69eb5c1dcbe295%3A0xf2df22406aeb6832!2sPALAKALI%20COFFEE%20%26%20RESTO!5e0!3m2!1sid!2sid!4v1774775336224!5m2!1sid!2sid"
-              class="w-full h-full border-0 filter grayscale contrast-125 opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition duration-500"
-              allowfullscreen=""
-              loading="lazy"
-              title="Peta Lokasi"
-            >
-            </iframe>
+        <div class="flex flex-col justify-end">
+          <div class="flex flex-col space-y-4">
+            <a href="#" class="text-xl md:text-2xl font-display font-medium hover:text-textMuted transition-colors flex items-center gap-4">
+              <i data-lucide="instagram" class="w-5 h-5 md:w-6 md:h-6"></i> @urbancafe.id
+            </a>
+            <a href="https://wa.me/6281233445566" target="_blank" class="text-xl md:text-2xl font-display font-medium hover:text-textMuted transition-colors flex items-center gap-4">
+              <i data-lucide="message-square" class="w-5 h-5 md:w-6 md:h-6"></i> 0812-3344-5566
+            </a>
           </div>
         </div>
       </div>
 
-      <div
-        class="border-t border-brandDarkGray py-8 text-center text-sm text-gray-500"
+      <div class="max-w-7xl mx-auto px-6 border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center text-[10px] md:text-xs text-textMuted uppercase tracking-widest font-medium text-center md:text-left">
+        <p>&copy; 2026 URBAN CAFE.</p>
+        <p class="mt-3 md:mt-0">CRAFTED BY PT DAKREATIV DIGITAL MEDIA.</p>
+      </div>
+    </footer>
+
+    <!-- Floating Action Buttons -->
+    <div class="fixed bottom-6 right-6 md:bottom-10 md:right-10 flex flex-col items-end gap-3 z-50">
+      
+      <!-- WhatsApp Order (Always Visible) -->
+      <a
+        href="https://wa.me/6281233445566"
+        target="_blank"
+        class="bg-brandBlack text-white flex items-center justify-center gap-2 md:gap-3 px-4 md:px-5 h-12 md:h-14 hover:bg-white hover:text-brandBlack border border-brandBlack transition-all duration-500 shadow-2xl group"
+        aria-label="Pesan via WhatsApp"
       >
-        <p>
-          &copy; 2026 Urban Cafe. All Rights Reserved. Minimalist Web Design.
-        </p>
-      </div>
-    </section>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:stroke-brandBlack" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <span class="text-[10px] md:text-xs font-bold uppercase tracking-widest">Order WA</span>
+      </a>
 
-    <a
-      href="#beranda"
-      id="back-to-top"
-      class="fixed bottom-8 right-8 bg-brandBlack text-white border border-brandDarkGray w-12 h-12 flex items-center justify-center transform scale-0 transition-all duration-300 z-50 hover:bg-white hover:text-brandBlack"
-    >
-      <i data-lucide="arrow-up" class="w-5 h-5"></i>
-    </a>
+      <!-- Back to Top (Appears on Scroll) -->
+      <a
+        href="#beranda"
+        id="back-to-top"
+        class="bg-white text-brandBlack border border-gray-200 w-12 h-12 md:w-14 md:h-14 flex items-center justify-center hover:bg-brandBlack hover:text-white transition-all duration-500 opacity-0 translate-y-10 pointer-events-none shadow-2xl"
+        aria-label="Kembali ke atas"
+      >
+        <i data-lucide="arrow-up" class="w-5 h-5"></i>
+      </a>
 
+    </div>
+
+    <!-- Scripts -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-      // Init Icons
+      // Initialize Lucide Icons
       lucide.createIcons();
 
-      // Init AOS Animation
+      // Initialize Custom AOS Animations
       AOS.init({
-        duration: 800,
         once: true,
         offset: 50,
       });
 
-      // Mobile Menu Toggle
-      const btn = document.getElementById("mobile-menu-btn");
+      // Mobile Menu Logic with Animation
+      const btn = document.getElementById("mobile-btn");
       const menu = document.getElementById("mobile-menu");
+      const links = document.querySelectorAll(".mobile-link");
 
-      btn.addEventListener("click", () => {
-        menu.classList.toggle("hidden");
-      });
+      function toggleMenu() {
+        const isClosed = menu.classList.contains("menu-closed");
+        if (isClosed) {
+          menu.classList.remove("menu-closed");
+          menu.classList.add("menu-open");
+          btn.innerHTML = `<i data-lucide="x" class="w-7 h-7"></i>`;
+          document.body.style.overflow = "hidden"; // Prevent background scroll
+        } else {
+          menu.classList.remove("menu-open");
+          menu.classList.add("menu-closed");
+          btn.innerHTML = `<i data-lucide="menu" class="w-7 h-7"></i>`;
+          document.body.style.overflow = ""; // Enable background scroll
+        }
+        lucide.createIcons();
+      }
 
-      menu.querySelectorAll("a").forEach((link) => {
+      btn.addEventListener("click", toggleMenu);
+
+      links.forEach(link => {
         link.addEventListener("click", () => {
-          menu.classList.add("hidden");
+          menu.classList.remove("menu-open");
+          menu.classList.add("menu-closed");
+          btn.innerHTML = `<i data-lucide="menu" class="w-7 h-7"></i>`;
+          document.body.style.overflow = "";
+          lucide.createIcons();
         });
       });
 
-      // FAQ Accordion Logic
+      // Minimalist FAQ Accordion
       function toggleFaq(element) {
         const parent = element.parentElement;
-        const wasActive = parent.classList.contains("faq-active");
-        const icon = parent.querySelector(".faq-icon");
+        const icon = element.querySelector('.faq-icon');
+        const isActive = parent.classList.contains("faq-active");
 
         // Close all
         document.querySelectorAll(".faq-item").forEach((el) => {
           el.classList.remove("faq-active");
-          // ubah icon kembali ke 'plus'
-          const ic = el.querySelector(".faq-icon");
-          if (ic) {
-            ic.innerHTML = '<path d="M5 12h14"/><path d="M12 5v14"/>'; // Lucide 'plus' path
-          }
+          const ic = el.querySelector('.faq-icon');
+          if(ic) ic.innerHTML = '<path d="M5 12h14"/><path d="M12 5v14"/>'; // Plus icon
         });
 
-        // Open clicked
-        if (!wasActive) {
+        // Open selected
+        if (!isActive) {
           parent.classList.add("faq-active");
-          // ubah icon ke 'x' atau 'minus'
-          icon.innerHTML = '<path d="M5 12h14"/>'; // Lucide 'minus' path
+          icon.innerHTML = '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'; // X icon (cross)
         }
       }
 
-      // Back to Top Logic
+      // Back to Top Scroll Logic
       const backToTopBtn = document.getElementById("back-to-top");
       window.addEventListener("scroll", () => {
-        if (window.scrollY > 400) {
-          backToTopBtn.classList.remove("scale-0");
-          backToTopBtn.classList.add("scale-100");
+        if (window.scrollY > 500) {
+          backToTopBtn.classList.remove("opacity-0", "translate-y-10", "pointer-events-none");
+          backToTopBtn.classList.add("opacity-100", "translate-y-0", "pointer-events-auto");
         } else {
-          backToTopBtn.classList.remove("scale-100");
-          backToTopBtn.classList.add("scale-0");
+          backToTopBtn.classList.remove("opacity-100", "translate-y-0", "pointer-events-auto");
+          backToTopBtn.classList.add("opacity-0", "translate-y-10", "pointer-events-none");
         }
       });
     </script>

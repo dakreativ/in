@@ -1,115 +1,39 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dakreativ AI - Video Prompts</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <style>
-        :root { --bg: #f8fafc; --text-main: #0f172a; --text-muted: #64748b; --primary: #000; --radius: 20px; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text-main); }
-        header { text-align: center; padding: 60px 20px 40px; }
-        header h1 { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
-        header p { color: var(--text-muted); font-size: 16px; margin-top: 8px; font-weight: 500; }
-        
-        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; padding: 0 20px 60px; }
-        
-        .card { background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; transition: 0.3s; display: flex; flex-direction: column; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
-        
-        .yt-thumb { width: 100%; height: 180px; position: relative; background: #e2e8f0; display: block; overflow: hidden; }
-        .yt-thumb img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
-        .card:hover .yt-thumb img { transform: scale(1.05); }
-        .play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: rgba(255,255,255,0.9); font-size: 48px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); pointer-events: none; transition: 0.3s; }
-        .card:hover .play-icon { color: #ef4444; }
-        
-        .card-body { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
-        .card-title { font-size: 16px; font-weight: 800; margin-bottom: 12px; line-height: 1.4; }
-        .card-prompt { background: #f1f5f9; padding: 12px; border-radius: 8px; font-size: 13px; color: #475569; margin-bottom: 16px; height: 80px; overflow-y: auto; line-height: 1.5; border: 1px solid #e2e8f0; }
-        
-        .card-actions { display: flex; gap: 8px; margin-top: auto; }
-        .btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; transition: 0.2s; text-decoration: none; }
-        .btn-copy { background: var(--primary); color: #fff; }
-        .btn-copy:hover { background: #334155; }
-        .btn-yt { background: #fee2e2; color: #ef4444; }
-        .btn-yt:hover { background: #fca5a5; color: #dc2626; }
-        
-        #loader { text-align: center; width: 100%; padding: 40px; color: var(--text-muted); font-weight: 600; grid-column: 1 / -1; }
-    </style>
-</head>
-<body>
+<script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyO_pvfm2Dtx30ZTq8gRCdT2l3Cg4g6WsKTZWBA-a8iUcu-In85PzyMAajl3wNcA56wCQ/exec";
 
-    <header>
-        <h1>AI Video Database</h1>
-        <p>Koleksi Referensi YouTube & Prompt AI Siap Copas.</p>
-    </header>
+    document.getElementById('addForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Menyimpan...';
+        btn.style.opacity = '0.7';
+        btn.disabled = true;
 
-    <div class="gallery" id="galleryContainer">
-        <div id="loader"><i class="ph ph-spinner ph-spin" style="font-size: 24px; vertical-align: middle;"></i> Mengambil data dari server...</div>
-    </div>
+        // Ubah jadi URLSearchParams agar lolos dari blokir CORS Google
+        const params = new URLSearchParams();
+        params.append('title', document.getElementById('title').value);
+        params.append('ytLink', document.getElementById('ytLink').value);
+        params.append('prompt', document.getElementById('prompt').value);
 
-    <script>
-        // URL Google Apps Script yang lu kasih
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbyO_pvfm2Dtx30ZTq8gRCdT2l3Cg4g6WsKTZWBA-a8iUcu-In85PzyMAajl3wNcA56wCQ/exec";
-
-        async function loadData() {
-            const container = document.getElementById('galleryContainer');
-            try {
-                const response = await fetch(GAS_URL);
-                const data = await response.json();
-                
-                container.innerHTML = '';
-                
-                if(data.length === 0) {
-                    container.innerHTML = '<div id="loader">Belum ada data database. Tambahkan via admin.html!</div>';
-                    return;
-                }
-
-                data.forEach(item => {
-                    const thumbnailUrl = `https://img.youtube.com/vi/${item.ytId}/hqdefault.jpg`;
-                    
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `
-                        <a href="${item.ytLink}" target="_blank" class="yt-thumb">
-                            <img src="${thumbnailUrl}" alt="Thumbnail">
-                            <i class="ph-fill ph-play-circle play-icon"></i>
-                        </a>
-                        <div class="card-body">
-                            <div class="card-title">${item.title}</div>
-                            <div class="card-prompt" id="prompt-${item.ytId}">${item.prompt}</div>
-                            <div class="card-actions">
-                                <button class="btn btn-copy" onclick="copyPrompt(\`${item.prompt.replace(/`/g, '\\`')}\`, this)">
-                                    <i class="ph ph-copy"></i> Salin Prompt
-                                </button>
-                                <a href="${item.ytLink}" target="_blank" class="btn btn-yt">
-                                    <i class="ph ph-youtube-logo"></i> Tonton
-                                </a>
-                            </div>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-            } catch (error) {
-                container.innerHTML = `<div id="loader" style="color:#ef4444;">Gagal memuat data: Pastikan script GAS sudah di-deploy dengan benar.</div>`;
-            }
-        }
-
-        function copyPrompt(text, btn) {
-            navigator.clipboard.writeText(text).then(() => {
-                const originalHtml = btn.innerHTML;
-                btn.innerHTML = '<i class="ph ph-check-circle"></i> Tersalin!';
-                btn.style.background = '#10b981';
-                setTimeout(() => {
-                    btn.innerHTML = originalHtml;
-                    btn.style.background = 'var(--primary)';
-                }, 2000);
+        try {
+            await fetch(GAS_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Pakai no-cors agar browser tidak memblokir redirect
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params.toString()
             });
-        }
 
-        window.onload = loadData;
-    </script>
-</body>
-</html>
+            alert('Mantap Bro! Data sukses masuk ke Google Sheets.');
+            document.getElementById('addForm').reset();
+        } catch (error) {
+            alert('Gagal nyimpen data. Detail: ' + error.message);
+        } finally {
+            btn.innerHTML = originalText;
+            btn.style.opacity = '1';
+            btn.disabled = false;
+        }
+    });
+</script>

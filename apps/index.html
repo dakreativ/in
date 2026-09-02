@@ -22,10 +22,42 @@
             -webkit-font-smoothing: antialiased;
         }
         
-        /* --- HEADER --- */
-        header { text-align: center; padding: 60px 20px 40px; }
+        /* --- HEADER & SEARCH --- */
+        header { text-align: center; padding: 50px 20px 30px; }
         header h1 { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
-        header p { color: var(--text-muted); font-size: 16px; margin-top: 8px; font-weight: 500; }
+        header p { color: var(--text-muted); font-size: 16px; margin-top: 8px; font-weight: 500; margin-bottom: 30px; }
+        
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .search-container i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: var(--text-muted);
+        }
+        .search-input {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            border-radius: 50px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-main);
+            outline: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            transition: 0.3s;
+        }
+        .search-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 20px rgba(59,130,246,0.1);
+        }
         
         /* --- GALLERY GRID --- */
         .gallery { 
@@ -45,7 +77,7 @@
             overflow: hidden; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
             cursor: pointer;
-            aspect-ratio: 9 / 16; /* Format Portrait Reels/Shorts */
+            aspect-ratio: 9 / 16; 
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease; 
         }
         
@@ -58,11 +90,31 @@
         .card img { 
             width: 100%; 
             height: 100%; 
-            object-fit: cover; /* Zoom agar gambar full */
+            object-fit: cover; 
             transition: transform 0.5s ease; 
             opacity: 0.85;
         }
         .card:hover img { transform: scale(1.08); opacity: 1; }
+
+        /* Fake Viewers Badge */
+        .view-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
 
         /* Icon Play Tengah */
         .play-center {
@@ -97,7 +149,7 @@
             flex-direction: column; 
             justify-content: flex-end;
             padding: 24px 20px;
-            pointer-events: none; /* Biar klik nembus ke kartu */
+            pointer-events: none; 
         }
         
         .card-title { 
@@ -120,7 +172,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            pointer-events: auto; /* Mengaktifkan klik hanya untuk box ini */
+            pointer-events: auto; 
         }
 
         .action-label {
@@ -150,7 +202,8 @@
         }
         .btn-copy:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(255,255,255,0.2); }
         
-        #loader { text-align: center; width: 100%; padding: 40px; color: var(--text-muted); font-weight: 600; grid-column: 1 / -1; }
+        #loader, #noResult { text-align: center; width: 100%; padding: 40px; color: var(--text-muted); font-weight: 600; grid-column: 1 / -1; }
+        #noResult { display: none; }
 
         /* --- MODAL ZOOM PREVIEW --- */
         .modal {
@@ -171,7 +224,7 @@
         
         .modal-content {
             width: 100%;
-            max-width: 420px; /* Ukuran pas untuk portrait video */
+            max-width: 420px; 
             aspect-ratio: 9 / 16;
             background: #000;
             border-radius: 24px;
@@ -222,15 +275,21 @@
     <header>
         <h1>AI Video Database</h1>
         <p>Koleksi Referensi YouTube & Prompt AI Siap Copas.</p>
+        
+        <div class="search-container">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="Cari judul konten atau ide prompt..." onkeyup="searchData()">
+        </div>
     </header>
 
     <div class="gallery" id="galleryContainer">
         <div id="loader"><i class="ph ph-spinner ph-spin" style="font-size: 24px; vertical-align: middle;"></i> Memuat inspirasi...</div>
+        <div id="noResult">Yahh, pencarian kamu nggak ketemu Bro. Coba kata kunci lain.</div>
     </div>
 
     <!-- Modal Zoom Preview -->
     <div class="modal" id="videoModal" onclick="closeModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()"> <!-- Stop propagation biar ga nutup kalo diklik videonya -->
+        <div class="modal-content" onclick="event.stopPropagation()">
             <button class="close-btn" onclick="closeModal(event)"><i class="ph ph-x"></i></button>
             <iframe id="ytIframe" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
@@ -239,8 +298,17 @@
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbyO_pvfm2Dtx30ZTq8gRCdT2l3Cg4g6WsKTZWBA-a8iUcu-In85PzyMAajl3wNcA56wCQ/exec";
 
+        // Fungsi generate fake viewers (Range: 10.1k - 99.9k)
+        function generateFakeViews() {
+            const views = Math.floor(Math.random() * 90) + 10;
+            const decimals = Math.floor(Math.random() * 9);
+            return `${views}.${decimals}k`;
+        }
+
         async function loadData() {
             const container = document.getElementById('galleryContainer');
+            const noResult = document.getElementById('noResult');
+            
             try {
                 const response = await fetch(GAS_URL);
                 const textResponse = await response.text(); 
@@ -258,7 +326,7 @@
                     return;
                 }
                 
-                container.innerHTML = '';
+                document.getElementById('loader').style.display = 'none';
                 
                 if(!data || data.length === 0) {
                     container.innerHTML = '<div id="loader">Belum ada data. Tambahkan di halaman Admin.</div>';
@@ -266,15 +334,18 @@
                 }
 
                 data.forEach(item => {
-                    // Gunakan maxresdefault atau hqdefault untuk thumbnail
                     const thumbnailUrl = `https://img.youtube.com/vi/${item.ytId}/hqdefault.jpg`;
+                    const fakeViews = generateFakeViews(); // Panggil fungsi fake viewers
                     
                     const card = document.createElement('div');
                     card.className = 'card';
-                    // Event onclick buka modal video
+                    card.setAttribute('data-title', item.title.toLowerCase());
+                    card.setAttribute('data-prompt', item.prompt.toLowerCase());
                     card.onclick = () => openModal(item.ytId);
                     
                     card.innerHTML = `
+                        <div class="view-badge"><i class="ph-fill ph-play-circle"></i> ${fakeViews}</div>
+                        
                         <img src="${thumbnailUrl}" alt="${item.title}" loading="lazy">
                         
                         <div class="play-center"><i class="ph-fill ph-play"></i></div>
@@ -284,23 +355,44 @@
                             
                             <div class="action-box">
                                 <div class="action-label"><i class="ph-fill ph-magic-wand"></i> Prompt</div>
-                                <!-- Kirim event untuk stopPropagation biar modal ga kebuka pas diklik Salin -->
                                 <button class="btn-copy" onclick="copyPrompt(event, \`${item.prompt.replace(/`/g, '\\`')}\`, this)">
                                     <i class="ph ph-copy"></i> Salin
                                 </button>
                             </div>
                         </div>
                     `;
-                    container.appendChild(card);
+                    // Kita insertBefore parent Node loader & noResult
+                    container.insertBefore(card, noResult);
                 });
             } catch (error) {
                 container.innerHTML = `<div id="loader" style="color:#ef4444;">Gagal memuat data. Periksa koneksi internet.</div>`;
             }
         }
 
-        // Fungsi Salin Prompt
+        // Fungsi Search / Filter Data
+        function searchData() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
+            let hasResult = false;
+
+            cards.forEach(card => {
+                const title = card.getAttribute('data-title');
+                const prompt = card.getAttribute('data-prompt');
+                
+                if(title.includes(keyword) || prompt.includes(keyword)) {
+                    card.style.display = 'block';
+                    hasResult = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Tampilkan pesan jika pencarian tidak ditemukan
+            document.getElementById('noResult').style.display = hasResult ? 'none' : 'block';
+        }
+
         function copyPrompt(event, text, btn) {
-            event.stopPropagation(); // Mencegah klik kartu (Modal) kepicu saat klik tombol salin
+            event.stopPropagation(); 
             
             navigator.clipboard.writeText(text).then(() => {
                 const originalHtml = btn.innerHTML;
@@ -316,24 +408,21 @@
             });
         }
 
-        // Fungsi Buka Modal Video
         function openModal(ytId) {
             const modal = document.getElementById('videoModal');
             const iframe = document.getElementById('ytIframe');
-            // Autoplay di set 1 biar pas diklik langsung main
             iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
             modal.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Kunci scroll background
+            document.body.style.overflow = 'hidden'; 
         }
 
-        // Fungsi Tutup Modal Video
         function closeModal(event) {
             if(event) event.stopPropagation();
             const modal = document.getElementById('videoModal');
             const iframe = document.getElementById('ytIframe');
-            iframe.src = ''; // Hapus src untuk mematikan video
+            iframe.src = ''; 
             modal.classList.remove('active');
-            document.body.style.overflow = 'auto'; // Buka scroll background
+            document.body.style.overflow = 'auto'; 
         }
 
         window.onload = loadData;

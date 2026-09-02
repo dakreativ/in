@@ -7,77 +7,241 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        :root { --bg: #f8fafc; --primary: #0f172a; --border: #e2e8f0; --accent: #3b82f6; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 40px 20px; color: var(--primary); }
-        .form-container { background: #fff; width: 100%; max-width: 500px; padding: 32px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid var(--border); }
-        h1 { font-size: 24px; font-weight: 800; margin-bottom: 24px; text-align: center; }
+        :root { --bg: #f8fafc; --primary: #0f172a; --border: #e2e8f0; --accent: #3b82f6; --danger: #ef4444; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--primary); padding: 40px 20px; }
+        
+        header { text-align: center; margin-bottom: 40px; }
+        header h1 { font-size: 28px; font-weight: 800; }
+        .nav-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; color: var(--text-muted); font-weight: 600; text-decoration: none; font-size: 14px; background: #e2e8f0; padding: 8px 16px; border-radius: 50px; transition: 0.2s; }
+        .nav-link:hover { background: var(--primary); color: #fff; }
+
+        .admin-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 32px; max-width: 1100px; margin: 0 auto; align-items: flex-start; }
+        
+        /* FORM SECTION */
+        .form-card { background: #fff; padding: 32px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid var(--border); position: sticky; top: 20px; }
+        .form-card h2 { font-size: 18px; font-weight: 800; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
         .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-        input, textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; font-family: inherit; font-size: 14px; background: #f8fafc; outline: none; transition: 0.2s; box-sizing: border-box; }
+        label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #475569; }
+        input, textarea { width: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; font-family: inherit; font-size: 14px; background: #f8fafc; outline: none; transition: 0.2s; }
         input:focus, textarea:focus { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
-        .btn { width: 100%; background: var(--primary); color: #fff; border: none; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
+        
+        .btn-group { display: flex; gap: 12px; margin-top: 24px; }
+        .btn { flex: 1; background: var(--primary); color: #fff; border: none; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
         .btn:hover { background: #334155; transform: translateY(-2px); }
-        .nav-link { display: block; text-align: center; margin-top: 16px; color: var(--accent); font-weight: 600; text-decoration: none; font-size: 14px; }
+        .btn-cancel { background: #f1f5f9; color: #475569; display: none; }
+        .btn-cancel:hover { background: #e2e8f0; transform: translateY(-2px); }
+
+        /* DATA LIST SECTION */
+        .data-list-card { background: transparent; }
+        .data-list-card h2 { font-size: 18px; font-weight: 800; margin-bottom: 20px; }
+        .data-item { display: flex; align-items: center; gap: 16px; background: #fff; padding: 16px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: 0.2s; }
+        .data-item:hover { border-color: #cbd5e1; transform: translateY(-2px); }
+        
+        .data-thumb { width: 100px; height: 60px; object-fit: cover; border-radius: 10px; flex-shrink: 0; background: #e2e8f0; }
+        .data-info { flex-grow: 1; min-width: 0; }
+        .data-title { font-weight: 800; font-size: 15px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .data-link { font-size: 12px; color: var(--accent); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+        
+        .data-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .btn-icon { width: 40px; height: 40px; border-radius: 12px; border: none; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: 0.2s; }
+        .btn-edit { background: #eff6ff; color: #3b82f6; }
+        .btn-edit:hover { background: #3b82f6; color: #fff; }
+        .btn-delete { background: #fef2f2; color: #ef4444; }
+        .btn-delete:hover { background: #ef4444; color: #fff; }
+
+        #loader { text-align: center; width: 100%; padding: 40px; color: #64748b; font-weight: 600; }
+
+        /* RESPONSIVE MOBILE */
+        @media (max-width: 768px) {
+            .admin-layout { grid-template-columns: 1fr; }
+            .form-card { position: relative; top: 0; }
+            .data-item { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .data-thumb { width: 100%; height: 140px; }
+            .data-actions { width: 100%; justify-content: flex-end; border-top: 1px dashed var(--border); padding-top: 12px; margin-top: 4px; }
+        }
     </style>
 </head>
 <body>
 
-<div class="form-container">
-    <h1><i class="ph ph-youtube-logo" style="color: #ef4444;"></i> Tambah AI Database</h1>
-    <form id="addForm">
-        <div class="form-group">
-            <label>Judul Konten</label>
-            <input type="text" id="title" placeholder="Contoh: Tutorial Animasi 3D AI" required>
+    <header>
+        <h1><i class="ph-fill ph-database" style="color: var(--accent);"></i> AI Admin Panel</h1>
+        <a href="index.html" class="nav-link"><i class="ph ph-arrow-left"></i> Kembali ke Gallery</a>
+    </header>
+
+    <div class="admin-layout">
+        <!-- FORM BOX -->
+        <div class="form-card">
+            <h2 id="formHeader"><i class="ph-fill ph-plus-circle"></i> Tambah Data Baru</h2>
+            <form id="adminForm">
+                <input type="hidden" id="rowId" value="">
+                
+                <div class="form-group">
+                    <label>Judul Konten</label>
+                    <input type="text" id="title" placeholder="Contoh: Video Cinematic AI" required>
+                </div>
+                <div class="form-group">
+                    <label>Link Video YouTube</label>
+                    <input type="url" id="ytLink" placeholder="https://youtube.com/watch?v=..." required>
+                </div>
+                <div class="form-group">
+                    <label>Teks Prompt Asli</label>
+                    <textarea id="prompt" rows="5" placeholder="Ketik/Paste prompt AI disini..." required></textarea>
+                </div>
+                
+                <div class="btn-group">
+                    <button type="submit" class="btn" id="submitBtn"><i class="ph ph-paper-plane-tilt"></i> Simpan Data</button>
+                    <button type="button" class="btn btn-cancel" id="cancelBtn" onclick="resetForm()"><i class="ph ph-x"></i> Batal Edit</button>
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-            <label>Link Video YouTube</label>
-            <input type="url" id="ytLink" placeholder="https://youtube.com/watch?v=..." required>
+
+        <!-- LIST BOX -->
+        <div class="data-list-card">
+            <h2><i class="ph-fill ph-list-dashes"></i> Kelola Database</h2>
+            <div id="dataContainer">
+                <div id="loader"><i class="ph ph-spinner ph-spin" style="font-size: 24px; vertical-align: middle;"></i> Memuat data dari server...</div>
+            </div>
         </div>
-        <div class="form-group">
-            <label>Teks Prompt Asli</label>
-            <textarea id="prompt" rows="5" placeholder="Ketik prompt AI yang digunakan di video ini..." required></textarea>
-        </div>
-        <button type="submit" class="btn" id="submitBtn"><i class="ph ph-paper-plane-tilt"></i> Simpan ke Database</button>
-    </form>
-    <a href="index.html" class="nav-link"><i class="ph ph-globe"></i> Lihat Tampilan Web (Index)</a>
-</div>
+    </div>
 
 <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbyO_pvfm2Dtx30ZTq8gRCdT2l3Cg4g6WsKTZWBA-a8iUcu-In85PzyMAajl3wNcA56wCQ/exec";
 
-    document.getElementById('addForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        const originalText = btn.innerHTML;
+    // 1. FUNGSI LOAD DATA
+    async function loadData() {
+        const container = document.getElementById('dataContainer');
+        container.innerHTML = '<div id="loader"><i class="ph ph-spinner ph-spin"></i> Memperbarui data...</div>';
         
-        btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Menyimpan...';
-        btn.style.opacity = '0.7';
-        btn.disabled = true;
+        try {
+            const response = await fetch(GAS_URL);
+            const textResponse = await response.text(); 
+            const data = JSON.parse(textResponse);
+            
+            container.innerHTML = '';
+            
+            if(data.error) throw new Error(data.error);
+            if(data.length === 0) {
+                container.innerHTML = '<div id="loader">Database masih kosong Bro!</div>';
+                return;
+            }
 
-        const data = {
-            title: document.getElementById('title').value,
-            ytLink: document.getElementById('ytLink').value,
-            prompt: document.getElementById('prompt').value
-        };
+            data.forEach(item => {
+                const thumbnailUrl = `https://img.youtube.com/vi/${item.ytId}/mqdefault.jpg`;
+                
+                // Gunakan base64 untuk menghindari error saat passing data via onclick
+                const safeTitle = btoa(encodeURIComponent(item.title));
+                const safeLink = btoa(encodeURIComponent(item.ytLink));
+                const safePrompt = btoa(encodeURIComponent(item.prompt));
+
+                const card = document.createElement('div');
+                card.className = 'data-item';
+                card.innerHTML = `
+                    <img src="${thumbnailUrl}" class="data-thumb" alt="Thumb">
+                    <div class="data-info">
+                        <div class="data-title">${item.title}</div>
+                        <a href="${item.ytLink}" target="_blank" class="data-link"><i class="ph-fill ph-youtube-logo" style="color: #ef4444;"></i> Cek Video Asli</a>
+                    </div>
+                    <div class="data-actions">
+                        <button onclick="editData('${item.row}', '${safeTitle}', '${safeLink}', '${safePrompt}')" class="btn-icon btn-edit" title="Edit Data"><i class="ph ph-pencil-simple"></i></button>
+                        <button onclick="deleteData('${item.row}', '${item.title.replace(/'/g, "\\'")}')" class="btn-icon btn-delete" title="Hapus Data"><i class="ph ph-trash"></i></button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        } catch (error) {
+            container.innerHTML = `<div id="loader" style="color:var(--danger);">Gagal memuat data: ${error.message}</div>`;
+        }
+    }
+
+    // 2. FUNGSI EDIT DATA (Menaikkan data ke Form)
+    function editData(row, safeTitle, safeLink, safePrompt) {
+        document.getElementById('rowId').value = row;
+        document.getElementById('title').value = decodeURIComponent(atob(safeTitle));
+        document.getElementById('ytLink').value = decodeURIComponent(atob(safeLink));
+        document.getElementById('prompt').value = decodeURIComponent(atob(safePrompt));
+        
+        document.getElementById('formHeader').innerHTML = '<i class="ph-fill ph-pencil-simple" style="color: var(--accent);"></i> Update Data';
+        document.getElementById('submitBtn').innerHTML = '<i class="ph ph-floppy-disk"></i> Update Sekarang';
+        document.getElementById('cancelBtn').style.display = 'flex';
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll otomatis ke form
+    }
+
+    // 3. FUNGSI RESET FORM (Kembali ke mode Tambah Baru)
+    function resetForm() {
+        document.getElementById('adminForm').reset();
+        document.getElementById('rowId').value = "";
+        
+        document.getElementById('formHeader').innerHTML = '<i class="ph-fill ph-plus-circle"></i> Tambah Data Baru';
+        document.getElementById('submitBtn').innerHTML = '<i class="ph ph-paper-plane-tilt"></i> Simpan Data';
+        document.getElementById('cancelBtn').style.display = 'none';
+    }
+
+    // 4. FUNGSI HAPUS DATA
+    async function deleteData(row, title) {
+        if(!confirm(`Yakin mau hapus video "${title}"?`)) return;
+
+        const params = new URLSearchParams();
+        params.append('action', 'delete');
+        params.append('row', row);
 
         try {
             await fetch(GAS_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Mencegah blokir browser saat kirim data
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(data)
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params.toString()
+            });
+            alert('Data berhasil dihapus Bro!');
+            loadData(); // Refresh list
+        } catch (error) {
+            alert('Gagal hapus data: ' + error.message);
+        }
+    }
+
+    // 5. SUBMIT FORM (Otomatis deteksi Add atau Edit)
+    document.getElementById('adminForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const btn = document.getElementById('submitBtn');
+        const originalText = btn.innerHTML;
+        const rowId = document.getElementById('rowId').value;
+        const actionType = rowId ? 'update' : 'create';
+
+        btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Memproses...';
+        btn.style.opacity = '0.7';
+        btn.disabled = true;
+
+        const params = new URLSearchParams();
+        params.append('action', actionType);
+        if (rowId) params.append('row', rowId);
+        params.append('title', document.getElementById('title').value);
+        params.append('ytLink', document.getElementById('ytLink').value);
+        params.append('prompt', document.getElementById('prompt').value);
+
+        try {
+            await fetch(GAS_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params.toString()
             });
 
-            alert('Mantap! Data sukses masuk ke Google Sheets.');
-            document.getElementById('addForm').reset();
+            alert(rowId ? 'Mantap, data sukses diupdate!' : 'Mantap, data baru sukses disimpan!');
+            resetForm();
+            loadData(); // Refresh list otomatis setelah simpan
         } catch (error) {
-            alert('Aduh gagal nyimpen: ' + error.message);
+            alert('Aduh gagal proses data: ' + error.message);
         } finally {
             btn.innerHTML = originalText;
             btn.style.opacity = '1';
             btn.disabled = false;
         }
     });
+
+    // Load data pertama kali dibuka
+    window.onload = loadData;
 </script>
 </body>
 </html>

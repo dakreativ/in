@@ -5,25 +5,26 @@
         const container = document.getElementById('galleryContainer');
         try {
             const response = await fetch(GAS_URL);
-            
-            // Tangkap sebagai teks dulu untuk mencegah error JSON Parse kalau Google minta login
             const textResponse = await response.text(); 
+            
             let data;
             try {
                 data = JSON.parse(textResponse);
             } catch (err) {
                 console.error("Respon bukan JSON:", textResponse);
-                throw new Error("Izin akses ditolak! Pastikan deployment GAS di-set ke 'Siapa Saja (Anyone)'.");
+                container.innerHTML = `<div id="loader" style="color:#ef4444;">Error Akses! Buka link GAS lu di browser baru, pastikan izinnya 'Siapa Saja'.</div>`;
+                return;
             }
             
             if(data.error) {
-                throw new Error(data.error);
+                container.innerHTML = `<div id="loader" style="color:#ef4444;">Script Error: ${data.error}</div>`;
+                return;
             }
             
             container.innerHTML = '';
             
             if(!data || data.length === 0) {
-                container.innerHTML = '<div id="loader">Belum ada data di database. Tambahkan lewat form admin!</div>';
+                container.innerHTML = '<div id="loader">Belum ada data video. Tambahkan di halaman Admin!</div>';
                 return;
             }
 
@@ -53,7 +54,7 @@
                 container.appendChild(card);
             });
         } catch (error) {
-            container.innerHTML = `<div id="loader" style="color:#ef4444;">Gagal memuat data: ${error.message}</div>`;
+            container.innerHTML = `<div id="loader" style="color:#ef4444;">Gagal fetch data: Pastikan internet / URL GAS aman.</div>`;
         }
     }
 

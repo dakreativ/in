@@ -153,8 +153,7 @@
                 loadData();
             }
         }
-
-        async function submitLogin() {
+async function submitLogin() {
             const nameInput = document.getElementById('visitorName').value.trim();
             if (!nameInput) {
                 alert('Nama lengkap wajib diisi ya Bro!');
@@ -165,23 +164,24 @@
             btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Memverifikasi...';
             btn.disabled = true;
 
-            const params = new URLSearchParams();
-            params.append('action', 'login');
-            params.append('nama', nameInput);
+            // Pastikan kirim data persis dengan yang diharapkan script backend
+            const formData = new URLSearchParams();
+            formData.append('action', 'login');
+            formData.append('nama', nameInput);
 
             try {
-                // Kirim data ke Google Sheets secara diam-diam
+                // Tembakkan data ke Apps Script
                 await fetch(GAS_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: params.toString()
+                    body: formData
                 });
 
-                // Simpan nama di HP pengunjung (Local Storage)
+                // Simpan sesi di HP/PC
                 localStorage.setItem('dkrtv_access_name', nameInput);
                 
-                // Sembunyikan layar login dan muat video
+                // Animasi hilang & Load galeri
                 document.getElementById('loginOverlay').style.opacity = '0';
                 setTimeout(() => {
                     document.getElementById('loginOverlay').style.display = 'none';
@@ -190,7 +190,7 @@
                 }, 400);
 
             } catch (error) {
-                alert('Gagal terhubung ke server. Coba lagi!');
+                alert('Gagal terhubung ke server. Pastikan internet stabil!');
                 btn.innerHTML = '<i class="ph-fill ph-sign-in"></i> Masuk Sekarang';
                 btn.disabled = false;
             }

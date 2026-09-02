@@ -1,84 +1,73 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Dakreativ AI Database</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <style>
-        :root { --bg: #f8fafc; --primary: #0f172a; --border: #e2e8f0; --accent: #3b82f6; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 40px 20px; color: var(--primary); }
-        .form-container { background: #fff; width: 100%; max-width: 500px; padding: 32px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid var(--border); }
-        h1 { font-size: 24px; font-weight: 800; margin-bottom: 24px; text-align: center; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-        input, textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; font-family: inherit; font-size: 14px; background: #f8fafc; outline: none; transition: 0.2s; box-sizing: border-box; }
-        input:focus, textarea:focus { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
-        .btn { width: 100%; background: var(--primary); color: #fff; border: none; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
-        .btn:hover { background: #334155; transform: translateY(-2px); }
-        .nav-link { display: block; text-align: center; margin-top: 16px; color: var(--accent); font-weight: 600; text-decoration: none; font-size: 14px; }
-    </style>
-</head>
-<body>
-
-<div class="form-container">
-    <h1><i class="ph ph-youtube-logo" style="color: #ef4444;"></i> Tambah AI Database</h1>
-    <form id="addForm">
-        <div class="form-group">
-            <label>Judul Konten</label>
-            <input type="text" id="title" placeholder="Contoh: Tutorial Animasi 3D AI" required>
-        </div>
-        <div class="form-group">
-            <label>Link Video YouTube</label>
-            <input type="url" id="ytLink" placeholder="https://youtube.com/watch?v=..." required>
-        </div>
-        <div class="form-group">
-            <label>Teks Prompt Asli</label>
-            <textarea id="prompt" rows="5" placeholder="Ketik prompt AI yang digunakan di video ini..." required></textarea>
-        </div>
-        <button type="submit" class="btn" id="submitBtn"><i class="ph ph-paper-plane-tilt"></i> Simpan ke Database</button>
-    </form>
-    <a href="index.html" class="nav-link"><i class="ph ph-globe"></i> Lihat Tampilan Web (Index)</a>
-</div>
-
 <script>
-    // URL Google Apps Script yang lu kasih
     const GAS_URL = "https://script.google.com/macros/s/AKfycbyO_pvfm2Dtx30ZTq8gRCdT2l3Cg4g6WsKTZWBA-a8iUcu-In85PzyMAajl3wNcA56wCQ/exec";
 
-    document.getElementById('addForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        const originalText = btn.innerHTML;
-        
-        btn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Menyimpan...';
-        btn.style.opacity = '0.7';
-        btn.disabled = true;
-
-        const data = {
-            title: document.getElementById('title').value,
-            ytLink: document.getElementById('ytLink').value,
-            prompt: document.getElementById('prompt').value
-        };
-
+    async function loadData() {
+        const container = document.getElementById('galleryContainer');
         try {
-            await fetch(GAS_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(data)
-            });
+            const response = await fetch(GAS_URL);
+            
+            // Tangkap sebagai teks dulu untuk mencegah error JSON Parse kalau Google minta login
+            const textResponse = await response.text(); 
+            let data;
+            try {
+                data = JSON.parse(textResponse);
+            } catch (err) {
+                console.error("Respon bukan JSON:", textResponse);
+                throw new Error("Izin akses ditolak! Pastikan deployment GAS di-set ke 'Siapa Saja (Anyone)'.");
+            }
+            
+            if(data.error) {
+                throw new Error(data.error);
+            }
+            
+            container.innerHTML = '';
+            
+            if(!data || data.length === 0) {
+                container.innerHTML = '<div id="loader">Belum ada data di database. Tambahkan lewat form admin!</div>';
+                return;
+            }
 
-            alert('Mantap! Data sukses masuk ke Google Sheets.');
-            document.getElementById('addForm').reset();
+            data.forEach(item => {
+                const thumbnailUrl = `https://img.youtube.com/vi/${item.ytId}/hqdefault.jpg`;
+                
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <a href="${item.ytLink}" target="_blank" class="yt-thumb">
+                        <img src="${thumbnailUrl}" alt="Thumbnail">
+                        <i class="ph-fill ph-play-circle play-icon"></i>
+                    </a>
+                    <div class="card-body">
+                        <div class="card-title">${item.title}</div>
+                        <div class="card-prompt" id="prompt-${item.ytId}">${item.prompt}</div>
+                        <div class="card-actions">
+                            <button class="btn btn-copy" onclick="copyPrompt(\`${item.prompt.replace(/`/g, '\\`')}\`, this)">
+                                <i class="ph ph-copy"></i> Salin Prompt
+                            </button>
+                            <a href="${item.ytLink}" target="_blank" class="btn btn-yt">
+                                <i class="ph ph-youtube-logo"></i> Tonton
+                            </a>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         } catch (error) {
-            alert('Gagal nyimpen data: ' + error.message);
-        } finally {
-            btn.innerHTML = originalText;
-            btn.style.opacity = '1';
-            btn.disabled = false;
+            container.innerHTML = `<div id="loader" style="color:#ef4444;">Gagal memuat data: ${error.message}</div>`;
         }
-    });
+    }
+
+    function copyPrompt(text, btn) {
+        navigator.clipboard.writeText(text).then(() => {
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="ph ph-check-circle"></i> Tersalin!';
+            btn.style.background = '#10b981';
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.style.background = 'var(--primary)';
+            }, 2000);
+        });
+    }
+
+    window.onload = loadData;
 </script>
-</body>
-</html>

@@ -3,109 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Profile</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap)" rel="stylesheet">
+    <title>Digital Card Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #0a0a0a; /* Background luar hitam pekat */
+            background-color: #050505; 
+            color: #ffffff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
         }
 
-        /* Animasi Background Kartu Mewah (Hitam ke Abu-abu metalik) */
-        .premium-gradient {
-            background: linear-gradient(-45deg, #111111, #2a2a2a, #000000, #1f1f1f);
+        /* Gradasi gerak mewah (Hitam, Abu Gelap, Silver) */
+        .luxury-card {
+            background: linear-gradient(-45deg, #0a0a0a, #1a1a1a, #0d0d0d, #262626);
             background-size: 400% 400%;
-            animation: gradientMove 10s ease infinite;
+            animation: gradientShift 12s ease infinite;
             position: relative;
             overflow: hidden;
         }
 
-        /* Efek kilap/kaca pada kartu */
-        .premium-gradient::before {
+        /* Efek Kilap / Glassmorphism Metalik */
+        .luxury-card::before {
             content: "";
             position: absolute;
-            top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0) 100%);
-            transform: skewX(-25deg);
-            animation: shine 6s infinite;
+            top: 0; left: -150%; width: 100%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-20deg);
+            animation: shine 7s infinite;
         }
 
-        @keyframes gradientMove {
+        @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
         @keyframes shine {
-            0% { left: -100%; }
-            20% { left: 200%; }
-            100% { left: 200%; }
+            0% { left: -150%; }
+            30% { left: 150%; }
+            100% { left: 150%; }
         }
-
-        /* Hilangkan scrollbar tapi tetap bisa scroll */
-        ::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="antialiased text-white p-4">
+<body class="p-4 antialiased flex flex-col justify-between items-center min-h-screen">
 
-    <!-- Container Kartu -->
-    <main class="w-full max-w-sm mx-auto premium-gradient rounded-3xl p-8 shadow-[0_0_40px_rgba(255,255,255,0.05)] border border-gray-800 flex-grow mt-8 mb-4">
-        
-        <!-- Profile Section -->
-        <div class="flex flex-col items-center mb-8">
-            <div class="w-24 h-24 rounded-full bg-white text-black flex items-center justify-center text-3xl font-bold mb-4 shadow-lg border-2 border-gray-300">
-                A
-            </div>
-            <h1 class="text-2xl font-bold tracking-tight text-white">Aditya Pratama</h1>
-            <p class="text-gray-400 text-sm mt-1">Creative Director</p>
-        </div>
-
-        <!-- Custom Text / Status Message (Bisa di-loop atau dipilih dari database) -->
-        <div class="bg-black/50 border border-gray-700 rounded-xl p-4 mb-8 text-center backdrop-blur-sm">
-            <p class="text-sm font-medium text-gray-200">
-                <!-- Contoh Opsi C (Bisa diganti A/B lewat backend) -->
-                "Terima kasih telah berkenalan, follow social media saya di bawah ya."
-            </p>
-        </div>
-
-        <!-- Links Data Section -->
-        <div class="space-y-4">
+    <div class="w-full max-w-md my-auto">
+        <!-- Container Kartu Utama -->
+        <div id="mainCard" class="luxury-card rounded-3xl p-8 border border-white/10 shadow-[0_0_50px_rgba(255,255,255,0.03)] backdrop-blur-md">
             
-            <!-- Link WhatsApp -->
-            <a href="[https://wa.me/6281234567890](https://wa.me/6281234567890)" target="_blank" class="block w-full bg-white text-black text-center py-3.5 rounded-xl font-semibold hover:bg-gray-200 transition-all transform hover:scale-[1.02] active:scale-95 shadow-md">
-                WhatsApp
-            </a>
+            <!-- Loading Indicator -->
+            <div id="loading" class="text-center py-10">
+                <div class="inline-block w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <p class="text-xs text-gray-400 mt-4 tracking-widest uppercase">Memuat Data...</p>
+            </div>
 
-            <!-- Link Instagram -->
-            <a href="[https://instagram.com/adityap](https://instagram.com/adityap)" target="_blank" class="block w-full bg-transparent border border-gray-600 text-white text-center py-3.5 rounded-xl font-semibold hover:bg-gray-800 transition-all transform hover:scale-[1.02] active:scale-95">
-                Instagram
-            </a>
+            <!-- FORM AKTIVASI (Jika Status Kosong) -->
+            <div id="activationForm" class="hidden">
+                <div class="text-center mb-6">
+                    <h1 class="text-xl font-bold tracking-tight text-white">Aktivasi Kartu Kamu</h1>
+                    <p class="text-xs text-gray-400 mt-1">Lengkapi data untuk mengaktifkan profil digital</p>
+                </div>
 
-            <!-- Link TikTok -->
-            <a href="[https://tiktok.com/@adityap](https://tiktok.com/@adityap)" target="_blank" class="block w-full bg-transparent border border-gray-600 text-white text-center py-3.5 rounded-xl font-semibold hover:bg-gray-800 transition-all transform hover:scale-[1.02] active:scale-95">
-                TikTok
-            </a>
+                <form id="formAktivasi" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 mb-1">Nama Lengkap</label>
+                        <input type="text" id="inputNama" required class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="Masukkan nama">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 mb-1">Nomor WhatsApp</label>
+                        <input type="text" id="inputWA" required class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="Contoh: 08123456789">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 mb-1">Username Instagram</label>
+                        <input type="text" id="inputIG" required class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="Tanpa tanda @">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 mb-1">Username TikTok</label>
+                        <input type="text" id="inputTikTok" required class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="Tanpa tanda @">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 mb-1">Pilihan Pesan / Custom Text Button</label>
+                        <select id="inputPesan" class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition">
+                            <option value="Jika menemukan kunci ini harap hubungi kontak kamu">a. Jika menemukan kunci ini harap hubungi kontak kamu</option>
+                            <option value="Hubungi saya jika ada project">b. Hubungi saya jika ada project</option>
+                            <option value="Terima kasih telah berkenalan follow social media kamu">c. Terima kasih telah berkenalan follow social media kamu</option>
+                        </select>
+                    </div>
 
-            <!-- Opsi Custom Button Extra (misal Opsi A/B dijadiin tombol tambahan) -->
-            <a href="mailto:email@domain.com" class="block w-full bg-gray-900 border border-dashed border-gray-600 text-gray-400 text-center py-3 rounded-xl text-sm hover:text-white hover:border-gray-400 transition-all mt-6">
-                Hubungi saya jika ada project
-            </a>
+                    <button type="submit" id="btnSubmit" class="w-full bg-white text-black font-semibold py-3.5 rounded-xl hover:bg-neutral-200 transition-all transform active:scale-95 text-sm mt-4">
+                        Aktifkan Kartu Sekarang
+                    </button>
+                </form>
+            </div>
+
+            <!-- DISPLAY PROFIL (Jika Status Terisi) -->
+            <div id="profileView" class="hidden flex flex-col items-center">
+                <div class="w-20 h-20 rounded-full bg-white text-black font-bold text-2xl flex items-center justify-center mb-4 shadow-lg border border-neutral-300" id="avatarInitial">
+                    A
+                </div>
+                <h1 class="text-2xl font-bold tracking-tight text-white text-center" id="displayNama">Nama Pemilik</h1>
+                
+                <!-- Custom Text / Message Header -->
+                <div class="w-full bg-black/50 border border-white/10 rounded-2xl p-4 my-6 text-center backdrop-blur-sm">
+                    <p class="text-xs font-medium text-neutral-300 leading-relaxed" id="displayPesan">
+                        "Terima kasih telah berkenalan, follow social media kamu."
+                    </p>
+                </div>
+
+                <!-- Action Links -->
+                <div class="w-full space-y-3">
+                    <a id="linkWA" href="#" target="_blank" class="block w-full bg-white text-black text-center py-3.5 rounded-xl font-semibold hover:bg-neutral-200 transition-all transform hover:scale-[1.01] active:scale-95 text-sm shadow-md">
+                        WhatsApp
+                    </a>
+                    <a id="linkIG" href="#" target="_blank" class="block w-full bg-neutral-900 border border-neutral-700 text-white text-center py-3.5 rounded-xl font-semibold hover:bg-neutral-800 transition-all transform hover:scale-[1.01] active:scale-95 text-sm">
+                        Instagram
+                    </a>
+                    <a id="linkTikTok" href="#" target="_blank" class="block w-full bg-neutral-900 border border-neutral-700 text-white text-center py-3.5 rounded-xl font-semibold hover:bg-neutral-800 transition-all transform hover:scale-[1.01] active:scale-95 text-sm">
+                        TikTok
+                    </a>
+                    <!-- Custom Action Button -->
+                    <a id="btnCustomAction" href="#" target="_blank" class="block w-full bg-black/80 border border-dashed border-neutral-600 text-neutral-300 text-center py-3.5 rounded-xl text-xs hover:border-white hover:text-white transition-all mt-4">
+                        Hubungi Saya
+                    </a>
+                </div>
+            </div>
 
         </div>
-
-    </main>
+    </div>
 
     <!-- Footer Kecil -->
-    <footer class="w-full text-center pb-4">
-        <p class="text-[10px] text-gray-600 tracking-wider uppercase font-semibold">
+    <footer class="w-full text-center py-4">
+        <p class="text-[10px] text-neutral-600 tracking-wider uppercase font-medium">
             create PT Dakreativ Digital Media
         </p>
     </footer>
 
+    <script>
+        // URL Web App Google Script kamu
+        const SCRIPT_URL = "GANTI_DENGAN_URL_WEB_APP_KAMU"; 
+        
+        // Ambil ID dari URL (Contoh: index.html?id=DAD-713578-00)
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (!productId) {
+                document.getElementById('loading').innerHTML = '<p class="text-red-400 text-xs">Error: ID Produk tidak ditemukan pada URL.</p>';
+                return;
+            }
+            loadCardData();
+        });
+
+        function loadCardData() {
+            fetch(`${SCRIPT_URL}?action=getProfile&id=${productId}`)
+                .then(res => res.json())
+                .then(res => {
+                    document.getElementById('loading').classList.add('hidden');
+                    if (res.success) {
+                        if (res.data.status === "Terisi") {
+                            renderProfile(res.data);
+                        } else {
+                            document.getElementById('activationForm').classList.remove('hidden');
+                        }
+                    } else {
+                        document.getElementById('loading').innerHTML = `<p class="text-red-400 text-xs">${res.message}</p>`;
+                        document.getElementById('loading').classList.remove('hidden');
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('loading').innerHTML = '<p class="text-red-400 text-xs">Gagal terhubung ke server.</p>';
+                });
+        }
+
+        function renderProfile(data) {
+            document.getElementById('displayNama').innerText = data.namaPemilik;
+            document.getElementById('avatarInitial').innerText = data.namaPemilik.charAt(0).toUpperCase();
+            document.getElementById('displayPesan').innerText = `"${data.pesanCustom}"`;
+
+            // Format Links
+            const cleanWA = data.waPemilik.replace(/[^0-9]/g, '');
+            const waFormatted = cleanWA.startsWith('0') ? '62' + cleanWA.slice(1) : cleanWA;
+
+            document.getElementById('linkWA').href = `https://wa.me/${waFormatted}`;
+            document.getElementById('linkIG').href = `https://instagram.com/${data.igPemilik.replace('@','')}`;
+            document.getElementById('linkTikTok').href = `https://tiktok.com/@${data.tiktokPemilik.replace('@','')}`;
+            document.getElementById('btnCustomAction').href = `https://wa.me/${waFormatted}?text=Halo%20${encodeURIComponent(data.namaPemilik)}`;
+
+            document.getElementById('profileView').classList.remove('hidden');
+        }
+
+        // Handle Submit Aktivasi
+        document.getElementById('formAktivasi').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.innerText = 'Memproses...';
+
+            const payload = {
+                action: 'activate',
+                idProduk: productId,
+                namaPemilik: document.getElementById('inputNama').value,
+                waPemilik: document.getElementById('inputWA').value,
+                igPemilik: document.getElementById('inputIG').value,
+                tiktokPemilik: document.getElementById('inputTikTok').value,
+                pesanCustom: document.getElementById('inputPesan').value
+            };
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    location.reload();
+                } else {
+                    alert('Gagal aktivasi: ' + res.message);
+                    btn.disabled = false;
+                    btn.innerText = 'Aktifkan Kartu Sekarang';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

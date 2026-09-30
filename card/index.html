@@ -3,184 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Profile Card</title>
+    <title>Kartu Digital Interaktif</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #050505; 
-            color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
+        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #ffffff; }
         .luxury-card {
-            background: linear-gradient(-45deg, #0a0a0a, #1a1a1a, #0d0d0d, #262626);
-            background-size: 400% 400%;
-            animation: gradientShift 12s ease infinite;
-            position: relative;
-            overflow: hidden;
+            background: linear-gradient(-45deg, #0a0a0a, #1a1a1a, #0d0d0d);
+            border: 1px solid rgba(255,255,255,0.1);
         }
-
-        .luxury-card::before {
-            content: "";
-            position: absolute;
-            top: 0; left: -150%; width: 100%; height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
-            transform: skewX(-20deg);
-            animation: shine 7s infinite;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        @keyframes shine {
-            0% { left: -150%; }
-            30% { left: 150%; }
-            100% { left: 150%; }
-        }
+        /* Loading Animation Super Cepat */
+        .spinner { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid white; border-radius: 50%; width: 30px; height: 30px; animation: spin 0.6s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="p-4 antialiased flex flex-col justify-between items-center min-h-screen">
+<body class="p-4 flex flex-col items-center justify-center min-h-screen">
 
-    <div class="w-full max-w-md my-auto">
-        <div id="mainCard" class="luxury-card rounded-3xl p-8 border border-white/10 shadow-[0_0_50px_rgba(255,255,255,0.03)] backdrop-blur-md">
+    <div class="w-full max-w-md">
+        <div id="mainCard" class="luxury-card rounded-3xl p-8 shadow-2xl backdrop-blur-md">
             
-            <!-- Loading Indicator -->
             <div id="loading" class="text-center py-10">
-                <div class="inline-block w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <p class="text-xs text-neutral-400 mt-4 tracking-widest uppercase">Memuat Data Kartu...</p>
+                <div class="spinner"></div>
+                <p class="text-xs text-neutral-400 mt-4 tracking-widest uppercase">Membuka Kartu...</p>
             </div>
 
             <!-- FORM AKTIVASI -->
             <div id="activationForm" class="hidden">
                 <div class="text-center mb-6">
-                    <h1 class="text-xl font-bold tracking-tight text-white">Aktivasi Kartu Digital</h1>
-                    <p class="text-xs text-neutral-400 mt-1">Lengkapi data untuk mengaktifkan profil kamu</p>
+                    <h1 class="text-xl font-bold text-white">Setup Kartu Digital</h1>
+                    <p class="text-[11px] text-neutral-400 mt-2 bg-neutral-900 py-1.5 px-3 rounded-lg border border-neutral-800">
+                        Ini adalah <b>Kartu Digital Pintar</b>. Isi data di bawah untuk menautkan profil ke kartu ini. (Kolom sosmed boleh dikosongkan)
+                    </p>
                 </div>
 
                 <form id="formAktivasi" class="space-y-4">
+                    <input type="text" id="inputNama" required class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white" placeholder="Nama Lengkap (Wajib)">
+                    <input type="text" id="inputWA" class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white" placeholder="No WhatsApp (Opsional)">
+                    <input type="text" id="inputIG" class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white" placeholder="Username IG Tanpa @ (Opsional)">
+                    <input type="text" id="inputTikTok" class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white" placeholder="Username TikTok Tanpa @ (Opsional)">
+                    
                     <div>
-                        <label class="block text-xs font-medium text-neutral-400 mb-1">Nama Pemilik Kartu</label>
-                        <input type="text" id="inputNama" required class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="Masukkan nama kamu">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-neutral-400 mb-1">Nomor WhatsApp</label>
-                        <input type="text" id="inputWA" required class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="Contoh: 08123456789">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-neutral-400 mb-1">Username Instagram</label>
-                        <input type="text" id="inputIG" required class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="Tanpa tanda @">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-neutral-400 mb-1">Username TikTok</label>
-                        <input type="text" id="inputTikTok" required class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="Tanpa tanda @">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-neutral-400 mb-1">Pilih Pesan Tombol Custom</label>
-                        <select id="inputPesan" class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition">
-                            <option value="Jika menemukan kunci ini harap hubungi kontak kamu">Jika menemukan kunci ini harap hubungi kontak kamu</option>
-                            <option value="Hubungi saya jika ada project">Hubungi saya jika ada project</option>
-                            <option value="Terima kasih telah berkenalan, follow social media kamu">Terima kasih telah berkenalan, follow social media kamu</option>
+                        <select id="inputPesan" class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white mb-2">
+                            <option value="Jika menemukan barang ini, harap hubungi saya">Jika menemukan barang ini, harap hubungi saya</option>
+                            <option value="Senang berkenalan dengan Anda!">Senang berkenalan dengan Anda!</option>
+                            <option value="Mari berkolaborasi, hubungi kontak di bawah">Mari berkolaborasi, hubungi kontak di bawah</option>
+                            <option value="MANUAL">-- Isi Teks Manual / Custom --</option>
                         </select>
+                        <input type="text" id="inputPesanManual" class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white hidden" placeholder="Ketik pesan custom di sini...">
                     </div>
 
-                    <button type="submit" id="btnSubmit" class="w-full bg-white text-black font-semibold py-3.5 rounded-xl hover:bg-neutral-200 transition-all transform active:scale-95 text-sm mt-4">
-                        Aktifkan Kartu Sekarang
+                    <button type="submit" id="btnSubmit" class="w-full bg-white text-black font-semibold py-3.5 rounded-xl hover:bg-neutral-200 text-sm mt-4">
+                        Simpan Profil ke Kartu
                     </button>
                 </form>
             </div>
 
-            <!-- TAMPILAN PROFIL MEWAH -->
+            <!-- TAMPILAN PROFIL -->
             <div id="profileView" class="hidden flex flex-col items-center">
-                <div class="w-20 h-20 rounded-full bg-white text-black font-bold text-2xl flex items-center justify-center mb-4 shadow-lg border border-neutral-300" id="avatarInitial">
-                    A
-                </div>
-                <h1 class="text-2xl font-bold tracking-tight text-white text-center" id="displayNama">Nama Pemilik</h1>
+                <div class="w-20 h-20 rounded-full bg-white text-black font-bold text-3xl flex items-center justify-center mb-4" id="avatarInitial"></div>
+                <h1 class="text-2xl font-bold text-white text-center" id="displayNama"></h1>
                 
-                <div class="w-full bg-black/50 border border-white/10 rounded-2xl p-4 my-6 text-center backdrop-blur-sm">
-                    <p class="text-xs font-medium text-neutral-300 leading-relaxed" id="displayPesan"></p>
+                <div class="w-full bg-white/5 border border-white/10 rounded-xl p-4 my-6 text-center">
+                    <p class="text-sm font-medium text-neutral-300 italic" id="displayPesan"></p>
                 </div>
 
-                <!-- Tombol-tombol Link Interaktif -->
                 <div class="w-full space-y-3">
-                    <a id="linkWA" href="#" target="_blank" class="block w-full bg-white text-black text-center py-3.5 rounded-xl font-semibold hover:bg-neutral-200 transition-all text-sm shadow-md">
-                        WhatsApp
-                    </a>
-                    <a id="linkIG" href="#" target="_blank" class="block w-full bg-neutral-900 border border-neutral-700 text-white text-center py-3.5 rounded-xl font-semibold hover:bg-neutral-800 transition-all text-sm">
-                        Instagram
-                    </a>
-                    <a id="linkTikTok" href="#" target="_blank" class="block w-full bg-neutral-900 border border-neutral-700 text-white text-center py-3.5 rounded-xl font-semibold hover:bg-neutral-800 transition-all text-sm">
-                        TikTok
-                    </a>
-                    <a id="btnCustomAction" href="#" target="_blank" class="block w-full bg-black/80 border border-dashed border-neutral-600 text-neutral-300 text-center py-3.5 rounded-xl text-xs hover:border-white hover:text-white transition-all mt-4">
-                        Hubungi Saya
-                    </a>
+                    <a id="linkWA" href="#" class="hidden w-full bg-white text-black text-center py-3.5 rounded-xl font-bold text-sm shadow-md">WhatsApp Saya</a>
+                    <a id="linkIG" href="#" class="hidden w-full bg-neutral-900 border border-neutral-700 text-white text-center py-3.5 rounded-xl font-semibold text-sm">Instagram</a>
+                    <a id="linkTikTok" href="#" class="hidden w-full bg-neutral-900 border border-neutral-700 text-white text-center py-3.5 rounded-xl font-semibold text-sm">TikTok</a>
                 </div>
             </div>
 
         </div>
     </div>
 
-    <footer class="w-full text-center py-4">
-        <p class="text-[10px] text-neutral-600 tracking-wider uppercase font-medium">
-            create PT Dakreativ Digital Media
-        </p>
-    </footer>
-
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxKQCp8huU_pEJ2uOF3aYE30oYHo_3FYNXJ1pX2AEiHfiVO8LPZip8Z3e9uE8OPJquew/exec"; 
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const productId = urlParams.get('id');
+        const productId = new URLSearchParams(window.location.search).get('id');
+
+        // Logic memunculkan Input Manual
+        document.getElementById('inputPesan').addEventListener('change', function() {
+            const manualInput = document.getElementById('inputPesanManual');
+            if (this.value === 'MANUAL') {
+                manualInput.classList.remove('hidden');
+                manualInput.required = true;
+            } else {
+                manualInput.classList.add('hidden');
+                manualInput.required = false;
+            }
+        });
 
         document.addEventListener("DOMContentLoaded", () => {
             if (!productId) {
-                document.getElementById('loading').innerHTML = '<p class="text-red-400 text-xs">Error: QR Code tidak valid atau ID tidak ditemukan.</p>';
+                document.getElementById('loading').innerHTML = '<p class="text-red-400">ID tidak valid.</p>';
                 return;
             }
-            loadCardData();
-        });
-
-        function loadCardData() {
+            
             fetch(`${SCRIPT_URL}?action=getProfile&id=${encodeURIComponent(productId)}`)
                 .then(res => res.json())
                 .then(res => {
                     document.getElementById('loading').classList.add('hidden');
-                    if (res.success) {
-                        if (res.data.status === "Terisi") {
-                            renderProfile(res.data);
-                        } else {
-                            document.getElementById('activationForm').classList.remove('hidden');
-                        }
-                    } else {
-                        document.getElementById('loading').innerHTML = `<p class="text-red-400 text-xs">${res.message}</p>`;
-                        document.getElementById('loading').classList.remove('hidden');
+                    if (res.success && res.data.status === "Terisi") {
+                        renderProfile(res.data);
+                    } else if (res.success) {
+                        document.getElementById('activationForm').classList.remove('hidden');
                     }
-                })
-                .catch(() => {
-                    document.getElementById('loading').innerHTML = '<p class="text-red-400 text-xs">Gagal terhubung ke database.</p>';
                 });
-        }
+        });
 
         function renderProfile(data) {
             document.getElementById('displayNama').innerText = data.namaPemilik;
             document.getElementById('avatarInitial').innerText = data.namaPemilik.charAt(0).toUpperCase();
             document.getElementById('displayPesan').innerText = `"${data.pesanCustom}"`;
 
-            const cleanWA = data.waPemilik.replace(/[^0-9]/g, '');
-            const waFormatted = cleanWA.startsWith('0') ? '62' + cleanWA.slice(1) : cleanWA;
-
-            document.getElementById('linkWA').href = `https://wa.me/${waFormatted}`;
-            document.getElementById('linkIG').href = `https://instagram.com/${data.igPemilik.replace('@','')}`;
-            document.getElementById('linkTikTok').href = `https://tiktok.com/@${data.tiktokPemilik.replace('@','')}`;
-            document.getElementById('btnCustomAction').href = `https://wa.me/${waFormatted}?text=Halo%20${encodeURIComponent(data.namaPemilik)}`;
+            // Kalau data diisi, munculin tombol. Kalau kosong, biarin hidden.
+            if(data.waPemilik) {
+                const cleanWA = data.waPemilik.replace(/[^0-9]/g, '');
+                const waFormatted = cleanWA.startsWith('0') ? '62' + cleanWA.slice(1) : cleanWA;
+                document.getElementById('linkWA').href = `https://wa.me/${waFormatted}`;
+                document.getElementById('linkWA').classList.remove('hidden');
+                document.getElementById('linkWA').classList.add('block');
+            }
+            if(data.igPemilik) {
+                document.getElementById('linkIG').href = `https://instagram.com/${data.igPemilik.replace('@','')}`;
+                document.getElementById('linkIG').classList.remove('hidden');
+                document.getElementById('linkIG').classList.add('block');
+            }
+            if(data.tiktokPemilik) {
+                document.getElementById('linkTikTok').href = `https://tiktok.com/@${data.tiktokPemilik.replace('@','')}`;
+                document.getElementById('linkTikTok').classList.remove('hidden');
+                document.getElementById('linkTikTok').classList.add('block');
+            }
 
             document.getElementById('profileView').classList.remove('hidden');
         }
@@ -188,8 +141,10 @@
         document.getElementById('formAktivasi').addEventListener('submit', (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnSubmit');
-            btn.disabled = true;
-            btn.innerText = 'Mengaktifkan...';
+            btn.disabled = true; btn.innerText = 'Menyimpan...';
+
+            let pesanFinal = document.getElementById('inputPesan').value;
+            if(pesanFinal === 'MANUAL') pesanFinal = document.getElementById('inputPesanManual').value;
 
             const payload = {
                 action: 'activate',
@@ -198,23 +153,12 @@
                 waPemilik: document.getElementById('inputWA').value,
                 igPemilik: document.getElementById('inputIG').value,
                 tiktokPemilik: document.getElementById('inputTikTok').value,
-                pesanCustom: document.getElementById('inputPesan').value
+                pesanCustom: pesanFinal
             };
 
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify(payload)
-            })
+            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
             .then(res => res.json())
-            .then(res => {
-                if (res.success) {
-                    location.reload();
-                } else {
-                    alert('Gagal aktivasi: ' + res.message);
-                    btn.disabled = false;
-                    btn.innerText = 'Aktifkan Kartu Sekarang';
-                }
-            });
+            .then(res => location.reload());
         });
     </script>
 </body>

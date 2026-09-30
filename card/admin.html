@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Generator QR Code Massal</title>
+  <!-- Load Library QR Code & JSZip -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
+    input { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
+    button { padding: 10px 20px; background: #28a745; color: white; border: none; cursor: pointer; width: 100%; }
+    #log { margin-top: 15px; font-size: 14px; color: #333; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Generate QR Code Klien</h2>
+  <label>Nama Klien (Pembeli)</label>
+  <input type="text" id="clientName" placeholder="Contoh: WO Pernikahan Budi">
+  
+  <label>No WA Klien</label>
+  <input type="text" id="clientPhone" placeholder="0812xxxxxx">
+  
+  <label>Jumlah QR Code yang dicetak</label>
+  <input type="number" id="qty" placeholder="Contoh: 200">
+
+  <button onclick="generateMassal()" id="btnGen">Generate & Download ZIP</button>
+  <div id="log"></div>
+</div>
+
+<script>
+  // PENTING: Ganti dengan URL Google Apps Script milikmu!
+  const API_URL = "URL_GOOGLE_APPS_SCRIPT_KAMU_DISINI"; 
+  
+  // PENTING: Ganti dengan URL GitHub Pages milikmu (tempat index.html di-host)
+  const SCAN_URL = "https://username.github.io/repo/index.html"; 
+
+  async function generateMassal() {
+    const clientName = document.getElementById('clientName').value;
+    const clientPhone = document.getElementById('clientPhone').value;
+    const qty = parseInt(document.getElementById('qty').value);
+    const logEl = document.getElementById('log');
+    const btn = document.getElementById('btnGen');
+
+    if(!clientName || !qty || qty <= 0) return alert("Isi data dengan benar!");
+
+    btn.disabled = true;
+    logEl.innerHTML = "Membuat ID unik...";
+
+    // 1. Buat ID unik (Format: KLIEN-TIMESTAMP-001)
+    let ids = [];
+    let timeCode = new Date().getTime().toString().slice(-6); // 6 angka unik
+    let prefix = clientName.substring(0,3).toUpperCase();
+    
+    for(let i = 1; i <= qty; i++) {
+      let num = i.toString().padStart(3, '0');
+      ids.push(`${prefix}-${timeCode}-${num}`); // Contoh: WED-123456-001
+    }
+
+    // 2. Daftarkan ke Database (Google Sheets API)
+    logEl.innerHTML = "Menyimpan ke Database...";
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'generate',
+          clientName: clientName,
+          clientPhone: clientPhone,
+          ids: ids
+        })
+      });
+      const result = await response.json();
+      if(!result.success) throw new Error(result.message);
+
+      // 3. Jika berhasil daftar, Generate Gambar QR + Teks
+      logEl.innerHTML = "Menggambar QR dan membungkus ke ZIP... (Tunggu Sebentar)";
+      
+      let zip = new JSZip();
+      let folder = zip.folder(`QR_${clientName}`);
+
+      for(let i = 0; i < ids.length; i++) {
+        let urlToScan = `${SCAN_URL}?id=${ids[i]}`;
+        let base64 = await createQRWithText(urlToScan, ids[i]);
+        
+        // Buang header "data:image/png;base64,"
+        let imgData = base64.split('base64,')[1];
+        folder.file(`${ids[i]}.png`, imgData, {base64: true});
+      }
+
+      // 4. Download ZIP
+      zip.generateAsync({type:"blob"}).then(function(content) {
+        saveAs(content, `QR_Codes_${clientName}.zip`);
+        logEl.innerHTML = "✅ Selesai! File ZIP berhasil didownload.";
+        btn.disabled = false;
+      });
+
+    } catch (err) {
+      logEl.innerHTML = `❌ Error: ${err.message}`;
+      btn.disabled = false;
+    }
+  }
+
+  // Fungsi untuk menggambar QR + Teks ID di bawahnya (Pakai Canvas HTML5)
+  function createQRWithText(url, idText) {
+    return new Promise((resolve) => {
+      // Bikin QR murni dulu
+      QRCode.toDataURL(url, { width: 250, margin: 2 }, function (err, qrBase64) {
+        let img = new Image();
+        img.onload = function() {
+          let canvas = document.createElement('canvas');
+          canvas.width = 250;
+          canvas.height = 290; // Ditambah 40px untuk teks
+          let ctx = canvas.getContext('2d');
+          
+          // Background Putih
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+          // Gambar QR
+          ctx.drawImage(img, 0, 0);
+          
+          // Gambar Teks ID
+          ctx.fillStyle = '#000000';
+          ctx.font = 'bold 18px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText(idText, canvas.width / 2, 270);
+          
+          resolve(canvas.toDataURL('image/png'));
+        };
+        img.src = qrBase64;
+      });
+    });
+  }
+</script>
+
+</body>
+</html>

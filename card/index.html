@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital ID App</title>
+  <style>
+    /* Kamu bebas ubah desain ini di GitHub! */
+    body { font-family: sans-serif; background: #eaeaea; display: flex; justify-content: center; padding: 20px;}
+    .card { background: white; padding: 20px; border-radius: 12px; max-width: 350px; width: 100%; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; }
+    input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;}
+    button { width: 100%; padding: 12px; background: #0056b3; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px;}
+    .locked { background: #f8f9fa; padding: 15px; border-radius: 6px; text-align: left; margin-top: 15px; }
+  </style>
+</head>
+<body>
+
+<div class="card" id="app">
+  <h2 id="title">Loading...</h2>
+  <div id="content">Memeriksa database...</div>
+</div>
+
+<script>
+  // PENTING: Ganti dengan URL Google Apps Script milikmu!
+  const API_URL = "URL_GOOGLE_APPS_SCRIPT_KAMU_DISINI"; 
+  
+  // Ambil ID dari URL (Misal: ?id=WED-123456-001)
+  const urlParams = new URLSearchParams(window.location.search);
+  const qrId = urlParams.get('id');
+
+  document.addEventListener("DOMContentLoaded", () => {
+    if (!qrId) {
+      document.getElementById('title').innerText = "Akses Ditolak";
+      document.getElementById('content').innerHTML = "Scan QR yang valid!";
+      return;
+    }
+    fetchData();
+  });
+
+  async function fetchData() {
+    try {
+      // Panggil API Google Script
+      const res = await fetch(`${API_URL}?action=check&id=${qrId}`);
+      const response = await res.json();
+      
+      if (!response.success) {
+        document.getElementById('title').innerText = "Error";
+        document.getElementById('content').innerHTML = `ID ${qrId} tidak ditemukan.`;
+        return;
+      }
+
+      const data = response.data;
+      const titleEl = document.getElementById('title');
+      const contentEl = document.getElementById('content');
+
+      if (data.status === 'Terisi') {
+        titleEl.innerText = "ID Card Digital";
+        contentEl.innerHTML = `
+          <div class="locked">
+            <small style="color:gray;">NAMA PEMILIK</small><br>
+            <strong>${data.ownerName}</strong><br><br>
+            <small style="color:gray;">NO HANDPHONE</small><br>
+            <strong>${data.ownerPhone}</strong>
+          </div>
+          <p style="color:red; font-size:12px;">Data terkunci permanen.</p>
+        `;
+      } else {
+        titleEl.innerText = "Aktivasi Produk";
+        contentEl.innerHTML = `
+          <p style="font-size: 14px;">Masukkan data diri Anda untuk mengunci suvenir ini.</p>
+          <input type="text" id="ownerName" placeholder="Nama Lengkap">
+          <input type="tel" id="ownerPhone" placeholder="Nomor Handphone/WA">
+          <button onclick="lockData()" id="btnSubmit">Kunci Data Sekarang</button>
+          <p id="msg" style="color:red; font-size: 12px;"></p>
+        `;
+      }
+    } catch (err) {
+      document.getElementById('content').innerHTML = "Gagal memuat sistem.";
+    }
+  }
+
+  async function lockData() {
+    const ownerName = document.getElementById('ownerName').value;
+    const ownerPhone = document.getElementById('ownerPhone').value;
+    const msg = document.getElementById('msg');
+    const btn = document.getElementById('btnSubmit');
+
+    if (!ownerName || !ownerPhone) return msg.innerText = "Isi semua data!";
+
+    btn.innerText = "Menyimpan...";
+    btn.disabled = true;
+
+    try {
+      // POST ke Google Apps Script
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Akali CORS
+        body: JSON.stringify({
+          action: 'save',
+          id: qrId,
+          ownerName: ownerName,
+          ownerPhone: ownerPhone
+        })
+      });
+      const result = await res.json();
+      
+      if (result.success) {
+        // Render ulang tampilan (panggil fetchData lagi)
+        fetchData(); 
+      } else {
+        msg.innerText = result.message;
+        btn.innerText = "Kunci Data Sekarang";
+        btn.disabled = false;
+      }
+    } catch (err) {
+      msg.innerText = "Koneksi terputus. Coba lagi.";
+      btn.disabled = false;
+      btn.innerText = "Kunci Data Sekarang";
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -3,181 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Minimalist</title>
+    <title>Admin Panel - Data Order & QR</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #000; }
-        /* Modal Animation */
-        .modal { transition: opacity 0.25s ease; }
-        body.modal-active { overflow-x: hidden; overflow-y: hidden !important; }
+        body { font-family: 'Inter', sans-serif; background-color: #ffffff; color: #000000; }
+        .modal-blur { backdrop-filter: blur(4px); }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased min-h-screen flex flex-col justify-between">
 
-    <!-- Navbar -->
-    <nav class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
-        <div class="text-xl font-semibold tracking-tight">Admin<span class="font-light">Panel</span></div>
-        <div class="text-sm border border-black px-4 py-1.5 rounded-full hover:bg-black hover:text-white transition cursor-pointer">Logout</div>
-    </nav>
+    <div>
+        <!-- Navbar Minimalis -->
+        <nav class="border-b border-neutral-200 px-8 py-5 flex justify-between items-center bg-white sticky top-0 z-10">
+            <div class="text-lg font-bold tracking-tight">ADMIN<span class="font-light">PANEL</span></div>
+            <div class="text-xs bg-black text-white px-3 py-1.5 rounded-full font-medium">PT Dakreativ Digital Media</div>
+        </nav>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-6 py-10">
-        <h1 class="text-2xl font-semibold mb-6">Data Order & Aktivasi</h1>
-        
-        <!-- Table Card -->
-        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50 border-b border-gray-200 text-xs uppercase tracking-wider text-graySantai bro, nggak masalah sama sekali. Desain ini dikembangkan menggunakan **Tailwind CSS** agar performanya sangat cepat (anti-lemot), dipadukan dengan tipografi modern (font *Inter*) dan tema monokrom (hitam, putih, abu-abu) untuk memunculkan kesan minimalis, elegan, dan premium. 
-
-Berikut adalah *full coding* yang bisa langsung kamu jalankan.
-
-### 1. Halaman Admin (`admin.html`)
-Halaman ini menampilkan tabel data yang bersih, ringan, dan memiliki simulasi modal (pop-up) ketika tombol QR diklik untuk melihat detail aktivasi.
-
-```html
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Data Order</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap)" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #111827; }
-        /* Animasi Modal */
-        .modal-enter { opacity: 0; transform: scale(0.95); transition: all 0.2s ease-out; }
-        .modal-enter-active { opacity: 1; transform: scale(1); }
-    </style>
-</head>
-<body class="antialiased">
-
-    <!-- Navbar -->
-    <nav class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
-        <div class="text-xl font-bold tracking-tight">Admin<span class="font-light">Panel</span></div>
-        <div class="text-sm text-gray-500">Superadmin</div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="p-6 max-w-7xl mx-auto">
-        <div class="flex justify-between items-end mb-6">
-            <div>
-                <h1 class="text-2xl font-bold">Data Order & Aktivasi</h1>
-                <p class="text-gray-500 text-sm mt-1">Kelola data pemesan dan status aktivasi kartu.</p>
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-6 py-10">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight">Data Order & Aktivasi QR</h1>
+                    <p class="text-xs text-neutral-500 mt-1">Pantau status aktivasi dan data pemesan real-time</p>
+                </div>
+                <button onclick="loadAdminData()" class="border border-black px-4 py-2 rounded-lg text-xs font-semibold hover:bg-black hover:text-white transition">
+                    Refresh Data
+                </button>
             </div>
-            <button class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                + Tambah Data
+
+            <!-- Table Container -->
+            <div class="border border-neutral-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs whitespace-nowrap">
+                        <thead class="bg-neutral-50 border-b border-neutral-200 text-neutral-600 font-semibold uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4">ID Produk</th>
+                                <th class="px-6 py-4">Klien Pembeli</th>
+                                <th class="px-6 py-4">Tanggal Order</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4">Aktivasi & QR Code</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-neutral-100 font-medium">
+                            <tr>
+                                <td colspan="5" class="text-center py-8 text-neutral-400">Memuat data order...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Detail QR Code & Aktivasi -->
+    <div id="qrModal" class="fixed inset-0 bg-black/50 modal-blur hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white border border-neutral-200 rounded-3xl p-6 w-full max-w-sm shadow-2xl">
+            <div class="flex justify-between items-center pb-4 border-b border-neutral-100">
+                <h3 class="font-bold text-sm tracking-tight">Detail Aktivasi QR Code</h3>
+                <button onclick="closeModal()" class="text-neutral-400 hover:text-black font-bold text-lg">&times;</button>
+            </div>
+
+            <div class="py-6 flex flex-col items-center">
+                <!-- Generasi QR Code Otomatis -->
+                <div class="bg-neutral-50 p-3 rounded-2xl border border-neutral-200 mb-4">
+                    <img id="qrImage" src="" alt="QR Code" class="w-36 h-36">
+                </div>
+                <p class="text-[11px] text-neutral-400 text-center font-mono" id="qrUrlText"></p>
+            </div>
+
+            <div class="space-y-2.5 text-xs border-t border-neutral-100 pt-4">
+                <div class="flex justify-between">
+                    <span class="text-neutral-500">Pemilik Kartu:</span>
+                    <span class="font-bold" id="mNama">-</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-neutral-500">Status Aktivasi:</span>
+                    <span class="font-semibold" id="mStatus">-</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-neutral-500">Tanggal/Jam Aktivasi:</span>
+                    <span class="font-mono text-neutral-800" id="mTglAktivasi">-</span>
+                </div>
+            </div>
+
+            <button onclick="closeModal()" class="w-full mt-6 bg-black text-white py-3 rounded-xl font-medium text-xs hover:bg-neutral-800 transition">
+                Tutup
             </button>
-        </div>
-
-        <!-- Table -->
-        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm whitespace-nowrap">
-                    <thead class="bg-gray-50 border-b border-gray-200 text-gray-600 font-medium">
-                        <tr>
-                            <th class="px-6 py-4">ID</th>
-                            <th class="px-6 py-4">Nama Pemesan</th>
-                            <th class="px-6 py-4">Tanggal Order</th>
-                            <th class="px-6 py-4">Status</th>
-                            <th class="px-6 py-4">Menu QR</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        <!-- Row 1 -->
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-medium">#ORD-001</td>
-                            <td class="px-6 py-4">Budi Santoso</td>
-                            <td class="px-6 py-4 text-gray-500">28 Sep 2026</td>
-                            <td class="px-6 py-4">
-                                <span class="bg-black text-white px-2 py-1 rounded text-xs font-medium tracking-wide">Aktif</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <button onclick="openModal('Budi Santoso', 'Aktif', '30 Sep 2026, 14:30 WIB')" class="text-black border border-gray-300 hover:bg-black hover:text-white px-3 py-1.5 rounded-md text-xs font-medium transition-all">
-                                    Lihat Data QR
-                                </button>
-                            </td>
-                        </tr>
-                        <!-- Row 2 -->
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-medium">#ORD-002</td>
-                            <td class="px-6 py-4">Ahmad Pratama</td>
-                            <td class="px-6 py-4 text-gray-500">29 Sep 2026</td>
-                            <td class="px-6 py-4">
-                                <span class="bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs font-medium tracking-wide">Belum Aktif</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <button onclick="openModal('Ahmad Pratama', 'Belum Aktif', '-')" class="text-black border border-gray-300 hover:bg-black hover:text-white px-3 py-1.5 rounded-md text-xs font-medium transition-all">
-                                    Lihat Data QR
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-
-    <!-- Modal QR Code Data -->
-    <div id="qrModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm modal-enter" id="modalContent">
-            <div class="flex justify-between items-center mb-4 border-b pb-3">
-                <h3 class="font-bold text-lg">Detail QR Code</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-black font-bold text-xl">&times;</button>
-            </div>
-            
-            <div class="space-y-4 text-sm">
-                <div class="flex justify-center mb-6">
-                    <!-- Placeholder QR Code -->
-                    <div class="w-32 h-32 bg-gray-100 border-2 border-dashed border-gray-300 rounded flex items-center justify-center text-gray-400 text-xs text-center p-2">
-                        [QR Code Generated Here]
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-2 border-b border-gray-100 pb-2">
-                    <span class="text-gray-500">Pemilik:</span>
-                    <span class="font-medium text-right" id="modalName"></span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 border-b border-gray-100 pb-2">
-                    <span class="text-gray-500">Status Aktivasi:</span>
-                    <span class="font-medium text-right" id="modalStatus"></span>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <span class="text-gray-500">Waktu Aktivasi:</span>
-                    <span class="font-medium text-right" id="modalTime"></span>
-                </div>
-            </div>
-            
-            <button onclick="closeModal()" class="w-full mt-6 bg-black text-white py-2 rounded-md font-medium hover:bg-gray-800 transition">Tutup</button>
         </div>
     </div>
 
+    <footer class="text-center py-6 border-t border-neutral-100">
+        <p class="text-[10px] text-neutral-400 uppercase tracking-widest font-medium">create PT Dakreativ Digital Media</p>
+    </footer>
+
     <script>
-        function openModal(name, status, time) {
-            document.getElementById('modalName').innerText = name;
-            document.getElementById('modalStatus').innerText = status;
-            document.getElementById('modalTime').innerText = time;
+        const SCRIPT_URL = "GANTI_DENGAN_URL_WEB_APP_KAMU"; 
+        const BASE_INDEX_URL = "GANTI_DENGAN_URL_WEB_APP_KAMU"; 
+
+        document.addEventListener("DOMContentLoaded", loadAdminData);
+
+        function loadAdminData() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-neutral-400">Memuat data...</td></tr>';
+
+            fetch(`${SCRIPT_URL}?action=getOrders`)
+                .then(res => res.json())
+                .then(data => {
+                    tbody.innerHTML = '';
+                    if (!data || data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-neutral-400">Belum ada data order.</td></tr>';
+                        return;
+                    }
+
+                    data.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.className = "hover:bg-neutral-50/80 transition-colors";
+
+                        const isAktif = item.status === "Terisi";
+                        const badgeStatus = isAktif 
+                            ? `<span class="bg-black text-white px-2.5 py-1 rounded-full text-[10px] font-semibold">Aktif</span>`
+                            : `<span class="bg-neutral-100 text-neutral-600 px-2.5 py-1 rounded-full text-[10px] font-semibold">Belum Aktif</span>`;
+
+                        tr.innerHTML = `
+                            <td class="px-6 py-4 font-mono font-bold">${item.idProduk}</td>
+                            <td class="px-6 py-4">${item.klienPembeli}</td>
+                            <td class="px-6 py-4 text-neutral-500">${item.tglOrder}</td>
+                            <td class="px-6 py-4">${badgeStatus}</td>
+                            <td class="px-6 py-4">
+                                <button onclick='openQrModal(${JSON.stringify(item)})' class="border border-neutral-300 hover:border-black px-3 py-1.5 rounded-lg text-xs transition">
+                                    Lihat QR & Aktivasi
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                })
+                .catch(() => {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-red-500">Gagal mengambil data.</td></tr>';
+                });
+        }
+
+        function openQrModal(item) {
+            const targetUrl = `${BASE_INDEX_URL}?id=${item.idProduk}`;
             
-            const modal = document.getElementById('qrModal');
-            const modalContent = document.getElementById('modalContent');
-            
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modalContent.classList.add('modal-enter-active');
-            }, 10);
+            document.getElementById('qrImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(targetUrl)}`;
+            document.getElementById('qrUrlText').innerText = targetUrl;
+            document.getElementById('mNama').innerText = item.namaPemilik || "-";
+            document.getElementById('mStatus').innerText = item.status === "Terisi" ? "Sudah Diaktivasi" : "Belum Diaktivasi";
+            document.getElementById('mTglAktivasi').innerText = item.tglAktivasi || "-";
+
+            document.getElementById('qrModal').classList.remove('hidden');
         }
 
         function closeModal() {
-            const modal = document.getElementById('qrModal');
-            const modalContent = document.getElementById('modalContent');
-            
-            modalContent.classList.remove('modal-enter-active');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 200);
+            document.getElementById('qrModal').classList.add('hidden');
         }
     </script>
 </body>

@@ -3,163 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kartu Digital Interaktif</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Digital Card - Dakreativ</title>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #ffffff; }
-        .luxury-card {
-            background: linear-gradient(-45deg, #0a0a0a, #1a1a1a, #0d0d0d);
-            border: 1px solid rgba(255,255,255,0.1);
+        body {
+            background-color: #0d0d0d;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-        /* Loading Animation Super Cepat */
-        .spinner { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid white; border-radius: 50%; width: 30px; height: 30px; animation: spin 0.6s linear infinite; margin: 0 auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .card {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .loading { color: #888; font-style: italic; }
+        .error { color: #ff4d4d; }
+        .btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
     </style>
 </head>
-<body class="p-4 flex flex-col items-center justify-center min-h-screen">
+<body>
 
-    <div class="w-full max-w-md">
-        <div id="mainCard" class="luxury-card rounded-3xl p-8 shadow-2xl backdrop-blur-md">
-            
-            <div id="loading" class="text-center py-10">
-                <div class="spinner"></div>
-                <p class="text-xs text-neutral-400 mt-4 tracking-widest uppercase">Membuka Kartu...</p>
-            </div>
-
-            <!-- FORM AKTIVASI -->
-            <div id="activationForm" class="hidden">
-                <div class="text-center mb-6">
-                    <h1 class="text-xl font-bold text-white">Setup Kartu Digital</h1>
-                    <p class="text-[11px] text-neutral-400 mt-2 bg-neutral-900 py-1.5 px-3 rounded-lg border border-neutral-800">
-                        Ini adalah <b>Kartu Digital Pintar</b>. Isi data di bawah untuk menautkan profil ke kartu ini. (Kolom sosmed boleh dikosongkan)
-                    </p>
-                </div>
-
-                <form id="formAktivasi" class="space-y-4">
-                    <input type="text" id="inputNama" required class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white" placeholder="Nama Lengkap (Wajib)">
-                    <input type="text" id="inputWA" class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white" placeholder="No WhatsApp (Opsional)">
-                    <input type="text" id="inputIG" class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white" placeholder="Username IG Tanpa @ (Opsional)">
-                    <input type="text" id="inputTikTok" class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white" placeholder="Username TikTok Tanpa @ (Opsional)">
-                    
-                    <div>
-                        <select id="inputPesan" class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white mb-2">
-                            <option value="Jika menemukan barang ini, harap hubungi saya">Jika menemukan barang ini, harap hubungi saya</option>
-                            <option value="Senang berkenalan dengan Anda!">Senang berkenalan dengan Anda!</option>
-                            <option value="Mari berkolaborasi, hubungi kontak di bawah">Mari berkolaborasi, hubungi kontak di bawah</option>
-                            <option value="MANUAL">-- Isi Teks Manual / Custom --</option>
-                        </select>
-                        <input type="text" id="inputPesanManual" class="w-full bg-black/60 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white hidden" placeholder="Ketik pesan custom di sini...">
-                    </div>
-
-                    <button type="submit" id="btnSubmit" class="w-full bg-white text-black font-semibold py-3.5 rounded-xl hover:bg-neutral-200 text-sm mt-4">
-                        Simpan Profil ke Kartu
-                    </button>
-                </form>
-            </div>
-
-            <!-- TAMPILAN PROFIL -->
-            <div id="profileView" class="hidden flex flex-col items-center">
-                <div class="w-20 h-20 rounded-full bg-white text-black font-bold text-3xl flex items-center justify-center mb-4" id="avatarInitial"></div>
-                <h1 class="text-2xl font-bold text-white text-center" id="displayNama"></h1>
-                
-                <div class="w-full bg-white/5 border border-white/10 rounded-xl p-4 my-6 text-center">
-                    <p class="text-sm font-medium text-neutral-300 italic" id="displayPesan"></p>
-                </div>
-
-                <div class="w-full space-y-3">
-                    <a id="linkWA" href="#" class="hidden w-full bg-white text-black text-center py-3.5 rounded-xl font-bold text-sm shadow-md">WhatsApp Saya</a>
-                    <a id="linkIG" href="#" class="hidden w-full bg-neutral-900 border border-neutral-700 text-white text-center py-3.5 rounded-xl font-semibold text-sm">Instagram</a>
-                    <a id="linkTikTok" href="#" class="hidden w-full bg-neutral-900 border border-neutral-700 text-white text-center py-3.5 rounded-xl font-semibold text-sm">TikTok</a>
-                </div>
-            </div>
-
-        </div>
+    <div id="card-container" class="card">
+        <p class="loading">Memuat data...</p>
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxKQCp8huU_pEJ2uOF3aYE30oYHo_3FYNXJ1pX2AEiHfiVO8LPZip8Z3e9uE8OPJquew/exec"; 
-        const productId = new URLSearchParams(window.location.search).get('id');
+        // 1. GANTI URL INI DENGAN URL WEB APP GOOGLE APPS SCRIPT KAMU
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxxKQCp8huU_pEJ2uOF3aYE30oYHo_3FYNXJ1pX2AEiHfiVO8LPZip8Z3e9uE8OPJquew/exec'; 
 
-        // Logic memunculkan Input Manual
-        document.getElementById('inputPesan').addEventListener('change', function() {
-            const manualInput = document.getElementById('inputPesanManual');
-            if (this.value === 'MANUAL') {
-                manualInput.classList.remove('hidden');
-                manualInput.required = true;
-            } else {
-                manualInput.classList.add('hidden');
-                manualInput.required = false;
-            }
-        });
+        // 2. Ambil ID dari URL (contoh: ?id=DAD-425410-01)
+        const urlParams = new URLSearchParams(window.location.search);
+        const idProduk = urlParams.get('id');
+        const container = document.getElementById('card-container');
 
-        document.addEventListener("DOMContentLoaded", () => {
-            if (!productId) {
-                document.getElementById('loading').innerHTML = '<p class="text-red-400">ID tidak valid.</p>';
-                return;
-            }
-            
-            fetch(`${SCRIPT_URL}?action=getProfile&id=${encodeURIComponent(productId)}`)
-                .then(res => res.json())
-                .then(res => {
-                    document.getElementById('loading').classList.add('hidden');
-                    if (res.success && res.data.status === "Terisi") {
-                        renderProfile(res.data);
-                    } else if (res.success) {
-                        document.getElementById('activationForm').classList.remove('hidden');
+        if (!idProduk) {
+            container.innerHTML = '<p class="error">ID Produk tidak ditemukan di URL.</p>';
+        } else {
+            // 3. Fetch data dari Google Sheets
+            fetch(`${scriptURL}?id=${idProduk}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Jika data tidak ditemukan atau statusnya kosong
+                    if (data.error) {
+                        container.innerHTML = `<p class="error">Data untuk ID ${idProduk} tidak ditemukan.</p>`;
+                    } else {
+                        // 4. Tampilkan data ke HTML (Sesuai kolom di Google Sheet)
+                        container.innerHTML = `
+                            <h2>${data.Nama_Pemilik}</h2>
+                            <p>${data.Pesan_Custom}</p>
+                            <p style="color: #4CAF50; font-size: 0.9em;">Status: ${data.Status}</p>
+                            
+                            <hr style="border-color: #333; margin: 15px 0;">
+                            
+                            <a href="https://wa.me/62${data.WA_Pemilik.toString().substring(1)}" class="btn" target="_blank">WhatsApp</a>
+                            <a href="https://instagram.com/${data.IG_Pemilik}" class="btn" target="_blank">Instagram</a>
+                            <a href="https://tiktok.com/@${data.TikTok_Pemilik}" class="btn" target="_blank">TikTok</a>
+                        `;
                     }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    container.innerHTML = '<p class="error">Gagal terhubung ke server.</p>';
                 });
-        });
-
-        function renderProfile(data) {
-            document.getElementById('displayNama').innerText = data.namaPemilik;
-            document.getElementById('avatarInitial').innerText = data.namaPemilik.charAt(0).toUpperCase();
-            document.getElementById('displayPesan').innerText = `"${data.pesanCustom}"`;
-
-            // Kalau data diisi, munculin tombol. Kalau kosong, biarin hidden.
-            if(data.waPemilik) {
-                const cleanWA = data.waPemilik.replace(/[^0-9]/g, '');
-                const waFormatted = cleanWA.startsWith('0') ? '62' + cleanWA.slice(1) : cleanWA;
-                document.getElementById('linkWA').href = `https://wa.me/${waFormatted}`;
-                document.getElementById('linkWA').classList.remove('hidden');
-                document.getElementById('linkWA').classList.add('block');
-            }
-            if(data.igPemilik) {
-                document.getElementById('linkIG').href = `https://instagram.com/${data.igPemilik.replace('@','')}`;
-                document.getElementById('linkIG').classList.remove('hidden');
-                document.getElementById('linkIG').classList.add('block');
-            }
-            if(data.tiktokPemilik) {
-                document.getElementById('linkTikTok').href = `https://tiktok.com/@${data.tiktokPemilik.replace('@','')}`;
-                document.getElementById('linkTikTok').classList.remove('hidden');
-                document.getElementById('linkTikTok').classList.add('block');
-            }
-
-            document.getElementById('profileView').classList.remove('hidden');
         }
-
-        document.getElementById('formAktivasi').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btnSubmit');
-            btn.disabled = true; btn.innerText = 'Menyimpan...';
-
-            let pesanFinal = document.getElementById('inputPesan').value;
-            if(pesanFinal === 'MANUAL') pesanFinal = document.getElementById('inputPesanManual').value;
-
-            const payload = {
-                action: 'activate',
-                idProduk: productId,
-                namaPemilik: document.getElementById('inputNama').value,
-                waPemilik: document.getElementById('inputWA').value,
-                igPemilik: document.getElementById('inputIG').value,
-                tiktokPemilik: document.getElementById('inputTikTok').value,
-                pesanCustom: pesanFinal
-            };
-
-            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-            .then(res => res.json())
-            .then(res => location.reload());
-        });
     </script>
 </body>
 </html>

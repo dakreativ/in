@@ -3,18 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webagotchi 3D - Advanced</title>
+    <title>Webagotchi 3D - Fresh</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Animasi nafas untuk karakter */
         @keyframes breathe {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
         .animate-breathe { animation: breathe 3s infinite ease-in-out; }
-        
-        /* Background ala ruangan 3D sederhana */
         .room-bg {
             background: radial-gradient(circle at 50% 120%, #d4e6f1 0%, #85c1e9 50%, #2e86c1 100%);
             box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
@@ -39,7 +36,6 @@
     <!-- LAYAR 2: GAMEPLAY -->
     <div id="game-screen" class="hidden bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative border-4 border-indigo-900">
         
-        <!-- Header: Info & Koin -->
         <div class="bg-indigo-600 text-white p-4 flex justify-between items-center shadow-md relative z-10">
             <div>
                 <h2 id="displayPetName" class="text-xl font-bold leading-tight">Nama Pet</h2>
@@ -50,160 +46,103 @@
             </div>
         </div>
 
-        <!-- STAGE 3D (Visual Area) -->
         <div id="stage" class="room-bg h-64 w-full relative flex items-center justify-center overflow-hidden transition-all duration-1000">
-            
-            <!-- TOMBOL TIDUR (Saklar Lampu) -->
             <div class="absolute top-2 right-2">
                 <span id="sleepingStatus" class="bg-black/50 text-white text-xs px-2 py-1 rounded-full hidden">Zzz...</span>
             </div>
-
-            <!-- KARAKTER (Nanti ganti script Spline 3D disini) -->
             <div id="character" class="text-8xl animate-breathe transition-all duration-500">👾</div>
-            
-            <!-- Efek kotor (Lalat) -->
             <div id="flies" class="absolute text-2xl animate-spin hidden" style="animation-duration: 3s;">🦟</div>
         </div>
 
-        <!-- STATUS BARS -->
         <div class="p-5 bg-gray-50 grid grid-cols-2 gap-4 text-xs font-bold text-gray-600">
-            <div>🍔 Lapar
-                <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barHunger" class="bg-orange-500 h-2 rounded-full" style="width: 100%"></div></div>
-            </div>
-            <div>😊 Senang
-                <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barHappy" class="bg-yellow-400 h-2 rounded-full" style="width: 100%"></div></div>
-            </div>
-            <div>⚡ Energi
-                <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barEnergy" class="bg-blue-500 h-2 rounded-full" style="width: 100%"></div></div>
-            </div>
-            <div>🛁 Kebersihan
-                <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barHygiene" class="bg-cyan-400 h-2 rounded-full" style="width: 100%"></div></div>
-            </div>
-            <div class="col-span-2">❤️ Kesehatan
-                <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barHealth" class="bg-red-500 h-2 rounded-full" style="width: 100%"></div></div>
-            </div>
+            <div>🍔 Lapar <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barHunger" class="bg-orange-500 h-2 rounded-full" style="width: 100%"></div></div></div>
+            <div>😊 Senang <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barHappy" class="bg-yellow-400 h-2 rounded-full" style="width: 100%"></div></div></div>
+            <div>⚡ Energi <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barEnergy" class="bg-blue-500 h-2 rounded-full" style="width: 100%"></div></div></div>
+            <div>🛁 Kebersihan <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barHygiene" class="bg-cyan-400 h-2 rounded-full" style="width: 100%"></div></div></div>
+            <div class="col-span-2">❤️ Kesehatan <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barHealth" class="bg-red-500 h-2 rounded-full" style="width: 100%"></div></div></div>
         </div>
 
-        <!-- ACTION BUTTONS -->
         <div class="p-4 grid grid-cols-3 gap-3 bg-white">
-            <button onclick="interact('feed')" class="bg-orange-100 hover:bg-orange-200 text-orange-700 font-bold py-3 rounded-xl transition flex flex-col items-center">
-                <span class="text-2xl mb-1">🍔</span> Makan
-            </button>
-            <button onclick="interact('play')" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-bold py-3 rounded-xl transition flex flex-col items-center">
-                <span class="text-2xl mb-1">🎾</span> Main
-            </button>
-            <button onclick="interact('bathe')" class="bg-cyan-100 hover:bg-cyan-200 text-cyan-700 font-bold py-3 rounded-xl transition flex flex-col items-center">
-                <span class="text-2xl mb-1">🛁</span> Mandi
-            </button>
-            <button onclick="interact('sleep')" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold py-3 rounded-xl transition flex flex-col items-center">
-                <span class="text-2xl mb-1">💡</span> Lampu
-            </button>
-            <button onclick="interact('heal')" class="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 rounded-xl transition flex flex-col items-center">
-                <span class="text-2xl mb-1">💊</span> Obat
-            </button>
-            <button onclick="alert('Toko Baju 3D Segera Hadir di Vercel!')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition flex flex-col items-center opacity-50">
-                <span class="text-2xl mb-1">👕</span> Toko
-            </button>
+            <button onclick="interact('feed')" class="bg-orange-100 hover:bg-orange-200 text-orange-700 font-bold py-3 rounded-xl transition flex flex-col items-center"><span class="text-2xl mb-1">🍔</span> Makan</button>
+            <button onclick="interact('play')" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-bold py-3 rounded-xl transition flex flex-col items-center"><span class="text-2xl mb-1">🎾</span> Main</button>
+            <button onclick="interact('bathe')" class="bg-cyan-100 hover:bg-cyan-200 text-cyan-700 font-bold py-3 rounded-xl transition flex flex-col items-center"><span class="text-2xl mb-1">🛁</span> Mandi</button>
+            <button onclick="interact('sleep')" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold py-3 rounded-xl transition flex flex-col items-center"><span class="text-2xl mb-1">💡</span> Lampu</button>
+            <button onclick="interact('heal')" class="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 rounded-xl transition flex flex-col items-center"><span class="text-2xl mb-1">💊</span> Obat</button>
+            <button onclick="alert('Toko Baju 3D Segera Hadir!')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition flex flex-col items-center opacity-50"><span class="text-2xl mb-1">👕</span> Toko</button>
         </div>
     </div>
 
     <script>
-        // Data Supabase dari kamu
+        // PERBAIKAN: Ubah nama variabel menjadi supabaseClient
         const supabaseUrl = 'https://bkxclrjycsdpchodgzzb.supabase.co';
         const supabaseKey = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         
         let currentPetId = null;
-        let isSleeping = false;
 
         async function startGame() {
             const owner = document.getElementById('ownerName').value;
             const pet = document.getElementById('petName').value;
-            if(!owner || !pet) return alert("Isi nama dulu bro!");
+            
+            if(!owner || !pet) {
+                alert("Isi nama dulu bro!");
+                return;
+            }
 
             document.getElementById('setup-screen').innerHTML = `<h2 class="text-2xl font-bold animate-pulse text-indigo-600">Menyambungkan ke Server...</h2>`;
 
-            // Simpan ke DB
-            const { data, error } = await supabase
+            // Gunakan supabaseClient
+            const { data, error } = await supabaseClient
                 .from('pets_advanced')
                 .insert([{ owner_name: owner, pet_name: pet }])
                 .select();
 
             if (error) {
                 console.error(error);
-                alert("Error database. Pastikan tabel 'pets_advanced' sudah dibuat di SQL Editor Supabase.");
+                alert("Error database. Cek console untuk detail.");
                 location.reload();
                 return;
             }
 
             currentPetId = data[0].id;
             
-            // Pindah Layar
             document.getElementById('setup-screen').classList.add('hidden');
             document.getElementById('game-screen').classList.remove('hidden');
             document.getElementById('displayPetName').innerText = pet;
             document.getElementById('displayOwnerName').innerText = owner;
 
-            // Load status awal
             updateUI(data[0]);
-
-            // Auto-save & kurangi stat tiap 5 detik (simulasi background)
             setInterval(gameLoop, 5000);
         }
 
         async function interact(action) {
             if(!currentPetId) return;
 
-            // Ambil data terbaru
-            const { data } = await supabase.from('pets_advanced').select('*').eq('id', currentPetId).single();
+            const { data } = await supabaseClient.from('pets_advanced').select('*').eq('id', currentPetId).single();
             let pet = data;
 
-            // Aturan jika sedang tidur
             if(pet.is_sleeping && action !== 'sleep') {
-                return alert("Sssst! Pet kamu lagi tidur. Nyalakan lampu dulu.");
+                alert("Sssst! Pet kamu lagi tidur. Nyalakan lampu dulu.");
+                return;
             }
-            // Aturan jika sakit
             if(pet.health < 30 && (action === 'play' || action === 'bathe')) {
-                return alert("Pet kamu sakit parah! Kasih obat dulu 💊");
+                alert("Pet kamu sakit parah! Kasih obat dulu 💊");
+                return;
             }
 
-            // Hitung efek tombol
-            if (action === 'feed') { 
-                pet.hunger += 30; 
-                pet.energy -= 5; 
-                pet.hygiene -= 10; // Makan bikin kotor
-                animateCharacter('scale(1.2)');
-            }
-            if (action === 'play') { 
-                pet.happiness += 20; 
-                pet.energy -= 15; 
-                pet.hunger -= 15; 
-                pet.hygiene -= 15; // Main keringetan
-                pet.coins += 10; // Main dapet duit!
-                animateCharacter('rotate(360deg)');
-            }
-            if (action === 'bathe') { 
-                pet.hygiene = 100; 
-                pet.happiness += 5;
-                animateCharacter('translateY(-20px)');
-            }
-            if (action === 'heal') { 
-                pet.health = 100; 
-                pet.happiness -= 10; // Ngga suka minum obat
-            }
-            if (action === 'sleep') { 
-                pet.is_sleeping = !pet.is_sleeping; // Toggle tidur
-            }
+            if (action === 'feed') { pet.hunger += 30; pet.energy -= 5; pet.hygiene -= 10; animateCharacter('scale(1.2)'); }
+            if (action === 'play') { pet.happiness += 20; pet.energy -= 15; pet.hunger -= 15; pet.hygiene -= 15; pet.coins += 10; animateCharacter('rotate(360deg)'); }
+            if (action === 'bathe') { pet.hygiene = 100; pet.happiness += 5; animateCharacter('translateY(-20px)'); }
+            if (action === 'heal') { pet.health = 100; pet.happiness -= 10; }
+            if (action === 'sleep') { pet.is_sleeping = !pet.is_sleeping; }
 
-            // Pastikan max 100, min 0
             pet.hunger = clamp(pet.hunger);
             pet.happiness = clamp(pet.happiness);
             pet.energy = clamp(pet.energy);
             pet.hygiene = clamp(pet.hygiene);
             pet.health = clamp(pet.health);
 
-            // Simpan ke DB
-            await supabase.from('pets_advanced').update({
+            await supabaseClient.from('pets_advanced').update({
                 hunger: pet.hunger, happiness: pet.happiness, energy: pet.energy,
                 hygiene: pet.hygiene, health: pet.health, coins: pet.coins,
                 is_sleeping: pet.is_sleeping
@@ -212,13 +151,12 @@
             updateUI(pet);
         }
 
-        // Fungsi yang jalan terus untuk ngurangin nyawa pelan-pelan
         async function gameLoop() {
             if(!currentPetId) return;
-            const { data: pet } = await supabase.from('pets_advanced').select('*').eq('id', currentPetId).single();
+            const { data: pet } = await supabaseClient.from('pets_advanced').select('*').eq('id', currentPetId).single();
             
             if (pet.is_sleeping) {
-                pet.energy += 5; // Tidur nambah energi
+                pet.energy += 5;
                 pet.hunger -= 1;
             } else {
                 pet.hunger -= 2;
@@ -227,7 +165,6 @@
                 pet.hygiene -= 1;
             }
 
-            // Kalau kotor atau kelaparan parah, darah (health) turun
             if (pet.hygiene < 30 || pet.hunger < 20) {
                 pet.health -= 5;
             }
@@ -238,45 +175,39 @@
             pet.hygiene = clamp(pet.hygiene);
             pet.health = clamp(pet.health);
 
-            await supabase.from('pets_advanced').update(pet).eq('id', currentPetId);
+            await supabaseClient.from('pets_advanced').update(pet).eq('id', currentPetId);
             updateUI(pet);
         }
 
         function updateUI(pet) {
             document.getElementById('statCoins').innerText = pet.coins;
-            
             document.getElementById('barHunger').style.width = pet.hunger + '%';
             document.getElementById('barHappy').style.width = pet.happiness + '%';
             document.getElementById('barEnergy').style.width = pet.energy + '%';
             document.getElementById('barHygiene').style.width = pet.hygiene + '%';
             document.getElementById('barHealth').style.width = pet.health + '%';
 
-            // Ganti warna bar kalau kritis
             document.getElementById('barHunger').className = pet.hunger < 30 ? "bg-red-500 h-2 rounded-full" : "bg-orange-500 h-2 rounded-full";
             document.getElementById('barHealth').className = pet.health < 30 ? "bg-black h-2 rounded-full animate-pulse" : "bg-red-500 h-2 rounded-full";
 
-            // Efek Visual Ruangan & Karakter
             const stage = document.getElementById('stage');
             const character = document.getElementById('character');
             const flies = document.getElementById('flies');
             const sleepStatus = document.getElementById('sleepingStatus');
 
-            // Logika Tidur (Gelap)
             if (pet.is_sleeping) {
-                stage.style.background = "#1a202c"; // Gelap
+                stage.style.background = "#1a202c";
                 sleepStatus.classList.remove('hidden');
                 character.innerText = "😴";
             } else {
                 stage.style.background = "radial-gradient(circle at 50% 120%, #d4e6f1 0%, #85c1e9 50%, #2e86c1 100%)";
                 sleepStatus.classList.add('hidden');
                 
-                // Ekspresi Wajah
                 if (pet.health < 30) character.innerText = "🤢";
                 else if (pet.happiness < 40) character.innerText = "🥺";
                 else character.innerText = "👾";
             }
 
-            // Logika Kotor (Ada lalat)
             if (pet.hygiene < 40) flies.classList.remove('hidden');
             else flies.classList.add('hidden');
         }

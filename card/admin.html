@@ -57,12 +57,11 @@
 <div id="toast"></div>
 
 <script>
-    // Konfigurasi Database
+    // Kunci ini sekarang cuma ada 1 kali aja
     const supabaseUrl = 'https://bkxclrjycsdpchodgzzb.supabase.co';
     const supabaseKey = 'sb_secret_gpG3xNKF9t-CyQQ72d-OVA_d6s0RG2o';
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // Ini udah gue ganti ke domain Vercel lu yang baru!
     const DOMAIN_WEB_CARD = "https://dkrtv.vercel.app/card/index.html?id="; 
 
     function showToast(msg, isError=false) {

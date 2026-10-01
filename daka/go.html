@@ -1,531 +1,1181 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webagotchi - Next Gen</title>
-    <!-- Tailwind untuk styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Font Awesome untuk Icon yang lebih keren -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Webagotchi Kawaii</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Nunito', 'sans-serif'] },
+                colors: {
+                    sky: '#87CEEB',
+                    grass: '#7ED957',
+                    cloud: '#FFFFFF',
+                    candy: { 400: '#FF6B6B', 500: '#FF4757' },
+                    lemon: { 400: '#FFD32A', 500: '#FFA801' }
+                },
+                boxShadow: {
+                    'bubbly': '0 8px 0 rgba(0,0,0,0.1), 0 15px 20px rgba(0,0,0,0.1)',
+                    'bubbly-pressed': '0 0px 0 rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.1)',
+                    'panel': '0 10px 30px rgba(0,0,0,0.08), inset 0 0 0 4px rgba(255,255,255,0.5)',
+                },
+                animation: {
+                    'bounce-slow': 'bounce 3s infinite',
+                    'wobble': 'wobble 2s ease-in-out infinite',
+                    'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards'
+                },
+                keyframes: {
+                    wobble: {
+                        '0%, 100%': { transform: 'rotate(-3deg)' },
+                        '50%': { transform: 'rotate(3deg)' }
+                    },
+                    pop: {
+                        '0%': { transform: 'scale(0.8)', opacity: '0' },
+                        '100%': { transform: 'scale(1)', opacity: '1' }
+                    }
+                }
+            }
+        }
+    }
+</script>
+<style>
+    body { background-color: #87CEEB; font-family: 'Nunito', sans-serif; height: 100vh; overflow: hidden; display: flex; justify-content: center; }
     
-    <style>
-        body { font-family: 'Nunito', sans-serif; }
-        
-        /* Background Gradient Bergerak */
-        .bg-animated {
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-        }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+    /* Background Clouds Pattern */
+    body::before {
+        content: ''; position: absolute; inset: 0; pointer-events: none; z-index: -1;
+        background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 10%),
+                          radial-gradient(circle at 80% 60%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 12%);
+        background-size: 200px 200px;
+    }
 
-        /* Glassmorphism Effect */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
+    /* Bubbly Buttons */
+    .btn-bubbly {
+        background: white; border-radius: 24px; padding: 12px; font-weight: 800; color: #4b5563;
+        box-shadow: 0 6px 0 #d1d5db; transition: all 0.1s; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .btn-bubbly:active { transform: translateY(6px); box-shadow: 0 0px 0 #d1d5db; }
+    
+    .btn-primary { background: #FFD32A; box-shadow: 0 6px 0 #FFA801; color: #fff; }
+    .btn-primary:active { transform: translateY(6px); box-shadow: 0 0px 0 #FFA801; }
 
-        /* Animasi Karakter */
-        .char-idle { animation: float 3s ease-in-out infinite; }
-        .char-eat { animation: bounce 0.5s ease-in-out 3; }
-        .char-play { animation: spin 1s ease-in-out; }
-        .char-sad { animation: shake 1s ease-in-out infinite; }
+    .btn-action { background: #fff; box-shadow: 0 6px 0 #e5e7eb; color: #4b5563; border: 2px solid #f3f4f6; }
+    .btn-action:active { transform: translateY(6px); box-shadow: 0 0px 0 #e5e7eb; }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2) translateY(-10px); }
-        }
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
+    /* Panels */
+    .cute-panel { background: rgba(255, 255, 255, 0.9); border-radius: 32px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 4px solid white; backdrop-filter: blur(10px); }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    /* Hide Scrollbar */
+    ::-webkit-scrollbar { width: 0px; background: transparent; }
+    
+    /* Progress Bars */
+    .stat-bar-container { background: #f3f4f6; border-radius: 999px; height: 14px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); padding: 2px; }
+    .stat-fill { height: 100%; border-radius: 999px; transition: width 0.5s ease-out, background-color 0.3s; position: relative; overflow: hidden; }
+    /* Shiny highlight on bar */
+    .stat-fill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 40%; background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent); }
+    
+    /* 3D Container */
+    #stage-container { position: relative; overflow: hidden; border-radius: 32px; background: #87CEEB; transition: background 1s ease; border: 4px solid white; }
+    
+    /* Notifications */
+    .toast { transform: translateY(-150%) scale(0.9); opacity: 0; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .toast.show { transform: translateY(0) scale(1); opacity: 1; }
 
-        /* Status Bar Transition */
-        .stat-bar { transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease; }
-    </style>
+    /* Canvas styling */
+    canvas { touch-action: none; outline: none; }
+</style>
 </head>
-<body class="bg-animated h-screen w-full flex items-center justify-center text-slate-800 overflow-hidden">
+<body class="antialiased text-gray-800">
 
-    <!-- OVERLAY NOTIFIKASI (Pop-up peringatan) -->
-    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-lg font-bold z-50 transition-all duration-300 opacity-0 -translate-y-10 pointer-events-none">
-        ⚠️ Pesan Sistem
+<div id="app-wrapper" class="w-full max-w-[420px] h-full flex flex-col relative sm:border-x-4 sm:border-white sm:shadow-2xl bg-sky">
+    
+    <!-- Global Toast -->
+    <div id="toast" class="absolute top-6 left-1/2 -translate-x-1/2 z-50 bg-white px-6 py-3 rounded-full font-bold text-sm shadow-xl flex items-center gap-2 toast pointer-events-none border-2 border-gray-100">
+        <i class="ph-fill ph-bell-ringing text-yellow-500 text-lg"></i> <span id="toast-msg"></span>
     </div>
 
-    <!-- ================= LAYAR 1: PENDAFTARAN / LOGIN ================= -->
-    <div id="setup-screen" class="glass-panel p-10 rounded-[30px] shadow-2xl w-[90%] max-w-sm text-center transform transition-all duration-500">
-        <div class="text-6xl mb-4 animate-bounce">🥚</div>
-        <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500 mb-2">Webagotchi</h1>
-        <p class="text-slate-500 mb-8 font-semibold">Tumbuh, Main, dan Bertahan Hidup!</p>
-        
-        <div class="space-y-4">
-            <input id="ownerName" type="text" placeholder="Nama Kamu" class="w-full p-4 bg-white/50 border-2 border-white rounded-2xl outline-none focus:border-pink-400 focus:bg-white transition-all shadow-inner font-bold text-center">
-            <input id="petName" type="text" placeholder="Nama Peliharaan" class="w-full p-4 bg-white/50 border-2 border-white rounded-2xl outline-none focus:border-violet-400 focus:bg-white transition-all shadow-inner font-bold text-center">
+    <!-- VIEW 1: Pick Pet -->
+    <main id="view-pick" class="flex-1 flex flex-col p-6 z-10 hidden bg-white/40 backdrop-blur-md">
+        <div class="flex-1 flex flex-col justify-center gap-6">
+            <div class="text-center animate-wobble">
+                <div class="text-7xl mb-2">🥚</div>
+                <h2 class="text-3xl font-black text-gray-800 tracking-tight">Hatch a Friend!</h2>
+                <p class="text-sm font-bold text-gray-600 mt-1">Choose your kawaii pet</p>
+            </div>
+            <div id="pick-grid" class="grid grid-cols-2 gap-4"></div>
+            <div class="space-y-4 mt-6">
+                <input id="pet-name" type="text" maxlength="12" placeholder="Name your pet..." class="w-full bg-white px-4 py-4 rounded-3xl outline-none focus:ring-4 focus:ring-yellow-300 text-center font-black text-lg placeholder-gray-400 shadow-sm border-2 border-gray-100">
+                <button id="btn-start" class="w-full btn-bubbly btn-primary py-4 text-xl tracking-wide">Let's Play!</button>
+            </div>
         </div>
-        
-        <button onclick="startGame()" class="mt-8 w-full bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 text-white font-black text-lg py-4 rounded-2xl transition-all shadow-[0_10px_20px_rgba(236,72,153,0.3)] hover:shadow-[0_10px_20px_rgba(236,72,153,0.5)] hover:-translate-y-1">
-            Mulai Petualangan! ✨
-        </button>
-    </div>
+    </main>
 
-    <!-- ================= LAYAR 2: GAMEPLAY UTAMA ================= -->
-    <div id="game-screen" class="hidden glass-panel rounded-[40px] shadow-2xl w-[95%] max-w-md h-[90vh] max-h-[800px] flex flex-col overflow-hidden relative border border-white/40">
-        
-        <!-- Header Profile & Coins -->
-        <div class="p-6 pb-4 flex justify-between items-center bg-white/30 backdrop-blur-md border-b border-white/30 z-10">
+    <!-- VIEW 2: Home Dashboard -->
+    <main id="view-home" class="flex-1 flex flex-col p-4 gap-4 z-10 hidden">
+        <!-- Top Bar -->
+        <header class="flex justify-between items-center cute-panel px-4 py-2">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-violet-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg border-2 border-white">
-                    <span id="initialAvatar">?</span>
-                </div>
+                <div id="avatar" class="w-12 h-12 rounded-full bg-sky-100 flex items-center justify-center text-3xl border-2 border-sky-300 shadow-inner"></div>
                 <div>
-                    <h2 id="displayPetName" class="text-2xl font-black text-slate-800 leading-none mb-1">Nama Pet</h2>
-                    <p class="text-slate-500 text-sm font-bold"><i class="fa-solid fa-user-tag text-xs mr-1"></i> <span id="displayOwnerName"></span></p>
+                    <h1 id="hud-name" class="font-black text-lg leading-tight text-gray-800"></h1>
+                    <p id="hud-species" class="text-xs font-bold text-gray-400 uppercase tracking-wider"></p>
                 </div>
             </div>
-            <div class="bg-gradient-to-r from-amber-300 to-orange-400 text-white font-black px-4 py-2 rounded-2xl shadow-lg border-2 border-white/50 flex items-center gap-2">
-                <i class="fa-solid fa-coins"></i> <span id="statCoins">0</span>
-            </div>
-        </div>
-
-        <!-- STAGE 3D / VISUAL AREA -->
-        <div id="stage" class="flex-1 relative flex items-center justify-center transition-all duration-1000 bg-gradient-to-b from-sky-200 to-sky-100">
-            <!-- Lamp Switch -->
-            <button onclick="interact('sleep')" class="absolute top-4 right-4 w-12 h-12 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-xl text-slate-600 transition-all hover:scale-110 z-20 border-2 border-slate-100">
-                <i id="lampIcon" class="fa-solid fa-lightbulb"></i>
+            <button onclick="ui.openShop()" class="btn-bubbly px-4 py-2 flex items-center gap-2 border-2 border-yellow-100">
+                <i class="ph-fill ph-coin text-yellow-500 text-xl"></i> <span id="hud-coins" class="text-lg">0</span>
             </button>
+        </header>
 
-            <!-- Status Tidur -->
-            <div id="sleepingStatus" class="absolute top-10 left-1/2 transform -translate-x-1/2 text-white font-black text-2xl hidden tracking-widest animate-pulse z-10">
-                Z z Z . . .
-            </div>
-
-            <!-- Karakter Emoji -->
-            <div id="character" class="text-[120px] char-idle transition-all duration-300 filter drop-shadow-2xl z-10 select-none">
-                👾
-            </div>
+        <!-- 3D Stage -->
+        <div id="stage-container" class="flex-1 relative shadow-inner">
+            <canvas id="canvas-3d" class="absolute inset-0 w-full h-full cursor-pointer"></canvas>
             
-            <!-- Lalat kalau kotor -->
-            <div id="flies" class="absolute text-4xl animate-spin hidden opacity-70 z-20" style="animation-duration: 2s; top: 30%; right: 30%;">
-                🦟
+            <!-- Chat Bubble -->
+            <div id="pet-bubble" class="absolute top-8 left-1/2 -translate-x-1/2 bg-white px-5 py-2.5 rounded-3xl font-black text-sm shadow-xl animate-bounce-slow pointer-events-none whitespace-nowrap border-2 border-gray-100 text-gray-700">
+                Hi! 💖
             </div>
-
-            <!-- Bayangan Karakter -->
-            <div id="shadow" class="absolute bottom-[20%] w-32 h-4 bg-black/10 rounded-[100%] blur-sm"></div>
+            <div class="absolute absolute top-[3.2rem] left-1/2 -translate-x-1/2 w-4 h-4 bg-white transform rotate-45 border-r-2 border-b-2 border-gray-100"></div> <!-- Speech triangle -->
+            
+            <!-- Context Hint -->
+            <div class="absolute bottom-4 w-full text-center text-sm font-bold text-white drop-shadow-md pointer-events-none opacity-80">
+                Tap me to play!
+            </div>
         </div>
 
-        <!-- STATUS BARS CONTAINER -->
-        <div class="bg-white/90 p-6 rounded-t-[40px] shadow-[0_-10px_25px_rgba(0,0,0,0.05)] z-20 relative">
-            <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div> <!-- Handle bar -->
+        <!-- Stats Panel -->
+        <div class="cute-panel p-5 grid grid-cols-2 gap-x-6 gap-y-4">
+            <div class="flex flex-col gap-1.5"><div class="flex justify-between text-xs font-black text-gray-600 uppercase"><span>Hunger</span><i class="ph-fill ph-hamburger text-orange-400 text-sm"></i></div><div class="stat-bar-container"><div id="bar-hunger" class="stat-fill" style="background:#FF9F43"></div></div></div>
+            <div class="flex flex-col gap-1.5"><div class="flex justify-between text-xs font-black text-gray-600 uppercase"><span>Happy</span><i class="ph-fill ph-smiley text-yellow-400 text-sm"></i></div><div class="stat-bar-container"><div id="bar-happy" class="stat-fill" style="background:#FFD32A"></div></div></div>
+            <div class="flex flex-col gap-1.5"><div class="flex justify-between text-xs font-black text-gray-600 uppercase"><span>Energy</span><i class="ph-fill ph-lightning text-blue-400 text-sm"></i></div><div class="stat-bar-container"><div id="bar-energy" class="stat-fill" style="background:#54A0FF"></div></div></div>
+            <div class="flex flex-col gap-1.5"><div class="flex justify-between text-xs font-black text-gray-600 uppercase"><span>Clean</span><i class="ph-fill ph-drop text-teal-400 text-sm"></i></div><div class="stat-bar-container"><div id="bar-clean" class="stat-fill" style="background:#00D2D3"></div></div></div>
+        </div>
 
-            <div class="grid grid-cols-2 gap-x-6 gap-y-4 mb-6">
-                <!-- Lapar -->
-                <div>
-                    <div class="flex justify-between text-sm font-black mb-1 text-slate-600">
-                        <span><i class="fa-solid fa-drumstick-bite text-orange-500 w-5"></i> Lapar</span>
-                        <span id="valHunger">100%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 shadow-inner overflow-hidden">
-                        <div id="barHunger" class="stat-bar bg-gradient-to-r from-orange-400 to-red-500 h-full rounded-full" style="width: 100%"></div>
-                    </div>
-                </div>
-                <!-- Senang -->
-                <div>
-                    <div class="flex justify-between text-sm font-black mb-1 text-slate-600">
-                        <span><i class="fa-solid fa-face-smile text-yellow-400 w-5"></i> Senang</span>
-                        <span id="valHappy">100%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 shadow-inner overflow-hidden">
-                        <div id="barHappy" class="stat-bar bg-gradient-to-r from-yellow-300 to-yellow-500 h-full rounded-full" style="width: 100%"></div>
-                    </div>
-                </div>
-                <!-- Energi -->
-                <div>
-                    <div class="flex justify-between text-sm font-black mb-1 text-slate-600">
-                        <span><i class="fa-solid fa-bolt text-blue-500 w-5"></i> Energi</span>
-                        <span id="valEnergy">100%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 shadow-inner overflow-hidden">
-                        <div id="barEnergy" class="stat-bar bg-gradient-to-r from-cyan-400 to-blue-500 h-full rounded-full" style="width: 100%"></div>
-                    </div>
-                </div>
-                <!-- Kebersihan -->
-                <div>
-                    <div class="flex justify-between text-sm font-black mb-1 text-slate-600">
-                        <span><i class="fa-solid fa-soap text-teal-400 w-5"></i> Bersih</span>
-                        <span id="valHygiene">100%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 shadow-inner overflow-hidden">
-                        <div id="barHygiene" class="stat-bar bg-gradient-to-r from-teal-300 to-emerald-500 h-full rounded-full" style="width: 100%"></div>
-                    </div>
-                </div>
-                <!-- Kesehatan (Full Width) -->
-                <div class="col-span-2 mt-2">
-                    <div class="flex justify-between text-sm font-black mb-1 text-slate-600">
-                        <span><i class="fa-solid fa-heart text-red-500 w-5"></i> Kesehatan</span>
-                        <span id="valHealth" class="text-red-500">100%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-4 border border-slate-200 shadow-inner overflow-hidden">
-                        <div id="barHealth" class="stat-bar bg-gradient-to-r from-rose-400 to-red-600 h-full rounded-full" style="width: 100%"></div>
-                    </div>
+        <!-- Action Buttons -->
+        <nav class="flex justify-between gap-3">
+            <button onclick="actions.feed()" class="btn-action flex-1 aspect-square rounded-[2rem] flex flex-col items-center justify-center gap-1 group">
+                <i class="ph-fill ph-hamburger text-4xl text-orange-400 group-active:scale-90 transition-transform"></i><span class="text-[11px] font-black uppercase tracking-wide">Feed</span>
+            </button>
+            <button onclick="actions.bath()" class="btn-action flex-1 aspect-square rounded-[2rem] flex flex-col items-center justify-center gap-1 group">
+                <i class="ph-fill ph-bathtub text-4xl text-teal-400 group-active:scale-90 transition-transform"></i><span class="text-[11px] font-black uppercase tracking-wide">Bath</span>
+            </button>
+            <button onclick="actions.sleep()" id="btn-sleep" class="btn-action flex-1 aspect-square rounded-[2rem] flex flex-col items-center justify-center gap-1 group">
+                <i class="ph-fill ph-moon-stars text-4xl text-indigo-400 group-active:scale-90 transition-transform"></i><span class="text-[11px] font-black uppercase tracking-wide">Sleep</span>
+            </button>
+            <button onclick="ui.openGames()" class="btn-action flex-1 aspect-square rounded-[2rem] flex flex-col items-center justify-center gap-1 group bg-yellow-50 border-yellow-200 shadow-[0_6px_0_#fef08a]">
+                <i class="ph-fill ph-game-controller text-4xl text-yellow-500 group-active:scale-90 transition-transform"></i><span class="text-[11px] font-black uppercase tracking-wide text-yellow-600">Play</span>
+            </button>
+        </nav>
+    </main>
+
+    <!-- VIEW 3: Minigames -->
+    <main id="view-game" class="flex-1 flex flex-col bg-gray-900 absolute inset-0 z-40 hidden text-white">
+        <header class="flex justify-between items-center p-4 z-50 bg-gray-900/80 backdrop-blur-md border-b border-gray-800">
+            <div class="flex flex-col">
+                <h1 id="game-title" class="font-black text-xl text-yellow-400 tracking-wide uppercase"></h1>
+                <p id="game-score" class="text-sm font-bold text-gray-300">Score: 0</p>
+            </div>
+            <button onclick="minigames.exit()" class="bg-red-500 hover:bg-red-600 px-5 py-2.5 rounded-full font-black text-sm shadow-[0_4px_0_#b91c1c] active:translate-y-1 active:shadow-none transition-all">Quit</button>
+        </header>
+        
+        <div class="flex-1 relative flex items-center justify-center overflow-hidden bg-gray-800" id="game-container">
+            <canvas id="game-canvas" class="block w-full h-full max-w-[400px] max-h-[600px] shadow-2xl bg-gray-900 border-x-4 border-gray-950"></canvas>
+            
+            <div id="game-ui-layer" class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center">
+                <!-- Memory Game Grid -->
+                <div id="memo-grid" class="grid grid-cols-4 gap-3 p-4 w-full max-w-[340px] hidden pointer-events-auto"></div>
+                
+                <!-- Game Over Overlay -->
+                <div id="game-over-modal" class="hidden pointer-events-auto bg-white p-8 rounded-[2rem] text-center shadow-2xl transform transition-transform scale-95 border-4 border-gray-100 max-w-[300px] w-full">
+                    <div class="text-5xl mb-4 animate-bounce-slow">🏆</div>
+                    <h3 class="text-3xl font-black text-gray-800 mb-2">Game Over!</h3>
+                    <p id="game-over-msg" class="text-lg font-bold text-gray-500 mb-8"></p>
+                    <button onclick="minigames.start(minigames.current)" class="w-full btn-bubbly btn-primary py-4 mb-4 text-lg">Play Again</button>
+                    <button onclick="minigames.exit()" class="w-full btn-bubbly btn-action py-4 text-lg">Claim Reward</button>
                 </div>
             </div>
+        </div>
+        <div id="game-hint" class="p-3 text-center text-sm font-bold text-gray-400 bg-gray-950"></div>
+    </main>
 
-            <!-- ACTION BUTTONS GRID -->
-            <div class="grid grid-cols-4 gap-3">
-                <button onclick="interact('feed')" class="group bg-orange-50 hover:bg-orange-500 hover:text-white text-orange-600 border-2 border-orange-200 hover:border-orange-500 rounded-2xl py-4 transition-all flex flex-col items-center shadow-sm hover:shadow-lg hover:-translate-y-1">
-                    <i class="fa-solid fa-burger text-2xl mb-1 group-hover:animate-bounce"></i>
-                    <span class="text-[10px] font-black uppercase tracking-wider">Makan</span>
-                </button>
-                <button onclick="interact('play')" class="group bg-yellow-50 hover:bg-yellow-400 hover:text-white text-yellow-600 border-2 border-yellow-200 hover:border-yellow-400 rounded-2xl py-4 transition-all flex flex-col items-center shadow-sm hover:shadow-lg hover:-translate-y-1">
-                    <i class="fa-solid fa-gamepad text-2xl mb-1 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-[10px] font-black uppercase tracking-wider">Main</span>
-                </button>
-                <button onclick="interact('bathe')" class="group bg-teal-50 hover:bg-teal-400 hover:text-white text-teal-600 border-2 border-teal-200 hover:border-teal-400 rounded-2xl py-4 transition-all flex flex-col items-center shadow-sm hover:shadow-lg hover:-translate-y-1">
-                    <i class="fa-solid fa-shower text-2xl mb-1 group-hover:rotate-12 transition-transform"></i>
-                    <span class="text-[10px] font-black uppercase tracking-wider">Mandi</span>
-                </button>
-                <button onclick="interact('heal')" class="group bg-red-50 hover:bg-red-500 hover:text-white text-red-600 border-2 border-red-200 hover:border-red-500 rounded-2xl py-4 transition-all flex flex-col items-center shadow-sm hover:shadow-lg hover:-translate-y-1 relative">
-                    <i class="fa-solid fa-kit-medical text-2xl mb-1 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-[10px] font-black uppercase tracking-wider">Obat</span>
-                    <span id="alertHealth" class="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center animate-ping hidden">!</span>
-                </button>
+    <!-- Bottom Sheet Modal (Shop / Game Select) -->
+    <div id="bottom-sheet" class="fixed inset-0 z-50 flex flex-col justify-end pointer-events-none hidden">
+        <div id="sheet-backdrop" class="absolute inset-0 bg-gray-900/40 backdrop-blur-sm pointer-events-auto opacity-0 transition-opacity duration-300" onclick="ui.closeSheet()"></div>
+        <div id="sheet-content" class="bg-white w-full max-w-[420px] mx-auto rounded-t-[2.5rem] p-6 pointer-events-auto transform translate-y-full transition-transform duration-300 ease-out shadow-[0_-10px_40px_rgba(0,0,0,0.1)] flex flex-col max-h-[85vh] border-t-4 border-x-4 border-white">
+            <div class="w-16 h-2 bg-gray-200 rounded-full mx-auto mb-6"></div>
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="sheet-title" class="text-2xl font-black text-gray-800">Menu</h3>
+                <button onclick="ui.closeSheet()" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors text-gray-500"><i class="ph-bold ph-x text-xl"></i></button>
+            </div>
+            <div id="sheet-body" class="overflow-y-auto pr-2 space-y-4 flex-1 pb-safe scroll-smooth">
+                <!-- Content injected here -->
             </div>
         </div>
     </div>
+</div>
 
-    <!-- SCRIPT LOGIKA UTAMA -->
-    <script>
-        // Supabase Init
-        const supabaseUrl = 'https://bkxclrjycsdpchodgzzb.supabase.co';
-        const supabaseKey = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3';
-        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+<script>
+    const $ = id => document.getElementById(id);
+    const clamp = (val, min=0, max=100) => Math.max(min, Math.min(max, val));
+
+    // Data structures - Kawaii Edition
+    const SPECIES = {
+        kucing: { e: '🐱', color: 0xFF9F43, name: 'Kitty', baseScale: [1, 0.9, 1] },
+        kelinci: { e: '🐰', color: 0xFFFFFF, name: 'Bunni', baseScale: [1, 1.1, 0.9] },
+        bebek: { e: '🐥', color: 0xFFD32A, name: 'Ducky', baseScale: [1, 0.9, 1.1] },
+        slime: { e: '🫧', color: 0x00D2D3, name: 'Bloop', baseScale: [1.1, 0.8, 1.1] }
+    };
+
+    const ITEMS = [
+        { id: 'cake', icon: '🍰', name: 'Strawberry Cake', desc: '+50 Hunger, +10 Happy', price: 15, fx: { hunger: 50, happy: 10 } },
+        { id: 'coffee', icon: '🧋', name: 'Boba Tea', desc: '+40 Energy', price: 12, fx: { energy: 40 } },
+        { id: 'hat', icon: '🎩', name: 'Magic Hat', desc: 'Stylish 3D Headwear', price: 30, equip: true },
+        { id: 'glass', icon: '🕶️', name: 'Cool Shades', desc: 'Awesome 3D Glasses', price: 40, equip: true },
+        { id: 'bow', icon: '🎀', name: 'Cute Bow', desc: 'Adorable accessory', price: 25, equip: true }
+    ];
+
+    let state = {
+        ver: 3, name: '', sp: 'kucing',
+        hunger: 80, happy: 80, energy: 80, clean: 80,
+        coins: 100, sleep: false,
+        own: [], worn: [],
+        lastUpdate: Date.now()
+    };
+
+    let tickInterval = null;
+
+    // --- State Management ---
+    function saveState() {
+        state.lastUpdate = Date.now();
+        localStorage.setItem('wg_v3', JSON.stringify(state));
+    }
+
+    function loadState() {
+        try {
+            const saved = JSON.parse(localStorage.getItem('wg_v3'));
+            if (saved && saved.ver === 3) return saved;
+        } catch(e) {}
+        return null;
+    }
+
+    function updateStats(mods) {
+        for (let k in mods) {
+            state[k] = clamp(state[k] + mods[k]);
+        }
+        saveState();
+        ui.renderStats();
+    }
+
+    // --- Core UI Controller ---
+    const ui = {
+        toastTimeout: null,
+        showToast(msg) {
+            const el = $('toast');
+            $('toast-msg').textContent = msg;
+            el.classList.add('show');
+            clearTimeout(this.toastTimeout);
+            this.toastTimeout = setTimeout(() => el.classList.remove('show'), 2500);
+        },
         
-        let currentPetId = null;
-        let lastSyncTime = null;
-
-        // Tampilkan Notifikasi Toast
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast');
-            toast.innerText = message;
-            toast.className = `fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full shadow-2xl font-bold z-50 transition-all duration-300 ${isError ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`;
-            toast.style.opacity = '1';
-            toast.style.transform = 'translate(-50%, 0)';
-            
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translate(-50%, -40px)';
-            }, 3000);
-        }
-
-        async function startGame() {
-            const owner = document.getElementById('ownerName').value.trim();
-            const pet = document.getElementById('petName').value.trim();
-            
-            if(!owner || !pet) {
-                showToast("Isi nama kamu dan peliharaan dulu, bro!", true);
-                return;
-            }
-
-            const btn = document.querySelector('#setup-screen button');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyambungkan...';
-            btn.disabled = true;
-
-            try {
-                // Cek apakah nama pet sudah ada di DB untuk user ini (Simulasi Login / Resume Game)
-                let { data: existingPets } = await supabaseClient
-                    .from('pets_advanced')
-                    .select('*')
-                    .eq('owner_name', owner)
-                    .eq('pet_name', pet)
-                    .order('last_interacted', { ascending: false })
-                    .limit(1);
-
-                let petData;
-
-                if (existingPets && existingPets.length > 0) {
-                    petData = existingPets[0];
-                    showToast(`Selamat datang kembali, ${owner}!`);
-                } else {
-                    // Buat pet baru
-                    const { data, error } = await supabaseClient
-                        .from('pets_advanced')
-                        .insert([{ owner_name: owner, pet_name: pet }])
-                        .select();
-                    if(error) throw error;
-                    petData = data[0];
-                    showToast("Telur berhasil menetas!");
+        switchView(id) {
+            ['view-pick', 'view-home', 'view-game'].forEach(v => {
+                $(v).classList.add('hidden');
+                if (v === id) {
+                    $(v).classList.remove('hidden');
+                    if(id === 'view-home') setTimeout(engine.resize, 50); 
                 }
+            });
+        },
 
-                currentPetId = petData.id;
-                
-                // Transisi UI
-                document.getElementById('setup-screen').classList.add('scale-95', 'opacity-0', 'pointer-events-none');
-                setTimeout(() => {
-                    document.getElementById('setup-screen').classList.add('hidden');
-                    const gameScreen = document.getElementById('game-screen');
-                    gameScreen.classList.remove('hidden');
-                    // Trigger reflow untuk animasi masuk
-                    void gameScreen.offsetWidth;
-                    gameScreen.classList.add('scale-100', 'opacity-100');
-                }, 300);
-
-                // Set Info
-                document.getElementById('displayPetName').innerText = petData.pet_name;
-                document.getElementById('displayOwnerName').innerText = petData.owner_name;
-                document.getElementById('initialAvatar').innerText = petData.pet_name.charAt(0).toUpperCase();
-
-                // KALKULASI WAKTU OFFLINE (Real-time progression trick)
-                await calculateOfflineProgression(petData);
-
-                // Mulai loop game
-                setInterval(gameLoop, 10000); // Sinkronisasi tiap 10 detik
-
-            } catch (err) {
-                console.error(err);
-                showToast("Terjadi kesalahan jaringan/database.", true);
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        }
-
-        // FUNGSI SUPER: Menghitung berapa lama player pergi dan memotong status
-        async function calculateOfflineProgression(petData) {
-            const now = new Date();
-            const lastInteracted = new Date(petData.last_interacted);
-            const diffInSeconds = Math.floor((now - lastInteracted) / 1000);
+        renderStats() {
+            $('bar-hunger').style.width = state.hunger + '%';
+            $('bar-happy').style.width = state.happy + '%';
+            $('bar-energy').style.width = state.energy + '%';
+            $('bar-clean').style.width = state.clean + '%';
             
-            // Hitung: 1 poin hilang setiap 1 jam (3600 detik). Bisa disesuaikan.
-            const hoursPassed = diffInSeconds / 3600; 
-            
-            if (hoursPassed > 0.5) { // Jika ditinggal lebih dari 30 menit
-                let lostPoints = Math.floor(hoursPassed * 10); // Hilang 10 poin per jam
+            // Warning colors
+            ['hunger', 'happy', 'energy', 'clean'].forEach(s => {
+                const bar = $(`bar-${s}`);
+                if (state[s] < 30) bar.style.backgroundColor = '#FF4757'; // Red
+                else bar.style.backgroundColor = ''; // Revert to CSS
+            });
 
-                petData.hunger -= lostPoints;
-                petData.hygiene -= lostPoints;
-                petData.happiness -= (lostPoints / 2); // Bahagia turun lebih lambat
+            $('hud-coins').textContent = state.coins;
+            $('hud-name').textContent = state.name;
+            $('hud-species').textContent = SPECIES[state.sp].name;
+            $('avatar').textContent = SPECIES[state.sp].e;
 
-                if (petData.is_sleeping) {
-                    petData.energy += (lostPoints * 2); // Kalau ditinggal tidur, energi nambah
-                } else {
-                    petData.energy -= lostPoints;
-                }
-
-                // Efek jangka panjang: Sakit
-                if (petData.hunger <= 0 || petData.hygiene <= 0) {
-                    petData.health -= (lostPoints * 2);
-                }
-
-                petData = clampPetData(petData);
-                
-                // Update ke DB hasil offline
-                petData.last_interacted = now.toISOString();
-                await supabaseClient.from('pets_advanced').update(petData).eq('id', petData.id);
-                
-                showToast(`Waktu berlalu ${Math.floor(hoursPassed)} jam! Status pet menurun.`, true);
-            }
-
-            updateUI(petData);
-        }
-
-        async function interact(action) {
-            if(!currentPetId) return;
-
-            const { data: pet } = await supabaseClient.from('pets_advanced').select('*').eq('id', currentPetId).single();
-
-            // Aturan Interaksi
-            if(pet.is_sleeping && action !== 'sleep') {
-                setAnimation('char-sad', '😴');
-                showToast("Sssst! Matikan lampu (bangunkan) dulu.", true);
-                return;
-            }
-            if(pet.health <= 0) {
-                showToast("Pet kamu sudah tiada 👻. Bikin baru lagi ya.", true);
-                return;
-            }
-            if(pet.health < 30 && (action === 'play' || action === 'bathe')) {
-                setAnimation('char-sad', '🤒');
-                showToast("Pet sakit parah! Kasih obat dulu.", true);
-                return;
-            }
-
-            // Aksi
-            if (action === 'feed') { 
-                if(pet.hunger >= 100) return showToast("Sudah kenyang banget!", true);
-                pet.hunger += 25; pet.energy -= 5; pet.hygiene -= 5; 
-                setAnimation('char-eat', '😋');
-                showToast("Nyam nyam!");
-            }
-            if (action === 'play') { 
-                if(pet.energy < 20) return showToast("Kecapean, butuh tidur/makan!", true);
-                pet.happiness += 20; pet.energy -= 15; pet.hunger -= 10; pet.hygiene -= 10; pet.coins += 15; 
-                setAnimation('char-play', '😆');
-                showToast("+15 Koin! Seru!");
-            }
-            if (action === 'bathe') { 
-                if(pet.hygiene >= 100) return showToast("Sudah wangi!", true);
-                pet.hygiene = 100; pet.happiness += 5; 
-                setAnimation('char-idle', '🛁');
-                showToast("Segar!");
-            }
-            if (action === 'heal') { 
-                if(pet.health >= 100) return showToast("Pet kamu sehat walafiat!", true);
-                pet.health = 100; pet.happiness -= 10; 
-                setAnimation('char-sad', '😖');
-                showToast("Sembuh, tapi rasanya pait!");
-            }
-            if (action === 'sleep') { 
-                pet.is_sleeping = !pet.is_sleeping; 
-            }
-
-            let updatedPet = clampPetData(pet);
-            updatedPet.last_interacted = new Date().toISOString();
-
-            await supabaseClient.from('pets_advanced').update({
-                hunger: updatedPet.hunger, happiness: updatedPet.happiness, energy: updatedPet.energy,
-                hygiene: updatedPet.hygiene, health: updatedPet.health, coins: updatedPet.coins,
-                is_sleeping: updatedPet.is_sleeping, last_interacted: updatedPet.last_interacted
-            }).eq('id', currentPetId);
-
-            updateUI(updatedPet);
-        }
-
-        // Loop berjalan selama web dibuka
-        async function gameLoop() {
-            if(!currentPetId) return;
-            const { data: pet } = await supabaseClient.from('pets_advanced').select('*').eq('id', currentPetId).single();
-            
-            if(pet.health <= 0) {
-                updateUI(pet);
-                return; // Berhenti kalau mati
-            }
-
-            if (pet.is_sleeping) {
-                pet.energy += 2;
-                pet.hunger -= 1;
+            // Day/Night Transition
+            if (state.sleep) {
+                engine.setNightMode(true);
+                $('btn-sleep').innerHTML = `<i class="ph-fill ph-sun text-4xl text-yellow-400 group-active:scale-90 transition-transform"></i><span class="text-[11px] font-black uppercase tracking-wide">Wake</span>`;
             } else {
-                pet.hunger -= 1;
-                pet.happiness -= 1;
-                pet.hygiene -= 1;
-                pet.energy -= 1;
+                engine.setNightMode(false);
+                $('btn-sleep').innerHTML = `<i class="ph-fill ph-moon-stars text-4xl text-indigo-400 group-active:scale-90 transition-transform"></i><span class="text-[11px] font-black uppercase tracking-wide">Sleep</span>`;
             }
 
-            // Penalti kalau status buruk
-            if (pet.hygiene < 20 || pet.hunger < 20) {
-                pet.health -= 2;
-            }
+            this.updateBubble();
+        },
 
-            let updatedPet = clampPetData(pet);
-            updatedPet.last_interacted = new Date().toISOString();
-
-            await supabaseClient.from('pets_advanced').update(updatedPet).eq('id', currentPetId);
-            updateUI(updatedPet);
-        }
-
-        function setAnimation(animationClass, emoji) {
-            const char = document.getElementById('character');
-            char.className = `text-[120px] transition-all duration-300 filter drop-shadow-2xl z-10 select-none ${animationClass}`;
-            char.innerText = emoji;
+        updateBubble() {
+            if (state.sleep) return $('pet-bubble').textContent = 'Zzz... 💤';
             
-            // Kembali ke idle setelah animasi selesai
-            setTimeout(() => {
-                char.className = `text-[120px] transition-all duration-300 filter drop-shadow-2xl z-10 select-none char-idle`;
-                // Emoji dikembalikan oleh updateUI saat sinkronisasi berikutnya
-            }, 1500);
-        }
+            const stats = ['hunger', 'clean', 'energy', 'happy'];
+            let lowest = stats[0];
+            stats.forEach(s => { if(state[s] < state[lowest]) lowest = s; });
 
-        function updateUI(pet) {
-            document.getElementById('statCoins').innerText = pet.coins;
-            
-            // Update Teks Value
-            document.getElementById('valHunger').innerText = pet.hunger + '%';
-            document.getElementById('valHappy').innerText = pet.happiness + '%';
-            document.getElementById('valEnergy').innerText = pet.energy + '%';
-            document.getElementById('valHygiene').innerText = pet.hygiene + '%';
-            document.getElementById('valHealth').innerText = pet.health + '%';
-
-            // Update Panjang Bar
-            document.getElementById('barHunger').style.width = pet.hunger + '%';
-            document.getElementById('barHappy').style.width = pet.happiness + '%';
-            document.getElementById('barEnergy').style.width = pet.energy + '%';
-            document.getElementById('barHygiene').style.width = pet.hygiene + '%';
-            document.getElementById('barHealth').style.width = pet.health + '%';
-
-            // Logika Warna Bar Kritis
-            document.getElementById('barHunger').className = pet.hunger < 30 ? "stat-bar bg-red-600 animate-pulse h-full rounded-full" : "stat-bar bg-gradient-to-r from-orange-400 to-red-500 h-full rounded-full";
-            document.getElementById('barHealth').className = pet.health < 30 ? "stat-bar bg-black animate-pulse h-full rounded-full" : "stat-bar bg-gradient-to-r from-rose-400 to-red-600 h-full rounded-full";
-
-            // Peringatan Obat
-            if(pet.health < 30) document.getElementById('alertHealth').classList.remove('hidden');
-            else document.getElementById('alertHealth').classList.add('hidden');
-
-            const stage = document.getElementById('stage');
-            const character = document.getElementById('character');
-            const flies = document.getElementById('flies');
-            const sleepStatus = document.getElementById('sleepingStatus');
-            const lampIcon = document.getElementById('lampIcon');
-
-            if(pet.health <= 0) {
-                character.innerText = "👻";
-                stage.className = "flex-1 relative flex items-center justify-center transition-all duration-1000 bg-gradient-to-b from-gray-700 to-gray-900";
-                return;
-            }
-
-            // Logika Visual Lingkungan
-            if (pet.is_sleeping) {
-                stage.className = "flex-1 relative flex items-center justify-center transition-all duration-1000 bg-gradient-to-b from-indigo-900 to-slate-900";
-                sleepStatus.classList.remove('hidden');
-                lampIcon.className = "fa-solid fa-moon text-indigo-500";
-                character.innerText = "😴";
+            if (state[lowest] > 60) {
+                $('pet-bubble').textContent = 'Feeling Awesome! ✨';
             } else {
-                stage.className = "flex-1 relative flex items-center justify-center transition-all duration-1000 bg-gradient-to-b from-sky-200 to-sky-100";
-                sleepStatus.classList.add('hidden');
-                lampIcon.className = "fa-solid fa-lightbulb text-yellow-500";
+                const msgs = { hunger: 'I need food! 🍔', clean: 'Bath time! 🛁', energy: 'So sleepy... 🥱', happy: 'Play with me! 🎮' };
+                $('pet-bubble').textContent = msgs[lowest];
+            }
+        },
+
+        openSheet(title, html) {
+            $('sheet-title').textContent = title;
+            $('sheet-body').innerHTML = html;
+            $('bottom-sheet').classList.remove('hidden');
+            void $('sheet-content').offsetWidth; // Reflow
+            $('sheet-backdrop').classList.remove('opacity-0');
+            $('sheet-content').classList.remove('translate-y-full');
+        },
+
+        closeSheet() {
+            $('sheet-backdrop').classList.add('opacity-0');
+            $('sheet-content').classList.add('translate-y-full');
+            setTimeout(() => $('bottom-sheet').classList.add('hidden'), 300);
+        },
+
+        openShop() {
+            const html = ITEMS.map(item => {
+                const owns = state.own.includes(item.id);
+                const wears = state.worn.includes(item.id);
+                let btnTxt = owns ? (wears ? 'Take Off' : 'Equip') : `🪙 ${item.price}`;
+                if(item.fx) btnTxt = `🪙 ${item.price}`; 
                 
-                // Ekspresi Utama
-                if(!character.className.includes('char-eat') && !character.className.includes('char-play')) {
-                    if (pet.health < 30) { character.innerText = "🤢"; character.classList.add('char-sad'); }
-                    else if (pet.hunger < 30) { character.innerText = "😫"; character.classList.remove('char-sad'); }
-                    else if (pet.happiness < 40) { character.innerText = "🥺"; character.classList.remove('char-sad'); }
-                    else { character.innerText = "👾"; character.classList.remove('char-sad'); }
+                const btnClass = owns && !item.fx ? 'bg-gray-200 text-gray-700 shadow-[0_4px_0_#d1d5db]' : 'bg-yellow-400 text-white shadow-[0_4px_0_#eab308]';
+
+                return `
+                <div class="flex items-center gap-4 p-4 bg-white border-2 border-gray-100 rounded-3xl shadow-sm">
+                    <div class="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center text-3xl border border-gray-200">${item.icon}</div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-black text-gray-800 text-base truncate">${item.name}</h4>
+                        <p class="text-xs font-bold text-gray-400 truncate">${item.desc}</p>
+                    </div>
+                    <button onclick="actions.buy('${item.id}')" class="px-5 py-2 rounded-2xl font-black text-sm active:translate-y-1 active:shadow-none transition-all ${btnClass}">
+                        ${btnTxt}
+                    </button>
+                </div>
+                `;
+            }).join('');
+            this.openSheet('Shop & Items', html);
+        },
+
+        openGames() {
+            const games = [
+                { id: 'tetris', icon: 'ph-squares-four text-blue-500', name: 'Jelly Blocks', desc: 'Squishy puzzle fun' },
+                { id: 'race', icon: 'ph-star text-yellow-500', name: 'Star Dash', desc: 'Catch the stars' },
+                { id: 'memo', icon: 'ph-cards text-pink-500', name: 'Bouncy Match', desc: 'Kawaii memory' }
+            ];
+            const html = games.map(g => `
+                <button onclick="minigames.start('${g.id}')" class="w-full flex items-center gap-4 p-4 bg-white border-2 border-gray-100 rounded-3xl shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-transform text-left">
+                    <div class="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center text-4xl border border-gray-200"><i class="ph-fill ${g.icon}"></i></div>
+                    <div class="flex-1">
+                        <h4 class="font-black text-gray-800 text-lg">${g.name}</h4>
+                        <p class="text-xs font-bold text-gray-400">${g.desc}</p>
+                    </div>
+                    <div class="px-5 py-2 bg-indigo-500 text-white rounded-2xl font-black text-sm shadow-[0_4px_0_#4338ca]">Play</div>
+                </button>
+            `).join('');
+            this.openSheet('Arcade', html);
+        }
+    };
+
+    // --- 3D Engine (Three.js) Kawaii Edition ---
+    const engine = {
+        scene: null, camera: null, renderer: null,
+        petGroup: null, eyes: [], cheeks: [], time: 0,
+        particles: [], particleGroup: null,
+        environment: { ground: null, clouds: [], ambientLight: null, dirLight: null },
+        isInteracting: false, interactTimer: 0, targetBgColor: new THREE.Color('#87CEEB'),
+        
+        init() {
+            const canvas = $('canvas-3d');
+            this.renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "high-performance" });
+            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            
+            this.scene = new THREE.Scene();
+            // Solid color background handled by renderer/scene to ensure smooth transitions
+            this.scene.background = this.targetBgColor;
+            
+            this.camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 50);
+            this.camera.position.set(0, 1.8, 7.5);
+            this.camera.lookAt(0, 0.5, 0);
+
+            // Lighting (Soft and bright)
+            this.environment.ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            this.scene.add(this.environment.ambientLight);
+            
+            this.environment.dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            this.environment.dirLight.position.set(5, 8, 5);
+            this.scene.add(this.environment.dirLight);
+
+            this.buildEnvironment();
+
+            this.particleGroup = new THREE.Group();
+            this.scene.add(this.particleGroup);
+
+            this.resize = this.resize.bind(this);
+            window.addEventListener('resize', this.resize);
+            this.resize();
+
+            // Interaction
+            canvas.addEventListener('pointerdown', this.handleTap.bind(this));
+
+            this.animate = this.animate.bind(this);
+            requestAnimationFrame(this.animate);
+        },
+
+        buildEnvironment() {
+            // Cute Grass Ground
+            const groundGeo = new THREE.CylinderGeometry(4, 4, 0.5, 32);
+            const groundMat = new THREE.MeshStandardMaterial({ color: 0x7ED957, roughness: 0.8, flatShading: true });
+            this.environment.ground = new THREE.Mesh(groundGeo, groundMat);
+            this.environment.ground.position.y = -1.25;
+            this.scene.add(this.environment.ground);
+
+            // Floating Clouds
+            for(let i=0; i<3; i++) {
+                const cloud = this.createCloudMesh();
+                cloud.position.set((Math.random()-0.5)*10, 3 + Math.random()*2, -3 - Math.random()*2);
+                cloud.scale.setScalar(0.5 + Math.random()*0.5);
+                this.environment.clouds.push({ mesh: cloud, speed: 0.005 + Math.random()*0.01 });
+                this.scene.add(cloud);
+            }
+        },
+
+        createCloudMesh() {
+            const group = new THREE.Group();
+            const mat = new THREE.MeshStandardMaterial({color: 0xffffff, flatShading: true});
+            const geo = new THREE.SphereGeometry(1, 16, 16);
+            const m1 = new THREE.Mesh(geo, mat); m1.scale.set(1.5, 1, 1.2);
+            const m2 = new THREE.Mesh(geo, mat); m2.position.set(1, -0.2, 0); m2.scale.set(1, 0.8, 1);
+            const m3 = new THREE.Mesh(geo, mat); m3.position.set(-1, -0.2, 0); m3.scale.set(1, 0.8, 1);
+            const m4 = new THREE.Mesh(geo, mat); m4.position.set(0, 0.6, 0); m4.scale.set(1.2, 1, 1);
+            group.add(m1, m2, m3, m4);
+            return group;
+        },
+
+        createKawaiiEye(radius) {
+            const group = new THREE.Group();
+            const eye = new THREE.Mesh(new THREE.SphereGeometry(radius, 16, 16), new THREE.MeshBasicMaterial({color: 0x111111}));
+            // Specular highlights for kawaii look
+            const hl1 = new THREE.Mesh(new THREE.SphereGeometry(radius * 0.35, 8, 8), new THREE.MeshBasicMaterial({color: 0xffffff}));
+            hl1.position.set(radius*0.3, radius*0.3, radius*0.8);
+            const hl2 = new THREE.Mesh(new THREE.SphereGeometry(radius * 0.15, 8, 8), new THREE.MeshBasicMaterial({color: 0xffffff}));
+            hl2.position.set(-radius*0.3, -radius*0.3, radius*0.9);
+            
+            group.add(eye, hl1, hl2);
+            return group;
+        },
+
+        setNightMode(isNight) {
+            this.targetBgColor = new THREE.Color(isNight ? '#1A1A2E' : '#87CEEB');
+            if(this.environment.ambientLight) {
+                this.environment.ambientLight.intensity = isNight ? 0.3 : 0.7;
+                this.environment.dirLight.intensity = isNight ? 0.2 : 0.6;
+                this.environment.ground.material.color.setHex(isNight ? 0x2d4a22 : 0x7ED957);
+            }
+        },
+
+        resize() {
+            const canvas = $('canvas-3d');
+            const w = canvas.clientWidth;
+            const h = canvas.clientHeight;
+            if (w === 0 || h === 0) return;
+            this.renderer.setSize(w, h, false);
+            this.camera.aspect = w / h;
+            this.camera.updateProjectionMatrix();
+        },
+
+        buildPet() {
+            if (this.petGroup) this.scene.remove(this.petGroup);
+            this.petGroup = new THREE.Group();
+            this.eyes = [];
+            this.cheeks = [];
+            
+            const spData = SPECIES[state.sp];
+            const matBase = new THREE.MeshStandardMaterial({ color: spData.color, roughness: 0.3, metalness: 0.1 });
+            const isWorn = id => state.worn.includes(id);
+
+            // Body (squishy sphere)
+            const bodyGeo = new THREE.SphereGeometry(1.2, 32, 32);
+            const body = new THREE.Mesh(bodyGeo, matBase);
+            body.scale.set(...spData.baseScale);
+            body.position.y = 0.2;
+            this.petGroup.add(body);
+
+            // Kawaii Eyes
+            [-1, 1].forEach(side => {
+                const eye = this.createKawaiiEye(0.18);
+                eye.position.set(side * 0.45, 0.4, 1.1);
+                this.petGroup.add(eye);
+                this.eyes.push(eye);
+                
+                // Blush (Cheeks)
+                const blushMat = new THREE.MeshBasicMaterial({ color: 0xFF6B6B, transparent: true, opacity: 0.7 });
+                const blush = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), blushMat);
+                blush.position.set(side * 0.65, 0.1, 1.05);
+                blush.scale.set(1.5, 0.6, 0.2);
+                this.petGroup.add(blush);
+                this.cheeks.push(blush);
+
+                // Specifics
+                if (state.sp === 'kucing') {
+                    const ear = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.7, 16), matBase);
+                    ear.position.set(side * 0.6, 1.3, 0);
+                    ear.rotation.z = -side * 0.3;
+                    this.petGroup.add(ear);
+                } else if (state.sp === 'kelinci') {
+                    const earGeo = new THREE.CylinderGeometry(0.15, 0.15, 1.2, 16);
+                    earGeo.translate(0, 0.6, 0); // pivot at base
+                    const ear = new THREE.Mesh(earGeo, matBase);
+                    ear.position.set(side * 0.4, 1.1, 0);
+                    ear.rotation.z = -side * 0.1;
+                    this.petGroup.add(ear);
+                }
+            });
+
+            // Tiny cute mouth
+            const mouth = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), new THREE.MeshBasicMaterial({color: 0x111111}));
+            mouth.position.set(0, 0.2, 1.2);
+            this.petGroup.add(mouth);
+
+            // Accessories
+            if (isWorn('hat')) {
+                const hatGroup = new THREE.Group();
+                hatGroup.position.set(0, 1.3, 0);
+                hatGroup.rotation.z = 0.1;
+                const top = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.6, 32), new THREE.MeshStandardMaterial({color:0x2d3436}));
+                top.position.y = 0.3;
+                const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.05, 32), new THREE.MeshStandardMaterial({color:0x2d3436}));
+                hatGroup.add(top, brim);
+                this.petGroup.add(hatGroup);
+            }
+            if (isWorn('glass')) {
+                const glassMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.1, metalness: 0.8 });
+                const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.05, 0.05), glassMat);
+                bridge.position.set(0, 0.45, 1.25);
+                this.petGroup.add(bridge);
+                [-1, 1].forEach(side => {
+                    const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.05, 32), glassMat);
+                    lens.rotation.x = Math.PI/2;
+                    lens.position.set(side * 0.45, 0.45, 1.25);
+                    this.petGroup.add(lens);
+                });
+            }
+            if (isWorn('bow')) {
+                const bowMat = new THREE.MeshStandardMaterial({ color: 0xFF4757 });
+                const bowGroup = new THREE.Group();
+                bowGroup.position.set(0.7, 1.1, 0.5);
+                bowGroup.rotation.z = 0.4;
+                [-1, 1].forEach(side => {
+                    const b = new THREE.Mesh(new THREE.SphereGeometry(0.25, 16, 16), bowMat);
+                    b.position.x = side * 0.2;
+                    b.scale.set(1, 0.7, 0.5);
+                    bowGroup.add(b);
+                });
+                const center = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), bowMat);
+                bowGroup.add(center);
+                this.petGroup.add(bowGroup);
+            }
+
+            this.scene.add(this.petGroup);
+        },
+
+        spawnParticles(type) {
+            const count = type === 'sleep' ? 1 : (type === 'bath' ? 20 : (type==='feed' ? 5 : 12));
+            for(let i=0; i<count; i++) {
+                let mesh, vy, vx, vz, life, rotSpeed;
+                
+                if (type === 'bath') {
+                    // Bubbles!
+                    mesh = new THREE.Mesh(
+                        new THREE.SphereGeometry(Math.random() * 0.15 + 0.05, 16, 16),
+                        new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.6, roughness: 0.1 })
+                    );
+                    mesh.position.set((Math.random()-0.5)*3, -0.5 + Math.random(), (Math.random()-0.5)*2 + 1);
+                    vy = 0.03 + Math.random()*0.02; // Float up
+                    vx = (Math.random()-0.5)*0.01;
+                    vz = (Math.random()-0.5)*0.01;
+                    life = 80 + Math.random()*40;
+                } 
+                else if (type === 'feed') {
+                    // Falling treats
+                    mesh = new THREE.Mesh(
+                        new THREE.SphereGeometry(0.15, 16, 16),
+                        new THREE.MeshStandardMaterial({ color: 0xFF4757 }) // Strawberry/Apple
+                    );
+                    mesh.position.set((Math.random()-0.5)*1.5, 3 + Math.random(), 1);
+                    vy = -0.05; // Fall down
+                    vx = 0; vz = 0;
+                    life = 60;
+                }
+                else if (type === 'sleep' || type === 'heart') {
+                    const tex = this.createTextTexture(type==='sleep'?'Z':'💖', type==='sleep'?'#ffffff':'#FF4757');
+                    mesh = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex }));
+                    mesh.scale.set(0.6, 0.6, 1);
+                    mesh.position.set((Math.random()-0.5)*2, 1.5 + Math.random()*0.5, 1.5);
+                    vy = 0.02 + Math.random()*0.01;
+                    vx = Math.sin(this.time + i) * 0.01;
+                    vz = 0;
+                    life = 100;
+                }
+
+                this.particleGroup.add(mesh);
+                this.particles.push({ mesh, vx, vy, vz, life, maxLife: life, type, rotSpeed });
+            }
+        },
+
+        createTextTexture(text, color) {
+            const c = document.createElement('canvas');
+            c.width = 128; c.height = 128;
+            const ctx = c.getContext('2d');
+            ctx.font = 'bold 80px Nunito';
+            ctx.fillStyle = color;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, 64, 64);
+            const tex = new THREE.CanvasTexture(c);
+            tex.needsUpdate = true;
+            return tex;
+        },
+
+        updateParticles() {
+            for(let i = this.particles.length - 1; i >= 0; i--) {
+                const p = this.particles[i];
+                p.mesh.position.x += p.vx;
+                p.mesh.position.y += p.vy;
+                p.mesh.position.z += p.vz;
+                
+                if(p.type === 'bath') {
+                    p.vx = Math.sin(this.time*5 + p.maxLife) * 0.01; // Wobbly bubbles
+                }
+                if(p.type === 'sleep' || p.type === 'heart') {
+                    p.vx = Math.sin(this.time*3 + p.maxLife) * 0.01;
+                    p.mesh.material.opacity = p.life / p.maxLife;
+                }
+
+                p.life--;
+                if(p.life <= 0 || (p.type === 'feed' && p.mesh.position.y < 0)) {
+                    if(p.mesh.geometry) p.mesh.geometry.dispose();
+                    if(p.mesh.material) p.mesh.material.dispose();
+                    this.particleGroup.remove(p.mesh);
+                    this.particles.splice(i, 1);
                 }
             }
+        },
 
-            // Logika Lalat
-            if (pet.hygiene < 40 && !pet.is_sleeping) flies.classList.remove('hidden');
-            else flies.classList.add('hidden');
-        }
+        handleTap(e) {
+            if (!this.petGroup) return;
+            const rect = this.renderer.domElement.getBoundingClientRect();
+            const mouse = new THREE.Vector2(
+                ((e.clientX - rect.left) / rect.width) * 2 - 1,
+                -((e.clientY - rect.top) / rect.height) * 2 + 1
+            );
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, this.camera);
+            const intersects = raycaster.intersectObject(this.petGroup, true);
+            
+            if (intersects.length > 0) {
+                if (state.sleep) return ui.showToast("Shh... pet is sleeping!");
+                this.isInteracting = true;
+                this.interactTimer = 40; // frames for happy jump
+                this.spawnParticles('heart');
+                updateStats({ happy: 2 });
+                if(Math.random() < 0.3) { state.coins++; ui.renderStats(); }
+            }
+        },
 
-        function clampPetData(pet) {
-            pet.hunger = Math.min(100, Math.max(0, pet.hunger));
-            pet.happiness = Math.min(100, Math.max(0, pet.happiness));
-            pet.energy = Math.min(100, Math.max(0, pet.energy));
-            pet.hygiene = Math.min(100, Math.max(0, pet.hygiene));
-            pet.health = Math.min(100, Math.max(0, pet.health));
-            return pet;
+        animate() {
+            requestAnimationFrame(this.animate);
+            this.time += 0.016;
+
+            // Smooth background color transition
+            this.scene.background.lerp(this.targetBgColor, 0.05);
+
+            // Cloud movement
+            this.environment.clouds.forEach(c => {
+                c.mesh.position.x += c.speed;
+                if(c.mesh.position.x > 8) c.mesh.position.x = -8;
+            });
+
+            if (this.petGroup && !$('view-home').classList.contains('hidden')) {
+                // Base idle breathing (squash and stretch)
+                let targetY = Math.sin(this.time * 3) * 0.05;
+                let targetRotY = Math.sin(this.time * 1) * 0.15;
+                let scaleY = 1 + Math.sin(this.time * (state.sleep ? 1.5 : 6)) * 0.04;
+                let scaleX = 1 - Math.sin(this.time * (state.sleep ? 1.5 : 6)) * 0.02;
+
+                // Interaction override (Jump & Spin)
+                if (this.interactTimer > 0) {
+                    this.interactTimer--;
+                    const progress = this.interactTimer / 40; // 1 to 0
+                    targetY = Math.sin(progress * Math.PI) * 1.5; // Jump arc
+                    targetRotY += (1 - progress) * Math.PI * 2; // Spin
+                    scaleY = 1 + Math.sin(progress * Math.PI * 4) * 0.1;
+                }
+
+                // Apply transforms smoothly
+                this.petGroup.position.y += (targetY - this.petGroup.position.y) * 0.15;
+                this.petGroup.rotation.y += (targetRotY - this.petGroup.rotation.y) * 0.1;
+                
+                const baseScale = SPECIES[state.sp].baseScale;
+                this.petGroup.scale.set(baseScale[0] * scaleX, baseScale[1] * scaleY, baseScale[2] * scaleX);
+
+                // Eye blinking
+                let eyeScaleY = state.sleep ? 0.1 : (Math.random() < 0.015 || (this.time*60)%250 < 5 ? 0.1 : 1);
+                this.eyes.forEach(eye => { eye.scale.y += (eyeScaleY - eye.scale.y) * 0.4; });
+            }
+
+            if (state.sleep && Math.random() < 0.01) this.spawnParticles('sleep');
+            this.updateParticles();
+
+            if (this.renderer && this.scene && this.camera) {
+                this.renderer.render(this.scene, this.camera);
+            }
         }
-    </script>
+    };
+
+    // --- App Actions ---
+    const actions = {
+        checkAwake() {
+            if (state.sleep) { ui.showToast('Pet is sleeping!'); return false; }
+            return true;
+        },
+        feed() {
+            if (!this.checkAwake()) return;
+            if (state.hunger >= 100) return ui.showToast('Already full!');
+            engine.spawnParticles('feed');
+            engine.interactTimer = 30; // Happy jump
+            updateStats({ hunger: 30, energy: 5, clean: -5 });
+            ui.showToast('Yummy! 🍔');
+        },
+        bath() {
+            if (!this.checkAwake()) return;
+            if (state.clean >= 100) return ui.showToast('Already squeaky clean!');
+            engine.spawnParticles('bath');
+            engine.interactTimer = 30; // Shake off water
+            updateStats({ clean: 50, happy: 5 });
+            ui.showToast('Splish splash! 🛁');
+        },
+        sleep() {
+            state.sleep = !state.sleep;
+            saveState();
+            ui.renderStats();
+            ui.showToast(state.sleep ? 'Good night! 🌙' : 'Good morning! ☀️');
+        },
+        buy(id) {
+            const item = ITEMS.find(i => i.id === id);
+            
+            const owns = state.own.includes(id);
+            if (item.fx || !owns) {
+                if (state.coins < item.price) return ui.showToast('Not enough coins!');
+                state.coins -= item.price;
+                if (item.fx) {
+                    updateStats(item.fx);
+                    if(item.id === 'cake') { engine.spawnParticles('feed'); engine.interactTimer=30; }
+                    ui.showToast(`Used ${item.name}!`);
+                } else {
+                    state.own.push(id);
+                    state.worn.push(id);
+                    engine.buildPet();
+                    ui.showToast(`Bought ${item.name}!`);
+                }
+            } else {
+                // Toggle equip
+                if (state.worn.includes(id)) state.worn = state.worn.filter(x => x !== id);
+                else state.worn.push(id);
+                engine.buildPet();
+            }
+            saveState();
+            ui.openShop();
+        }
+    };
+
+    function tick() {
+        if (state.sleep) {
+            updateStats({ energy: 3, hunger: -0.5 });
+            if (state.energy >= 100) actions.sleep(); // auto wake
+        } else {
+            updateStats({ hunger: -1, happy: -1.5, energy: -1, clean: -0.5 });
+        }
+    }
+
+    // --- Minigames System (Kawaii Reskin) ---
+    const minigames = {
+        current: null, loop: null, 
+        canvas: null, ctx: null, 
+        width: 0, height: 0,
+        score: 0, state: {},
+
+        start(gameId) {
+            ui.closeSheet();
+            if (state.energy < 20) return ui.showToast('Too tired to play!');
+            
+            this.current = gameId;
+            this.score = 0;
+            ui.switchView('view-game');
+            $('game-over-modal').classList.add('hidden');
+            $('game-hint').textContent = {
+                tetris: 'Swipe to move & drop. Tap to rotate.',
+                race: 'Tap lanes to catch stars and dodge storm clouds!',
+                memo: 'Find matching kawaii pairs.'
+            }[gameId];
+            
+            const titles = { tetris: 'Jelly Blocks', race: 'Star Dash', memo: 'Bouncy Match' };
+            $('game-title').textContent = titles[gameId];
+            this.updateScore();
+
+            this.canvas = $('game-canvas');
+            this.ctx = this.canvas.getContext('2d');
+            this.width = 300; 
+            this.height = 500;
+            this.canvas.width = this.width;
+            this.canvas.height = this.height;
+            
+            $('game-ui-layer').classList.remove('hidden');
+            $('memo-grid').classList.add('hidden');
+            this.canvas.classList.remove('hidden');
+            
+            this.canvas.onpointerdown = null;
+            this.canvas.onpointermove = null;
+            this.canvas.onpointerup = null;
+            $('memo-grid').onclick = null;
+
+            if(this.loop) cancelAnimationFrame(this.loop);
+
+            if (gameId === 'tetris') this.initTetris();
+            else if (gameId === 'race') this.initRace();
+            else if (gameId === 'memo') this.initMemo();
+        },
+
+        updateScore() { $('game-score').textContent = `Score: ${this.score}`; },
+
+        end(msg) {
+            cancelAnimationFrame(this.loop);
+            $('game-over-msg').textContent = msg;
+            $('game-over-modal').classList.remove('hidden');
+        },
+
+        exit() {
+            cancelAnimationFrame(this.loop);
+            const reward = Math.floor(this.score / 10) + 2;
+            state.coins += reward;
+            updateStats({ happy: 20, energy: -15, hunger: -10 });
+            ui.showToast(`Earned ${reward} coins! 🪙`);
+            ui.switchView('view-home');
+        },
+
+        // 1. Jelly Blocks (Tetris)
+        initTetris() {
+            const COLS = 10, ROWS = 20;
+            const BLOCK_SIZE = this.width / COLS;
+            let board = Array.from({length: ROWS}, () => Array(COLS).fill(0));
+            
+            const SHAPES = [ [[1,1,1,1]], [[1,1],[1,1]], [[0,1,0],[1,1,1]], [[1,0,0],[1,1,1]], [[0,0,1],[1,1,1]], [[0,1,1],[1,1,0]], [[1,1,0],[0,1,1]] ];
+            const COLORS = ['#000', '#00D2D3', '#FFD32A', '#9b59b6', '#FF9F43', '#54A0FF', '#7ED957', '#FF4757'];
+            
+            let piece = this.spawnPiece(SHAPES);
+            let dropCounter = 0, dropInterval = 800, lastTime = 0;
+
+            let touch = { active: false, sx: 0, sy: 0, moved: false };
+            this.canvas.onpointerdown = e => { touch.active = true; touch.sx = e.clientX; touch.sy = e.clientY; touch.moved = false; this.canvas.setPointerCapture(e.pointerId); };
+            this.canvas.onpointermove = e => {
+                if(!touch.active) return;
+                let dx = e.clientX - touch.sx, dy = e.clientY - touch.sy;
+                if(Math.abs(dx) > 30) { this.movePiece(board, piece, dx > 0 ? 1 : -1, 0); touch.sx = e.clientX; touch.moved = true; }
+                if(dy > 40) { this.movePiece(board, piece, 0, 1); touch.sy = e.clientY; touch.moved = true; dropCounter = 0; }
+            };
+            this.canvas.onpointerup = e => { touch.active = false; if(!touch.moved) this.rotatePiece(board, piece); };
+
+            const run = (time) => {
+                let dt = time - lastTime;
+                lastTime = time;
+                dropCounter += dt;
+                if (dropCounter > dropInterval) {
+                    if (!this.movePiece(board, piece, 0, 1)) {
+                        this.mergePiece(board, piece);
+                        this.clearLines(board);
+                        piece = this.spawnPiece(SHAPES);
+                        if (this.collide(board, piece)) return this.end("Board Full!");
+                    }
+                    dropCounter = 0;
+                }
+                this.drawTetris(board, piece, BLOCK_SIZE, COLORS);
+                this.loop = requestAnimationFrame(run);
+            };
+            this.loop = requestAnimationFrame(run);
+        },
+        spawnPiece(shapes) { let typeId = Math.floor(Math.random() * shapes.length); return { m: shapes[typeId].map(r => [...r]), x: 3, y: 0, c: typeId + 1 }; },
+        collide(board, piece) {
+            for(let y=0; y<piece.m.length; y++) {
+                for(let x=0; x<piece.m[y].length; x++) {
+                    if(piece.m[y][x] && (board[piece.y+y] && board[piece.y+y][piece.x+x]) !== 0) return true;
+                }
+            } return false;
+        },
+        movePiece(board, p, dx, dy) { p.x += dx; p.y += dy; if (this.collide(board, p)) { p.x -= dx; p.y -= dy; return false; } return true; },
+        rotatePiece(board, p) { let m = p.m[0].map((_, i) => p.m.map(row => row[i]).reverse()); let old = p.m; p.m = m; if(this.collide(board, p)) p.m = old; },
+        mergePiece(board, p) { p.m.forEach((row, y) => { row.forEach((val, x) => { if(val) board[p.y+y][p.x+x] = p.c; }); }); },
+        clearLines(board) {
+            let lines = 0;
+            for(let y = board.length-1; y>=0; y--) {
+                if(board[y].every(v => v !== 0)) { board.splice(y, 1); board.unshift(Array(board[0].length).fill(0)); lines++; y++; }
+            }
+            if(lines > 0) { this.score += [0, 40, 100, 300, 1200][lines]; this.updateScore(); }
+        },
+        drawTetris(board, piece, size, colors) {
+            let ctx = this.ctx;
+            ctx.fillStyle = '#1e293b'; ctx.fillRect(0, 0, this.width, this.height);
+            // Grid lines
+            ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+            for(let i=0; i<this.width; i+=size) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,this.height); ctx.stroke(); }
+            for(let i=0; i<this.height; i+=size) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(this.width,i); ctx.stroke(); }
+
+            const drawBlock = (x, y, cIndex) => {
+                if(!cIndex) return;
+                let color = colors[cIndex];
+                let px = x * size, py = y * size;
+                // Jelly Block styling
+                ctx.fillStyle = color;
+                this.roundRect(ctx, px+2, py+2, size-4, size-4, 8); ctx.fill();
+                // Inner highlight
+                ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                this.roundRect(ctx, px+4, py+4, size-8, (size-8)/2, 4); ctx.fill();
+            };
+            board.forEach((row, y) => row.forEach((val, x) => drawBlock(x, y, val)));
+            piece.m.forEach((row, y) => row.forEach((val, x) => { if(val) drawBlock(piece.x+x, piece.y+y, piece.c); }));
+        },
+
+        // 2. Star Dash (Race)
+        initRace() {
+            let state = { lane: 1, speed: 4, dist: 0, obs: [], timer: 0 };
+            const LWIDTH = this.width / 3;
+
+            this.canvas.onpointerdown = e => {
+                let rect = this.canvas.getBoundingClientRect();
+                let x = e.clientX - rect.left;
+                if(x < rect.width / 2) state.lane = Math.max(0, state.lane - 1);
+                else state.lane = Math.min(2, state.lane + 1);
+            };
+
+            const run = () => {
+                state.timer++; state.dist += state.speed; state.speed = Math.min(10, 4 + state.dist / 1500);
+
+                if(state.timer % Math.max(25, 60 - Math.floor(state.speed*4)) === 0) {
+                    state.obs.push({ lane: Math.floor(Math.random()*3), y: -50, type: Math.random() < 0.4 ? 'star' : 'cloud' });
+                }
+
+                for(let i = state.obs.length-1; i >= 0; i--) {
+                    let o = state.obs[i];
+                    o.y += state.speed;
+                    if (o.lane === state.lane && o.y > 360 && o.y < 440) {
+                        if (o.type === 'star') { this.score += 20; this.updateScore(); state.obs.splice(i, 1); } 
+                        else { return this.end("Zapped!"); }
+                    } else if (o.y > 550) { state.obs.splice(i, 1); }
+                }
+                this.score += 0.1; 
+                if(Math.floor(this.score) % 10 === 0) this.updateScore();
+                this.drawRace(state, LWIDTH);
+                this.loop = requestAnimationFrame(run);
+            };
+            this.loop = requestAnimationFrame(run);
+        },
+        drawRace(st, lw) {
+            let ctx = this.ctx;
+            // Sky background
+            ctx.fillStyle = '#87CEEB'; ctx.fillRect(0,0,this.width, this.height);
+            // Grass sides
+            ctx.fillStyle = '#7ED957'; ctx.fillRect(0,0,20, this.height); ctx.fillRect(this.width-20,0,20, this.height);
+            
+            // Lanes
+            ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 4; ctx.setLineDash([20, 20]); ctx.lineDashOffset = -st.dist % 40;
+            ctx.beginPath(); ctx.moveTo(lw, 0); ctx.lineTo(lw, this.height); ctx.moveTo(lw*2, 0); ctx.lineTo(lw*2, this.height); ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Entities
+            st.obs.forEach(o => {
+                let cx = o.lane * lw + lw/2;
+                if (o.type === 'star') {
+                    this.drawStar(ctx, cx, o.y, 5, 15, 7, '#FFD32A');
+                } else {
+                    // Storm cloud
+                    ctx.fillStyle = '#636e72';
+                    ctx.beginPath(); ctx.arc(cx, o.y, 18, 0, Math.PI*2); ctx.arc(cx-12, o.y+5, 12, 0, Math.PI*2); ctx.arc(cx+12, o.y+5, 12, 0, Math.PI*2); ctx.fill();
+                    // lightning
+                    ctx.fillStyle = '#FFD32A';
+                    ctx.beginPath(); ctx.moveTo(cx, o.y+10); ctx.lineTo(cx-5, o.y+25); ctx.lineTo(cx+2, o.y+22); ctx.lineTo(cx, o.y+35); ctx.fill();
+                }
+            });
+
+            // Player (Happy Star)
+            let px = st.lane * lw + lw/2;
+            let py = 400;
+            this.drawStar(ctx, px, py, 5, 20, 10, '#FF9F43');
+            // Face
+            ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(px-6, py-2, 2, 0, Math.PI*2); ctx.arc(px+6, py-2, 2, 0, Math.PI*2); ctx.fill();
+        },
+        drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius, color) {
+            let rot = Math.PI / 2 * 3; let x = cx, y = cy; let step = Math.PI / spikes;
+            ctx.beginPath(); ctx.moveTo(cx, cy - outerRadius);
+            for(i=0; i<spikes; i++) {
+                x = cx + Math.cos(rot) * outerRadius; y = cy + Math.sin(rot) * outerRadius; ctx.lineTo(x, y); rot += step;
+                x = cx + Math.cos(rot) * innerRadius; y = cy + Math.sin(rot) * innerRadius; ctx.lineTo(x, y); rot += step;
+            }
+            ctx.lineTo(cx, cy - outerRadius); ctx.closePath();
+            ctx.fillStyle = color; ctx.fill();
+        },
+
+        // 3. Bouncy Match (Memory)
+        initMemo() {
+            this.canvas.classList.add('hidden'); 
+            let grid = $('memo-grid'); grid.classList.remove('hidden');
+            
+            const emojis = ['🍙','🍰','🍩','🍦','🍓','🥞','🍔','🍕'];
+            let cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+            
+            let state = { open: [], matched: 0, lock: false, moves: 0 };
+            
+            grid.innerHTML = cards.map((c, i) => `
+                <div class="card-container aspect-square perspective-1000 cursor-pointer animate-pop" style="animation-delay: ${i*0.05}s" data-idx="${i}">
+                    <div class="card-inner w-full h-full relative transition-transform duration-500 transform-style-preserve-3d rounded-2xl shadow-md border-4 border-white">
+                        <div class="card-front absolute inset-0 bg-sky-300 rounded-xl flex items-center justify-center backface-hidden">
+                            <span class="text-3xl text-white opacity-60">☁️</span>
+                        </div>
+                        <div class="card-back absolute inset-0 bg-white rounded-xl flex items-center justify-center text-4xl backface-hidden transform rotate-y-180">
+                            ${c}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            if(!$('memo-style')) {
+                const style = document.createElement('style'); style.id = 'memo-style';
+                style.textContent = `
+                    .perspective-1000 { perspective: 1000px; }
+                    .transform-style-preserve-3d { transform-style: preserve-3d; }
+                    .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+                    .rotate-y-180 { transform: rotateY(180deg); }
+                    .card-flipped .card-inner { transform: rotateY(180deg) scale(1.05); }
+                    .card-matched .card-inner { transform: rotateY(180deg) scale(0.9); opacity: 0.8; }
+                `;
+                document.head.appendChild(style);
+            }
+
+            grid.onclick = e => {
+                let el = e.target.closest('.card-container');
+                if(!el || state.lock || el.classList.contains('card-flipped')) return;
+                
+                el.classList.add('card-flipped');
+                state.open.push({ el, val: cards[el.dataset.idx] });
+                
+                if(state.open.length === 2) {
+                    state.moves++; state.lock = true;
+                    if(state.open[0].val === state.open[1].val) {
+                        setTimeout(() => {
+                            state.open.forEach(o => { o.el.classList.remove('card-flipped'); o.el.classList.add('card-matched'); });
+                            state.open = []; state.matched += 2; this.score += 50; this.updateScore(); state.lock = false;
+                            if(state.matched === 16) {
+                                let bonus = Math.max(0, 30 - state.moves) * 10; this.score += bonus;
+                                this.end(`Cleared in ${state.moves} moves!`);
+                            }
+                        }, 500);
+                    } else {
+                        setTimeout(() => {
+                            state.open.forEach(o => o.el.classList.remove('card-flipped'));
+                            state.open = []; state.lock = false;
+                        }, 800);
+                    }
+                }
+            };
+        },
+
+        roundRect(ctx, x, y, w, h, r) {
+            ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+        }
+    };
+
+    // --- App Init ---
+    function initApp() {
+        const pg = $('pick-grid');
+        Object.entries(SPECIES).forEach(([k, v]) => {
+            const btn = document.createElement('button');
+            btn.className = 'bg-white/80 rounded-3xl p-4 flex flex-col items-center gap-2 border-4 border-transparent transition-all hover:scale-105 shadow-sm';
+            btn.innerHTML = `<span class="text-5xl drop-shadow-md">${v.e}</span><span class="font-black text-gray-700">${v.name}</span>`;
+            btn.onclick = () => {
+                Array.from(pg.children).forEach(c => { c.classList.remove('border-yellow-400', 'bg-white', 'shadow-lg'); c.classList.add('bg-white/80'); });
+                btn.classList.add('border-yellow-400', 'bg-white', 'shadow-lg'); btn.classList.remove('bg-white/80');
+                state.sp = k;
+            };
+            pg.appendChild(btn);
+        });
+        pg.firstElementChild.click();
+
+        $('btn-start').onclick = () => {
+            const nm = $('pet-name').value.trim();
+            state.name = nm || SPECIES[state.sp].name;
+            state.hunger = state.happy = state.energy = state.clean = 80;
+            state.coins = 100;
+            state.own = []; state.worn = [];
+            state.lastUpdate = Date.now();
+            saveState();
+            startGame();
+        };
+
+        const saved = loadState();
+        if (saved) {
+            state = saved;
+            const hours = (Date.now() - state.lastUpdate) / 3600000;
+            if (hours > 0.1) {
+                const decay = Math.min(60, Math.floor(hours * 10));
+                if(state.sleep) {
+                    state.energy = clamp(state.energy + decay*3);
+                    state.hunger = clamp(state.hunger - decay*0.5);
+                } else {
+                    state.hunger = clamp(state.hunger - decay);
+                    state.happy = clamp(state.happy - decay);
+                    state.clean = clamp(state.clean - decay);
+                    state.energy = clamp(state.energy - decay);
+                }
+            }
+            startGame();
+        } else {
+            ui.switchView('view-pick');
+        }
+    }
+
+    function startGame() {
+        ui.switchView('view-home');
+        ui.renderStats();
+        
+        if(!engine.renderer) engine.init();
+        engine.buildPet();
+
+        if(tickInterval) clearInterval(tickInterval);
+        tickInterval = setInterval(tick, 10000); // every 10s
+    }
+
+    window.onload = initApp;
+
+</script>
 </body>
 </html>

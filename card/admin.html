@@ -8,6 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- Library ini nge-booking nama "supabase" -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --bg: #09090b; --surface: #18181b; --border: #27272a; --text: #fafafa; --text-muted: #a1a1aa; --primary: #ffffff; --primary-invert: #000000; }
@@ -58,10 +59,11 @@
 <div id="toast"></div>
 
 <script>
-    // Hanya ada SATU deklarasi kunci Supabase di sini
     const supabaseUrl = 'https://bkxclrjycsdpchodgzzb.supabase.co';
     const supabaseKey = 'sb_secret_gpG3xNKF9t-CyQQ72d-OVA_d6s0RG2o';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    
+    // NAMA VARIABELNYA UDAH GUE UBAH JADI supabaseClient BIAR GAK BENTROK
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
     const DOMAIN_WEB_CARD = "https://dkrtv.vercel.app/card/index.html?id="; 
 
@@ -75,7 +77,8 @@
 
     async function loadOrders() {
         try {
-            const { data, error } = await supabase.from('cards').select('*').eq('status', 'Terisi').order('tgl_aktivasi', { ascending: false });
+            // Manggil datanya pakai supabaseClient
+            const { data, error } = await supabaseClient.from('cards').select('*').eq('status', 'Terisi').order('tgl_aktivasi', { ascending: false });
             const tbody = document.getElementById('table-body');
             
             if (error) throw error;
@@ -118,7 +121,8 @@
                 newRows.push({ id_produk: id, klien_pembeli: klien, wa_klien: wa, status: "Kosong" });
             }
 
-            const { error } = await supabase.from('cards').insert(newRows);
+            // Insert datanya pakai supabaseClient
+            const { error } = await supabaseClient.from('cards').insert(newRows);
             if(error) throw new Error("Gagal nyimpen ke database: " + error.message);
 
             btn.innerHTML = "Membuat ZIP...";
@@ -150,7 +154,6 @@
                 });
 
                 img.src = qr.toDataURL();
-                
                 await drawPromise;
 
                 const base64Data = canvas.toDataURL('image/png').split(',')[1];

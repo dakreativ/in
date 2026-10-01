@@ -58,6 +58,7 @@
 <div id="toast"></div>
 
 <script>
+    // Hanya ada SATU deklarasi kunci Supabase di sini
     const supabaseUrl = 'https://bkxclrjycsdpchodgzzb.supabase.co';
     const supabaseKey = 'sb_secret_gpG3xNKF9t-CyQQ72d-OVA_d6s0RG2o';
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
@@ -136,7 +137,6 @@
 
                 const img = new Image();
                 
-                // PERBAIKAN LOGIKA: Pasang telinga (Promise) dulu sebelum gambarnya dimuat!
                 const drawPromise = new Promise((resolve, reject) => {
                     img.onload = () => {
                         ctx.drawImage(img, 0, 0);
@@ -149,10 +149,8 @@
                     img.onerror = () => reject(new Error("Gagal menggambar QR Code"));
                 });
 
-                // Baru tembak gambar QR-nya ke Image
                 img.src = qr.toDataURL();
                 
-                // Tunggu sampai gambarnya beres digambar di Canvas
                 await drawPromise;
 
                 const base64Data = canvas.toDataURL('image/png').split(',')[1];

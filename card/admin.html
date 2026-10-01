@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Dakreativ</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Library Pembuat QR dan ZIP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -22,6 +23,7 @@
         .form-group input { width: 100%; padding: 12px 14px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px; outline: none; transition: 0.2s; font-size: 14px; }
         .btn { background: var(--primary); color: var(--primary-invert); border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; height: 45px; }
         .btn:hover { opacity: 0.9; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .table-wrapper { overflow-x: auto; margin-top: 10px; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
         th { color: var(--text-muted); padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 500; }
@@ -57,7 +59,6 @@
 <div id="toast"></div>
 
 <script>
-    // Kunci ini sekarang cuma ada 1 kali aja
     const supabaseUrl = 'https://bkxclrjycsdpchodgzzb.supabase.co';
     const supabaseKey = 'sb_secret_gpG3xNKF9t-CyQQ72d-OVA_d6s0RG2o';
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
@@ -69,51 +70,64 @@
         toast.innerText = msg;
         toast.style.borderLeft = isError ? "4px solid #ef4444" : "4px solid #22c55e";
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3500);
+        setTimeout(() => toast.classList.remove('show'), 4000);
     }
 
     async function loadOrders() {
-        const { data, error } = await supabase.from('cards').select('*').eq('status', 'Terisi').order('tgl_aktivasi', { ascending: false });
-        const tbody = document.getElementById('table-body');
-        
-        if (error || !data || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada kartu yang diaktivasi.</td></tr>';
-            return;
-        }
+        try {
+            const { data, error } = await supabase.from('cards').select('*').eq('status', 'Terisi').order('tgl_aktivasi', { ascending: false });
+            const tbody = document.getElementById('table-body');
+            
+            if (error) throw error;
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada kartu yang diaktivasi.</td></tr>';
+                return;
+            }
 
-        tbody.innerHTML = data.map(item => `
-            <tr>
-                <td style="font-family: monospace; color: #fff;">${item.id_produk}</td>
-                <td>${item.klien_pembeli || '-'}</td>
-                <td style="font-weight: 500;">${item.nama_pemilik || '-'}</td>
-                <td>${new Date(item.tgl_aktivasi).toLocaleDateString('id-ID')}</td>
-                <td><span class="status-badge">Terisi</span></td>
-            </tr>
-        `).join('');
+            tbody.innerHTML = data.map(item => `
+                <tr>
+                    <td style="font-family: monospace; color: #fff;">${item.id_produk}</td>
+                    <td>${item.klien_pembeli || '-'}</td>
+                    <td style="font-weight: 500;">${item.nama_pemilik || '-'}</td>
+                    <td>${new Date(item.tgl_aktivasi).toLocaleDateString('id-ID')}</td>
+                    <td><span class="status-badge">Terisi</span></td>
+                </tr>
+            `).join('');
+        } catch (err) {
+            document.getElementById('table-body').innerHTML = '<tr><td colspan="5" style="text-align:center; color:#ef4444;">Gagal memuat data database.</td></tr>';
+        }
     }
 
     async function generateBatch(e) {
         e.preventDefault();
         const btn = document.getElementById('btnSubmit');
-        btn.disabled = true; btn.innerHTML = "Processing...";
+        btn.disabled = true; 
+        btn.innerHTML = "Processing DB...";
 
-        const klien = document.getElementById('klien').value;
-        const wa = document.getElementById('wa').value;
-        const jumlah = parseInt(document.getElementById('jumlah').value);
-        const newRows = [];
-        const generatedIds = [];
-        const prefix = "DAD-" + Math.floor(100000 + Math.random() * 900000);
+        try {
+            const klien = document.getElementById('klien').value;
+            const wa = document.getElementById('wa').value;
+            const jumlah = parseInt(document.getElementById('jumlah').value);
+            const newRows = [];
+            const generatedIds = [];
+            const prefix = "DAD-" + Math.floor(100000 + Math.random() * 900000);
 
-        for (let i = 1; i <= jumlah; i++) {
-            const id = `${prefix}-${i.toString().padStart(2, '0')}`;
-            generatedIds.push(id);
-            newRows.push({ id_produk: id, klien_pembeli: klien, wa_klien: wa, status: "Kosong" });
-        }
+            for (let i = 1; i <= jumlah; i++) {
+                const id = `${prefix}-${i.toString().padStart(2, '0')}`;
+                generatedIds.push(id);
+                newRows.push({ id_produk: id, klien_pembeli: klien, wa_klien: wa, status: "Kosong" });
+            }
 
-        const { error } = await supabase.from('cards').insert(newRows);
-        
-        if(!error) {
+            // 1. Proses Database
+            const { error } = await supabase.from('cards').insert(newRows);
+            if(error) throw new Error("Gagal nyimpen ke database: " + error.message);
+
             btn.innerHTML = "Membuat ZIP...";
+            
+            // Cek apakah library ZIP tersedia
+            if (typeof JSZip === 'undefined') throw new Error("Library JSZip terblokir koneksi.");
+
+            // 2. Proses Canvas & ZIP
             const zip = new JSZip();
             
             for (let i = 0; i < generatedIds.length; i++) {
@@ -122,34 +136,48 @@
                 const canvas = document.createElement('canvas');
                 canvas.width = 400; canvas.height = 460;
                 const ctx = canvas.getContext('2d');
-                ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#ffffff'; 
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
 
                 const img = new Image();
                 img.src = qr.toDataURL();
                 
-                await new Promise(resolve => {
+                await new Promise((resolve, reject) => {
                     img.onload = () => {
                         ctx.drawImage(img, 0, 0);
-                        ctx.fillStyle = '#000000'; ctx.font = 'bold 24px Inter, sans-serif'; ctx.textAlign = 'center';
+                        ctx.fillStyle = '#000000'; 
+                        ctx.font = 'bold 24px Inter, sans-serif'; 
+                        ctx.textAlign = 'center';
                         ctx.fillText(id, canvas.width / 2, 435);
                         resolve();
                     };
+                    img.onerror = () => reject(new Error("Gagal menggambar QR Code"));
                 });
 
                 const base64Data = canvas.toDataURL('image/png').split(',')[1];
                 zip.file(`${id}.png`, base64Data, {base64: true});
             }
 
+            // Bersihin nama klien biar gak ditolak Windows pas download
+            const amanKlien = klien.replace(/[^a-zA-Z0-9]/g, '_');
             const content = await zip.generateAsync({type:"blob"});
-            saveAs(content, `Batch_${klien}_${jumlah}pcs.zip`);
+            
+            if (typeof saveAs === 'undefined') throw new Error("Fitur Download terblokir browser.");
+            
+            saveAs(content, `Batch_${amanKlien}_${jumlah}pcs.zip`);
             
             showToast("Berhasil generate dan download ZIP!");
             document.getElementById('batchForm').reset();
             loadOrders(); 
-        } else {
-            showToast("Gagal: " + error.message, true);
+
+        } catch (err) {
+            console.error(err);
+            showToast("ERROR: " + err.message, true); // Ini bakal ngasih tau jelas errornya apa
+        } finally {
+            btn.disabled = false; 
+            btn.innerHTML = "Buat ZIP";
         }
-        btn.disabled = false; btn.innerHTML = "Buat ZIP";
     }
 
     window.onload = loadOrders;

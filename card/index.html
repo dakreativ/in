@@ -3,53 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Card</title>
+    <title>Digital Card Profile</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --bg: #000000; --surface: #111111; --border: #222222; --text: #ffffff; --muted: #888888; --accent: #252525; }
+        /* SETUP TEMA DINAMIS */
+        :root { --bg1: #000000; --bg2: #222222; --bg3: #444444; --text-color: #ffffff; --glass-bg: rgba(255, 255, 255, 0.08); --glass-border: rgba(255, 255, 255, 0.15); --glass-hover: rgba(255, 255, 255, 0.15); }
+        
+        body.theme-hitamputih { --bg1: #000000; --bg2: #1a1a1a; --bg3: #333333; --text-color: #ffffff; }
+        body.theme-maroon { --bg1: #3b0000; --bg2: #6b0000; --bg3: #240000; --text-color: #ffffff; }
+        body.theme-hijau { --bg1: #042411; --bg2: #0b4523; --bg3: #021208; --text-color: #ffffff; }
+        body.theme-navy { --bg1: #000022; --bg2: #000055; --bg3: #000011; --text-color: #ffffff; }
+        body.theme-ungu { --bg1: #1c0024; --bg2: #3f0052; --bg3: #110016; --text-color: #ffffff; }
+        /* Tema Terang */
+        body.theme-cream { --bg1: #fdfbf7; --bg2: #f2ebd2; --bg3: #e6dac3; --text-color: #1f2937; --glass-bg: rgba(255, 255, 255, 0.4); --glass-border: rgba(0, 0, 0, 0.08); --glass-hover: rgba(255, 255, 255, 0.7); }
+        body.theme-pink { --bg1: #fff0f3; --bg2: #ffc2d1; --bg3: #ffb3c6; --text-color: #1f2937; --glass-bg: rgba(255, 255, 255, 0.4); --glass-border: rgba(0, 0, 0, 0.08); --glass-hover: rgba(255, 255, 255, 0.7); }
+
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 40px 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
-        .skeleton { background: linear-gradient(90deg, var(--border) 25%, var(--accent) 50%, var(--border) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 8px; }
-        @keyframes loading { to { background-position: -200% 0; } }
-        .sk-avatar { width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 20px; }
-        .sk-title { width: 60%; height: 24px; margin: 0 auto 10px; }
-        .sk-text { width: 80%; height: 14px; margin: 0 auto 30px; }
-        .sk-btn { width: 100%; height: 50px; margin-bottom: 12px; border-radius: 12px; }
-        .avatar { width: 90px; height: 90px; background: #ffffff; color: #000000; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 36px; font-weight: 700; margin: 0 auto 16px; border: 4px solid var(--bg); box-shadow: 0 0 0 1px var(--border); }
-        .name { font-size: 24px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.5px; }
-        .bio { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; padding: 0 10px; }
-        .links { display: flex; flex-direction: column; gap: 12px; }
-        .btn-link { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; background: transparent; border: 1px solid var(--border); color: var(--text); text-decoration: none; border-radius: 12px; font-weight: 500; font-size: 15px; transition: 0.2s; }
-        .btn-link:hover { background: var(--accent); }
-        .btn-link svg { width: 20px; height: 20px; fill: currentColor; }
-        .form-section { text-align: left; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .form-title { font-size: 20px; font-weight: 600; margin-bottom: 5px; }
-        .form-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
-        .form-desc strong { color: var(--text); font-family: monospace; background: var(--accent); padding: 2px 6px; border-radius: 4px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
-        .form-group input, .form-group textarea { width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 12px; outline: none; transition: 0.2s; font-size: 14px; }
-        .form-group input:focus, .form-group textarea:focus { border-color: var(--muted); }
-        .btn-submit { width: 100%; background: #ffffff; color: #000000; border: none; padding: 16px; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        .btn-submit:active { transform: scale(0.98); }
-        .btn-submit:disabled { opacity: 0.7; cursor: wait; }
-        .custom-section { border-top: 1px dashed var(--border); padding-top: 20px; margin-top: 10px; }
+        
+        /* ANIMASI BACKGROUND GERAK */
+        body { 
+            background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3), var(--bg1));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-color); 
+            display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; 
+            transition: all 0.5s ease;
+        }
+        @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
+
+        /* KARTU GLASSMORPHISM */
+        .card { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); 
+            border-radius: 24px; padding: 40px 24px; width: 100%; max-width: 400px; 
+            text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); 
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* TAMPILAN PROFIL AKTIF */
+        .name { font-size: 26px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .bio { font-size: 15px; opacity: 0.8; margin-bottom: 30px; line-height: 1.6; padding: 0 10px; }
+        .links { display: flex; flex-direction: column; gap: 14px; }
+        
+        .btn-link { 
+            display: flex; align-items: center; justify-content: center; gap: 10px; 
+            padding: 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); 
+            color: var(--text-color); text-decoration: none; border-radius: 16px; 
+            font-weight: 600; font-size: 15px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .btn-link:hover { background: var(--glass-hover); transform: translateY(-2px); }
+        .btn-link svg { width: 22px; height: 22px; fill: currentColor; }
+
+        /* TAMPILAN FORM AKTIVASI */
+        .form-section { text-align: left; }
+        .form-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; text-align: center;}
+        .form-desc { font-size: 14px; opacity: 0.7; margin-bottom: 24px; line-height: 1.5; text-align: center; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 500; opacity: 0.9; margin-bottom: 6px; }
+        .form-group input, .form-group select, .form-group textarea { 
+            width: 100%; padding: 14px; background: var(--glass-bg); border: 1px solid var(--glass-border); 
+            color: var(--text-color); border-radius: 12px; outline: none; transition: 0.2s; font-size: 14px; 
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--text-color); background: var(--glass-hover); }
+        
+        /* Agar tulisan dropdown terlihat di semua browser */
+        select option { background: #222; color: #fff; }
+
+        .btn-submit { 
+            width: 100%; background: var(--text-color); color: var(--bg1); 
+            border: none; padding: 16px; border-radius: 12px; font-weight: 700; 
+            font-size: 15px; cursor: pointer; margin-top: 10px; transition: 0.2s; 
+        }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-submit:active { transform: translateY(0); }
+        .btn-submit:disabled { opacity: 0.5; cursor: wait; }
+        .custom-section { border-top: 1px dashed var(--glass-border); padding-top: 20px; margin-top: 10px; }
     </style>
 </head>
-<body>
+<body class="theme-hitamputih">
 
     <div id="app" class="card">
-        <div class="skeleton sk-avatar"></div><div class="skeleton sk-title"></div><div class="skeleton sk-text"></div><div class="skeleton sk-btn"></div><div class="skeleton sk-btn"></div>
+        <!-- Tampilan Loading (Skeleton) -->
+        <h2 style="opacity: 0.5; font-size: 16px; animation: fadeIn 1s infinite alternate;">Memuat Data...</h2>
     </div>
 
 <script>
-    // URL udah gue hapus buntutnya, dan pakai secret key lu biar langsung tembus
+    // Kunci API (Sudah disamakan dengan Admin)
     const supabaseUrl = 'https://bkxclrjycsdpchodgzzb.supabase.co';
-    const supabaseKey = 'sb_secret_gpG3xNKF9t-CyQQ72d-OVA_d6s0RG2o';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const supabaseKey = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
     const idProduk = new URLSearchParams(window.location.search).get('id');
     const app = document.getElementById('app');
@@ -69,40 +115,107 @@
         link: `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`
     };
 
+    // FUNGSI GANTI TAMPILAN CUSTOM PESAN
+    function cekTujuan() {
+        const val = document.getElementById('tujuan').value;
+        const boxCustom = document.getElementById('boxCustom');
+        if (val === 'custom') {
+            boxCustom.style.display = 'block';
+            document.getElementById('pesan').setAttribute('required', 'true');
+        } else {
+            boxCustom.style.display = 'none';
+            document.getElementById('pesan').removeAttribute('required');
+        }
+    }
+
+    // FUNGSI GANTI TEMA SAAT PREVIEW DI FORM
+    function gantiTemaPreview() {
+        const tema = document.getElementById('temaPilihan').value;
+        document.body.className = `theme-${tema}`;
+    }
+
     async function loadCard() {
         if (!idProduk) {
-            app.innerHTML = '<p style="color:#ef4444; font-weight: 500;">Akses ditolak. Parameter ID tidak ditemukan.</p>';
+            app.innerHTML = '<h2 style="color:#ef4444;">Akses Ditolak</h2><p style="opacity:0.8; margin-top:10px;">Parameter ID tidak ditemukan.</p>';
             return;
         }
 
-        const { data, error } = await supabase.from('cards').select('*').eq('id_produk', idProduk).single();
+        const { data, error } = await supabaseClient.from('cards').select('*').eq('id_produk', idProduk).single();
 
         if (error || !data) {
-            app.innerHTML = `<p style="color:#ef4444; font-weight: 500;">ID kartu tidak valid atau belum terdaftar.</p>`;
+            app.innerHTML = '<h2 style="color:#ef4444;">ID Tidak Valid</h2><p style="opacity:0.8; margin-top:10px;">Kartu belum terdaftar di sistem.</p>';
             return;
         }
 
         if (data.status === "Kosong") {
+            // TAMPILAN FORM AKTIVASI
             app.innerHTML = `
                 <div class="form-section">
-                    <h2 class="form-title">Aktivasi Kartu Digital</h2>
-                    <p class="form-desc">ID Kartu: <strong>${idProduk}</strong><br>Silakan lengkapi data di bawah ini untuk menampilkan profil kamu saat kartu ini di-scan.</p>
+                    <h2 class="form-title">Aktivasi Profil</h2>
+                    <p class="form-desc">ID Kartu: <strong style="font-family:monospace; background:rgba(0,0,0,0.2); padding:2px 8px; border-radius:4px;">${idProduk}</strong></p>
                     <form id="actForm" onsubmit="submitAktivasi(event)">
-                        <div class="form-group"><label>Nama Lengkap / Panggilan*</label><input type="text" id="nama" placeholder="Contoh: Budi Santoso" required></div>
+                        
+                        <div class="form-group">
+                            <label>Pilih Tema Warna</label>
+                            <select id="temaPilihan" onchange="gantiTemaPreview()">
+                                <option value="hitamputih">Hitam & Putih (Default)</option>
+                                <option value="maroon">Merah Maroon</option>
+                                <option value="hijau">Hijau Tua</option>
+                                <option value="navy">Navy Tua</option>
+                                <option value="ungu">Ungu Tua</option>
+                                <option value="cream">Cream (Terang)</option>
+                                <option value="pink">Pink Muda (Terang)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Pesan Utama / Tujuan Kartu</label>
+                            <select id="tujuan" onchange="cekTujuan()">
+                                <option value="Jika menemukan kunci ini, mohon kabari saya.">1. Jika menemukan kunci ini...</option>
+                                <option value="Mari terhubung untuk peluang kerjasama & bisnis.">2. Hubungi untuk kerjasama...</option>
+                                <option value="Jika menemukan hewan peliharaan ini, mohon hubungi saya.">3. Jika menemukan hewan ini...</option>
+                                <option value="custom">4. Tulis Pesan Sendiri (Custom)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="boxCustom" style="display:none;">
+                            <label>Tulis Pesan Custom</label>
+                            <textarea id="pesan" rows="2" placeholder="Tuliskan pesan singkat di sini..."></textarea>
+                        </div>
+
+                        <div class="form-group"><label>Nama Lengkap / Instansi*</label><input type="text" id="nama" placeholder="Contoh: Budi Santoso" required></div>
                         <div class="form-group"><label>Nomor WhatsApp*</label><input type="number" id="wa" placeholder="0812..." required></div>
                         <div class="form-group"><label>Username Instagram</label><input type="text" id="ig" placeholder="tanpa @ (opsional)"></div>
                         <div class="form-group"><label>Username TikTok</label><input type="text" id="tiktok" placeholder="tanpa @ (opsional)"></div>
-                        <div class="form-group"><label>Bio / Tentang Saya</label><textarea id="pesan" rows="2" placeholder="Halo, mari terhubung! (opsional)"></textarea></div>
+                        
                         <div class="custom-section">
-                            <p style="font-size:13px; font-weight:600; margin-bottom:12px; color: #fff;">Tambahkan Link Custom (Opsional)</p>
+                            <p style="font-size:13px; font-weight:600; margin-bottom:12px;">Tambahkan Link Custom (Opsional)</p>
                             <div class="form-group"><label>Nama Tombol</label><input type="text" id="cNama" placeholder="Cth: Portofolio Saya"></div>
-                            <div class="form-group"><label>URL / Link</label><input type="url" id="cUrl" placeholder="https://..."></div>
+                            <div class="form-group"><label>URL / Link Website</label><input type="url" id="cUrl" placeholder="https://..."></div>
                         </div>
-                        <button type="submit" class="btn-submit" id="btnAktif">Simpan & Aktifkan Profil</button>
+                        <button type="submit" class="btn-submit" id="btnAktif">Simpan & Aktifkan</button>
                     </form>
                 </div>
             `;
         } else {
+            // EKSTRAK DATA TEMA DAN PESAN (Trik Tanpa Ubah Database)
+            let teksPesan = data.pesan_custom || "";
+            let temaTersimpan = "hitamputih"; // Tema bawaan
+
+            try {
+                // Mencoba membaca data sebagai JSON (format baru)
+                const parsedData = JSON.parse(data.pesan_custom);
+                teksPesan = parsedData.text;
+                temaTersimpan = parsedData.theme;
+            } catch(e) {
+                // Jika error, berarti ini data lama (hanya teks biasa)
+                teksPesan = data.pesan_custom;
+            }
+
+            // Terapkan Tema ke Halaman
+            document.body.className = `theme-${temaTersimpan}`;
+
+            // TAMPILAN PROFIL AKTIF KLIEN
             let btnHTML = '';
             if(data.wa_pemilik) btnHTML += `<a href="https://wa.me/${formatWA(data.wa_pemilik)}" class="btn-link" target="_blank">${icons.wa} WhatsApp</a>`;
             if(data.ig_pemilik) btnHTML += `<a href="https://instagram.com/${data.ig_pemilik.replace('@','')}" class="btn-link" target="_blank">${icons.ig} Instagram</a>`;
@@ -110,9 +223,8 @@
             if(data.nama_link_custom && data.url_link_custom) btnHTML += `<a href="${data.url_link_custom}" class="btn-link" target="_blank">${icons.link} ${data.nama_link_custom}</a>`;
 
             app.innerHTML = `
-                <div class="avatar">${data.nama_pemilik.charAt(0).toUpperCase()}</div>
                 <h2 class="name">${data.nama_pemilik}</h2>
-                <p class="bio">${data.pesan_custom || ""}</p>
+                <p class="bio">${teksPesan}</p>
                 <div class="links">${btnHTML}</div>
             `;
         }
@@ -124,25 +236,37 @@
         btn.disabled = true;
         btn.innerText = "Memproses...";
 
+        // Ambil Nilai Form
+        const pilihanTujuan = document.getElementById('tujuan').value;
+        const pesanFinal = (pilihanTujuan === 'custom') ? document.getElementById('pesan').value : pilihanTujuan;
+        const temaDipilih = document.getElementById('temaPilihan').value;
+
+        // BUNGKUS PESAN DAN TEMA JADI SATU (Trik JSON)
+        const bungkusData = JSON.stringify({
+            text: pesanFinal,
+            theme: temaDipilih
+        });
+
         const payload = {
             nama_pemilik: document.getElementById('nama').value,
             wa_pemilik: document.getElementById('wa').value,
             ig_pemilik: document.getElementById('ig').value,
             tiktok_pemilik: document.getElementById('tiktok').value,
-            pesan_custom: document.getElementById('pesan').value,
             nama_link_custom: document.getElementById('cNama').value,
             url_link_custom: document.getElementById('cUrl').value,
+            pesan_custom: bungkusData, // Simpan bungkusan ke kolom pesan lama
             status: "Terisi",
             tgl_aktivasi: new Date().toISOString()
         };
 
-        const { error } = await supabase.from('cards').update(payload).eq('id_produk', idProduk);
+        const { error } = await supabaseClient.from('cards').update(payload).eq('id_produk', idProduk);
 
         if (!error) {
             window.location.reload(); 
         } else {
             alert("Gagal mengaktifkan: " + error.message);
             btn.disabled = false;
+            btn.innerText = "Simpan & Aktifkan";
         }
     }
 

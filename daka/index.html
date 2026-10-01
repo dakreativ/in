@@ -5,453 +5,173 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Daka - Premium Assistant</title>
     
-    <!-- Font Minimalis Modern (Inter) ala Vercel/Apple -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script>
         tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        neutral: {
-                            50: '#fafafa',
-                            100: '#f5f5f5',
-                            200: '#e5e5e5',
-                            300: '#d4d4d4',
-                            800: '#262626',
-                            900: '#171717',
-                        }
-                    }
-                }
-            }
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] }, colors: { neutral: { 50: '#fafafa', 100: '#f5f5f5', 200: '#e5e5e5', 300: '#d4d4d4', 800: '#262626', 900: '#171717' } } } }
         }
     </script>
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f0f0; /* Desktop background */
-            -webkit-tap-highlight-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Mobile Container for Premium Look */
-        .app-container {
-            max-width: 440px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            height: 100vh;
-            height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Minimalist Scrollbar */
-        .chat-scroll::-webkit-scrollbar { width: 3px; }
-        .chat-scroll::-webkit-scrollbar-track { background: transparent; }
-        .chat-scroll::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 10px; }
-
-        .fade-in { animation: fadeIn 0.5s ease forwards; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* 3D Float Animation for Avatar */
-        .float-3d {
-            animation: float 3s ease-in-out infinite;
-            filter: drop-shadow(0 10px 8px rgba(0,0,0,0.08));
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-6px) rotate(2deg); }
-        }
-
-        /* Glassmorphism for Header & Input */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-
-        /* Apple-style Typing Indicator */
-        .typing-dots { display: flex; align-items: center; gap: 4px; padding: 6px 4px; }
-        .dot {
-            width: 5px; height: 5px;
-            background-color: #a3a3a3;
-            border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-        .dot:nth-child(1) { animation-delay: -0.32s; }
-        .dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
-            40% { transform: scale(1); opacity: 1; }
-        }
-
-        /* Custom Input Focus transition */
+        /* Anti-Copas */
+        body { font-family: 'Inter', sans-serif; background-color: #f0f0f0; margin: 0; padding: 0; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+        input, textarea { user-select: auto !important; }
+        /* UI Styling */
+        .app-container { max-width: 440px; margin: 0 auto; background-color: #ffffff; height: 100dvh; display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
+        .chat-scroll::-webkit-scrollbar { width: 3px; } .chat-scroll::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 10px; }
+        .fade-in { animation: fadeIn 0.5s ease forwards; } @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .float-3d { animation: float 3s ease-in-out infinite; filter: drop-shadow(0 10px 8px rgba(0,0,0,0.08)); } @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-6px) rotate(2deg); } }
+        .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .typing-dots { display: flex; align-items: center; gap: 4px; padding: 6px 4px; } .dot { width: 5px; height: 5px; background-color: #a3a3a3; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; } .dot:nth-child(1) { animation-delay: -0.32s; } .dot:nth-child(2) { animation-delay: -0.16s; } @keyframes bounce { 0%, 80%, 100% { transform: scale(0); opacity: 0.3; } 40% { transform: scale(1); opacity: 1; } }
         .input-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body>
-
     <div class="app-container">
-        
+        <!-- Onboarding -->
         <div id="onboarding-screen" class="absolute inset-0 z-50 bg-white flex flex-col justify-between p-8 transition-opacity duration-500">
             <div class="flex-1 flex flex-col justify-center items-center text-center mt-[-10%]">
-                <!-- 3D Avatar Waving -->
                 <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Waving%20Hand.png" alt="Waving" class="w-28 h-28 float-3d mb-8 object-contain">
-                
                 <h1 class="text-[28px] font-semibold text-neutral-900 mb-3 tracking-tight">Hai, aku Daka.</h1>
-                <p class="text-[15px] text-neutral-500 max-w-[260px] leading-relaxed font-light">Asisten virtual pribadimu. Siap mendengar dan membantu kapanpun.</p>
+                <p class="text-[15px] text-neutral-500 max-w-[260px] leading-relaxed font-light">Asisten virtual pribadimu.</p>
             </div>
-            
             <div class="w-full pb-8">
-                <input type="text" id="user-name-input" placeholder="Nama panggilan kamu..." class="w-full bg-neutral-50 text-neutral-900 border border-neutral-200 rounded-2xl px-6 py-4 text-[15px] focus:outline-none focus:bg-white focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 transition-all mb-4 placeholder-neutral-400 font-medium text-center">
-                
-                <button onclick="startChat()" class="w-full bg-neutral-900 hover:bg-black text-white font-medium py-4 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2">
-                    Mulai Sesi
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </button>
+                <input type="text" id="user-name-input" placeholder="Nama panggilan kamu..." class="w-full bg-neutral-50 text-neutral-900 border border-neutral-200 rounded-2xl px-6 py-4 mb-4 text-center focus:outline-none" autocomplete="off">
+                <button onclick="startChat()" class="w-full bg-neutral-900 text-white font-medium py-4 rounded-2xl flex items-center justify-center gap-2">Mulai Sesi <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></button>
             </div>
         </div>
 
+        <!-- Chat Screen -->
         <div id="chat-screen" class="flex-1 flex flex-col h-full hidden bg-neutral-50/30">
-            
-            <!-- Premium Header -->
             <header class="glass-panel border-b border-neutral-100 px-5 py-3 flex items-center justify-between z-20 sticky top-0">
                 <div class="flex items-center gap-3">
-                    <!-- Dynamic 3D Avatar Container -->
-                    <div class="w-[42px] h-[42px] rounded-full bg-neutral-100 flex items-center justify-center overflow-visible border border-neutral-200/50">
-                        <img id="daka-avatar-img" src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Slightly%20Smiling%20Face.png" alt="Daka" class="w-[34px] h-[34px] object-contain float-3d transition-all duration-300">
+                    <div class="w-[42px] h-[42px] rounded-full bg-neutral-100 flex items-center justify-center border border-neutral-200/50">
+                        <img id="daka-avatar-img" src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Slightly%20Smiling%20Face.png" class="w-[34px] h-[34px] float-3d transition-all duration-300">
                     </div>
                     <div>
-                        <h2 class="font-semibold text-[15px] text-neutral-900 tracking-tight">Daka Assistant</h2>
-                        <div class="flex items-center gap-1.5 mt-0.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                            <span id="daka-status" class="text-[11px] text-neutral-500 font-medium tracking-wide uppercase">Siap membantu</span>
-                        </div>
+                        <h2 class="font-semibold text-[15px] text-neutral-900">Daka Assistant</h2>
+                        <div class="flex items-center gap-1.5 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span><span id="daka-status" class="text-[11px] text-neutral-500 uppercase">Siap membantu</span></div>
                     </div>
                 </div>
-                
-                <!-- Minimalist Reset/Settings Button -->
-                <button onclick="resetApp()" class="w-9 h-9 flex items-center justify-center text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 rounded-full transition-all active:scale-90" title="Ganti Nama">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke-width="1.5"></circle><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
-                </button>
+                <button onclick="resetApp()" class="w-9 h-9 flex items-center justify-center text-neutral-400 hover:text-neutral-900 rounded-full"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke-width="1.5"></circle><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg></button>
             </header>
 
-            <!-- Chat Area -->
-            <div id="chat-container" class="flex-1 overflow-y-auto chat-scroll p-5 space-y-6 relative z-10 flex flex-col pb-32">
-                <div class="text-center mt-2 mb-2">
-                    <span class="text-[10px] uppercase tracking-widest text-neutral-400 font-semibold">Hari Ini</span>
-                </div>
-                <!-- Messages will be injected here -->
-            </div>
+            <div id="chat-container" class="flex-1 overflow-y-auto chat-scroll p-5 space-y-6 relative z-10 flex flex-col pb-32"></div>
 
             <div class="absolute bottom-0 left-0 right-0 glass-panel border-t border-neutral-100 p-4 z-20">
-                <form id="chat-form" onsubmit="handleSend(event)" class="relative flex items-end bg-neutral-100 rounded-3xl p-1.5 border border-neutral-200/60 input-transition focus-within:bg-white focus-within:border-neutral-300 focus-within:shadow-sm">
-                    
-                    <textarea 
-                        id="message-input" 
-                        rows="1" 
-                        class="flex-1 max-h-32 min-h-[40px] bg-transparent px-4 py-2.5 text-[14px] text-neutral-900 focus:outline-none resize-none placeholder-neutral-400 font-medium" 
-                        placeholder="Ketik pesan..."
-                        oninput="this.style.height = ''; this.style.height = Math.min(this.scrollHeight, 120) + 'px'"
-                        onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); handleSend(event); }"
-                    ></textarea>
-                    
-                    <button type="submit" id="send-btn" class="w-10 h-10 shrink-0 bg-neutral-900 hover:bg-black text-white rounded-full flex items-center justify-center transition-all active:scale-90 disabled:opacity-30 disabled:bg-neutral-400 mr-0.5 mb-0.5">
-                        <!-- Minimalist Up Arrow (iOS Style) -->
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-                    </button>
+                <form id="chat-form" onsubmit="handleSend(event)" class="relative flex items-end bg-neutral-100 rounded-3xl p-1.5 border border-neutral-200/60 focus-within:bg-white">
+                    <textarea id="message-input" rows="1" class="flex-1 max-h-32 min-h-[40px] bg-transparent px-4 py-2.5 text-[14px] focus:outline-none resize-none" placeholder="Ketik pesan..." oninput="this.style.height=''; this.style.height=Math.min(this.scrollHeight,120)+'px'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();handleSend(event);}"></textarea>
+                    <button type="submit" id="send-btn" class="w-10 h-10 shrink-0 bg-neutral-900 text-white rounded-full flex items-center justify-center mr-0.5 mb-0.5"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></button>
                 </form>
             </div>
         </div>
     </div>
 
     <script>
-        const API_KEY = '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'; // User API Key
-        const MODEL = 'openai/gpt-oss-120b'; // Updated Model
-        const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+        // Anti-Copas Scripts
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => { if (e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'))||(e.ctrlKey&&(e.key==='U'||e.key==='C'))) e.preventDefault(); });
+        document.addEventListener('copy', e => e.preventDefault());
 
-        // 3D Fluent Emojis URLs (High Quality Assets)
         const ASSETS_3D = {
             idle: 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Slightly%20Smiling%20Face.png',
             happy: 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Grinning%20Face%20with%20Smiling%20Eyes.png',
             sad: 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Pleading%20Face.png',
             wise: 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Face%20with%20Monocle.png',
-            thinking: 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Thinking%20Face.png' // Added for typing state
+            thinking: 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Thinking%20Face.png'
         };
 
-        let userName = '';
-        let chatHistory = []; 
-        let isTyping = false;
-
-        // DOM Elements
-        const screens = {
-            onboarding: document.getElementById('onboarding-screen'),
-            chat: document.getElementById('chat-screen')
-        };
-        const elements = {
-            nameInput: document.getElementById('user-name-input'),
-            chatContainer: document.getElementById('chat-container'),
-            msgInput: document.getElementById('message-input'),
-            sendBtn: document.getElementById('send-btn'),
-            avatarImg: document.getElementById('daka-avatar-img'),
-            statusText: document.getElementById('daka-status')
-        };
+        let userName = ''; let chatHistory = []; let isTyping = false;
+        const screens = { onboarding: document.getElementById('onboarding-screen'), chat: document.getElementById('chat-screen') };
+        const el = { nameInput: document.getElementById('user-name-input'), chatContainer: document.getElementById('chat-container'), msgInput: document.getElementById('message-input'), sendBtn: document.getElementById('send-btn'), avatarImg: document.getElementById('daka-avatar-img'), statusText: document.getElementById('daka-status') };
 
         function initApp() {
             const savedName = localStorage.getItem('daka_premium_user');
-            if (savedName) {
-                userName = savedName;
-                showChatScreen();
-                if (chatHistory.length === 0) {
-                    addSystemGreeting();
-                }
-            } else {
-                showOnboarding();
-            }
+            if (savedName) { userName = savedName; showChatScreen(); if (chatHistory.length === 0) addSystemGreeting(); } 
+            else { screens.onboarding.style.display = 'flex'; screens.chat.classList.add('hidden'); setTimeout(()=>screens.onboarding.style.opacity='1',50); }
         }
 
-        function showOnboarding() {
-            screens.onboarding.style.display = 'flex';
-            screens.chat.classList.add('hidden');
-            setTimeout(() => { screens.onboarding.style.opacity = '1'; }, 50);
-        }
-
-        function showChatScreen() {
-            screens.onboarding.style.opacity = '0';
-            setTimeout(() => {
-                screens.onboarding.style.display = 'none';
-                screens.chat.classList.remove('hidden');
-                scrollToBottom();
-            }, 500); 
-        }
-
+        function showChatScreen() { screens.onboarding.style.opacity = '0'; setTimeout(()=>{ screens.onboarding.style.display = 'none'; screens.chat.classList.remove('hidden'); scrollToBottom(); }, 500); }
+        
         function startChat() {
-            const name = elements.nameInput.value.trim();
-            if (!name) {
-                // Minimalist visual feedback
-                elements.nameInput.classList.add('ring-2', 'ring-red-400');
-                setTimeout(() => elements.nameInput.classList.remove('ring-2', 'ring-red-400'), 1000);
-                elements.nameInput.focus();
-                return;
-            }
-            
-            userName = name;
-            localStorage.setItem('daka_premium_user', userName);
-            showChatScreen();
-            addSystemGreeting(true);
+            const name = el.nameInput.value.trim();
+            if (!name) return;
+            userName = name; localStorage.setItem('daka_premium_user', userName); showChatScreen(); addSystemGreeting(true);
         }
 
-        function resetApp() {
-            localStorage.removeItem('daka_premium_user');
-            userName = '';
-            chatHistory = [];
-            elements.chatContainer.innerHTML = '<div class="text-center mt-2 mb-2"><span class="text-[10px] uppercase tracking-widest text-neutral-400 font-semibold">Hari Ini</span></div>';
-            elements.nameInput.value = '';
-            setEmotion('idle');
-            initApp();
-        }
+        function resetApp() { localStorage.removeItem('daka_premium_user'); userName=''; chatHistory=[]; el.chatContainer.innerHTML=''; el.nameInput.value=''; setEmotion('idle'); initApp(); }
 
         function addSystemGreeting(isNew = false) {
-            const greeting = isNew 
-                ? `Halo ${userName}. Senang bertemu denganmu. Aku Daka, asisten pribadimu. Ada yang bisa kubantu hari ini?`
-                : `Selamat datang kembali, ${userName}. Bagaimana kabarmu hari ini?`;
-            
-            addMessageToUI('daka', greeting);
-            chatHistory.push({ role: 'assistant', content: greeting });
+            const msg = isNew ? `Bip bop! 🔑 Gantungan kunci terdeteksi... Halo ${userName}, Aku Daka. Ada yang bisa dibantu?` : `Tersambung kembali. Halo ${userName}!`;
+            addMessageToUI('daka', msg); chatHistory.push({ role: 'assistant', content: msg });
         }
 
-        function scrollToBottom() {
-            setTimeout(() => {
-                elements.chatContainer.scrollTo({
-                    top: elements.chatContainer.scrollHeight,
-                    behavior: 'smooth'
-                });
-            }, 50);
-        }
-
-        function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, 
-                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])
-            );
-        }
+        function scrollToBottom() { setTimeout(() => el.chatContainer.scrollTo({ top: el.chatContainer.scrollHeight, behavior: 'smooth' }), 50); }
+        function escapeHTML(str) { return str.replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t])); }
 
         function addMessageToUI(sender, text) {
-            const wrapper = document.createElement('div');
-            wrapper.className = `flex w-full fade-in ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
-            
+            const wrap = document.createElement('div'); wrap.className = `flex w-full fade-in ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
             const bubble = document.createElement('div');
-            // Premium minimalist bubble styling
-            if (sender === 'user') {
-                bubble.className = 'max-w-[80%] bg-neutral-900 text-white rounded-3xl rounded-tr-lg px-5 py-3 shadow-[0_4px_12px_rgba(0,0,0,0.1)] text-[14.5px] leading-[1.6] font-light tracking-wide';
-                bubble.innerHTML = escapeHTML(text).replace(/\n/g, '<br>');
-            } else {
-                bubble.className = 'max-w-[80%] bg-white border border-neutral-200 text-neutral-800 rounded-3xl rounded-tl-lg px-5 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.03)] text-[14.5px] leading-[1.6] font-light tracking-wide';
-                bubble.innerHTML = escapeHTML(text).replace(/\n/g, '<br>');
-            }
-
-            wrapper.appendChild(bubble);
-            elements.chatContainer.appendChild(wrapper);
-            scrollToBottom();
+            bubble.className = sender === 'user' ? 'max-w-[80%] bg-neutral-900 text-white rounded-3xl rounded-tr-lg px-5 py-3 text-[14.5px]' : 'max-w-[80%] bg-white border border-neutral-200 rounded-3xl rounded-tl-lg px-5 py-3 text-[14.5px]';
+            bubble.innerHTML = escapeHTML(text).replace(/\n/g, '<br>');
+            wrap.appendChild(bubble); el.chatContainer.appendChild(wrap); scrollToBottom();
         }
 
-        let typingIndicatorEl = null;
-
+        let typingEl = null;
         function showTyping() {
-            if (typingIndicatorEl) return;
-            isTyping = true;
-            elements.sendBtn.disabled = true;
-            elements.msgInput.disabled = true;
-            setEmotion('thinking'); // Set avatar to thinking 3D emoji
-            elements.statusText.textContent = "Mengetik balasan...";
-
-            const wrapper = document.createElement('div');
-            wrapper.id = 'typing-indicator-wrapper';
-            wrapper.className = 'flex w-full justify-start fade-in';
-            
-            const bubble = document.createElement('div');
-            bubble.className = 'bg-white border border-neutral-200 rounded-3xl rounded-tl-lg px-5 py-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)]';
-            
-            bubble.innerHTML = `
-                <div class="typing-dots">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </div>
-            `;
-            
-            wrapper.appendChild(bubble);
-            elements.chatContainer.appendChild(wrapper);
-            typingIndicatorEl = wrapper;
-            scrollToBottom();
+            if(typingEl) return; isTyping=true; el.sendBtn.disabled=true; el.msgInput.disabled=true; setEmotion('thinking'); el.statusText.textContent="Mengetik...";
+            const wrap = document.createElement('div'); wrap.className='flex w-full justify-start fade-in';
+            const bubble = document.createElement('div'); bubble.className='bg-white border rounded-3xl rounded-tl-lg px-5 py-4';
+            bubble.innerHTML = `<div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+            wrap.appendChild(bubble); el.chatContainer.appendChild(wrap); typingEl=wrap; scrollToBottom();
         }
-
-        function hideTyping() {
-            if (typingIndicatorEl) {
-                typingIndicatorEl.remove();
-                typingIndicatorEl = null;
-            }
-            isTyping = false;
-            elements.sendBtn.disabled = false;
-            elements.msgInput.disabled = false;
-            elements.msgInput.focus();
-            elements.statusText.textContent = "Siap membantu";
-        }
-
-        function setEmotion(emotionCode) {
-            const imgUrl = ASSETS_3D[emotionCode] || ASSETS_3D['idle'];
-            elements.avatarImg.style.opacity = '0'; // fade out
-            
-            setTimeout(() => {
-                elements.avatarImg.src = imgUrl;
-                elements.avatarImg.style.opacity = '1'; // fade in
-            }, 150);
-        }
+        function hideTyping() { if(typingEl){typingEl.remove(); typingEl=null;} isTyping=false; el.sendBtn.disabled=false; el.msgInput.disabled=false; el.msgInput.focus(); el.statusText.textContent="Siap membantu"; }
+        function setEmotion(code) { el.avatarImg.style.opacity='0'; setTimeout(()=>{ el.avatarImg.src=ASSETS_3D[code]||ASSETS_3D['idle']; el.avatarImg.style.opacity='1'; }, 150); }
 
         async function handleSend(e) {
-            e.preventDefault();
-            if (isTyping) return;
-
-            const text = elements.msgInput.value.trim();
-            if (!text) return;
-
-            addMessageToUI('user', text);
-            elements.msgInput.value = '';
-            elements.msgInput.style.height = '40px'; 
+            e.preventDefault(); if (isTyping) return;
+            const text = el.msgInput.value.trim(); if (!text) return;
+            
+            addMessageToUI('user', text); el.msgInput.value=''; el.msgInput.style.height='40px'; 
             chatHistory.push({ role: 'user', content: text });
-
             showTyping();
 
             try {
-                // Precise system prompt enforcing JSON for gpt-oss-120b
-                const systemPrompt = `Kamu adalah "Daka", asisten virtual premium yang elegan, cerdas, berempati, dan sangat natural.
-Nama user: ${userName}. (Sebut namanya sesekali agar personal).
+                const systemPrompt = `Kamu adalah "Daka", asisten virtual premium terhubung via Gantungan Kunci pintar. Nama user: ${userName}. ATURAN WAJIB: Respond HANYA dengan JSON valid berisi 2 key: "emotion" dan "message". Pilihan emotion: "idle", "happy", "sad", atau "wise".`;
+                const messages = [{ role: 'system', content: systemPrompt }, ...chatHistory.slice(-10)];
 
-Gaya bahasa: Minimalis, hangat, sopan, namun santai (tidak kaku seperti robot). Gunakan bahasa Indonesia sehari-hari yang elegan.
-Jika user sedih, berikan empati. Jika senang, ikut apresiasi. Jika bertanya, jawab dengan cerdas dan ringkas.
-
-ATURAN WAJIB:
-Kamu HARUS merespon HANYA dengan format JSON murni yang memiliki 2 key: "emotion" dan "message".
-Pilihan emotion HANYA: "idle", "happy", "sad", atau "wise".
-
-Contoh Response:
-{
-  "emotion": "happy",
-  "message": "Tentu, ${userName}. Hari yang indah untuk memulai sesuatu yang baru, bukan?"
-}`;
-
-                const recentHistory = chatHistory.slice(-10);
-                const messages = [
-                    { role: 'system', content: systemPrompt },
-                    ...recentHistory
-                ];
-
-                const response = await fetch(API_URL, {
+                // SEKARANG NGE-HIT KE FILE /api/chat (BACKEND VERCEL KITA), BUKAN KE GROQ LANGSUNG!
+                const response = await fetch('/api/chat', {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        model: MODEL,
-                        messages: messages,
-                        temperature: 0.7,
-                        max_tokens: 500,
-                        response_format: { type: "json_object" }
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messages: messages })
                 });
 
-                if (!response.ok) {
-                    throw new Error('Gagal terhubung ke server');
-                }
-
+                if (!response.ok) throw new Error('Network error');
+                
                 const data = await response.json();
                 let aiResponseText = data.choices[0].message.content;
-                
-                // Clean markdown if AI includes it
                 aiResponseText = aiResponseText.replace(/```json/gi, '').replace(/```/gi, '').trim();
+                
                 const startIndex = aiResponseText.indexOf('{');
                 const endIndex = aiResponseText.lastIndexOf('}');
-                if (startIndex !== -1 && endIndex !== -1) {
-                    aiResponseText = aiResponseText.substring(startIndex, endIndex + 1);
-                }
+                if (startIndex !== -1 && endIndex !== -1) aiResponseText = aiResponseText.substring(startIndex, endIndex + 1);
 
                 const parsedData = JSON.parse(aiResponseText);
+                hideTyping(); setEmotion(parsedData.emotion || 'idle');
+                const dakaMsg = parsedData.message || "Maaf, bisakah diulangi?";
                 
-                hideTyping();
-                setEmotion(parsedData.emotion || 'idle');
-                
-                const dakaMessage = parsedData.message || "Maaf, bisakah kamu mengulanginya?";
-                addMessageToUI('daka', dakaMessage);
-                chatHistory.push({ role: 'assistant', content: dakaMessage });
+                addMessageToUI('daka', dakaMsg);
+                chatHistory.push({ role: 'assistant', content: dakaMsg });
 
             } catch (error) {
-                console.error("API Error:", error);
-                hideTyping();
-                setEmotion('sad');
-                addMessageToUI('daka', `Maaf ${userName}, sepertinya ada gangguan jaringan saat ini. Mohon coba lagi nanti.`);
-                chatHistory.pop(); // Remove failed attempt context
+                hideTyping(); setEmotion('sad'); addMessageToUI('daka', `Koneksi ke backend terputus.`); chatHistory.pop();
             }
         }
-
-        // Initialize on load
         window.addEventListener('DOMContentLoaded', initApp);
-
     </script>
 </body>
 </html>

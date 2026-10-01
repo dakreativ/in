@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Card - Profile</title>
+    <title>Digital Card</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #000000; --surface: #111111; --border: #222222; --text: #ffffff; --muted: #888888; --accent: #252525; }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 40px 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 40px 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
         
-        /* Skeleton Loader Animasi */
+        /* Animasi Loading */
         .skeleton { background: linear-gradient(90deg, var(--border) 25%, var(--accent) 50%, var(--border) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 8px; }
         @keyframes loading { to { background-position: -200% 0; } }
         .sk-avatar { width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 20px; }
@@ -21,9 +21,9 @@
         .sk-btn { width: 100%; height: 50px; margin-bottom: 12px; border-radius: 12px; }
 
         /* Profile Elements */
-        .avatar { width: 90px; height: 90px; background: #fff; color: #000; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 36px; font-weight: 700; margin: 0 auto 16px; }
+        .avatar { width: 90px; height: 90px; background: #ffffff; color: #000000; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 36px; font-weight: 700; margin: 0 auto 16px; border: 4px solid var(--bg); box-shadow: 0 0 0 1px var(--border); }
         .name { font-size: 24px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.5px; }
-        .bio { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+        .bio { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; padding: 0 10px; }
         
         .links { display: flex; flex-direction: column; gap: 12px; }
         .btn-link { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; background: transparent; border: 1px solid var(--border); color: var(--text); text-decoration: none; border-radius: 12px; font-weight: 500; font-size: 15px; transition: 0.2s; }
@@ -34,23 +34,25 @@
         .form-section { text-align: left; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .form-title { font-size: 20px; font-weight: 600; margin-bottom: 5px; }
-        .form-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+        .form-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+        .form-desc strong { color: var(--text); font-family: monospace; background: var(--accent); padding: 2px 6px; border-radius: 4px; }
         
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
-        .form-group input, .form-group textarea { width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 10px; outline: none; transition: 0.2s; font-size: 14px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 12px; outline: none; transition: 0.2s; font-size: 14px; }
         .form-group input:focus, .form-group textarea:focus { border-color: var(--muted); }
-        .btn-submit { width: 100%; background: #ffffff; color: #000000; border: none; padding: 14px; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        
+        .btn-submit { width: 100%; background: #ffffff; color: #000000; border: none; padding: 16px; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; margin-top: 10px; transition: 0.2s; }
         .btn-submit:active { transform: scale(0.98); }
         .btn-submit:disabled { opacity: 0.7; cursor: wait; }
 
-        .custom-section { border-top: 1px dashed var(--border); padding-top: 15px; margin-top: 5px; }
+        .custom-section { border-top: 1px dashed var(--border); padding-top: 20px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div id="app" class="card">
-        <!-- Skeleton Initial Load -->
+        <!-- Skeleton UI saat proses load API -->
         <div class="skeleton sk-avatar"></div>
         <div class="skeleton sk-title"></div>
         <div class="skeleton sk-text"></div>
@@ -59,7 +61,9 @@
     </div>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxKQCp8huU_pEJ2uOF3aYE30oYHo_3FYNXJ1pX2AEiHfiVO8LPZip8Z3e9uE8OPJquew/exec';
+    // GANTI LINK DI BAWAH INI SESUAI DEPLOYMENT APPS SCRIPT LO
+    const SCRIPT_URL = 'PASTE_LINK_APPS_SCRIPT_DISINI';
+    
     const idProduk = new URLSearchParams(window.location.search).get('id');
     const app = document.getElementById('app');
 
@@ -71,61 +75,56 @@
         return cleaned;
     }
 
-    // Komponen SVG Icons
     const icons = {
         wa: `<svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>`,
         ig: `<svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>`,
         tiktok: `<svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93v7.2c0 1.96-.5 3.96-1.75 5.42-1.67 1.95-4.33 2.8-6.9 2.22-2.8-.62-5-2.92-5.4-5.74-.2-1.32-.04-2.71.55-3.9 1.15-2.3 3.65-3.72 6.22-3.7.02 1.4.01 2.8.03 4.2-.9-.05-1.85.12-2.6.7-.85.65-1.3 1.7-1.15 2.75.18 1.15 1.1 2.1 2.25 2.35 1.22.28 2.6-.08 3.32-1.1.7-.95.82-2.15.82-3.3V0h3.53z"/></svg>`,
-        link: `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`
+        link: `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`
     };
 
     if (!idProduk) {
-        app.innerHTML = '<p style="color:#ef4444">Akses Ditolak. Kartu tidak valid.</p>';
+        app.innerHTML = '<p style="color:#ef4444; font-weight: 500;">Akses ditolak. Parameter ID tidak ditemukan.</p>';
     } else {
         fetch(`${SCRIPT_URL}?id=${idProduk}`)
             .then(res => res.json())
             .then(res => {
                 const data = res.data;
                 if (!data || res.error) {
-                    app.innerHTML = `<p style="color:#ef4444">ID ${idProduk} tidak ditemukan di database.</p>`;
+                    app.innerHTML = `<p style="color:#ef4444; font-weight: 500;">ID kartu tidak valid atau belum terdaftar.</p>`;
                     return;
                 }
 
-                // JIKA BELUM DIAKTIVASI -> Tampilkan Form
+                // JIKA BELUM DIAKTIVASI -> Buka Form
                 if (data.status === "Kosong") {
                     app.innerHTML = `
                         <div class="form-section">
-                            <h2 class="form-title">Aktivasi Kartu Kamu</h2>
-                            <p class="form-desc">ID: ${idProduk} • Silakan isi data di bawah ini untuk mengatur kartu digital kamu.</p>
+                            <h2 class="form-title">Aktivasi Kartu Digital</h2>
+                            <p class="form-desc">ID Kartu: <strong>${idProduk}</strong><br>Silakan lengkapi data di bawah ini untuk menampilkan profil kamu saat kartu ini di-scan.</p>
                             <form id="actForm" onsubmit="submitAktivasi(event)">
-                                <div class="form-group"><label>Nama Tampilan*</label><input type="text" id="nama" required></div>
-                                <div class="form-group"><label>WhatsApp*</label><input type="number" id="wa" placeholder="0812..." required></div>
-                                <div class="form-group"><label>Username Instagram</label><input type="text" id="ig" placeholder="tanpa @"></div>
-                                <div class="form-group"><label>Username TikTok</label><input type="text" id="tiktok" placeholder="tanpa @"></div>
-                                <div class="form-group"><label>Bio / Pesan Singkat</label><textarea id="pesan" rows="2" placeholder="Halo, mari berteman!"></textarea></div>
+                                <div class="form-group"><label>Nama Lengkap / Panggilan*</label><input type="text" id="nama" placeholder="Contoh: Budi Santoso" required></div>
+                                <div class="form-group"><label>Nomor WhatsApp*</label><input type="number" id="wa" placeholder="0812..." required></div>
+                                <div class="form-group"><label>Username Instagram</label><input type="text" id="ig" placeholder="tanpa @ (opsional)"></div>
+                                <div class="form-group"><label>Username TikTok</label><input type="text" id="tiktok" placeholder="tanpa @ (opsional)"></div>
+                                <div class="form-group"><label>Bio / Tentang Saya</label><textarea id="pesan" rows="2" placeholder="Halo, mari terhubung! (opsional)"></textarea></div>
                                 
                                 <div class="custom-section">
-                                    <p style="font-size:13px; font-weight:600; margin-bottom:10px;">Tambahkan Link Custom (Opsional)</p>
+                                    <p style="font-size:13px; font-weight:600; margin-bottom:12px; color: #fff;">Tambahkan Link Custom (Opsional)</p>
                                     <div class="form-group"><label>Nama Tombol</label><input type="text" id="cNama" placeholder="Cth: Portofolio Saya"></div>
                                     <div class="form-group"><label>URL / Link</label><input type="url" id="cUrl" placeholder="https://..."></div>
                                 </div>
 
-                                <button type="submit" class="btn-submit" id="btnAktif">Simpan & Aktifkan</button>
+                                <button type="submit" class="btn-submit" id="btnAktif">Simpan & Aktifkan Profil</button>
                             </form>
                         </div>
                     `;
                 } 
-                // JIKA SUDAH DIAKTIVASI -> Tampilkan Kartu
+                // JIKA SUDAH DIAKTIVASI -> Tampilkan Digital Card
                 else {
                     let btnHTML = '';
                     if(data.waPemilik) btnHTML += `<a href="https://wa.me/${formatWA(data.waPemilik)}" class="btn-link" target="_blank">${icons.wa} WhatsApp</a>`;
                     if(data.igPemilik) btnHTML += `<a href="https://instagram.com/${data.igPemilik.replace('@','')}" class="btn-link" target="_blank">${icons.ig} Instagram</a>`;
                     if(data.tiktokPemilik) btnHTML += `<a href="https://tiktok.com/@${data.tiktokPemilik.replace('@','')}" class="btn-link" target="_blank">${icons.tiktok} TikTok</a>`;
-                    
-                    // Tombol Custom Link
-                    if(data.linkCustomNama && data.linkCustomUrl) {
-                        btnHTML += `<a href="${data.linkCustomUrl}" class="btn-link" target="_blank">${icons.link} ${data.linkCustomNama}</a>`;
-                    }
+                    if(data.linkCustomNama && data.linkCustomUrl) btnHTML += `<a href="${data.linkCustomUrl}" class="btn-link" target="_blank">${icons.link} ${data.linkCustomNama}</a>`;
 
                     app.innerHTML = `
                         <div class="avatar">${data.namaPemilik.charAt(0).toUpperCase()}</div>
@@ -136,16 +135,15 @@
                 }
             })
             .catch(() => {
-                app.innerHTML = '<p style="color:#ef4444">Gagal terhubung. Pastikan internet lancar.</p>';
+                app.innerHTML = '<p style="color:#ef4444; font-weight: 500;">Gagal memuat data. Periksa koneksi internet.</p>';
             });
     }
 
-    // Fungsi Submit Form Aktivasi (Browser -> GAS)
     async function submitAktivasi(e) {
         e.preventDefault();
         const btn = document.getElementById('btnAktif');
         btn.disabled = true;
-        btn.innerText = "Menyimpan Data...";
+        btn.innerText = "Memproses...";
 
         const payload = {
             action: "activate",
@@ -162,8 +160,8 @@
         try {
             const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
             const result = await res.json();
-            if(result.success) window.location.reload(); // Langsung reload jadi kartu digital
-            else alert("Error: " + result.error);
+            if(result.success) window.location.reload(); 
+            else alert("Gagal mengaktifkan: " + result.error);
         } catch (err) {
             alert("Terjadi kesalahan jaringan.");
         } finally {

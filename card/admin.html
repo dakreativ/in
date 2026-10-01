@@ -5,38 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Dakreativ</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Scripts for QR, Canvas, and ZIP Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* CSS-nya persis sama */
         :root { --bg: #09090b; --surface: #18181b; --border: #27272a; --text: #fafafa; --text-muted: #a1a1aa; --primary: #ffffff; --primary-invert: #000000; }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); padding: 30px 20px; }
         .container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
-        
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
         .card-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-        
         .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 16px; align-items: end; }
         @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
-        
         .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 8px; }
         .form-group input { width: 100%; padding: 12px 14px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px; outline: none; transition: 0.2s; font-size: 14px; }
-        .form-group input:focus { border-color: var(--text-muted); }
-        
         .btn { background: var(--primary); color: var(--primary-invert); border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; height: 45px; }
         .btn:hover { opacity: 0.9; }
-        .btn:active { transform: scale(0.97); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
         .table-wrapper { overflow-x: auto; margin-top: 10px; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
         th { color: var(--text-muted); padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 500; }
         td { padding: 16px 0; border-bottom: 1px solid var(--border); }
-        tr:last-child td { border-bottom: none; }
-        
         .status-badge { background: rgba(34, 197, 94, 0.1); color: #22c55e; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid rgba(34, 197, 94, 0.2); }
         #toast { position: fixed; bottom: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border); padding: 14px 20px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateY(150%); transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 50; }
         #toast.show { transform: translateY(0); }
@@ -45,58 +35,35 @@
 <body>
 
 <div class="container">
-    <!-- Generator Section -->
     <div class="card">
         <div class="card-title">📦 Generate QR & ZIP Batch</div>
         <form class="form-grid" id="batchForm" onsubmit="generateBatch(event)">
-            <div class="form-group">
-                <label>Nama Klien / Instansi</label>
-                <input type="text" id="klien" placeholder="Contoh: PT Dakreativ" required>
-            </div>
-            <div class="form-group">
-                <label>Nomor WA Klien</label>
-                <input type="number" id="wa" placeholder="0812..." required>
-            </div>
-            <div class="form-group">
-                <label>Jumlah Barcode</label>
-                <input type="number" id="jumlah" min="1" max="100" value="1" required>
-            </div>
-            <button type="submit" class="btn" id="btnSubmit">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Buat ZIP
-            </button>
+            <div class="form-group"><label>Nama Klien / Instansi</label><input type="text" id="klien" placeholder="Contoh: PT Dakreativ" required></div>
+            <div class="form-group"><label>Nomor WA Klien</label><input type="number" id="wa" placeholder="0812..." required></div>
+            <div class="form-group"><label>Jumlah Barcode</label><input type="number" id="jumlah" min="1" max="100" value="1" required></div>
+            <button type="submit" class="btn" id="btnSubmit">Buat ZIP</button>
         </form>
     </div>
 
-    <!-- Data Teraktivasi Section -->
     <div class="card">
         <div class="card-title">✨ Daftar Kartu Aktif</div>
         <div class="table-wrapper">
             <table>
-                <thead>
-                    <tr>
-                        <th>ID Produk</th>
-                        <th>Klien (Pembeli)</th>
-                        <th>Nama Pemilik</th>
-                        <th>Tgl Aktivasi</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Memuat data...</td></tr>
-                </tbody>
+                <thead><tr><th>ID Produk</th><th>Klien (Pembeli)</th><th>Nama Pemilik</th><th>Tgl Aktivasi</th><th>Status</th></tr></thead>
+                <tbody id="table-body"><tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Memuat data...</td></tr></tbody>
             </table>
         </div>
     </div>
 </div>
-
 <div id="toast"></div>
 
 <script>
-    // 1. GANTI DENGAN LINK GOOGLE APPS SCRIPT LO
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxKQCp8huU_pEJ2uOF3aYE30oYHo_3FYNXJ1pX2AEiHfiVO8LPZip8Z3e9uE8OPJquew/exec";
-    
-    // 2. LINK BARCODE SPESIFIK YANG LO MINTA
+    // ===== MASUKIN URL & KEY SUPABASE LU DI SINI =====
+    const supabaseUrl = 'MASUKIN_URL_SUPABASE_DI_SINI';
+    const supabaseKey = 'MASUKIN_ANON_KEY_SUPABASE_DI_SINI';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // Ganti ini kalau domain lu udah ganti (misal nama vercel lu)
     const DOMAIN_WEB_CARD = "https://dakreativ.github.io/in/card/index.html?id="; 
 
     function showToast(msg, isError=false) {
@@ -108,110 +75,83 @@
     }
 
     async function loadOrders() {
-        try {
-            const res = await fetch(`${SCRIPT_URL}?action=getOrders`);
-            const data = await res.json();
-            const tbody = document.getElementById('table-body');
-            
-            if (!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada kartu yang diaktivasi.</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = data.map(item => `
-                <tr>
-                    <td style="font-family: monospace; color: #fff;">${item.idProduk}</td>
-                    <td>${item.klienPembeli || '-'}</td>
-                    <td style="font-weight: 500;">${item.namaPemilik || '-'}</td>
-                    <td>${item.tglAktivasi || '-'}</td>
-                    <td><span class="status-badge">Terisi</span></td>
-                </tr>
-            `).join('');
-        } catch (err) {
-            document.getElementById('table-body').innerHTML = '<tr><td colspan="5" style="text-align:center; color:#ef4444;">Koneksi terputus.</td></tr>';
+        const { data, error } = await supabase.from('cards').select('*').eq('status', 'Terisi').order('tgl_aktivasi', { ascending: false });
+        const tbody = document.getElementById('table-body');
+        
+        if (error || !data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada kartu yang diaktivasi.</td></tr>';
+            return;
         }
+
+        tbody.innerHTML = data.map(item => `
+            <tr>
+                <td style="font-family: monospace; color: #fff;">${item.id_produk}</td>
+                <td>${item.klien_pembeli || '-'}</td>
+                <td style="font-weight: 500;">${item.nama_pemilik || '-'}</td>
+                <td>${new Date(item.tgl_aktivasi).toLocaleDateString('id-ID')}</td>
+                <td><span class="status-badge">Terisi</span></td>
+            </tr>
+        `).join('');
     }
 
     async function generateBatch(e) {
         e.preventDefault();
         const btn = document.getElementById('btnSubmit');
-        btn.disabled = true;
-        btn.innerHTML = "Processing...";
+        btn.disabled = true; btn.innerHTML = "Processing...";
 
-        const payload = {
-            action: "addBatchOrder",
-            klienPembeli: document.getElementById('klien').value,
-            waKlien: document.getElementById('wa').value,
-            jumlah: document.getElementById('jumlah').value
-        };
+        const klien = document.getElementById('klien').value;
+        const wa = document.getElementById('wa').value;
+        const jumlah = parseInt(document.getElementById('jumlah').value);
+        const newRows = [];
+        const generatedIds = [];
+        const prefix = "DAD-" + Math.floor(100000 + Math.random() * 900000);
 
-        try {
-            const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
-            const result = await res.json();
-            
-            if(result.success) {
-                btn.innerHTML = "Membuat ZIP...";
-                const zip = new JSZip();
-                
-                // Proses Canvas untuk Menggabungkan QR & Teks ID
-                for (let i = 0; i < result.generatedIds.length; i++) {
-                    const id = result.generatedIds[i];
-                    
-                    // Generate QR Code doang
-                    const qr = new QRious({
-                        value: DOMAIN_WEB_CARD + id,
-                        size: 400,
-                        level: 'H'
-                    });
-
-                    // Bikin Canvas buat gabung QR + Teks
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 400; 
-                    canvas.height = 460; // Tinggi ekstra buat teks
-                    const ctx = canvas.getContext('2d');
-                    
-                    // Background Putih
-                    ctx.fillStyle = '#ffffff'; 
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                    // Render gambar dari QR
-                    const img = new Image();
-                    img.src = qr.toDataURL();
-                    
-                    await new Promise(resolve => {
-                        img.onload = () => {
-                            ctx.drawImage(img, 0, 0); // Pasang QR di atas
-                            
-                            // Pasang Teks ID di bawah QR
-                            ctx.fillStyle = '#000000';
-                            ctx.font = 'bold 24px Inter, sans-serif';
-                            ctx.textAlign = 'center';
-                            ctx.fillText(id, canvas.width / 2, 435);
-                            resolve();
-                        };
-                    });
-
-                    // Konversi Canvas Final ke Base64 untuk ZIP
-                    const base64Data = canvas.toDataURL('image/png').split(',')[1];
-                    zip.file(`${id}.png`, base64Data, {base64: true});
-                }
-
-                // Download ZIP
-                const content = await zip.generateAsync({type:"blob"});
-                saveAs(content, `Batch_${result.klien}_${result.generatedIds.length}pcs.zip`);
-                
-                showToast("Berhasil generate dan download ZIP!");
-                document.getElementById('batchForm').reset();
-                loadOrders(); // Refresh table
-            } else {
-                showToast("Gagal: " + result.error, true);
-            }
-        } catch (err) {
-            showToast("Error sistem jaringan.", true);
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = "Buat ZIP";
+        for (let i = 1; i <= jumlah; i++) {
+            const id = `${prefix}-${i.toString().padStart(2, '0')}`;
+            generatedIds.push(id);
+            newRows.push({ id_produk: id, klien_pembeli: klien, wa_klien: wa, status: "Kosong" });
         }
+
+        const { error } = await supabase.from('cards').insert(newRows);
+        
+        if(!error) {
+            btn.innerHTML = "Membuat ZIP...";
+            const zip = new JSZip();
+            
+            for (let i = 0; i < generatedIds.length; i++) {
+                const id = generatedIds[i];
+                const qr = new QRious({ value: DOMAIN_WEB_CARD + id, size: 400, level: 'H' });
+                const canvas = document.createElement('canvas');
+                canvas.width = 400; canvas.height = 460;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const img = new Image();
+                img.src = qr.toDataURL();
+                
+                await new Promise(resolve => {
+                    img.onload = () => {
+                        ctx.drawImage(img, 0, 0);
+                        ctx.fillStyle = '#000000'; ctx.font = 'bold 24px Inter, sans-serif'; ctx.textAlign = 'center';
+                        ctx.fillText(id, canvas.width / 2, 435);
+                        resolve();
+                    };
+                });
+
+                const base64Data = canvas.toDataURL('image/png').split(',')[1];
+                zip.file(`${id}.png`, base64Data, {base64: true});
+            }
+
+            const content = await zip.generateAsync({type:"blob"});
+            saveAs(content, `Batch_${klien}_${jumlah}pcs.zip`);
+            
+            showToast("Berhasil generate dan download ZIP!");
+            document.getElementById('batchForm').reset();
+            loadOrders(); 
+        } else {
+            showToast("Gagal: " + error.message, true);
+        }
+        btn.disabled = false; btn.innerHTML = "Buat ZIP";
     }
 
     window.onload = loadOrders;

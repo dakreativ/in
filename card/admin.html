@@ -10,7 +10,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* CSS-nya persis sama */
         :root { --bg: #09090b; --surface: #18181b; --border: #27272a; --text: #fafafa; --text-muted: #a1a1aa; --primary: #ffffff; --primary-invert: #000000; }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); padding: 30px 20px; }
@@ -58,13 +57,13 @@
 <div id="toast"></div>
 
 <script>
-    // ===== MASUKIN URL & KEY SUPABASE LU DI SINI =====
-    const supabaseUrl = 'https://bkxclrjycsdpchodgzzb.supabase.co/rest/v1/';
-    const supabaseKey = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3';
+    // Konfigurasi Database
+    const supabaseUrl = 'https://bkxclrjycsdpchodgzzb.supabase.co';
+    const supabaseKey = 'sb_secret_gpG3xNKF9t-CyQQ72d-OVA_d6s0RG2o';
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // Ganti ini kalau domain lu udah ganti (misal nama vercel lu)
-    const DOMAIN_WEB_CARD = "https://dakreativ.github.io/in/card/index.html?id="; 
+    // Ini udah gue ganti ke domain Vercel lu yang baru!
+    const DOMAIN_WEB_CARD = "https://dkrtv.vercel.app/card/index.html?id="; 
 
     function showToast(msg, isError=false) {
         const toast = document.getElementById('toast');

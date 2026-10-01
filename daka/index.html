@@ -3,222 +3,529 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webagotchi 3D - Fresh</title>
+    <title>Webagotchi - Next Gen</title>
+    <!-- Tailwind untuk styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Font Awesome untuk Icon yang lebih keren -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        @keyframes breathe {
+        body { font-family: 'Nunito', sans-serif; }
+        
+        /* Background Gradient Bergerak */
+        .bg-animated {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glassmorphism Effect */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Animasi Karakter */
+        .char-idle { animation: float 3s ease-in-out infinite; }
+        .char-eat { animation: bounce 0.5s ease-in-out 3; }
+        .char-play { animation: spin 1s ease-in-out; }
+        .char-sad { animation: shake 1s ease-in-out infinite; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        @keyframes bounce {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.2) translateY(-10px); }
         }
-        .animate-breathe { animation: breathe 3s infinite ease-in-out; }
-        .room-bg {
-            background: radial-gradient(circle at 50% 120%, #d4e6f1 0%, #85c1e9 50%, #2e86c1 100%);
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
         }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* Status Bar Transition */
+        .stat-bar { transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease; }
     </style>
 </head>
-<body class="bg-slate-900 h-screen flex items-center justify-center font-sans text-gray-800">
+<body class="bg-animated h-screen w-full flex items-center justify-center text-slate-800 overflow-hidden">
 
-    <!-- LAYAR 1: PENDAFTARAN -->
-    <div id="setup-screen" class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm text-center">
-        <h1 class="text-3xl font-black text-indigo-600 mb-2">Webagotchi</h1>
-        <p class="text-gray-500 mb-6">Versi Advanced 🌟</p>
+    <!-- OVERLAY NOTIFIKASI (Pop-up peringatan) -->
+    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-lg font-bold z-50 transition-all duration-300 opacity-0 -translate-y-10 pointer-events-none">
+        ⚠️ Pesan Sistem
+    </div>
+
+    <!-- ================= LAYAR 1: PENDAFTARAN / LOGIN ================= -->
+    <div id="setup-screen" class="glass-panel p-10 rounded-[30px] shadow-2xl w-[90%] max-w-sm text-center transform transition-all duration-500">
+        <div class="text-6xl mb-4 animate-bounce">🥚</div>
+        <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500 mb-2">Webagotchi</h1>
+        <p class="text-slate-500 mb-8 font-semibold">Tumbuh, Main, dan Bertahan Hidup!</p>
         
-        <input id="ownerName" type="text" placeholder="Nama Kamu (Pemilik)" class="w-full mb-3 p-3 border-2 border-gray-200 rounded-xl outline-none focus:border-indigo-500 transition">
-        <input id="petName" type="text" placeholder="Nama Peliharaan" class="w-full mb-6 p-3 border-2 border-gray-200 rounded-xl outline-none focus:border-indigo-500 transition">
+        <div class="space-y-4">
+            <input id="ownerName" type="text" placeholder="Nama Kamu" class="w-full p-4 bg-white/50 border-2 border-white rounded-2xl outline-none focus:border-pink-400 focus:bg-white transition-all shadow-inner font-bold text-center">
+            <input id="petName" type="text" placeholder="Nama Peliharaan" class="w-full p-4 bg-white/50 border-2 border-white rounded-2xl outline-none focus:border-violet-400 focus:bg-white transition-all shadow-inner font-bold text-center">
+        </div>
         
-        <button onclick="startGame()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-lg hover:shadow-indigo-500/50">
-            Tetaskan Telur! 🥚
+        <button onclick="startGame()" class="mt-8 w-full bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 text-white font-black text-lg py-4 rounded-2xl transition-all shadow-[0_10px_20px_rgba(236,72,153,0.3)] hover:shadow-[0_10px_20px_rgba(236,72,153,0.5)] hover:-translate-y-1">
+            Mulai Petualangan! ✨
         </button>
     </div>
 
-    <!-- LAYAR 2: GAMEPLAY -->
-    <div id="game-screen" class="hidden bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative border-4 border-indigo-900">
+    <!-- ================= LAYAR 2: GAMEPLAY UTAMA ================= -->
+    <div id="game-screen" class="hidden glass-panel rounded-[40px] shadow-2xl w-[95%] max-w-md h-[90vh] max-h-[800px] flex flex-col overflow-hidden relative border border-white/40">
         
-        <div class="bg-indigo-600 text-white p-4 flex justify-between items-center shadow-md relative z-10">
-            <div>
-                <h2 id="displayPetName" class="text-xl font-bold leading-tight">Nama Pet</h2>
-                <p class="text-indigo-200 text-xs">Milik: <span id="displayOwnerName"></span></p>
+        <!-- Header Profile & Coins -->
+        <div class="p-6 pb-4 flex justify-between items-center bg-white/30 backdrop-blur-md border-b border-white/30 z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-violet-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg border-2 border-white">
+                    <span id="initialAvatar">?</span>
+                </div>
+                <div>
+                    <h2 id="displayPetName" class="text-2xl font-black text-slate-800 leading-none mb-1">Nama Pet</h2>
+                    <p class="text-slate-500 text-sm font-bold"><i class="fa-solid fa-user-tag text-xs mr-1"></i> <span id="displayOwnerName"></span></p>
+                </div>
             </div>
-            <div class="bg-yellow-400 text-yellow-900 font-black px-4 py-1 rounded-full shadow-inner">
-                🪙 <span id="statCoins">0</span>
+            <div class="bg-gradient-to-r from-amber-300 to-orange-400 text-white font-black px-4 py-2 rounded-2xl shadow-lg border-2 border-white/50 flex items-center gap-2">
+                <i class="fa-solid fa-coins"></i> <span id="statCoins">0</span>
             </div>
         </div>
 
-        <div id="stage" class="room-bg h-64 w-full relative flex items-center justify-center overflow-hidden transition-all duration-1000">
-            <div class="absolute top-2 right-2">
-                <span id="sleepingStatus" class="bg-black/50 text-white text-xs px-2 py-1 rounded-full hidden">Zzz...</span>
+        <!-- STAGE 3D / VISUAL AREA -->
+        <div id="stage" class="flex-1 relative flex items-center justify-center transition-all duration-1000 bg-gradient-to-b from-sky-200 to-sky-100">
+            <!-- Lamp Switch -->
+            <button onclick="interact('sleep')" class="absolute top-4 right-4 w-12 h-12 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-xl text-slate-600 transition-all hover:scale-110 z-20 border-2 border-slate-100">
+                <i id="lampIcon" class="fa-solid fa-lightbulb"></i>
+            </button>
+
+            <!-- Status Tidur -->
+            <div id="sleepingStatus" class="absolute top-10 left-1/2 transform -translate-x-1/2 text-white font-black text-2xl hidden tracking-widest animate-pulse z-10">
+                Z z Z . . .
             </div>
-            <div id="character" class="text-8xl animate-breathe transition-all duration-500">👾</div>
-            <div id="flies" class="absolute text-2xl animate-spin hidden" style="animation-duration: 3s;">🦟</div>
+
+            <!-- Karakter Emoji -->
+            <div id="character" class="text-[120px] char-idle transition-all duration-300 filter drop-shadow-2xl z-10 select-none">
+                👾
+            </div>
+            
+            <!-- Lalat kalau kotor -->
+            <div id="flies" class="absolute text-4xl animate-spin hidden opacity-70 z-20" style="animation-duration: 2s; top: 30%; right: 30%;">
+                🦟
+            </div>
+
+            <!-- Bayangan Karakter -->
+            <div id="shadow" class="absolute bottom-[20%] w-32 h-4 bg-black/10 rounded-[100%] blur-sm"></div>
         </div>
 
-        <div class="p-5 bg-gray-50 grid grid-cols-2 gap-4 text-xs font-bold text-gray-600">
-            <div>🍔 Lapar <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barHunger" class="bg-orange-500 h-2 rounded-full" style="width: 100%"></div></div></div>
-            <div>😊 Senang <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barHappy" class="bg-yellow-400 h-2 rounded-full" style="width: 100%"></div></div></div>
-            <div>⚡ Energi <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barEnergy" class="bg-blue-500 h-2 rounded-full" style="width: 100%"></div></div></div>
-            <div>🛁 Kebersihan <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barHygiene" class="bg-cyan-400 h-2 rounded-full" style="width: 100%"></div></div></div>
-            <div class="col-span-2">❤️ Kesehatan <div class="w-full bg-gray-300 rounded-full h-2 mt-1"><div id="barHealth" class="bg-red-500 h-2 rounded-full" style="width: 100%"></div></div></div>
-        </div>
+        <!-- STATUS BARS CONTAINER -->
+        <div class="bg-white/90 p-6 rounded-t-[40px] shadow-[0_-10px_25px_rgba(0,0,0,0.05)] z-20 relative">
+            <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div> <!-- Handle bar -->
 
-        <div class="p-4 grid grid-cols-3 gap-3 bg-white">
-            <button onclick="interact('feed')" class="bg-orange-100 hover:bg-orange-200 text-orange-700 font-bold py-3 rounded-xl transition flex flex-col items-center"><span class="text-2xl mb-1">🍔</span> Makan</button>
-            <button onclick="interact('play')" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-bold py-3 rounded-xl transition flex flex-col items-center"><span class="text-2xl mb-1">🎾</span> Main</button>
-            <button onclick="interact('bathe')" class="bg-cyan-100 hover:bg-cyan-200 text-cyan-700 font-bold py-3 rounded-xl transition flex flex-col items-center"><span class="text-2xl mb-1">🛁</span> Mandi</button>
-            <button onclick="interact('sleep')" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold py-3 rounded-xl transition flex flex-col items-center"><span class="text-2xl mb-1">💡</span> Lampu</button>
-            <button onclick="interact('heal')" class="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 rounded-xl transition flex flex-col items-center"><span class="text-2xl mb-1">💊</span> Obat</button>
-            <button onclick="alert('Toko Baju 3D Segera Hadir!')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition flex flex-col items-center opacity-50"><span class="text-2xl mb-1">👕</span> Toko</button>
+            <div class="grid grid-cols-2 gap-x-6 gap-y-4 mb-6">
+                <!-- Lapar -->
+                <div>
+                    <div class="flex justify-between text-sm font-black mb-1 text-slate-600">
+                        <span><i class="fa-solid fa-drumstick-bite text-orange-500 w-5"></i> Lapar</span>
+                        <span id="valHunger">100%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 shadow-inner overflow-hidden">
+                        <div id="barHunger" class="stat-bar bg-gradient-to-r from-orange-400 to-red-500 h-full rounded-full" style="width: 100%"></div>
+                    </div>
+                </div>
+                <!-- Senang -->
+                <div>
+                    <div class="flex justify-between text-sm font-black mb-1 text-slate-600">
+                        <span><i class="fa-solid fa-face-smile text-yellow-400 w-5"></i> Senang</span>
+                        <span id="valHappy">100%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 shadow-inner overflow-hidden">
+                        <div id="barHappy" class="stat-bar bg-gradient-to-r from-yellow-300 to-yellow-500 h-full rounded-full" style="width: 100%"></div>
+                    </div>
+                </div>
+                <!-- Energi -->
+                <div>
+                    <div class="flex justify-between text-sm font-black mb-1 text-slate-600">
+                        <span><i class="fa-solid fa-bolt text-blue-500 w-5"></i> Energi</span>
+                        <span id="valEnergy">100%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 shadow-inner overflow-hidden">
+                        <div id="barEnergy" class="stat-bar bg-gradient-to-r from-cyan-400 to-blue-500 h-full rounded-full" style="width: 100%"></div>
+                    </div>
+                </div>
+                <!-- Kebersihan -->
+                <div>
+                    <div class="flex justify-between text-sm font-black mb-1 text-slate-600">
+                        <span><i class="fa-solid fa-soap text-teal-400 w-5"></i> Bersih</span>
+                        <span id="valHygiene">100%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-3 border border-slate-200 shadow-inner overflow-hidden">
+                        <div id="barHygiene" class="stat-bar bg-gradient-to-r from-teal-300 to-emerald-500 h-full rounded-full" style="width: 100%"></div>
+                    </div>
+                </div>
+                <!-- Kesehatan (Full Width) -->
+                <div class="col-span-2 mt-2">
+                    <div class="flex justify-between text-sm font-black mb-1 text-slate-600">
+                        <span><i class="fa-solid fa-heart text-red-500 w-5"></i> Kesehatan</span>
+                        <span id="valHealth" class="text-red-500">100%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-4 border border-slate-200 shadow-inner overflow-hidden">
+                        <div id="barHealth" class="stat-bar bg-gradient-to-r from-rose-400 to-red-600 h-full rounded-full" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACTION BUTTONS GRID -->
+            <div class="grid grid-cols-4 gap-3">
+                <button onclick="interact('feed')" class="group bg-orange-50 hover:bg-orange-500 hover:text-white text-orange-600 border-2 border-orange-200 hover:border-orange-500 rounded-2xl py-4 transition-all flex flex-col items-center shadow-sm hover:shadow-lg hover:-translate-y-1">
+                    <i class="fa-solid fa-burger text-2xl mb-1 group-hover:animate-bounce"></i>
+                    <span class="text-[10px] font-black uppercase tracking-wider">Makan</span>
+                </button>
+                <button onclick="interact('play')" class="group bg-yellow-50 hover:bg-yellow-400 hover:text-white text-yellow-600 border-2 border-yellow-200 hover:border-yellow-400 rounded-2xl py-4 transition-all flex flex-col items-center shadow-sm hover:shadow-lg hover:-translate-y-1">
+                    <i class="fa-solid fa-gamepad text-2xl mb-1 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-[10px] font-black uppercase tracking-wider">Main</span>
+                </button>
+                <button onclick="interact('bathe')" class="group bg-teal-50 hover:bg-teal-400 hover:text-white text-teal-600 border-2 border-teal-200 hover:border-teal-400 rounded-2xl py-4 transition-all flex flex-col items-center shadow-sm hover:shadow-lg hover:-translate-y-1">
+                    <i class="fa-solid fa-shower text-2xl mb-1 group-hover:rotate-12 transition-transform"></i>
+                    <span class="text-[10px] font-black uppercase tracking-wider">Mandi</span>
+                </button>
+                <button onclick="interact('heal')" class="group bg-red-50 hover:bg-red-500 hover:text-white text-red-600 border-2 border-red-200 hover:border-red-500 rounded-2xl py-4 transition-all flex flex-col items-center shadow-sm hover:shadow-lg hover:-translate-y-1 relative">
+                    <i class="fa-solid fa-kit-medical text-2xl mb-1 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-[10px] font-black uppercase tracking-wider">Obat</span>
+                    <span id="alertHealth" class="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center animate-ping hidden">!</span>
+                </button>
+            </div>
         </div>
     </div>
 
+    <!-- SCRIPT LOGIKA UTAMA -->
     <script>
-        // PERBAIKAN: Ubah nama variabel menjadi supabaseClient
+        // Supabase Init
         const supabaseUrl = 'https://bkxclrjycsdpchodgzzb.supabase.co';
         const supabaseKey = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         
         let currentPetId = null;
+        let lastSyncTime = null;
+
+        // Tampilkan Notifikasi Toast
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.className = `fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full shadow-2xl font-bold z-50 transition-all duration-300 ${isError ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`;
+            toast.style.opacity = '1';
+            toast.style.transform = 'translate(-50%, 0)';
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translate(-50%, -40px)';
+            }, 3000);
+        }
 
         async function startGame() {
-            const owner = document.getElementById('ownerName').value;
-            const pet = document.getElementById('petName').value;
+            const owner = document.getElementById('ownerName').value.trim();
+            const pet = document.getElementById('petName').value.trim();
             
             if(!owner || !pet) {
-                alert("Isi nama dulu bro!");
+                showToast("Isi nama kamu dan peliharaan dulu, bro!", true);
                 return;
             }
 
-            document.getElementById('setup-screen').innerHTML = `<h2 class="text-2xl font-bold animate-pulse text-indigo-600">Menyambungkan ke Server...</h2>`;
+            const btn = document.querySelector('#setup-screen button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyambungkan...';
+            btn.disabled = true;
 
-            // Gunakan supabaseClient
-            const { data, error } = await supabaseClient
-                .from('pets_advanced')
-                .insert([{ owner_name: owner, pet_name: pet }])
-                .select();
+            try {
+                // Cek apakah nama pet sudah ada di DB untuk user ini (Simulasi Login / Resume Game)
+                let { data: existingPets } = await supabaseClient
+                    .from('pets_advanced')
+                    .select('*')
+                    .eq('owner_name', owner)
+                    .eq('pet_name', pet)
+                    .order('last_interacted', { ascending: false })
+                    .limit(1);
 
-            if (error) {
-                console.error(error);
-                alert("Error database. Cek console untuk detail.");
-                location.reload();
-                return;
+                let petData;
+
+                if (existingPets && existingPets.length > 0) {
+                    petData = existingPets[0];
+                    showToast(`Selamat datang kembali, ${owner}!`);
+                } else {
+                    // Buat pet baru
+                    const { data, error } = await supabaseClient
+                        .from('pets_advanced')
+                        .insert([{ owner_name: owner, pet_name: pet }])
+                        .select();
+                    if(error) throw error;
+                    petData = data[0];
+                    showToast("Telur berhasil menetas!");
+                }
+
+                currentPetId = petData.id;
+                
+                // Transisi UI
+                document.getElementById('setup-screen').classList.add('scale-95', 'opacity-0', 'pointer-events-none');
+                setTimeout(() => {
+                    document.getElementById('setup-screen').classList.add('hidden');
+                    const gameScreen = document.getElementById('game-screen');
+                    gameScreen.classList.remove('hidden');
+                    // Trigger reflow untuk animasi masuk
+                    void gameScreen.offsetWidth;
+                    gameScreen.classList.add('scale-100', 'opacity-100');
+                }, 300);
+
+                // Set Info
+                document.getElementById('displayPetName').innerText = petData.pet_name;
+                document.getElementById('displayOwnerName').innerText = petData.owner_name;
+                document.getElementById('initialAvatar').innerText = petData.pet_name.charAt(0).toUpperCase();
+
+                // KALKULASI WAKTU OFFLINE (Real-time progression trick)
+                await calculateOfflineProgression(petData);
+
+                // Mulai loop game
+                setInterval(gameLoop, 10000); // Sinkronisasi tiap 10 detik
+
+            } catch (err) {
+                console.error(err);
+                showToast("Terjadi kesalahan jaringan/database.", true);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
+        }
 
-            currentPetId = data[0].id;
+        // FUNGSI SUPER: Menghitung berapa lama player pergi dan memotong status
+        async function calculateOfflineProgression(petData) {
+            const now = new Date();
+            const lastInteracted = new Date(petData.last_interacted);
+            const diffInSeconds = Math.floor((now - lastInteracted) / 1000);
             
-            document.getElementById('setup-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
-            document.getElementById('displayPetName').innerText = pet;
-            document.getElementById('displayOwnerName').innerText = owner;
+            // Hitung: 1 poin hilang setiap 1 jam (3600 detik). Bisa disesuaikan.
+            const hoursPassed = diffInSeconds / 3600; 
+            
+            if (hoursPassed > 0.5) { // Jika ditinggal lebih dari 30 menit
+                let lostPoints = Math.floor(hoursPassed * 10); // Hilang 10 poin per jam
 
-            updateUI(data[0]);
-            setInterval(gameLoop, 5000);
+                petData.hunger -= lostPoints;
+                petData.hygiene -= lostPoints;
+                petData.happiness -= (lostPoints / 2); // Bahagia turun lebih lambat
+
+                if (petData.is_sleeping) {
+                    petData.energy += (lostPoints * 2); // Kalau ditinggal tidur, energi nambah
+                } else {
+                    petData.energy -= lostPoints;
+                }
+
+                // Efek jangka panjang: Sakit
+                if (petData.hunger <= 0 || petData.hygiene <= 0) {
+                    petData.health -= (lostPoints * 2);
+                }
+
+                petData = clampPetData(petData);
+                
+                // Update ke DB hasil offline
+                petData.last_interacted = now.toISOString();
+                await supabaseClient.from('pets_advanced').update(petData).eq('id', petData.id);
+                
+                showToast(`Waktu berlalu ${Math.floor(hoursPassed)} jam! Status pet menurun.`, true);
+            }
+
+            updateUI(petData);
         }
 
         async function interact(action) {
             if(!currentPetId) return;
 
-            const { data } = await supabaseClient.from('pets_advanced').select('*').eq('id', currentPetId).single();
-            let pet = data;
+            const { data: pet } = await supabaseClient.from('pets_advanced').select('*').eq('id', currentPetId).single();
 
+            // Aturan Interaksi
             if(pet.is_sleeping && action !== 'sleep') {
-                alert("Sssst! Pet kamu lagi tidur. Nyalakan lampu dulu.");
+                setAnimation('char-sad', '😴');
+                showToast("Sssst! Matikan lampu (bangunkan) dulu.", true);
+                return;
+            }
+            if(pet.health <= 0) {
+                showToast("Pet kamu sudah tiada 👻. Bikin baru lagi ya.", true);
                 return;
             }
             if(pet.health < 30 && (action === 'play' || action === 'bathe')) {
-                alert("Pet kamu sakit parah! Kasih obat dulu 💊");
+                setAnimation('char-sad', '🤒');
+                showToast("Pet sakit parah! Kasih obat dulu.", true);
                 return;
             }
 
-            if (action === 'feed') { pet.hunger += 30; pet.energy -= 5; pet.hygiene -= 10; animateCharacter('scale(1.2)'); }
-            if (action === 'play') { pet.happiness += 20; pet.energy -= 15; pet.hunger -= 15; pet.hygiene -= 15; pet.coins += 10; animateCharacter('rotate(360deg)'); }
-            if (action === 'bathe') { pet.hygiene = 100; pet.happiness += 5; animateCharacter('translateY(-20px)'); }
-            if (action === 'heal') { pet.health = 100; pet.happiness -= 10; }
-            if (action === 'sleep') { pet.is_sleeping = !pet.is_sleeping; }
+            // Aksi
+            if (action === 'feed') { 
+                if(pet.hunger >= 100) return showToast("Sudah kenyang banget!", true);
+                pet.hunger += 25; pet.energy -= 5; pet.hygiene -= 5; 
+                setAnimation('char-eat', '😋');
+                showToast("Nyam nyam!");
+            }
+            if (action === 'play') { 
+                if(pet.energy < 20) return showToast("Kecapean, butuh tidur/makan!", true);
+                pet.happiness += 20; pet.energy -= 15; pet.hunger -= 10; pet.hygiene -= 10; pet.coins += 15; 
+                setAnimation('char-play', '😆');
+                showToast("+15 Koin! Seru!");
+            }
+            if (action === 'bathe') { 
+                if(pet.hygiene >= 100) return showToast("Sudah wangi!", true);
+                pet.hygiene = 100; pet.happiness += 5; 
+                setAnimation('char-idle', '🛁');
+                showToast("Segar!");
+            }
+            if (action === 'heal') { 
+                if(pet.health >= 100) return showToast("Pet kamu sehat walafiat!", true);
+                pet.health = 100; pet.happiness -= 10; 
+                setAnimation('char-sad', '😖');
+                showToast("Sembuh, tapi rasanya pait!");
+            }
+            if (action === 'sleep') { 
+                pet.is_sleeping = !pet.is_sleeping; 
+            }
 
-            pet.hunger = clamp(pet.hunger);
-            pet.happiness = clamp(pet.happiness);
-            pet.energy = clamp(pet.energy);
-            pet.hygiene = clamp(pet.hygiene);
-            pet.health = clamp(pet.health);
+            let updatedPet = clampPetData(pet);
+            updatedPet.last_interacted = new Date().toISOString();
 
             await supabaseClient.from('pets_advanced').update({
-                hunger: pet.hunger, happiness: pet.happiness, energy: pet.energy,
-                hygiene: pet.hygiene, health: pet.health, coins: pet.coins,
-                is_sleeping: pet.is_sleeping
+                hunger: updatedPet.hunger, happiness: updatedPet.happiness, energy: updatedPet.energy,
+                hygiene: updatedPet.hygiene, health: updatedPet.health, coins: updatedPet.coins,
+                is_sleeping: updatedPet.is_sleeping, last_interacted: updatedPet.last_interacted
             }).eq('id', currentPetId);
 
-            updateUI(pet);
+            updateUI(updatedPet);
         }
 
+        // Loop berjalan selama web dibuka
         async function gameLoop() {
             if(!currentPetId) return;
             const { data: pet } = await supabaseClient.from('pets_advanced').select('*').eq('id', currentPetId).single();
             
+            if(pet.health <= 0) {
+                updateUI(pet);
+                return; // Berhenti kalau mati
+            }
+
             if (pet.is_sleeping) {
-                pet.energy += 5;
+                pet.energy += 2;
                 pet.hunger -= 1;
             } else {
-                pet.hunger -= 2;
+                pet.hunger -= 1;
                 pet.happiness -= 1;
-                pet.energy -= 1;
                 pet.hygiene -= 1;
+                pet.energy -= 1;
             }
 
-            if (pet.hygiene < 30 || pet.hunger < 20) {
-                pet.health -= 5;
+            // Penalti kalau status buruk
+            if (pet.hygiene < 20 || pet.hunger < 20) {
+                pet.health -= 2;
             }
 
-            pet.hunger = clamp(pet.hunger);
-            pet.happiness = clamp(pet.happiness);
-            pet.energy = clamp(pet.energy);
-            pet.hygiene = clamp(pet.hygiene);
-            pet.health = clamp(pet.health);
+            let updatedPet = clampPetData(pet);
+            updatedPet.last_interacted = new Date().toISOString();
 
-            await supabaseClient.from('pets_advanced').update(pet).eq('id', currentPetId);
-            updateUI(pet);
+            await supabaseClient.from('pets_advanced').update(updatedPet).eq('id', currentPetId);
+            updateUI(updatedPet);
+        }
+
+        function setAnimation(animationClass, emoji) {
+            const char = document.getElementById('character');
+            char.className = `text-[120px] transition-all duration-300 filter drop-shadow-2xl z-10 select-none ${animationClass}`;
+            char.innerText = emoji;
+            
+            // Kembali ke idle setelah animasi selesai
+            setTimeout(() => {
+                char.className = `text-[120px] transition-all duration-300 filter drop-shadow-2xl z-10 select-none char-idle`;
+                // Emoji dikembalikan oleh updateUI saat sinkronisasi berikutnya
+            }, 1500);
         }
 
         function updateUI(pet) {
             document.getElementById('statCoins').innerText = pet.coins;
+            
+            // Update Teks Value
+            document.getElementById('valHunger').innerText = pet.hunger + '%';
+            document.getElementById('valHappy').innerText = pet.happiness + '%';
+            document.getElementById('valEnergy').innerText = pet.energy + '%';
+            document.getElementById('valHygiene').innerText = pet.hygiene + '%';
+            document.getElementById('valHealth').innerText = pet.health + '%';
+
+            // Update Panjang Bar
             document.getElementById('barHunger').style.width = pet.hunger + '%';
             document.getElementById('barHappy').style.width = pet.happiness + '%';
             document.getElementById('barEnergy').style.width = pet.energy + '%';
             document.getElementById('barHygiene').style.width = pet.hygiene + '%';
             document.getElementById('barHealth').style.width = pet.health + '%';
 
-            document.getElementById('barHunger').className = pet.hunger < 30 ? "bg-red-500 h-2 rounded-full" : "bg-orange-500 h-2 rounded-full";
-            document.getElementById('barHealth').className = pet.health < 30 ? "bg-black h-2 rounded-full animate-pulse" : "bg-red-500 h-2 rounded-full";
+            // Logika Warna Bar Kritis
+            document.getElementById('barHunger').className = pet.hunger < 30 ? "stat-bar bg-red-600 animate-pulse h-full rounded-full" : "stat-bar bg-gradient-to-r from-orange-400 to-red-500 h-full rounded-full";
+            document.getElementById('barHealth').className = pet.health < 30 ? "stat-bar bg-black animate-pulse h-full rounded-full" : "stat-bar bg-gradient-to-r from-rose-400 to-red-600 h-full rounded-full";
+
+            // Peringatan Obat
+            if(pet.health < 30) document.getElementById('alertHealth').classList.remove('hidden');
+            else document.getElementById('alertHealth').classList.add('hidden');
 
             const stage = document.getElementById('stage');
             const character = document.getElementById('character');
             const flies = document.getElementById('flies');
             const sleepStatus = document.getElementById('sleepingStatus');
+            const lampIcon = document.getElementById('lampIcon');
 
-            if (pet.is_sleeping) {
-                stage.style.background = "#1a202c";
-                sleepStatus.classList.remove('hidden');
-                character.innerText = "😴";
-            } else {
-                stage.style.background = "radial-gradient(circle at 50% 120%, #d4e6f1 0%, #85c1e9 50%, #2e86c1 100%)";
-                sleepStatus.classList.add('hidden');
-                
-                if (pet.health < 30) character.innerText = "🤢";
-                else if (pet.happiness < 40) character.innerText = "🥺";
-                else character.innerText = "👾";
+            if(pet.health <= 0) {
+                character.innerText = "👻";
+                stage.className = "flex-1 relative flex items-center justify-center transition-all duration-1000 bg-gradient-to-b from-gray-700 to-gray-900";
+                return;
             }
 
-            if (pet.hygiene < 40) flies.classList.remove('hidden');
+            // Logika Visual Lingkungan
+            if (pet.is_sleeping) {
+                stage.className = "flex-1 relative flex items-center justify-center transition-all duration-1000 bg-gradient-to-b from-indigo-900 to-slate-900";
+                sleepStatus.classList.remove('hidden');
+                lampIcon.className = "fa-solid fa-moon text-indigo-500";
+                character.innerText = "😴";
+            } else {
+                stage.className = "flex-1 relative flex items-center justify-center transition-all duration-1000 bg-gradient-to-b from-sky-200 to-sky-100";
+                sleepStatus.classList.add('hidden');
+                lampIcon.className = "fa-solid fa-lightbulb text-yellow-500";
+                
+                // Ekspresi Utama
+                if(!character.className.includes('char-eat') && !character.className.includes('char-play')) {
+                    if (pet.health < 30) { character.innerText = "🤢"; character.classList.add('char-sad'); }
+                    else if (pet.hunger < 30) { character.innerText = "😫"; character.classList.remove('char-sad'); }
+                    else if (pet.happiness < 40) { character.innerText = "🥺"; character.classList.remove('char-sad'); }
+                    else { character.innerText = "👾"; character.classList.remove('char-sad'); }
+                }
+            }
+
+            // Logika Lalat
+            if (pet.hygiene < 40 && !pet.is_sleeping) flies.classList.remove('hidden');
             else flies.classList.add('hidden');
         }
 
-        function animateCharacter(transformValue) {
-            const char = document.getElementById('character');
-            char.style.transform = transformValue;
-            setTimeout(() => { char.style.transform = 'scale(1)'; }, 300);
+        function clampPetData(pet) {
+            pet.hunger = Math.min(100, Math.max(0, pet.hunger));
+            pet.happiness = Math.min(100, Math.max(0, pet.happiness));
+            pet.energy = Math.min(100, Math.max(0, pet.energy));
+            pet.hygiene = Math.min(100, Math.max(0, pet.hygiene));
+            pet.health = Math.min(100, Math.max(0, pet.health));
+            return pet;
         }
-
-        function clamp(val) { return Math.min(100, Math.max(0, val)); }
     </script>
 </body>
 </html>

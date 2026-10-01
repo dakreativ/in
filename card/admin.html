@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Dakreativ</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Library Pembuat QR dan ZIP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -94,7 +93,7 @@
                 </tr>
             `).join('');
         } catch (err) {
-            document.getElementById('table-body').innerHTML = '<tr><td colspan="5" style="text-align:center; color:#ef4444;">Gagal memuat data database.</td></tr>';
+            document.getElementById('table-body').innerHTML = '<tr><td colspan="5" style="text-align:center; color:#ef4444;">Gagal memuat data.</td></tr>';
         }
     }
 
@@ -118,16 +117,11 @@
                 newRows.push({ id_produk: id, klien_pembeli: klien, wa_klien: wa, status: "Kosong" });
             }
 
-            // 1. Proses Database
             const { error } = await supabase.from('cards').insert(newRows);
             if(error) throw new Error("Gagal nyimpen ke database: " + error.message);
 
             btn.innerHTML = "Membuat ZIP...";
             
-            // Cek apakah library ZIP tersedia
-            if (typeof JSZip === 'undefined') throw new Error("Library JSZip terblokir koneksi.");
-
-            // 2. Proses Canvas & ZIP
             const zip = new JSZip();
             
             for (let i = 0; i < generatedIds.length; i++) {
@@ -141,9 +135,9 @@
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
                 const img = new Image();
-                img.src = qr.toDataURL();
                 
-                await new Promise((resolve, reject) => {
+                // PERBAIKAN LOGIKA: Pasang telinga (Promise) dulu sebelum gambarnya dimuat!
+                const drawPromise = new Promise((resolve, reject) => {
                     img.onload = () => {
                         ctx.drawImage(img, 0, 0);
                         ctx.fillStyle = '#000000'; 
@@ -155,15 +149,18 @@
                     img.onerror = () => reject(new Error("Gagal menggambar QR Code"));
                 });
 
+                // Baru tembak gambar QR-nya ke Image
+                img.src = qr.toDataURL();
+                
+                // Tunggu sampai gambarnya beres digambar di Canvas
+                await drawPromise;
+
                 const base64Data = canvas.toDataURL('image/png').split(',')[1];
                 zip.file(`${id}.png`, base64Data, {base64: true});
             }
 
-            // Bersihin nama klien biar gak ditolak Windows pas download
             const amanKlien = klien.replace(/[^a-zA-Z0-9]/g, '_');
             const content = await zip.generateAsync({type:"blob"});
-            
-            if (typeof saveAs === 'undefined') throw new Error("Fitur Download terblokir browser.");
             
             saveAs(content, `Batch_${amanKlien}_${jumlah}pcs.zip`);
             
@@ -173,7 +170,7 @@
 
         } catch (err) {
             console.error(err);
-            showToast("ERROR: " + err.message, true); // Ini bakal ngasih tau jelas errornya apa
+            showToast("ERROR: " + err.message, true);
         } finally {
             btn.disabled = false; 
             btn.innerHTML = "Buat ZIP";

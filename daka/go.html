@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Webagotchi 3D 2.0</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;900&display=swap" rel="stylesheet">
+<title>Webagotchi Kawaii 3.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -12,7 +12,7 @@
         theme: {
             extend: {
                 fontFamily: { sans: ['Nunito', 'sans-serif'] },
-                colors: { sky: '#74b9ff', grass: '#55efc4', panel: 'rgba(255, 255, 255, 0.85)' }
+                colors: { sky: '#74b9ff', panel: 'rgba(255, 255, 255, 0.9)' }
             }
         }
     }
@@ -20,129 +20,130 @@
 <style>
     body { background: linear-gradient(135deg, #a29bfe 0%, #74b9ff 100%); font-family: 'Nunito', sans-serif; height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; margin: 0; }
     
-    /* Console Wrapper for Desktop */
-    #app-wrapper {
-        width: 100%; height: 100%; max-width: 400px; max-height: 850px;
-        position: relative; overflow: hidden;
-        background: #eef2f3;
-    }
+    #app-wrapper { width: 100%; height: 100%; max-width: 400px; max-height: 850px; position: relative; overflow: hidden; background: #eef2f3; }
     @media (min-width: 420px) {
         #app-wrapper { height: 90vh; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 8px #ffffff, inset 0 0 20px rgba(0,0,0,0.1); border: 4px solid #dfe6e9; }
     }
 
-    /* 3D Buttons */
+    /* Buttons */
     .btn-3d {
-        position: relative; background: #fff; border-radius: 20px; font-weight: 800; color: #2d3436;
-        box-shadow: 0 6px 0 #b2bec3, 0 10px 15px rgba(0,0,0,0.1);
+        position: relative; background: #fff; border-radius: 18px; font-weight: 800; color: #2d3436;
+        box-shadow: 0 5px 0 #b2bec3, 0 10px 15px rgba(0,0,0,0.1);
         transition: all 0.1s; display: flex; flex-direction: column; align-items: center; justify-content: center;
-        text-transform: uppercase; letter-spacing: 0.5px;
     }
-    .btn-3d::after {
-        content: ''; position: absolute; top: 2px; left: 10%; right: 10%; height: 30%;
-        background: linear-gradient(to bottom, rgba(255,255,255,0.8), transparent); border-radius: 20px; pointer-events: none;
-    }
-    .btn-3d:active { transform: translateY(6px); box-shadow: 0 0px 0 #b2bec3, 0 2px 4px rgba(0,0,0,0.1); }
-    
-    .btn-primary { background: #fdcb6e; box-shadow: 0 6px 0 #e1b12c, 0 10px 15px rgba(225, 177, 44, 0.3); color: #fff; }
+    .btn-3d:active { transform: translateY(5px); box-shadow: 0 0px 0 #b2bec3, 0 2px 4px rgba(0,0,0,0.1); }
+    .btn-primary { background: #fdcb6e; box-shadow: 0 5px 0 #e1b12c; color: #fff; text-transform: uppercase; letter-spacing: 1px;}
     .btn-primary:active { box-shadow: 0 0px 0 #e1b12c; }
 
-    /* 3D Icons */
-    .icon-3d { filter: drop-shadow(0px 4px 2px rgba(0,0,0,0.2)) drop-shadow(0px 1px 1px rgba(255,255,255,0.5)); font-size: 28px; margin-bottom: 2px; }
+    .icon-3d { filter: drop-shadow(0px 3px 1px rgba(0,0,0,0.2)); font-size: 24px; margin-bottom: 2px; }
 
-    /* Glass Panels */
-    .glass-panel { background: var(--tw-colors-panel); border-radius: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 2px solid rgba(255,255,255,0.8); backdrop-filter: blur(12px); }
+    /* Panels & Bars */
+    .glass-panel { background: var(--tw-colors-panel); border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); border: 2px solid rgba(255,255,255,1); backdrop-filter: blur(10px); }
+    .stat-bar-container { background: #dfe6e9; border-radius: 8px; height: 12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; padding: 2px;}
+    .stat-fill { height: 100%; border-radius: 6px; transition: width 0.3s ease, background-color 0.3s; position: relative; }
+    .stat-fill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 30%; background: rgba(255,255,255,0.4); }
 
-    /* Progress Bars */
-    .stat-bar-container { background: #dfe6e9; border-radius: 12px; height: 10px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; }
-    .stat-fill { height: 100%; border-radius: 12px; transition: width 0.3s ease; position: relative; }
-    .stat-fill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: rgba(255,255,255,0.4); }
-
-    /* Canvas Stage */
-    #stage-container { border-radius: 24px; box-shadow: inset 0 10px 20px rgba(0,0,0,0.1); overflow: hidden; border: 4px solid #fff; }
     canvas { touch-action: none; outline: none; }
-
-    /* Animations */
     @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     .animate-float { animation: float 3s ease-in-out infinite; }
-    ::-webkit-scrollbar { display: none; }
 </style>
 </head>
 <body class="text-gray-800">
 
 <div id="app-wrapper" class="flex flex-col">
-    
-    <!-- Toast Notification -->
-    <div id="toast" class="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-white/90 backdrop-blur px-5 py-2 rounded-full font-bold text-xs shadow-lg transform -translate-y-16 opacity-0 transition-all duration-300 pointer-events-none border border-gray-100 flex items-center gap-2">
-        <span class="text-base">🔔</span> <span id="toast-msg"></span>
+    <!-- Toast -->
+    <div id="toast" class="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-white/95 backdrop-blur px-5 py-2.5 rounded-full font-bold text-sm shadow-xl transform -translate-y-20 opacity-0 transition-all duration-300 pointer-events-none border-2 border-gray-100 flex items-center gap-2">
+        <span>🔔</span> <span id="toast-msg"></span>
     </div>
 
-    <!-- VIEW 1: Pick Pet -->
+    <!-- VIEW 1: Pick -->
     <main id="view-pick" class="flex-1 flex flex-col p-6 z-10 bg-white/40 backdrop-blur-md">
-        <div class="flex-1 flex flex-col justify-center gap-5">
+        <div class="flex-1 flex flex-col justify-center gap-6">
             <div class="text-center animate-float">
-                <div class="text-6xl mb-1 icon-3d">🥚</div>
-                <h2 class="text-2xl font-black text-gray-800">Pilih Temanmu!</h2>
+                <div class="text-6xl mb-2 icon-3d">🥚</div>
+                <h2 class="text-3xl font-black text-gray-800 tracking-tight">Pilih Pet!</h2>
             </div>
             <div id="pick-grid" class="grid grid-cols-2 gap-3"></div>
             <div class="space-y-3 mt-4">
-                <input id="pet-name" type="text" maxlength="10" placeholder="Beri nama..." class="w-full bg-white px-4 py-3 rounded-2xl outline-none focus:ring-4 focus:ring-yellow-300 text-center font-bold text-sm shadow-sm border-2 border-gray-100">
-                <button id="btn-start" class="w-full btn-3d btn-primary py-3 text-base">Mulai Main!</button>
+                <input id="pet-name" type="text" maxlength="10" placeholder="Namai pet-mu..." class="w-full bg-white px-4 py-4 rounded-2xl outline-none focus:ring-4 focus:ring-yellow-300 text-center font-black text-base shadow-sm border-2 border-gray-100 placeholder-gray-400">
+                <button id="btn-start" class="w-full btn-3d btn-primary py-4 text-lg">Let's Go!</button>
             </div>
         </div>
     </main>
 
     <!-- VIEW 2: Dashboard -->
-    <main id="view-home" class="flex-1 flex flex-col p-3 gap-3 z-10 hidden bg-gradient-to-b from-sky-100 to-sky-50">
-        <!-- Header -->
-        <header class="flex justify-between items-center glass-panel px-3 py-2">
-            <div class="flex items-center gap-2">
-                <div id="avatar" class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-2xl shadow-sm border border-gray-100 icon-3d"></div>
+    <main id="view-home" class="flex-1 flex flex-col p-4 gap-4 z-10 hidden bg-gradient-to-b from-sky-100 to-sky-50">
+        <header class="flex justify-between items-center glass-panel px-4 py-2">
+            <div class="flex items-center gap-3">
+                <div id="avatar" class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-3xl shadow-sm border border-gray-100 icon-3d"></div>
                 <div>
-                    <h1 id="hud-name" class="font-black text-sm text-gray-800"></h1>
-                    <p id="hud-species" class="text-[10px] font-bold text-gray-400 uppercase"></p>
+                    <h1 id="hud-name" class="font-black text-base text-gray-800"></h1>
+                    <p id="hud-species" class="text-[10px] font-bold text-gray-400 uppercase tracking-wider"></p>
                 </div>
             </div>
-            <button onclick="ui.openShop()" class="btn-3d px-3 py-1.5 text-xs flex items-center gap-1">
-                <span class="text-sm icon-3d">🪙</span> <span id="hud-coins">0</span>
+            <button onclick="ui.openShop()" class="btn-3d px-4 py-2 text-sm flex items-center gap-2">
+                <span class="icon-3d text-lg">🪙</span> <span id="hud-coins" class="font-black">0</span>
             </button>
         </header>
 
-        <!-- 3D Scene -->
-        <div id="stage-container" class="flex-1 relative bg-sky-300 transition-colors duration-1000">
+        <!-- 3D Stage -->
+        <div class="flex-1 relative bg-[#74b9ff] transition-colors duration-1000 rounded-3xl shadow-inner border-4 border-white overflow-hidden" id="stage-bg">
             <canvas id="canvas-3d" class="absolute inset-0 w-full h-full cursor-pointer"></canvas>
-            
-            <!-- Chat Bubble -->
-            <div id="pet-bubble" class="absolute top-4 left-1/2 -translate-x-1/2 bg-white px-4 py-1.5 rounded-2xl font-bold text-xs shadow-md animate-float pointer-events-none border border-gray-100">
-                Halo! ✨
-            </div>
-            <div class="absolute bottom-2 w-full text-center text-[10px] font-bold text-white/80 pointer-events-none">Tap untuk interaksi</div>
+            <div id="pet-bubble" class="absolute top-6 left-1/2 -translate-x-1/2 bg-white px-4 py-2 rounded-2xl font-bold text-xs shadow-lg animate-float pointer-events-none">Halo! ✨</div>
+            <div class="absolute bottom-3 w-full text-center text-xs font-bold text-white/90 drop-shadow-md pointer-events-none">Tap Wajahku!</div>
         </div>
 
         <!-- Stats -->
-        <div class="glass-panel p-3 grid grid-cols-2 gap-x-4 gap-y-3">
-            <div class="flex flex-col gap-1"><div class="flex justify-between text-[9px] font-black text-gray-500 uppercase"><span>Lapar</span><span class="icon-3d text-[10px]">🍔</span></div><div class="stat-bar-container"><div id="bar-hunger" class="stat-fill bg-orange-400"></div></div></div>
-            <div class="flex flex-col gap-1"><div class="flex justify-between text-[9px] font-black text-gray-500 uppercase"><span>Senang</span><span class="icon-3d text-[10px]">🎾</span></div><div class="stat-bar-container"><div id="bar-happy" class="stat-fill bg-yellow-400"></div></div></div>
-            <div class="flex flex-col gap-1"><div class="flex justify-between text-[9px] font-black text-gray-500 uppercase"><span>Energi</span><span class="icon-3d text-[10px]">⚡</span></div><div class="stat-bar-container"><div id="bar-energy" class="stat-fill bg-blue-400"></div></div></div>
-            <div class="flex flex-col gap-1"><div class="flex justify-between text-[9px] font-black text-gray-500 uppercase"><span>Bersih</span><span class="icon-3d text-[10px]">🛁</span></div><div class="stat-bar-container"><div id="bar-clean" class="stat-fill bg-teal-400"></div></div></div>
+        <div class="glass-panel p-4 grid grid-cols-2 gap-x-6 gap-y-3">
+            <div class="flex flex-col gap-1"><div class="flex justify-between text-[10px] font-black text-gray-500 uppercase"><span>Lapar</span><span class="icon-3d text-[11px]">🍔</span></div><div class="stat-bar-container"><div id="bar-hunger" class="stat-fill bg-orange-400"></div></div></div>
+            <div class="flex flex-col gap-1"><div class="flex justify-between text-[10px] font-black text-gray-500 uppercase"><span>Senang</span><span class="icon-3d text-[11px]">🎾</span></div><div class="stat-bar-container"><div id="bar-happy" class="stat-fill bg-yellow-400"></div></div></div>
+            <div class="flex flex-col gap-1"><div class="flex justify-between text-[10px] font-black text-gray-500 uppercase"><span>Energi</span><span class="icon-3d text-[11px]">⚡</span></div><div class="stat-bar-container"><div id="bar-energy" class="stat-fill bg-blue-400"></div></div></div>
+            <div class="flex flex-col gap-1"><div class="flex justify-between text-[10px] font-black text-gray-500 uppercase"><span>Bersih</span><span class="icon-3d text-[11px]">🛁</span></div><div class="stat-bar-container"><div id="bar-clean" class="stat-fill bg-teal-400"></div></div></div>
         </div>
 
-        <!-- Controls -->
-        <nav class="flex justify-between gap-2 pb-1">
-            <button onclick="actions.feed()" class="btn-3d flex-1 aspect-square rounded-2xl group"><span class="icon-3d group-active:scale-90 transition-transform">🍔</span><span class="text-[9px]">Makan</span></button>
-            <button onclick="actions.bath()" class="btn-3d flex-1 aspect-square rounded-2xl group"><span class="icon-3d group-active:scale-90 transition-transform">🛁</span><span class="text-[9px]">Mandi</span></button>
-            <button onclick="actions.sleep()" id="btn-sleep" class="btn-3d flex-1 aspect-square rounded-2xl group"><span class="icon-3d group-active:scale-90 transition-transform">💤</span><span class="text-[9px]">Tidur</span></button>
-            <button onclick="ui.openGames()" class="btn-3d flex-1 aspect-square rounded-2xl group !bg-indigo-50 !shadow-[0_6px_0_#c7d2fe,0_10px_15px_rgba(0,0,0,0.1)] !text-indigo-600"><span class="icon-3d group-active:scale-90 transition-transform">🎮</span><span class="text-[9px]">Main</span></button>
+        <!-- Action Nav -->
+        <nav class="flex justify-between gap-3 pb-1">
+            <button onclick="actions.feed()" class="btn-3d flex-1 aspect-square rounded-[1.2rem] group"><span class="icon-3d text-3xl group-active:scale-90 transition-transform">🍔</span><span class="text-[10px] font-bold">MAKAN</span></button>
+            <button onclick="actions.bath()" class="btn-3d flex-1 aspect-square rounded-[1.2rem] group"><span class="icon-3d text-3xl group-active:scale-90 transition-transform">🛁</span><span class="text-[10px] font-bold">MANDI</span></button>
+            <button onclick="actions.sleep()" id="btn-sleep" class="btn-3d flex-1 aspect-square rounded-[1.2rem] group"><span class="icon-3d text-3xl group-active:scale-90 transition-transform">💤</span><span class="text-[10px] font-bold">TIDUR</span></button>
+            <button onclick="game.start()" class="btn-3d flex-1 aspect-square rounded-[1.2rem] group !bg-indigo-50 !shadow-[0_5px_0_#c7d2fe] !text-indigo-600 border border-indigo-100"><span class="icon-3d text-3xl group-active:scale-90 transition-transform">🎮</span><span class="text-[10px] font-bold">MAIN</span></button>
         </nav>
     </main>
 
-    <!-- Bottom Sheet / Shop -->
-    <div id="bottom-sheet" class="fixed inset-0 z-50 flex flex-col justify-end pointer-events-none hidden absolute">
-        <div id="sheet-backdrop" class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm pointer-events-auto opacity-0 transition-opacity" onclick="ui.closeSheet()"></div>
-        <div id="sheet-content" class="bg-white w-full rounded-t-[2rem] p-5 pointer-events-auto transform translate-y-full transition-transform shadow-2xl flex flex-col max-h-[75vh]">
-            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-4"></div>
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="sheet-title" class="text-lg font-black">Menu</h3>
-                <button onclick="ui.closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-bold">X</button>
+    <!-- VIEW 3: Mini Game (Catch the Food) -->
+    <main id="view-game" class="flex-1 flex flex-col z-20 hidden bg-gray-900 absolute inset-0 text-white">
+        <header class="flex justify-between items-center p-4 bg-gray-900/80 backdrop-blur border-b border-gray-800 z-30">
+            <div>
+                <h1 class="font-black text-lg text-yellow-400 uppercase">Tangkap!</h1>
+                <p id="game-score" class="text-xs font-bold text-gray-300">Skor: 0</p>
+            </div>
+            <button onclick="game.exit()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-xl font-bold text-xs shadow-[0_4px_0_#991b1b] active:translate-y-1 active:shadow-none transition-all">Berhenti</button>
+        </header>
+        <div class="flex-1 relative overflow-hidden bg-gray-800">
+            <canvas id="game-canvas" class="block w-full h-full cursor-none"></canvas>
+            
+            <!-- Game Over -->
+            <div id="game-over" class="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden z-40">
+                <div class="bg-white text-gray-800 p-6 rounded-3xl text-center max-w-[280px] w-full transform scale-95 shadow-2xl border-4 border-gray-100">
+                    <div class="text-5xl mb-2 icon-3d">💥</div>
+                    <h3 class="text-2xl font-black mb-1">Game Over!</h3>
+                    <p id="game-msg" class="text-sm font-bold text-gray-500 mb-6">Skor kamu: 10</p>
+                    <button onclick="game.start()" class="w-full btn-3d btn-primary py-3 mb-3 text-sm">Main Lagi</button>
+                    <button onclick="game.exit()" class="w-full btn-3d bg-gray-200 py-3 text-sm">Ambil Hadiah</button>
+                </div>
+            </div>
+        </div>
+        <div class="p-3 text-center text-xs font-bold text-gray-400 bg-gray-950">Geser keranjang ke Kiri & Kanan!</div>
+    </main>
+
+    <!-- Bottom Sheet -->
+    <div id="bottom-sheet" class="fixed inset-0 z-50 flex flex-col justify-end pointer-events-none hidden">
+        <div id="sheet-backdrop" class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm pointer-events-auto opacity-0 transition-opacity" onclick="ui.closeSheet()"></div>
+        <div id="sheet-content" class="bg-white w-full max-w-[400px] mx-auto rounded-t-[2.5rem] p-6 pointer-events-auto transform translate-y-full transition-transform shadow-2xl flex flex-col max-h-[80vh]">
+            <div class="w-16 h-1.5 bg-gray-200 rounded-full mx-auto mb-5"></div>
+            <div class="flex justify-between items-center mb-5">
+                <h3 id="sheet-title" class="text-xl font-black text-gray-800">Toko</h3>
+                <button onclick="ui.closeSheet()" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 font-bold hover:bg-gray-200 transition">X</button>
             </div>
             <div id="sheet-body" class="overflow-y-auto space-y-3 flex-1 pb-4"></div>
         </div>
@@ -153,16 +154,14 @@
     const $ = id => document.getElementById(id);
     const clamp = (val, min=0, max=100) => Math.max(min, Math.min(max, val));
 
-    // --- Audio Synth Engine (No External Files Needed!) ---
+    // --- Audio Engine (Synthesizer) ---
     const sfx = {
         ctx: null,
         init() { if(!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
         play(freq, type, dur, vol, slideFreq=null) {
             if(!this.ctx) return;
-            const osc = this.ctx.createOscillator();
-            const gain = this.ctx.createGain();
-            osc.type = type; 
-            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
             if(slideFreq) osc.frequency.exponentialRampToValueAtTime(slideFreq, this.ctx.currentTime + dur);
             gain.gain.setValueAtTime(vol, this.ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + dur);
@@ -174,36 +173,42 @@
         bath() { this.play(200, 'triangle', 0.4, 0.1, 100); },
         sleep() { this.play(300, 'sine', 0.3, 0.1, 200); },
         buy() { this.play(1200, 'sine', 0.1, 0.1, 2000); },
-        error() { this.play(150, 'sawtooth', 0.2, 0.1, 100); }
+        error() { this.play(150, 'sawtooth', 0.2, 0.1, 100); },
+        laugh() { // Chiptune happy sound
+            [600, 800, 1000, 1200].forEach((f, i) => setTimeout(() => this.play(f, 'square', 0.1, 0.05), i*80));
+        },
+        coin() { this.play(1500, 'sine', 0.1, 0.1, 2500); },
+        boom() { this.play(100, 'sawtooth', 0.5, 0.2, 10); }
     };
 
-    // Data
+    // --- Data ---
     const SPECIES = {
-        kucing: { e: '🐱', color: 0xffa502, name: 'Kucing', scale: [1, 0.9, 1] },
-        kelinci: { e: '🐰', color: 0xffffff, name: 'Kelinci', scale: [1, 1.1, 0.9] },
-        bebek: { e: '🐥', color: 0xf6e58d, name: 'Bebek', scale: [1, 0.9, 1.1] }
+        kucing: { e: '🐱', color: '#ffb142', name: 'Miko', earType: 'cat' },
+        kelinci: { e: '🐰', color: '#f1f2f6', name: 'Usagi', earType: 'bunny' },
+        beruang: { e: '🐻', color: '#ff9f43', name: 'Kuma', earType: 'bear' }
     };
 
     const ITEMS = [
         { id: 'cake', icon: '🍰', name: 'Kue Stroberi', desc: '+50 Lapar, +10 Senang', price: 15, fx: { hunger: 50, happy: 10 } },
         { id: 'coffee', icon: '🧋', name: 'Boba Tea', desc: '+40 Energi', price: 12, fx: { energy: 40 } },
-        { id: 'hat', icon: '🎩', name: 'Topi Sulap', desc: 'Aksesoris 3D Keren', price: 30, equip: true },
-        { id: 'glass', icon: '🕶️', name: 'Kacamata Hitam', desc: 'Aksesoris 3D Keren', price: 40, equip: true }
+        { id: 'hat', icon: '🎩', name: 'Topi Sulap', desc: 'Aksesoris Kepala', price: 30, equip: true },
+        { id: 'glass', icon: '🕶️️', name: 'Kacamata Hitam', desc: 'Aksesoris Wajah', price: 40, equip: true }
     ];
 
     let state = { sp: 'kucing', name: '', hunger: 80, happy: 80, energy: 80, clean: 80, coins: 50, sleep: false, own: [], worn: [], lastUpdate: Date.now() };
 
-    // --- UI Controller ---
+    // --- UI Logic ---
     const ui = {
         showToast(msg) {
-            const el = $('toast');$('toast-msg').textContent = msg;
-            el.classList.remove('transform', '-translate-y-16', 'opacity-0');
+            const el = $('toast'); $('toast-msg').textContent = msg;
+            el.classList.remove('transform', '-translate-y-20', 'opacity-0');
             clearTimeout(this.to);
-            this.to = setTimeout(() => el.classList.add('transform', '-translate-y-16', 'opacity-0'), 2000);
+            this.to = setTimeout(() => el.classList.add('transform', '-translate-y-20', 'opacity-0'), 2500);
         },
         switchView(id) {
-            ['view-pick', 'view-home'].forEach(v => $(v).classList.add('hidden'));$(id).classList.remove('hidden');
-            if(id === 'view-home') setTimeout(engine.resize, 100);
+            ['view-pick', 'view-home', 'view-game'].forEach(v => $(v).classList.add('hidden'));
+            $(id).classList.remove('hidden');
+            if(id === 'view-home') setTimeout(() => engine.resize(), 100);
         },
         renderStats() {
             ['hunger', 'happy', 'energy', 'clean'].forEach(s => {
@@ -217,16 +222,16 @@
             $('avatar').textContent = SPECIES[state.sp].e;
 
             if (state.sleep) {
-                engine.setNight(true);
-                $('btn-sleep').innerHTML = `<span class="icon-3d group-active:scale-90 transition-transform">☀️</span><span class="text-[9px]">Bangun</span>`;
+                engine.setNight(true); engine.setExpression('sleep');
+                $('btn-sleep').innerHTML = `<span class="icon-3d text-3xl group-active:scale-90 transition-transform">☀️</span><span class="text-[10px] font-bold">BANGUN</span>`;
                 $('pet-bubble').textContent = 'Zzz... 💤';
             } else {
-                engine.setNight(false);
-                $('btn-sleep').innerHTML = `<span class="icon-3d group-active:scale-90 transition-transform">💤</span><span class="text-[9px]">Tidur</span>`;
+                engine.setNight(false); engine.setExpression('normal');
+                $('btn-sleep').innerHTML = `<span class="icon-3d text-3xl group-active:scale-90 transition-transform">💤</span><span class="text-[10px] font-bold">TIDUR</span>`;
                 const stats = ['hunger', 'clean', 'energy', 'happy'];
                 let lowest = stats.reduce((a,b) => state[a] < state[b] ? a : b);
-                const msgs = { hunger: 'Aku lapar! 🍔', clean: 'Waktunya mandi! 🛁', energy: 'Aku ngantuk... 🥱', happy: 'Ayo main! 🎮' };
-                $('pet-bubble').textContent = state[lowest] > 60 ? 'Perasaanku Hebat! ✨' : msgs[lowest];
+                const msgs = { hunger: 'Lapar euy! 🍔', clean: 'Mandiyuk! 🛁', energy: 'Ngantuk... 🥱', happy: 'Main dong! 🎮' };
+                $('pet-bubble').textContent = state[lowest] > 60 ? 'Bahagia banget! ✨' : msgs[lowest];
             }
         },
         openSheet(title, html) {
@@ -247,22 +252,21 @@
                 const wears = state.worn.includes(i.id);
                 let txt = owns ? (wears ? 'Lepas' : 'Pakai') : `🪙 ${i.price}`;
                 if(i.fx) txt = `🪙 ${i.price}`;
-                const btnClass = (owns && !i.fx) ? 'bg-gray-200 text-gray-700 shadow-sm' : 'bg-yellow-400 text-white shadow-[0_4px_0_#e1b12c] active:shadow-none active:translate-y-1';
+                const btnClass = (owns && !i.fx) ? 'bg-gray-200 text-gray-700 shadow-sm' : 'bg-yellow-400 text-white shadow-[0_4px_0_#e1b12c] active:translate-y-1 active:shadow-none';
                 return `
-                <div class="flex items-center gap-3 p-3 bg-white border border-gray-100 rounded-2xl shadow-sm">
-                    <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center icon-3d">${i.icon}</div>
+                <div class="flex items-center gap-4 p-4 bg-white border-2 border-gray-100 rounded-2xl shadow-sm">
+                    <div class="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center icon-3d text-2xl">${i.icon}</div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="font-bold text-sm truncate">${i.name}</h4>
-                        <p class="text-[10px] text-gray-400 truncate">${i.desc}</p>
+                        <h4 class="font-bold text-base truncate">${i.name}</h4>
+                        <p class="text-xs text-gray-400 truncate font-bold">${i.desc}</p>
                     </div>
-                    <button onclick="actions.buy('${i.id}')" class="px-4 py-1.5 rounded-xl font-bold text-xs transition-all ${btnClass}">${txt}</button>
+                    <button onclick="actions.buy('${i.id}')" class="px-5 py-2 rounded-xl font-bold text-xs transition-all ${btnClass}">${txt}</button>
                 </div>`;
             }).join('');
             this.openSheet('Toko Barang', html);
         }
     };
 
-    // --- Actions ---
     const actions = {
         update(mods) {
             for(let k in mods) state[k] = clamp(state[k] + mods[k]);
@@ -270,34 +274,34 @@
         },
         feed() {
             sfx.init();
-            if(state.sleep) return sfx.error() || ui.showToast('Sedang tidur!');
-            if(state.hunger >= 100) return ui.showToast('Kenyang!');
-            sfx.feed(); engine.spawnParticles('feed'); engine.jump();
+            if(state.sleep) return sfx.error() || ui.showToast('Lagi molor bro!');
+            if(state.hunger >= 100) return ui.showToast('Perutku penuh!');
+            sfx.feed(); engine.spawnParticles('feed'); engine.jump('happy');
             this.update({ hunger: 30, energy: 5, clean: -5 });
             ui.showToast('Nyam nyam! 🍔');
         },
         bath() {
             sfx.init();
-            if(state.sleep) return sfx.error() || ui.showToast('Sedang tidur!');
-            if(state.clean >= 100) return ui.showToast('Sudah bersih!');
-            sfx.bath(); engine.spawnParticles('bath'); engine.jump();
+            if(state.sleep) return sfx.error();
+            if(state.clean >= 100) return ui.showToast('Udah kinclong!');
+            sfx.bath(); engine.spawnParticles('bath'); engine.jump('happy');
             this.update({ clean: 50, happy: 5 });
-            ui.showToast('Segar! 🛁');
+            ui.showToast('Segerrr! 🛁');
         },
         sleep() {
             sfx.init(); sfx.sleep();
             state.sleep = !state.sleep;
             ui.renderStats();
-            ui.showToast(state.sleep ? 'Selamat tidur! 🌙' : 'Pagi! ☀️');
+            ui.showToast(state.sleep ? 'Nighty night! 🌙' : 'Pagi dunia! ☀️');
         },
         buy(id) {
             const item = ITEMS.find(i => i.id === id);
             if(item.fx || !state.own.includes(id)) {
-                if(state.coins < item.price) { sfx.error(); return ui.showToast('Koin tidak cukup!'); }
+                if(state.coins < item.price) { sfx.error(); return ui.showToast('Kere bro, koin kurang!'); }
                 state.coins -= item.price; sfx.buy();
-                if(item.fx) { this.update(item.fx); engine.spawnParticles('feed'); engine.jump(); }
+                if(item.fx) { this.update(item.fx); engine.spawnParticles('feed'); engine.jump('happy'); }
                 else { state.own.push(id); state.worn.push(id); engine.buildPet(); }
-                ui.showToast(`Membeli ${item.name}!`);
+                ui.showToast(`Beli ${item.name}!`);
             } else {
                 sfx.tap();
                 if(state.worn.includes(id)) state.worn = state.worn.filter(x => x !== id);
@@ -308,54 +312,62 @@
         }
     };
 
-    // --- 3D Engine ---
+    // --- 3D Engine & Dynamic Face System ---
     const engine = {
         scene: null, camera: null, renderer: null, petGroup: null, 
         particles: [], pGroup: null, dirLight: null, time: 0, interactTimer: 0,
+        faceMat: null, faceCtx: null, currentExpr: 'normal',
 
         init() {
             const canvas = $('canvas-3d');
             this.renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
             this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            this.renderer.shadowMap.enabled = true; // Enable Shadows!
+            this.renderer.shadowMap.enabled = true;
             this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
             this.scene = new THREE.Scene();
             this.camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 50);
-            this.camera.position.set(0, 2, 7);
-            this.camera.lookAt(0, 0.5, 0);
+            this.camera.position.set(0, 1.8, 6.5);
+            this.camera.lookAt(0, 0.3, 0);
 
-            // Lighting setup for better 3D depth
-            const ambient = new THREE.AmbientLight(0xffffff, 0.5);
-            this.scene.add(ambient);
-            
-            this.dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
-            this.dirLight.position.set(4, 6, 3);
+            // Lighting for Toon Shading
+            this.scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            this.dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            this.dirLight.position.set(5, 8, 4);
             this.dirLight.castShadow = true;
             this.dirLight.shadow.mapSize.width = 1024;
             this.dirLight.shadow.mapSize.height = 1024;
-            this.dirLight.shadow.camera.near = 0.5;
-            this.dirLight.shadow.camera.far = 15;
             this.scene.add(this.dirLight);
 
-            // Ground receiving shadow
-            const groundMat = new THREE.MeshStandardMaterial({ color: 0x55efc4, roughness: 0.8 });
-            const ground = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 0.5, 32), groundMat);
-            ground.position.y = -1.25;
+            // Soft shadow ground
+            const ground = new THREE.Mesh(
+                new THREE.CylinderGeometry(4, 4, 0.5, 32), 
+                new THREE.MeshToonMaterial({ color: 0x55efc4 })
+            );
+            ground.position.y = -1;
             ground.receiveShadow = true;
             this.scene.add(ground);
 
             this.pGroup = new THREE.Group();
             this.scene.add(this.pGroup);
 
+            // Initialize Dynamic Face Material
+            const faceCanvas = document.createElement('canvas');
+            faceCanvas.width = 256; faceCanvas.height = 256;
+            this.faceCtx = faceCanvas.getContext('2d');
+            const faceTex = new THREE.CanvasTexture(faceCanvas);
+            this.faceMat = new THREE.MeshBasicMaterial({ map: faceTex, transparent: true, depthWrite: false });
+
             window.addEventListener('resize', () => this.resize());
             this.resize();
+
+            // Interaction
             canvas.addEventListener('pointerdown', () => {
                 sfx.init();
-                if(state.sleep) return sfx.error() || ui.showToast('Ssst.. lagi tidur!');
-                sfx.tap(); this.spawnParticles('heart'); this.jump();
-                actions.update({happy: 2});
-                if(Math.random() < 0.3) { state.coins++; ui.renderStats(); }
+                if(state.sleep) { sfx.error(); ui.showToast('Ssst.. lagi tidur!'); return; }
+                sfx.laugh(); this.spawnParticles('heart'); this.jump('happy');
+                actions.update({happy: 3});
+                if(Math.random() < 0.4) { state.coins++; ui.renderStats(); }
             });
 
             this.animate = this.animate.bind(this);
@@ -370,100 +382,168 @@
             this.camera.updateProjectionMatrix();
         },
         setNight(isNight) {
-            $('stage-container').style.backgroundColor = isNight ? '#2d3436' : '#74b9ff';
-            if(this.dirLight) this.dirLight.intensity = isNight ? 0.2 : 0.7;
+            $('stage-bg').style.backgroundColor = isNight ? '#2d3436' : '#74b9ff';
+            if(this.dirLight) this.dirLight.intensity = isNight ? 0.3 : 0.8;
         },
+        
+        // Dynamic Face Drawing
+        setExpression(expr) {
+            if(this.currentExpr === expr && expr !== 'normal') return; 
+            this.currentExpr = expr;
+            const ctx = this.faceCtx;
+            ctx.clearRect(0, 0, 256, 256);
+            ctx.fillStyle = '#2d3436'; ctx.strokeStyle = '#2d3436';
+            ctx.lineWidth = 14; ctx.lineCap = 'round';
+
+            // Eyes
+            if(expr === 'normal') {
+                ctx.beginPath(); ctx.arc(80, 110, 16, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(176, 110, 16, 0, Math.PI*2); ctx.fill();
+                // Kawaii highlights
+                ctx.fillStyle = '#fff';
+                ctx.beginPath(); ctx.arc(74, 104, 5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(170, 104, 5, 0, Math.PI*2); ctx.fill();
+            } else if(expr === 'sleep') {
+                ctx.beginPath(); ctx.arc(80, 120, 16, Math.PI, Math.PI*2); ctx.stroke();
+                ctx.beginPath(); ctx.arc(176, 120, 16, Math.PI, Math.PI*2); ctx.stroke();
+            } else if(expr === 'happy') {
+                // ^ ^ eyes
+                ctx.beginPath(); ctx.moveTo(56, 120); ctx.quadraticCurveTo(80, 80, 104, 120); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(152, 120); ctx.quadraticCurveTo(176, 80, 200, 120); ctx.stroke();
+            }
+
+            // Mouth
+            ctx.fillStyle = '#2d3436';
+            if(expr === 'normal') {
+                // Little w shape
+                ctx.lineWidth = 8;
+                ctx.beginPath(); ctx.moveTo(116,140); ctx.quadraticCurveTo(122,150,128,140); ctx.quadraticCurveTo(134,150,140,140); ctx.stroke();
+            } else if(expr === 'sleep') {
+                ctx.beginPath(); ctx.arc(128, 150, 6, 0, Math.PI*2); ctx.stroke();
+            } else if(expr === 'happy') {
+                // Open D mouth
+                ctx.beginPath(); ctx.arc(128, 140, 20, 0, Math.PI); ctx.fill();
+                ctx.fillStyle = '#ff7675'; // tongue
+                ctx.beginPath(); ctx.arc(128, 148, 12, 0, Math.PI); ctx.fill();
+            }
+
+            // Blush
+            ctx.fillStyle = 'rgba(255, 118, 117, 0.4)';
+            ctx.beginPath(); ctx.ellipse(45, 140, 22, 10, 0, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(211, 140, 22, 10, 0, 0, Math.PI*2); ctx.fill();
+
+            this.faceMat.map.needsUpdate = true;
+        },
+
         buildPet() {
             if(this.petGroup) this.scene.remove(this.petGroup);
             this.petGroup = new THREE.Group();
-            
             const sp = SPECIES[state.sp];
-            const mat = new THREE.MeshStandardMaterial({ color: sp.color, roughness: 0.4, metalness: 0.1 });
             
-            // Body
+            // Toon Material for that sweet anime look
+            const colorObj = new THREE.Color(sp.color);
+            const mat = new THREE.MeshToonMaterial({ color: colorObj });
+            
+            // Squishy Body
             const body = new THREE.Mesh(new THREE.SphereGeometry(1.2, 32, 32), mat);
-            body.scale.set(...sp.scale);
             body.position.y = 0.2;
             body.castShadow = true;
             this.petGroup.add(body);
 
-            // Kawaii Eyes & Face
-            [-1, 1].forEach(s => {
-                const eye = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), new THREE.MeshBasicMaterial({color: 0x111}));
-                eye.position.set(s * 0.4, 0.4, 1.15);
-                
-                const hl = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), new THREE.MeshBasicMaterial({color: 0xfff}));
-                hl.position.set(s*0.42, 0.45, 1.28);
-                
-                const blush = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), new THREE.MeshBasicMaterial({color: 0xff7675}));
-                blush.position.set(s*0.6, 0.15, 1.1); blush.scale.set(1.5, 0.5, 0.2);
-                
-                this.petGroup.add(eye, hl, blush);
-            });
-            const mouth = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), new THREE.MeshBasicMaterial({color: 0x111}));
-            mouth.position.set(0, 0.2, 1.25);
-            this.petGroup.add(mouth);
+            // 2D Face Overlay (The Magic Trick!)
+            const facePlane = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 1.8), this.faceMat);
+            facePlane.position.set(0, 0.2, 1.15); // slightly in front of sphere
+            this.petGroup.add(facePlane);
+
+            // Ears based on species
+            if(sp.earType === 'cat') {
+                [-1,1].forEach(s => {
+                    const ear = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.8, 16), mat);
+                    ear.position.set(s*0.6, 1.2, 0); ear.rotation.z = -s*0.4; ear.castShadow=true;
+                    this.petGroup.add(ear);
+                });
+            } else if (sp.earType === 'bunny') {
+                [-1,1].forEach(s => {
+                    const ear = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, 0.8, 8, 16), mat);
+                    ear.position.set(s*0.4, 1.4, 0); ear.rotation.z = -s*0.1; ear.castShadow=true;
+                    this.petGroup.add(ear);
+                });
+            } else if (sp.earType === 'bear') {
+                [-1,1].forEach(s => {
+                    const ear = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 16), mat);
+                    ear.position.set(s*0.7, 1.0, 0); ear.castShadow=true;
+                    this.petGroup.add(ear);
+                });
+            }
 
             // Accessories
             if(state.worn.includes('hat')) {
-                const hatMat = new THREE.MeshStandardMaterial({color:0x2d3436});
+                const hatMat = new THREE.MeshToonMaterial({color:0x2d3436});
                 const hat = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.6, 32), hatMat); hat.position.set(0, 1.4, 0); hat.rotation.z = 0.1; hat.castShadow=true;
                 const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.05, 32), hatMat); brim.position.set(0, 1.1, 0); brim.rotation.z = 0.1; brim.castShadow=true;
                 this.petGroup.add(hat, brim);
             }
             if(state.worn.includes('glass')) {
-                const glassMat = new THREE.MeshStandardMaterial({color:0x111, roughness: 0.1});
-                const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.05, 0.05), glassMat); bridge.position.set(0, 0.45, 1.3);
-                this.petGroup.add(bridge);
+                const glassMat = new THREE.MeshBasicMaterial({color:0x111});
+                const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.05, 0.05), glassMat); bridge.position.set(0, 0.35, 1.28); this.petGroup.add(bridge);
                 [-1,1].forEach(s => {
-                    const l = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.05, 32), glassMat);
-                    l.rotation.x = Math.PI/2; l.position.set(s*0.4, 0.45, 1.3); this.petGroup.add(l);
+                    const l = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.05, 32), glassMat);
+                    l.rotation.x = Math.PI/2; l.position.set(s*0.4, 0.35, 1.28); this.petGroup.add(l);
                 });
             }
 
             this.scene.add(this.petGroup);
+            this.setExpression(state.sleep ? 'sleep' : 'normal');
         },
-        jump() { this.interactTimer = 30; },
+
+        jump(expr) { 
+            this.interactTimer = 40; 
+            if(expr) this.setExpression(expr);
+        },
+
         spawnParticles(type) {
-            const count = type==='bath'?15:5;
+            const count = type==='bath'?15:6;
             for(let i=0; i<count; i++) {
                 let m;
                 if(type === 'bath') {
-                    m = new THREE.Mesh(new THREE.SphereGeometry(0.1+Math.random()*0.1, 16,16), new THREE.MeshStandardMaterial({color:0xfff, transparent:true, opacity:0.6}));
+                    m = new THREE.Mesh(new THREE.SphereGeometry(0.08+Math.random()*0.1, 8,8), new THREE.MeshBasicMaterial({color:0xffffff, transparent:true, opacity:0.7}));
                     m.position.set((Math.random()-0.5)*3, Math.random(), (Math.random()-0.5)*2+1);
-                    this.particles.push({m, vy: 0.04, vx: 0, life: 60});
-                } else if(type === 'feed' || type === 'heart') {
+                    this.particles.push({m, vy: 0.04, vx: Math.random()*0.02-0.01, life: 60});
+                } else {
                     const canvas = document.createElement('canvas'); canvas.width=64; canvas.height=64;
-                    const ctx = canvas.getContext('2d'); ctx.font='40px Arial'; ctx.fillText(type==='feed'?'🍔':'💖', 10, 45);
+                    const ctx = canvas.getContext('2d'); ctx.font='40px Arial'; ctx.fillText(type==='feed'?'🍔':'✨', 10, 45);
                     const tex = new THREE.CanvasTexture(canvas);
                     m = new THREE.Sprite(new THREE.SpriteMaterial({map:tex})); m.scale.set(0.6,0.6,1);
                     m.position.set((Math.random()-0.5)*2, 2, 1);
-                    this.particles.push({m, vy: type==='feed'?-0.05:0.03, vx: (Math.random()-0.5)*0.02, life: 60});
+                    this.particles.push({m, vy: type==='feed'?-0.06:0.03, vx: (Math.random()-0.5)*0.03, life: 50});
                 }
                 this.pGroup.add(m);
             }
         },
+
         animate() {
             requestAnimationFrame(this.animate);
             this.time += 0.05;
             
             if(this.petGroup && !$('view-home').classList.contains('hidden')) {
-                // Breathing & Idle
-                let scaleY = 1 + Math.sin(this.time * (state.sleep?0.5:2)) * 0.03;
-                let scaleX = 1 - Math.sin(this.time * (state.sleep?0.5:2)) * 0.015;
+                // Squash and stretch breathing
+                let scaleY = 1 + Math.sin(this.time * (state.sleep?0.5:2)) * 0.04;
+                let scaleX = 1 - Math.sin(this.time * (state.sleep?0.5:2)) * 0.02;
                 let posY = Math.sin(this.time) * 0.05;
                 
-                // Jump Interaction
+                // Interaction Jump & Spin
                 if(this.interactTimer > 0) {
                     this.interactTimer--;
-                    posY += Math.sin((1 - this.interactTimer/30) * Math.PI) * 1.5;
-                    this.petGroup.rotation.y = (1 - this.interactTimer/30) * Math.PI * 2;
+                    const prog = this.interactTimer / 40;
+                    posY += Math.sin(prog * Math.PI) * 1.5;
+                    this.petGroup.rotation.y = prog * Math.PI * 2;
+                    // Reset face when landing
+                    if(this.interactTimer === 0 && !state.sleep) this.setExpression('normal');
                 } else {
-                    this.petGroup.rotation.y = Math.sin(this.time * 0.5) * 0.1;
+                    this.petGroup.rotation.y = Math.sin(this.time * 0.5) * 0.15;
                 }
                 
-                const bs = SPECIES[state.sp].scale;
-                this.petGroup.scale.set(bs[0]*scaleX, bs[1]*scaleY, bs[2]*scaleX);
+                this.petGroup.scale.set(scaleX, scaleY, scaleX);
                 this.petGroup.position.y += (posY - this.petGroup.position.y) * 0.2;
             }
 
@@ -474,28 +554,131 @@
                 p.life--;
                 if(p.life <= 0) {
                     if(p.m.material) p.m.material.dispose();
-                    if(p.m.geometry) p.m.geometry.dispose();
                     this.pGroup.remove(p.m); this.particles.splice(i,1);
                 }
             }
 
-            if(state.sleep && Math.random()<0.02) this.spawnParticles('sleep'); // small zzzs can use same logic
-
+            if(state.sleep && Math.random()<0.015) this.spawnParticles('sleep');
             this.renderer.render(this.scene, this.camera);
         }
     };
 
-    // --- Init ---
+    // --- Mini-Game System (Catch the Yummy) ---
+    const game = {
+        canvas: null, ctx: null, loop: null, 
+        player: { x: 150, y: 0, w: 60, h: 60 },
+        items: [], score: 0, active: false, speed: 3,
+
+        start() {
+            if(state.energy < 20) return ui.showToast('Terlalu capek untuk main!');
+            ui.closeSheet(); ui.switchView('view-game');
+            $('game-over').classList.add('hidden');
+            sfx.init();
+
+            this.canvas = $('game-canvas');
+            this.ctx = this.canvas.getContext('2d');
+            this.canvas.width = this.canvas.clientWidth;
+            this.canvas.height = this.canvas.clientHeight;
+            
+            this.player.y = this.canvas.height - 80;
+            this.player.x = this.canvas.width/2 - this.player.w/2;
+            this.score = 0; this.speed = 4;
+            this.items = []; this.active = true;
+            this.updateUI();
+
+            // Touch & Mouse Controls
+            const move = (e) => {
+                const rect = this.canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                this.player.x = clientX - rect.left - this.player.w/2;
+                this.player.x = clamp(this.player.x, 0, this.canvas.width - this.player.w);
+            };
+            this.canvas.onpointerdown = move;
+            this.canvas.onpointermove = (e) => { if(e.buttons>0 || e.touches) move(e); };
+
+            if(this.loop) cancelAnimationFrame(this.loop);
+            this.run = this.run.bind(this);
+            this.run();
+        },
+        
+        run() {
+            if(!this.active) return;
+            this.ctx.clearRect(0,0, this.canvas.width, this.canvas.height);
+            
+            // Draw Player Basket (Kawaii Pet)
+            this.ctx.font = '50px Arial';
+            this.ctx.fillText(SPECIES[state.sp].e, this.player.x, this.player.y + 50);
+
+            // Spawn Items
+            if(Math.random() < 0.03 + (this.score*0.001)) {
+                const isBomb = Math.random() < 0.3;
+                this.items.push({
+                    x: Math.random() * (this.canvas.width-40), y: -50,
+                    type: isBomb ? '💣' : ['🍰','🍔','🍕','🍓'][Math.floor(Math.random()*4)],
+                    isBomb
+                });
+            }
+
+            // Update Items
+            for(let i=this.items.length-1; i>=0; i--) {
+                let item = this.items[i];
+                item.y += this.speed;
+                this.ctx.font = '40px Arial';
+                this.ctx.fillText(item.type, item.x, item.y);
+
+                // Collision
+                if(item.y + 40 > this.player.y && item.y < this.player.y + this.player.h &&
+                   item.x + 40 > this.player.x && item.x < this.player.x + this.player.w) {
+                    
+                    if(item.isBomb) {
+                        sfx.boom(); this.over(); return; // Game Over
+                    } else {
+                        sfx.coin();
+                        this.score += 10; 
+                        this.speed = Math.min(12, this.speed + 0.1);
+                        this.updateUI();
+                        this.items.splice(i, 1);
+                    }
+                } else if(item.y > this.canvas.height) {
+                    this.items.splice(i, 1);
+                }
+            }
+
+            this.loop = requestAnimationFrame(this.run);
+        },
+
+        updateUI() { $('game-score').textContent = `Skor: ${this.score}`; },
+
+        over() {
+            this.active = false;
+            $('game-over').classList.remove('hidden');$('game-msg').textContent = `Kamu dapat ${Math.floor(this.score/20)} Koin!`;
+        },
+
+        exit() {
+            this.active = false;
+            if(this.loop) cancelAnimationFrame(this.loop);
+            const reward = Math.floor(this.score / 20);
+            if(reward > 0) {
+                state.coins += reward;
+                actions.update({ happy: 20, energy: -15, hunger: -15 });
+                ui.showToast(`Dapat ${reward} koin! 🪙`);
+            }
+            ui.switchView('view-home');
+        }
+    };
+
+    // --- Init App ---
     window.onload = () => {
         const pg = $('pick-grid');
         Object.entries(SPECIES).forEach(([k, v]) => {
             const btn = document.createElement('button');
-            btn.className = 'bg-white rounded-2xl p-3 flex flex-col items-center gap-1 border-4 border-transparent transition-all shadow-sm';
-            btn.innerHTML = `<span class="text-4xl icon-3d">${v.e}</span><span class="font-bold text-xs">${v.name}</span>`;
+            btn.className = 'bg-white/80 rounded-2xl p-4 flex flex-col items-center gap-2 border-4 border-transparent transition-all shadow-sm hover:scale-105';
+            btn.innerHTML = `<span class="text-5xl icon-3d">${v.e}</span><span class="font-bold text-sm text-gray-700">${v.name}</span>`;
             btn.onclick = () => {
                 sfx.init(); sfx.tap();
-                Array.from(pg.children).forEach(c => c.classList.remove('border-yellow-400'));
-                btn.classList.add('border-yellow-400'); state.sp = k;
+                Array.from(pg.children).forEach(c => { c.classList.remove('border-yellow-400','bg-white'); c.classList.add('bg-white/80');});
+                btn.classList.add('border-yellow-400', 'bg-white'); btn.classList.remove('bg-white/80');
+                state.sp = k;
             };
             pg.appendChild(btn);
         });
@@ -507,8 +690,8 @@
             ui.switchView('view-home'); ui.renderStats();
             engine.init(); engine.buildPet();
             setInterval(() => {
-                if(!state.sleep) actions.update({hunger: -2, happy: -1, energy: -1, clean: -1});
-                else { actions.update({energy: 5}); if(state.energy>=100) actions.sleep(); }
+                if(!state.sleep) actions.update({hunger: -1, happy: -1, energy: -1, clean: -1});
+                else { actions.update({energy: 4, hunger: -0.5}); if(state.energy>=100) actions.sleep(); }
             }, 10000);
         };
     };

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Blank Smart QR</title>
+    <title>Super Admin - Dktv.</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
@@ -13,43 +13,68 @@
         :root { --bg: #f8fafc; --surface: #ffffff; --border: #e2e8f0; --text: #0f172a; --primary: #000000; --biru: #3b82f6;}
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); padding: 30px 20px; }
-        .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
-        .card-title { font-size: 20px; font-weight: 800; margin-bottom: 20px; letter-spacing: -0.5px; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr auto; gap: 16px; align-items: end; }
-        .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #475569; }
-        .form-group input { width: 100%; padding: 14px; border: 2px solid var(--border); border-radius: 10px; outline: none; font-size: 14px; }
-        .form-group input:focus { border-color: var(--biru); }
-        .btn { background: var(--primary); color: white; border: none; padding: 14px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
-        .btn:disabled { opacity: 0.5; cursor: wait; transform: none; }
+        .container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
         
-        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; margin-top: 10px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 24px; }
+        @media (min-width: 768px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+        
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+        .card-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: var(--primary); display: flex; align-items: center; gap: 8px;}
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 8px; color: #475569; }
+        .form-group input { width: 100%; padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px; outline: none; font-size: 14px; transition: 0.2s;}
+        .form-group input:focus { border-color: var(--biru); }
+        
+        .btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; width: 100%; }
+        .btn:hover { opacity: 0.8; transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.5; cursor: wait; }
+        .btn-blue { background: var(--biru); }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
         th { background: #f1f5f9; padding: 14px; border-bottom: 2px solid var(--border); font-weight: 700; }
         td { padding: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-        .badge-kosong { background: #dcfce3; color: #166534; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 11px; }
-        .badge-kunci { background: #fee2e2; color: #991b1b; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 11px; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-block; }
+        .bg-biru { background: #dbeafe; color: #1e40af; }
+        .bg-oren { background: #ffedd5; color: #c2410c; }
+        .btn-sm { background: #e2e8f0; padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; border: none; font-weight: 700; margin-right: 4px; }
+        .btn-copy { background: #10b981; color: white; }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="card">
-        <div class="card-title">📦 Generate Batch Smart QR (Masal)</div>
-        <form class="form-grid" onsubmit="generateBatch(event)">
-            <div class="form-group"><label>Nama Order / Batch</label><input type="text" id="batchName" placeholder="Contoh: Suvenir Nikah Rian" required></div>
-            <div class="form-group"><label>Jumlah QR (Pcs)</label><input type="number" id="jumlah" min="1" max="100" value="10" required></div>
-            <button type="submit" class="btn" id="btnSubmit">Buat & Download ZIP</button>
-        </form>
+    
+    <div class="grid-2">
+        <!-- FORM 1: ORDER SATUAN (BISA DIEDIT KLIEN) -->
+        <div class="card" style="border-top: 4px solid var(--biru);">
+            <div class="card-title">✨ Order Satuan (Bisa Diedit)</div>
+            <p style="font-size:12px; color:gray; margin-bottom:15px;">QR Code premium. Klien akan dapat link khusus untuk edit URL kapan saja.</p>
+            <form onsubmit="generateSatuan(event)">
+                <div class="form-group"><label>Nama Klien / Instansi</label><input type="text" id="namaKlien" required></div>
+                <button type="submit" class="btn btn-blue" id="btnSatuan">Buat 1 QR & Link Akses</button>
+            </form>
+        </div>
+
+        <!-- FORM 2: ORDER MASAL (SEKALI KLAIM / KUNCI) -->
+        <div class="card" style="border-top: 4px solid var(--primary);">
+            <div class="card-title">📦 Order Masal (Sekali Kunci)</div>
+            <p style="font-size:12px; color:gray; margin-bottom:15px;">QR Code grosir untuk suvenir. User klaim link pertama kali, lalu terkunci permanen.</p>
+            <form onsubmit="generateBatch(event)">
+                <div class="form-group"><label>Nama Batch Order</label><input type="text" id="batchName" required></div>
+                <div class="form-group"><label>Jumlah (Pcs)</label><input type="number" id="jumlah" min="1" max="100" value="10" required></div>
+                <button type="submit" class="btn" id="btnBatch">Buat & Download ZIP</button>
+            </form>
+        </div>
     </div>
 
+    <!-- TABEL DATABASE -->
     <div class="card">
-        <div class="card-title">🗄️ Database QR Code</div>
+        <div class="card-title">🗄️ Database Semua QR Code</div>
         <div style="overflow-x: auto;">
             <table>
                 <thead>
-                    <tr><th>ID QR</th><th>Nama Batch</th><th>Status</th><th>Link Tujuan</th><th>Klik</th></tr>
+                    <tr><th>ID QR</th><th>Nama / Batch</th><th>Tipe Layanan</th><th>Status & Link</th><th>Klik</th><th>Aksi</th></tr>
                 </thead>
-                <tbody id="tableBody"><tr><td colspan="5" align="center">Memuat data...</td></tr></tbody>
+                <tbody id="tableBody"><tr><td colspan="6" align="center">Memuat data...</td></tr></tbody>
             </table>
         </div>
     </div>
@@ -60,67 +85,98 @@
     const supabaseKey = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3';
     const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
     
-    // GANTI SAMA DOMAIN VERCEL LU!
+    // GANTI SAMA DOMAIN LU
     const DOMAIN_JEMBATAN = "https://dkrtv.vercel.app/qrcode/scan.html?id="; 
+    const DOMAIN_EDIT = "https://dkrtv.vercel.app/qrcode/edit.html?token="; 
 
     async function loadData() {
         const { data, error } = await supabaseClient.from('dynamic_links').select('*').order('created_at', { ascending: false });
         const tbody = document.getElementById('tableBody');
         
-        if(error || !data || data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" align="center">Belum ada QR Code.</td></tr>`; return;
-        }
+        if(error || !data || data.length === 0) { tbody.innerHTML = `<tr><td colspan="6" align="center">Belum ada data.</td></tr>`; return; }
 
-        tbody.innerHTML = data.map(item => `
+        tbody.innerHTML = data.map(item => {
+            const tipeBadge = item.tipe_qr === 'Editable' ? `<span class="badge bg-biru">Bisa Diedit</span>` : `<span class="badge bg-oren">Sekali Kunci</span>`;
+            
+            // Tombol Copy Link Edit hanya muncul kalau tipenya Editable
+            const btnAkses = item.tipe_qr === 'Editable' 
+                ? `<button class="btn-sm btn-copy" onclick="copyAkses('${item.token_rahasia}')">Copy Link Klien</button>` 
+                : `<span style="font-size:10px; color:gray;">(Bukan Editable)</span>`;
+
+            return `
             <tr>
                 <td><b>${item.qr_id}</b></td>
-                <td>${item.batch_name}</td>
-                <td><span class="${item.status === 'Kosong' ? 'badge-kosong' : 'badge-kunci'}">${item.status}</span></td>
-                <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    ${item.target_url ? `<a href="${item.target_url}" target="_blank" style="color:#3b82f6;">${item.target_url}</a>` : '<span style="color:gray;">Belum diklaim</span>'}
+                <td>${item.nama_klien}</td>
+                <td>${tipeBadge}</td>
+                <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                    <b>${item.status}</b><br>
+                    <a href="${item.target_url || '#'}" target="_blank" style="color:#3b82f6; font-size:11px;">${item.target_url || 'Belum disetting'}</a>
                 </td>
                 <td><b>${item.clicks}</b></td>
-            </tr>
-        `).join('');
+                <td>
+                    <button class="btn-sm" onclick="downloadQR('${item.qr_id}')">DL QR</button>
+                    ${btnAkses}
+                </td>
+            </tr>`;
+        }).join('');
     }
 
+    // FUNGSI ORDER SATUAN (EDITABLE)
+    async function generateSatuan(e) {
+        e.preventDefault();
+        document.getElementById('btnSatuan').disabled = true;
+        
+        const nama = document.getElementById('namaKlien').value;
+        const idUnik = "QR-" + Math.floor(100000 + Math.random() * 900000);
+        const token = "TKN-" + Math.random().toString(36).substr(2, 9);
+
+        await supabaseClient.from('dynamic_links').insert([{ 
+            qr_id: idUnik, token_rahasia: token, nama_klien: nama, tipe_qr: 'Editable' 
+        }]);
+        
+        document.getElementById('namaKlien').value = '';
+        document.getElementById('btnSatuan').disabled = false;
+        loadData();
+    }
+
+    // FUNGSI ORDER MASAL (SEKALI KUNCI / BLANK)
     async function generateBatch(e) {
         e.preventDefault();
-        const btn = document.getElementById('btnSubmit');
+        const btn = document.getElementById('btnBatch');
         btn.disabled = true; btn.innerText = "Memproses...";
 
         const batchName = document.getElementById('batchName').value;
         const jumlah = parseInt(document.getElementById('jumlah').value);
-        
         const newQRs = [];
-        const prefix = "QR" + Math.floor(1000 + Math.random() * 9000); // Kode unik batch
+        const prefix = "BCH" + Math.floor(100 + Math.random() * 900); 
         
-        // 1. Siapkan data buat database
         for (let i = 1; i <= jumlah; i++) {
             const idUnik = `${prefix}-${i.toString().padStart(3, '0')}`;
-            newQRs.push({ qr_id: idUnik, batch_name: batchName, status: "Kosong" });
+            // Token kosong karena di setting dari form Scan, bukan halaman edit klien
+            newQRs.push({ qr_id: idUnik, nama_klien: batchName, tipe_qr: 'Sekali_Klaim' });
         }
 
-        // 2. Insert masal ke Supabase
-        const { error } = await supabaseClient.from('dynamic_links').insert(newQRs);
-        if (error) { alert("Gagal simpan ke database: " + error.message); btn.disabled = false; btn.innerText = "Buat & Download ZIP"; return; }
+        await supabaseClient.from('dynamic_links').insert(newQRs);
 
-        // 3. Generate File ZIP
-        btn.innerText = "Membuat File ZIP...";
+        btn.innerText = "Membuat ZIP...";
         const zip = new JSZip();
-        
         for (let qrData of newQRs) {
             const qr = new QRious({ value: DOMAIN_JEMBATAN + qrData.qr_id, size: 600, level: 'H' });
-            const base64Data = qr.toDataURL('image/png').split(',')[1];
-            zip.file(`${qrData.qr_id}.png`, base64Data, {base64: true});
+            zip.file(`${qrData.qr_id}.png`, qr.toDataURL('image/png').split(',')[1], {base64: true});
         }
 
         const content = await zip.generateAsync({type:"blob"});
-        saveAs(content, `Batch_${batchName.replace(/[^a-zA-Z0-9]/g, '_')}_${jumlah}pcs.zip`);
+        saveAs(content, `Batch_${batchName}_${jumlah}pcs.zip`);
 
         document.getElementById('batchName').value = '';
         btn.disabled = false; btn.innerText = "Buat & Download ZIP";
         loadData();
+    }
+
+    function copyAkses(token) { navigator.clipboard.writeText(DOMAIN_EDIT + token); alert("Link Edit Klien di-copy!"); }
+    function downloadQR(idQR) {
+        const qr = new QRious({ value: DOMAIN_JEMBATAN + idQR, size: 600, level: 'H' });
+        const a = document.createElement('a'); a.href = qr.toDataURL('image/png'); a.download = `${idQR}.png`; a.click();
     }
 
     window.onload = loadData;

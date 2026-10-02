@@ -3,71 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart QR - Klaim</title>
-    <!-- Font UI/UX Modern -->
+    <title>Mengarahkan...</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --biru: #3b82f6; --dark: #0f172a; --gray: #64748b; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: var(--dark); }
+        body { background: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: var(--dark); text-align: center;}
         
-        /* Layar Loading */
-        #loadingScreen { display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .loader { border: 4px solid #e2e8f0; border-top: 4px solid var(--biru); border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; }
+        .loader { border: 4px solid #e2e8f0; border-top: 4px solid var(--biru); border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 0 auto 15px;}
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Form Klaim Glassmorphism */
+        /* Form Klaim (Untuk Grosir) */
         #claimScreen { display: none; width: 100%; max-width: 400px; padding: 20px; }
-        .glass-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 35px 25px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1); text-align: center; }
-        
+        .glass-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 35px 25px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1); }
         .icon-lock { background: #dbeafe; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
-        .title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
-        .subtitle { font-size: 14px; color: var(--gray); margin-bottom: 24px; line-height: 1.5; }
-
         .input-group { text-align: left; margin-bottom: 20px; }
         .input-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 8px; }
         .input-group input { width: 100%; padding: 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 14px; outline: none; transition: 0.3s; }
-        .input-group input:focus { border-color: var(--biru); box-shadow: 0 0 0 4px rgba(59,130,246,0.1); }
-
-        .btn-simpan { width: 100%; background: var(--dark); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.2s; }
-        .btn-simpan:hover { background: #1e293b; transform: translateY(-2px); }
-        .btn-simpan:disabled { opacity: 0.7; cursor: wait; }
-
-        .warning-text { font-size: 11px; color: #ef4444; font-weight: 600; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .input-group input:focus { border-color: var(--biru); }
+        .btn-simpan { width: 100%; background: var(--dark); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- 1. Tampilan Loading Awal -->
     <div id="loadingScreen">
         <div class="loader"></div>
         <h3 style="color:var(--gray);">Memproses QR Code...</h3>
     </div>
 
-    <!-- 2. Tampilan Form Klaim (Muncul kalau status Kosong) -->
     <div id="claimScreen">
         <div class="glass-card">
             <div class="icon-lock">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
             </div>
-            <div class="title">Klaim Smart QR Anda</div>
-            <div class="subtitle">QR Code ini masih kosong. Masukkan link ke profil Anda di bawah ini untuk mengaktifkannya.</div>
+            <h2 style="font-size:22px; font-weight:800; margin-bottom:8px;">Klaim QR Code</h2>
+            <p style="font-size:14px; color:var(--gray); margin-bottom:24px;">Masukkan link Anda. Setelah dikunci, link ini tidak dapat diubah lagi.</p>
 
             <form onsubmit="kunciQR(event)">
                 <div class="input-group">
                     <label>Link / URL Tujuan</label>
-                    <input type="url" id="linkTujuan" placeholder="Contoh: https://instagram.com/akun" required>
+                    <input type="url" id="linkTujuan" placeholder="https://instagram.com/akun" required>
                 </div>
                 <button type="submit" class="btn-simpan" id="btnSubmit">Kunci QR Code 🔒</button>
             </form>
-
-            <div class="warning-text">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                Perhatian: Link tidak dapat diubah setelah dikunci.
-            </div>
         </div>
     </div>
 
@@ -80,58 +59,46 @@
     const loadingScreen = document.getElementById('loadingScreen');
     const claimScreen = document.getElementById('claimScreen');
 
-    async function cekStatusQR() {
-        if (!idQR) {
-            loadingScreen.innerHTML = '<h3 style="color:red;">QR Tidak Valid</h3><p style="font-size:14px; color:gray;">Parameter ID tidak ditemukan.</p>'; return;
+    async function proses() {
+        if (!idQR) return loadingScreen.innerHTML = '<h3 style="color:red;">QR Tidak Valid</h3>';
+
+        const { data, error } = await supabaseClient.from('dynamic_links').select('*').eq('qr_id', idQR).single();
+        if (error || !data) return loadingScreen.innerHTML = '<h3 style="color:red;">QR Code Tidak Terdaftar</h3>';
+
+        // 1. JIKA LINK SUDAH ADA (Langsung Redirect + Hitung Klik)
+        if (data.target_url && data.target_url.trim() !== "") {
+            const klikBaru = (data.clicks || 0) + 1;
+            supabaseClient.from('dynamic_links').update({ clicks: klikBaru }).eq('qr_id', idQR).then(() => {
+                window.location.replace(data.target_url);
+            }).catch(() => window.location.replace(data.target_url));
+            return;
         }
 
-        try {
-            const { data, error } = await supabaseClient.from('dynamic_links').select('*').eq('qr_id', idQR).single();
-            if (error) throw error;
+        // 2. JIKA LINK MASIH KOSONG, TAPI INI LAYANAN PREMIUM (EDITABLE)
+        if (data.tipe_qr === 'Editable') {
+            loadingScreen.innerHTML = `
+                <div style="background:white; padding:30px; border-radius:16px; border:1px solid #e2e8f0;">
+                    <h3>Belum Diatur</h3>
+                    <p style="font-size:14px; color:gray; margin-top:10px;">Pemilik QR belum memasukkan link melalui Dashboard Klien.</p>
+                </div>`;
+            return;
+        }
 
-            if (data.status === 'Kosong') {
-                // QR MASIH KOSONG: Tampilkan Form Klaim UI Premium
-                loadingScreen.style.display = 'none';
-                claimScreen.style.display = 'block';
-            } 
-            else if (data.status === 'Terkunci') {
-                // QR SUDAH ADA ISI: Nambah Klik, lalu Redirect!
-                const klikBaru = (data.clicks || 0) + 1;
-                supabaseClient.from('dynamic_links').update({ clicks: klikBaru }).eq('qr_id', idQR).then(() => {
-                    window.location.replace(data.target_url);
-                }).catch(() => window.location.replace(data.target_url));
-            }
-
-        } catch (err) {
-            loadingScreen.innerHTML = `<h3 style="color:red;">Sistem Error / QR Tidak Terdaftar</h3><p style="font-size:12px; color:gray;">${err.message}</p>`;
+        // 3. JIKA LINK MASIH KOSONG & INI PRODUK GROSIR (SEKALI KLAIM)
+        if (data.tipe_qr === 'Sekali_Klaim') {
+            loadingScreen.style.display = 'none';
+            claimScreen.style.display = 'block';
         }
     }
 
-    // Fungsi Submit Form Klaim dari End-User
     window.kunciQR = async function(e) {
         e.preventDefault();
-        const btn = document.getElementById('btnSubmit');
-        btn.disabled = true; btn.innerText = "Mengunci QR Code...";
-
         const linkBaru = document.getElementById('linkTujuan').value;
-
-        // Update database: Ubah Link dan Ganti Status jadi TERKUNCI
-        const { error } = await supabaseClient.from('dynamic_links').update({ 
-            target_url: linkBaru, 
-            status: 'Terkunci' 
-        }).eq('qr_id', idQR);
-
-        if (!error) {
-            // Berhasil? Langsung buka linknya saat itu juga sebagai test!
-            window.location.replace(linkBaru);
-        } else {
-            alert("Gagal mengaktifkan QR: " + error.message);
-            btn.disabled = false; btn.innerText = "Kunci QR Code 🔒";
-        }
+        const { error } = await supabaseClient.from('dynamic_links').update({ target_url: linkBaru, status: 'Terkunci' }).eq('qr_id', idQR);
+        if (!error) window.location.replace(linkBaru);
     }
 
-    // Jalankan pas web pertama dibuka
-    cekStatusQR();
+    proses();
 </script>
 </body>
 </html>

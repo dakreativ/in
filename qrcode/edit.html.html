@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit QR Code - Klien</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f3f4f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 400px; text-align: center; }
+        .title { font-size: 20px; font-weight: 700; margin-bottom: 5px; }
+        .subtitle { font-size: 14px; color: #6b7280; margin-bottom: 24px; line-height: 1.5; }
+        input { width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 10px; margin-bottom: 16px; font-size: 14px; outline: none; transition: 0.2s; box-sizing: border-box; }
+        input:focus { border-color: #000000; }
+        button { width: 100%; background: #000000; color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; }
+        button:hover { opacity: 0.8; }
+        .status { margin-top: 15px; font-size: 13px; font-weight: 600; color: #10b981; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="card" id="app">
+    <h2 style="color:gray;">Memuat data...</h2>
+</div>
+
+<script>
+    const supabaseUrl = 'https://bkxclrjycsdpchodgzzb.supabase.co';
+    const supabaseKey = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    const token = new URLSearchParams(window.location.search).get('token');
+    const app = document.getElementById('app');
+
+    async function loadKlienData() {
+        if (!token) { app.innerHTML = '<h2 style="color:red;">Akses Ditolak!</h2><p>Link tidak valid.</p>'; return; }
+
+        const { data, error } = await supabaseClient.from('dynamic_links').select('*').eq('token_rahasia', token).single();
+
+        if (error || !data) { app.innerHTML = '<h2 style="color:red;">Data Tidak Ditemukan</h2><p>Hubungi admin untuk link akses baru.</p>'; return; }
+
+        app.innerHTML = `
+            <div class="title">Halo, ${data.nama_klien}! 👋</div>
+            <div class="subtitle">Atur ke mana QR Code Anda akan mengarah.<br>Perubahan akan langsung aktif detik ini juga.</div>
+            
+            <form onsubmit="updateLink(event)">
+                <input type="url" id="linkBaru" placeholder="Masukkan Link (Misal: https://instagram.com/akun)" value="${data.target_url || ''}" required>
+                <button type="submit" id="btnSimpan">Simpan Perubahan</button>
+            </form>
+            <div id="msg" class="status">✅ Link berhasil diperbarui! QR Code siap digunakan.</div>
+        `;
+    }
+
+    window.updateLink = async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btnSimpan');
+        btn.disabled = true; btn.innerText = "Menyimpan...";
+
+        const linkBaru = document.getElementById('linkBaru').value;
+        const { error } = await supabaseClient.from('dynamic_links').update({ target_url: linkBaru }).eq('token_rahasia', token);
+
+        if (!error) {
+            document.getElementById('msg').style.display = 'block';
+            setTimeout(() => document.getElementById('msg').style.display = 'none', 4000);
+        } else {
+            alert("Gagal menyimpan: " + error.message);
+        }
+        btn.disabled = false; btn.innerText = "Simpan Perubahan";
+    }
+
+    loadKlienData();
+</script>
+</body>
+</html>

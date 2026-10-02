@@ -4,15 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mengarahkan...</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #ffffff; font-family: sans-serif; margin: 0; text-align: center; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #000; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; text-align: center; color: #0f172a; }
+        .loader { border: 4px solid #f1f5f9; border-top: 4px solid #3b82f6; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 0 auto 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .error-box { background: #fee2e2; border: 1px solid #fca5a5; padding: 20px; border-radius: 12px; max-width: 90%; }
+        .error-title { font-weight: 700; color: #b91c1c; margin-bottom: 8px; }
     </style>
 </head>
 <body>
-    <div id="status"><div class="loader"></div><h3 style="color:#666;">Sedang memproses...</h3></div>
+    <div id="status">
+        <div class="loader"></div>
+        <h3 style="color:#64748b;">Memproses QR Code...</h3>
+    </div>
 
 <script>
     const supabaseUrl = 'https://bkxclrjycsdpchodgzzb.supabase.co';
@@ -20,26 +26,51 @@
     const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
     const idQR = new URLSearchParams(window.location.search).get('id');
+    const statusBox = document.getElementById('status');
 
-async function proses() {
-        if (!idQR) return document.getElementById('status').innerHTML = 'QR Tidak Valid.';
-        
-        // Ambil link target sekaligus jumlah klik saat ini
-        const { data, error } = await supabaseClient.from('dynamic_links').select('target_url, clicks').eq('qr_id', idQR).single();
-        
-        if (error || !data) return document.getElementById('status').innerHTML = 'QR Code tidak terdaftar.';
-        
-        if (data.target_url && data.target_url.trim() !== "") {
-            // INI FITUR BARUNYA: Tambah 1 ke kolom 'clicks' sebelum di redirect
-            const klikBaru = (data.clicks || 0) + 1;
-            await supabaseClient.from('dynamic_links').update({ clicks: klikBaru }).eq('qr_id', idQR);
+    async function proses() {
+        try {
+            if (!idQR) {
+                statusBox.innerHTML = '<div class="error-box"><div class="error-title">Link QR Tidak Valid</div><p style="font-size:14px; color:#7f1d1d;">Parameter ID tidak ditemukan. Jangan buka file ini secara langsung.</p></div>';
+                return;
+            }
             
-            // Langsung pindah lokasi
-            window.location.replace(data.target_url); 
-        } else {
-            document.getElementById('status').innerHTML = 'Pemilik belum mengatur link tujuan QR ini.';
+            // Ambil link dan jumlah klik saat ini
+            const { data, error } = await supabaseClient.from('dynamic_links').select('target_url, clicks').eq('qr_id', idQR).single();
+            
+            if (error) throw error; // Lempar error ke blok catch
+
+            if (!data) {
+                statusBox.innerHTML = '<div class="error-box"><div class="error-title">QR Code Tidak Terdaftar</div><p style="font-size:14px; color:#7f1d1d;">Kode ini belum terdaftar di sistem PT Dakreativ.</p></div>';
+                return;
+            }
+
+            if (data.target_url && data.target_url.trim() !== "") {
+                // Tambah jumlah klik di background
+                const klikBaru = (data.clicks || 0) + 1;
+                
+                // Langsung update tanpa nunggu selesai, lalu segera redirect
+                supabaseClient.from('dynamic_links').update({ clicks: klikBaru }).eq('qr_id', idQR).then(() => {
+                    window.location.replace(data.target_url);
+                }).catch(() => {
+                    // Kalau update error, tetap redirect biar klien nggak mandek
+                    window.location.replace(data.target_url);
+                });
+                
+            } else {
+                statusBox.innerHTML = '<div style="padding:20px;"><h3>QR Code Belum Aktif</h3><p style="color:#64748b;">Pemilik QR ini belum mengatur link tujuannya.</p></div>';
+            }
+        } catch (err) {
+            // Tampilkan error aslinya kalau database macet
+            statusBox.innerHTML = `
+                <div class="error-box">
+                    <div class="error-title">Terjadi Kesalahan Database</div>
+                    <p style="font-size:12px; color:#7f1d1d; word-break:break-all;">${err.message}</p>
+                </div>`;
         }
     }
+    
+    proses();
 </script>
 </body>
 </html>

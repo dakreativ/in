@@ -56,8 +56,9 @@
     const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
     
     // UBAH INI NANTI SESUAI DOMAIN LU!
-    const DOMAIN_JEMBATAN = "https://domainlu.com/scan.html?id="; 
-    const DOMAIN_EDIT_KLIEN = "https://domainlu.com/edit.html?token=";
+   // UBAH INI NANTI SESUAI DOMAIN LU!
+const DOMAIN_JEMBATAN = "https://dkrtv.vercel.app/qrcode/scan.html?id="; 
+const DOMAIN_EDIT_KLIEN = "https://dkrtv.vercel.app/qrcode/edit.html?token=";
 
     async function loadData() {
         const { data, error } = await supabaseClient.from('dynamic_links').select('*').order('created_at', { ascending: false });

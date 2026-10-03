@@ -1,48 +1,99 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <title>Admin Bikin Barcode</title>
+    <title>Superadmin Generator Barcode</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { font-family: sans-serif; padding: 20px; background: #1e293b; color: white;}
-        .card { background: #334155; padding: 20px; border-radius: 10px; max-width: 500px; margin: 0 auto 20px;}
-        input { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box;}
-        button { background: #38bdf8; padding: 10px; width: 100%; border: none; font-weight: bold; cursor: pointer;}
-        table { width: 100%; margin-top: 20px; border-collapse: collapse;}
-        td, th { padding: 10px; border: 1px solid #475569;}
+        body { font-family: sans-serif; background: #0F172A; color: white; padding: 20px;}
+        .card { background: #1E293B; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto 20px;}
+        input, select { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; background:#334155; border:1px solid #475569; color:white; border-radius:5px;}
+        button { background: #38BDF8; color: #0F172A; font-weight: bold; border: none; padding: 12px; width: 100%; cursor: pointer; border-radius:5px;}
+        table { width: 100%; border-collapse: collapse; margin-top:10px;}
+        td, th { padding: 10px; border: 1px solid #475569; text-align: left; font-size: 14px;}
+        #qr-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .qr-box { background: white; padding: 10px; border-radius: 5px; text-align: center; color: black; font-weight: bold; font-size: 12px;}
     </style>
 </head>
 <body>
     <div class="card">
-        <h2>1. Bikin Barcode Kosong</h2>
-        <input type="password" id="pass" value="Tetydadan21@" placeholder="Password Admin">
-        <input type="text" id="orderId" placeholder="Masukkan ID (cth: B001)">
-        <button onclick="buatSlot()">Buat Slot Barcode</button>
+        <h2>🛠️ Generate Order Barcode</h2>
+        <input type="password" id="adminPass" value="Tetydadan21@" placeholder="Password Admin">
+        <input type="text" id="orderId" placeholder="Prefix ID Barcode (cth: DADAN)">
+        <input type="text" id="clientName" placeholder="Nama Klien">
+        <input type="text" id="clientWa" placeholder="No WA Klien">
+        <input type="text" id="clientPass" placeholder="Password Buka Galeri (cth: 1234)">
+        
+        <select id="orderType" onchange="toggleBulk()">
+            <option value="Single">1 Barcode (Bisa ganti link via Admin)</option>
+            <option value="Bulk">Generate Banyak (Langsung Kunci Permanen)</option>
+        </select>
+
+        <div id="bulkInputs" style="display:none; padding:10px; background:#0F172A; border-radius:5px; margin-bottom:10px;">
+            <input type="number" id="bulkQty" placeholder="Jumlah Barcode (cth: 20)">
+            <input type="text" id="bulkDesc" placeholder="Deskripsi Acara">
+            <input type="text" id="bulkDrive" placeholder="Link Google Drive (Akses: Siapa Saja)">
+        </div>
+
+        <button onclick="generateOrder()">Generate Barcode</button>
+        <div id="qr-container"></div>
     </div>
 
     <div class="card">
-        <h2>2. Data Barcode</h2>
+        <h2>📋 Database Barcode</h2>
         <button onclick="loadData()">Refresh Data</button>
         <table>
-            <thead><tr><th>ID</th><th>Status</th><th>Klien</th></tr></thead>
+            <thead><tr><th>ID</th><th>Nama</th><th>Tipe</th><th>Status</th><th>Aksi</th></tr></thead>
             <tbody id="tabel"></tbody>
         </table>
     </div>
 
     <script>
+        // PASTE URL GAS & URL GITHUB LU DISINI
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
+        const WEB_URL = "https://dakreativ.github.io/in/id/"; 
 
-        function buatSlot() {
-            fetch(GAS_URL, {
-                method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'add_slot', pass: document.getElementById('pass').value, order_id: document.getElementById('orderId').value })
-            }).then(r=>r.json()).then(d => { alert(d.message); loadData(); });
+        function toggleBulk() {
+            document.getElementById('bulkInputs').style.display = document.getElementById('orderType').value === 'Bulk' ? 'block' : 'none';
+        }
+
+        function generateOrder() {
+            const tipe = document.getElementById('orderType').value;
+            const payload = {
+                action: 'create_order', pass: document.getElementById('adminPass').value,
+                prefix_id: document.getElementById('orderId').value, nama: document.getElementById('clientName').value,
+                wa: document.getElementById('clientWa').value, tipe: tipe, kunci: document.getElementById('clientPass').value,
+                qty: document.getElementById('bulkQty').value, desc: document.getElementById('bulkDesc').value, drive: document.getElementById('bulkDrive').value
+            };
+
+            fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r=>r.json()).then(d => {
+                alert(d.message); loadData();
+                
+                // BIKIN GAMBAR QR CODE OTOMATIS
+                const qrCont = document.getElementById('qr-container');
+                qrCont.innerHTML = '';
+                if(tipe === 'Single') {
+                    bikinQR(payload.prefix_id);
+                } else {
+                    for(let i=1; i<=payload.qty; i++) bikinQR(payload.prefix_id + '-' + i);
+                }
+            });
+        }
+
+        function bikinQR(id) {
+            const div = document.createElement('div'); div.className = 'qr-box';
+            new QRCode(div, { text: WEB_URL + "?id=" + id, width: 128, height: 128 });
+            div.innerHTML += `<br>ID: ${id}`;
+            document.getElementById('qr-container').appendChild(div);
         }
 
         function loadData() {
-            fetch(`${GAS_URL}?action=get_all&pass=${document.getElementById('pass').value}`)
+            fetch(`${GAS_URL}?action=get_all&pass=${document.getElementById('adminPass').value}`)
             .then(r=>r.json()).then(d => {
                 let html = '';
-                d.data.forEach(x => { html += `<tr><td>${x.order_id}</td><td>${x.status}</td><td>${x.name || '-'}</td></tr>`; });
+                d.data.forEach(x => { 
+                    let btnEdit = x.tipe === 'Single' ? `<button style="padding:5px; font-size:10px;" onclick="window.open('${WEB_URL}?edit=${x.id}')">Edit Link</button>` : '-';
+                    html += `<tr><td>${x.id}</td><td>${x.nama}</td><td>${x.tipe}</td><td>${x.status}</td><td>${btnEdit}</td></tr>`; 
+                });
                 document.getElementById('tabel').innerHTML = html;
             });
         }

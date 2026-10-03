@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { font-family: sans-serif; background: #f8fafc; padding: 20px;}
-        .card { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
-        input, select { width: 100%; padding: 10px; margin-bottom: 15px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px;}
-        button { background: #2563eb; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;}
+        .card { background: white; padding: 20px; border-radius: 10px; max-width: 450px; margin: 0 auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        input { width: 100%; padding: 12px; margin-bottom: 15px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 8px;}
+        button { background: #0F172A; color: white; padding: 12px; width: 100%; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;}
         .hidden { display: none !important; }
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px;}
         .grid img, .grid video { width: 100%; border-radius: 8px; aspect-ratio: 1; object-fit: cover;}
@@ -15,79 +15,106 @@
 </head>
 <body>
 
-    <h2 id="loadingText" style="text-align:center;">Memproses...</h2>
+    <h3 id="loadingText" style="text-align:center;">Memproses Barcode...</h3>
 
-    <!-- FORM SETUP BUAT KLIEN KALO BARCODE KOSONG -->
-    <div class="card hidden" id="formSetup">
-        <h3>✨ Aktifkan Galeri Anda</h3>
-        <p style="font-size:14px; color:gray;">Barcode ini masih kosong. Isi data untuk mengaktifkan.</p>
-        <label>Nama Acara / Toko</label>
-        <input type="text" id="cName">
-        <label>Tipe Galeri</label>
-        <select id="cTipe">
-            <option value="Info">Katalog Publik (Tanpa Password)</option>
-            <option value="Event">Event Privat (Pakai Password)</option>
-        </select>
-        <label>Password (Kunci Event)</label>
-        <input type="text" id="cPass" placeholder="Isi jika tipe Event">
-        <label>Link Folder Google Drive</label>
-        <input type="text" id="cDrive" placeholder="Pastikan hak akses 'Siapa Saja'">
-        <button onclick="klaim()">Aktifkan Galeri</button>
+    <!-- 1. FORM SETUP PERTAMA KALI SCAN (Hanya muncul jika Status: Kosong) -->
+    <div class="card hidden" id="setupBox">
+        <h2 style="margin-top:0;">Setup Galeri</h2>
+        <p style="font-size:14px; color:gray;">Masukkan data galeri. Setelah disimpan, barcode akan otomatis terkunci.</p>
+        <label>Deskripsi Acara / Toko</label>
+        <input type="text" id="setupDesc" placeholder="cth: Wedding Dadan">
+        <label>Link Google Drive</label>
+        <input type="text" id="setupDrive" placeholder="Akses wajib: Siapa Saja">
+        <button onclick="submitSetup()">Simpan & Kunci Barcode</button>
     </div>
 
-    <!-- TAMPILAN GALERI BUAT TAMU KALO BARCODE UDAH AKTIF -->
-    <div class="card hidden" id="galleryView" style="max-width: 600px;">
-        <h2 id="gTitle"></h2>
-        <div id="gridFoto" class="grid"></div>
+    <!-- 2. FORM PASSWORD UNTUK BUKA GALERI (Scan Ke-2 dst) -->
+    <div class="card hidden" id="passBox">
+        <h2 style="margin-top:0;" id="passTitle">Buka Galeri</h2>
+        <input type="password" id="userPass" placeholder="Masukkan Password Galeri">
+        <button onclick="cekPassword()">Buka Sekarang</button>
+    </div>
+
+    <!-- 3. FORM EDIT LINK (Khusus URL ?edit=xxx) -->
+    <div class="card hidden" id="editBox">
+        <h2 style="margin-top:0;">Edit Link Drive</h2>
+        <input type="password" id="editPass" placeholder="Masukkan Password Klien">
+        <input type="text" id="editDesc" placeholder="Deskripsi Baru">
+        <input type="text" id="editDrive" placeholder="Link Drive Baru">
+        <button onclick="submitEdit()">Update Link</button>
+    </div>
+
+    <!-- 4. GALERI FOTO -->
+    <div class="card hidden" id="galleryBox" style="max-width: 800px;">
+        <h2 id="gTitle" style="margin:0;"></h2>
+        <p id="gDesc" style="color:gray; margin-top:5px;"></p>
+        <div id="gridFoto" class="grid">Memuat foto dari Drive...</div>
     </div>
 
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/execI"; 
         const urlParams = new URLSearchParams(window.location.search);
         const orderId = urlParams.get('id');
+        const editId = urlParams.get('edit');
 
-        if(orderId) {
-            fetch(GAS_URL + "?action=check&id=" + orderId).then(r=>r.json()).then(data => {
+        let dbPass = ""; let dbDrive = "";
+
+        if(editId) {
+            document.getElementById('loadingText').classList.add('hidden');
+            document.getElementById('editBox').classList.remove('hidden');
+        } else if(orderId) {
+            fetch(GAS_URL + "?action=scan&id=" + orderId).then(r=>r.json()).then(data => {
                 document.getElementById('loadingText').classList.add('hidden');
                 
                 if (data.status === 'success') {
-                    if (data.state === 'Kosong') {
-                        // Kalo kosong, suruh klien isi form
-                        document.getElementById('formSetup').classList.remove('hidden');
-                    } else if (data.state === 'Aktif') {
-                        // Kalo aktif, cek password (kalo event)
-                        if (data.tipe === 'Event') {
-                            let p = prompt("Masukkan Kunci Akses:");
-                            if (p !== data.password) return alert("Password Salah!");
-                        }
-                        // Buka galeri
-                        document.getElementById('galleryView').classList.remove('hidden');
-                        document.getElementById('gTitle').innerText = data.name;
-                        loadFoto(data.folder_url);
+                    dbPass = data.pass; dbDrive = data.drive;
+                    document.getElementById('gTitle').innerText = data.nama;
+                    document.getElementById('gDesc').innerText = data.desc;
+
+                    if (data.is_locked === 'Kosong') {
+                        document.getElementById('setupBox').classList.remove('hidden');
+                    } else {
+                        document.getElementById('passTitle').innerText = "Galeri " + data.nama;
+                        document.getElementById('passBox').classList.remove('hidden');
                     }
                 } else alert(data.message);
             });
         }
 
-        function klaim() {
+        function submitSetup() {
             fetch(GAS_URL, {
-                method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                    action: 'claim', order_id: orderId, name: document.getElementById('cName').value,
-                    wa: '', tipe: document.getElementById('cTipe').value,
-                    password: document.getElementById('cPass').value, folder_url: document.getElementById('cDrive').value
+                method: 'POST', body: JSON.stringify({
+                    action: 'first_setup', id: orderId, 
+                    desc: document.getElementById('setupDesc').value, drive: document.getElementById('setupDrive').value
                 })
-            }).then(r=>r.json()).then(d => { alert(d.message); location.reload(); });
+            }).then(r=>r.json()).then(d => { alert("Berhasil Terkunci!"); location.reload(); });
+        }
+
+        function cekPassword() {
+            if(document.getElementById('userPass').value !== dbPass) return alert("Password Salah!");
+            document.getElementById('passBox').classList.add('hidden');
+            document.getElementById('galleryBox').classList.remove('hidden');
+            loadFoto(dbDrive);
+        }
+
+        function submitEdit() {
+            fetch(GAS_URL, {
+                method: 'POST', body: JSON.stringify({
+                    action: 'edit_link', id: editId, pass_klien: document.getElementById('editPass').value,
+                    desc: document.getElementById('editDesc').value, drive: document.getElementById('editDrive').value
+                })
+            }).then(r=>r.json()).then(d => alert(d.message));
         }
 
         function loadFoto(url) {
-            document.getElementById('gridFoto').innerHTML = "Memuat Foto...";
             fetch(GAS_URL + "?action=get_images&url=" + encodeURIComponent(url)).then(r=>r.json()).then(d => {
                 let html = '';
-                d.images.forEach(img => {
-                    if(img.type.includes('image')) html += `<img src="${img.url}">`;
-                    if(img.type.includes('video')) html += `<video src="${img.url}" controls></video>`;
-                });
+                if(d.images) {
+                    d.images.forEach(img => {
+                        if(img.type.includes('image')) html += `<img src="${img.url}">`;
+                        if(img.type.includes('video')) html += `<video src="${img.url}" controls></video>`;
+                    });
+                }
                 document.getElementById('gridFoto').innerHTML = html;
             });
         }

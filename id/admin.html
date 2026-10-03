@@ -4,147 +4,146 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workspace Admin | Dynamic QR</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
-    <!-- Library untuk bikin gambar Barcode otomatis -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0F172A; color: white; margin: 0; padding: 20px; }
+        body { font-family: sans-serif; background: #0F172A; color: white; margin: 0; padding: 20px; }
         .hidden { display: none !important; }
         .container { max-width: 900px; margin: 0 auto; }
-        .card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px; margin-bottom: 20px; }
-        h2 { margin-top: 0; color: #38BDF8; font-weight: 800; }
-        .input-group { margin-bottom: 15px; }
-        label { font-size: 13px; font-weight: 700; color: #94A3B8; display: block; margin-bottom: 5px; }
-        input, select { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 12px; border-radius: 10px; box-sizing: border-box; outline: none; }
-        input:focus, select:focus { border-color: #38BDF8; }
-        button { background: #38BDF8; color: #0F172A; font-weight: 800; border: none; padding: 14px; border-radius: 10px; cursor: pointer; width: 100%; transition: 0.3s; }
-        button:hover { background: #0EA5E9; transform: translateY(-2px); }
-        button:disabled { background: #475569; cursor: not-allowed; }
-        
+        .card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 25px; margin-bottom: 20px; }
+        h2 { margin-top: 0; color: #38BDF8; }
+        input, select { width: 100%; background: #1E293B; border: 1px solid #475569; color: white; padding: 12px; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; }
+        button { background: #38BDF8; color: #0F172A; font-weight: bold; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
-        th, td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: left; }
-        th { color: #94A3B8; font-size: 12px; }
+        th, td { padding: 12px; border-bottom: 1px solid #334155; text-align: left; }
+        th { color: #94A3B8; }
         .badge-kosong { background: #FCA5A5; color: #7F1D1D; padding: 4px 8px; border-radius: 5px; font-size: 11px; }
         .badge-aktif { background: #86EFAC; color: #14532D; padding: 4px 8px; border-radius: 5px; font-size: 11px; }
-
-        /* Style Gambar QR Code */
+        .flex-row { display: flex; gap: 15px; }
+        .flex-row > div { flex: 1; }
         #qr-container { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px; justify-content: center; }
-        .qr-box { background: white; padding: 15px; border-radius: 10px; text-align: center; color: black; font-weight: bold; font-size: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .qr-box img { margin: 0 auto 10px; }
+        .qr-box { background: white; padding: 15px; border-radius: 10px; text-align: center; color: black; font-weight: bold; font-size: 12px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- FORM GENERATE -->
-        <div class="card">
-            <h2>+ Generate Barcode Baru</h2>
-            <input type="password" id="adminPass" placeholder="Password Admin" value="Tetydadan21@">
-            
-            <div style="display: flex; gap: 15px;">
-                <div class="input-group" style="flex:1;"><label>Prefix ID (cth: MEJA / WEDDING)</label><input type="text" id="orderId" oninput="this.value=this.value.replace(/\\s+/g, '').toUpperCase()"></div>
-                <div class="input-group" style="flex:1;"><label>Nama Klien / Bisnis</label><input type="text" id="clientName"></div>
-                <div class="input-group" style="flex:1;"><label>No WA (Opsional)</label><input type="number" id="clientWa"></div>
-            </div>
-
-            <div class="input-group">
-                <label>Tipe Order</label>
-                <select id="orderType" onchange="toggleBulk()">
-                    <option value="Single">1 Barcode (Setup Oleh Klien Saat Scan Pertama)</option>
-                    <option value="Bulk">Banyak Barcode (Langsung Aktif / Terkunci)</option>
-                </select>
-            </div>
-
-            <div class="input-group"><label>Password (Isi jika galeri ingin dikunci)</label><input type="text" id="clientPass" placeholder="cth: 123456 (Kosongkan jika publik)"></div>
-
-            <!-- Muncul khusus Tipe Bulk -->
-            <div id="bulkInputs" style="display:none; background: #0B1120; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-                <div class="input-group"><label>Jumlah Barcode</label><input type="number" id="bulkQty" placeholder="cth: 20"></div>
-                <div class="input-group"><label>Deskripsi Acara</label><input type="text" id="bulkDesc" placeholder="cth: Menu Kafe Kita"></div>
-                <div class="input-group"><label>Link Google Drive (Akses: Siapa Saja)</label><input type="text" id="bulkDrive"></div>
-            </div>
-
-            <button id="btnGen" onclick="generateOrder()">Generate & Simpan</button>
-            <div id="qr-container"></div>
+        <!-- LOGIN -->
+        <div id="loginSection" class="card" style="max-width: 400px; margin: 100px auto; text-align: center;">
+            <h2>Admin Login</h2>
+            <input type="password" id="adminPass" placeholder="Password Rahasia" value="Tetydadan21@">
+            <button onclick="doLogin()">Masuk Workspace</button>
         </div>
 
-        <!-- TABEL DATA -->
-        <div class="card">
-            <h2 style="display: flex; justify-content: space-between;">Database <button onclick="loadData()" style="width: auto; padding: 8px 15px; font-size: 12px;">🔄 Refresh</button></h2>
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead><tr><th>ID</th><th>Tipe</th><th>Nama Klien</th><th>Password</th><th>Status</th></tr></thead>
-                    <tbody id="tabel"><tr><td colspan="5" style="text-align: center;">Memuat data...</td></tr></tbody>
-                </table>
+        <!-- DASHBOARD -->
+        <div id="dashboardSection" class="hidden">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <h1 style="margin: 0;">Workspace <span style="color:#38BDF8;">Admin</span></h1>
+                <button onclick="logout()" style="width: auto; background: transparent; border: 1px solid #EF4444; color: #EF4444; padding: 8px 15px;">Keluar</button>
+            </div>
+
+            <!-- FORM GENERATE -->
+            <div class="card">
+                <h2>+ Generate Barcode Baru</h2>
+                <div class="flex-row">
+                    <div><label>Prefix ID Barcode</label><input type="text" id="orderId" placeholder="cth: VIP-01" oninput="this.value=this.value.replace(/\\s+/g, '').toUpperCase()"></div>
+                    <div><label>Nama Klien</label><input type="text" id="clientName" placeholder="Nama Acara/Toko"></div>
+                </div>
+
+                <div class="flex-row">
+                    <div>
+                        <label>Tipe Order</label>
+                        <select id="orderType" onchange="toggleBulk()">
+                            <option value="Single">1 Barcode (Setup Oleh Klien Saat Scan)</option>
+                            <option value="Bulk">Banyak Barcode (Langsung Aktif/Kunci)</option>
+                        </select>
+                    </div>
+                    <div><label>Password Galeri</label><input type="text" id="clientPass" placeholder="Isi untuk kunci galeri"></div>
+                </div>
+
+                <div id="bulkInputs" style="display:none; background: #0B1120; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                    <div class="flex-row">
+                        <div><label>Jumlah Barcode</label><input type="number" id="bulkQty" placeholder="cth: 20"></div>
+                        <div><label>Deskripsi Acara</label><input type="text" id="bulkDesc"></div>
+                    </div>
+                    <label>Link Google Drive</label><input type="text" id="bulkDrive" placeholder="Akses Wajib Siapa Saja (Anyone)">
+                </div>
+
+                <button id="btnGen" onclick="generateOrder()">Generate & Simpan Barcode</button>
+                <div id="qr-container"></div>
+            </div>
+
+            <!-- TABEL DATABASE -->
+            <div class="card">
+                <h2 style="display:flex; justify-content:space-between;">Database Barcode <button onclick="loadData()" style="width:auto; padding:5px 10px; font-size:12px;">🔄 Refresh</button></h2>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead><tr><th>ID</th><th>Tipe</th><th>Nama Klien</th><th>Password</th><th>Status</th><th>Aksi</th></tr></thead>
+                        <tbody id="tabel"><tr><td colspan="6" style="text-align: center;">Memuat data...</td></tr></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // =======================================================
-        // WAJIB GANTI 2 LINK DI BAWAH INI SESUAI PUNYA LU BRO!
-        // =======================================================
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
-        const WEB_URL = window.location.origin + window.location.pathname.replace('admin.html', ''); // Ini URL web github lu
-        // =======================================================
+        const WEB_URL = "https://dakreativ.github.io/in/id/"; 
 
-        function toggleBulk() {
-            document.getElementById('bulkInputs').style.display = document.getElementById('orderType').value === 'Bulk' ? 'block' : 'none';
-        }
+        let currentPass = sessionStorage.getItem('adminPass');
+        if (currentPass) showDashboard();
+
+        function doLogin() { currentPass = document.getElementById('adminPass').value; if(currentPass) { sessionStorage.setItem('adminPass', currentPass); showDashboard(); } }
+        function logout() { sessionStorage.removeItem('adminPass'); location.reload(); }
+        function showDashboard() { document.getElementById('loginSection').classList.add('hidden'); document.getElementById('dashboardSection').classList.remove('hidden'); loadData(); }
+        function toggleBulk() { document.getElementById('bulkInputs').style.display = document.getElementById('orderType').value === 'Bulk' ? 'block' : 'none'; }
 
         function generateOrder() {
             const btn = document.getElementById('btnGen');
             const tipe = document.getElementById('orderType').value;
             const payload = {
-                action: 'create_order', pass: document.getElementById('adminPass').value,
+                action: 'create_order', pass: currentPass,
                 prefix_id: document.getElementById('orderId').value, nama: document.getElementById('clientName').value,
-                wa: document.getElementById('clientWa').value, tipe: tipe, kunci: document.getElementById('clientPass').value,
+                wa: '', tipe: tipe, kunci: document.getElementById('clientPass').value,
                 qty: document.getElementById('bulkQty').value, desc: document.getElementById('bulkDesc').value, drive: document.getElementById('bulkDrive').value
             };
 
             if(!payload.prefix_id) return alert("ID Barcode Wajib Diisi!");
-
             btn.disabled = true; btn.innerText = "Processing...";
             
             fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r=>r.json()).then(d => {
-                btn.disabled = false; btn.innerText = "Generate & Simpan";
+                btn.disabled = false; btn.innerText = "Generate & Simpan Barcode";
                 if(d.status === 'success') {
                     alert(d.message); loadData();
-                    
-                    // Generate QR Code Fisiknya
-                    const qrCont = document.getElementById('qr-container');
-                    qrCont.innerHTML = '<h3 style="width:100%; text-align:center;">↓ Simpan Gambar QR Ini ↓</h3>';
-                    
-                    if(tipe === 'Single') {
-                        bikinQR(payload.prefix_id);
-                    } else {
-                        for(let i=1; i<=payload.qty; i++) bikinQR(payload.prefix_id + '-' + i);
-                    }
+                    document.getElementById('qr-container').innerHTML = '';
+                    if(tipe === 'Single') bikinQR(payload.prefix_id);
+                    else for(let i=1; i<=payload.qty; i++) bikinQR(payload.prefix_id + '-' + i);
                 } else alert(d.message);
-            }).catch(()=> { btn.disabled = false; btn.innerText = "Generate & Simpan"; alert("Error Jaringan"); });
+            }).catch(()=> { btn.disabled = false; btn.innerText = "Generate & Simpan Barcode"; alert("Error Jaringan"); });
         }
 
         function bikinQR(id) {
             const div = document.createElement('div'); div.className = 'qr-box';
-            new QRCode(div, { text: WEB_URL + "?id=" + id, width: 150, height: 150 });
-            div.innerHTML += `<div style="margin-top:8px;">ID: ${id}</div>`;
+            const qrCanvas = document.createElement('div');
+            new QRCode(qrCanvas, { text: WEB_URL + "?id=" + id, width: 128, height: 128 });
+            
+            const teksId = document.createElement('div'); teksId.style.marginTop = "8px"; teksId.innerText = "ID: " + id;
+            div.appendChild(qrCanvas); div.appendChild(teksId);
             document.getElementById('qr-container').appendChild(div);
         }
 
         function loadData() {
-            fetch(`${GAS_URL}?action=get_all&pass=${document.getElementById('adminPass').value}`)
+            fetch(`${GAS_URL}?action=get_all&pass=${encodeURIComponent(currentPass)}`)
             .then(r=>r.json()).then(d => {
-                if(d.status==='error') return document.getElementById('tabel').innerHTML = `<tr><td colspan="5" style="color:red;text-align:center;">${d.message}</td></tr>`;
+                if(d.status==='error') { alert(d.message); logout(); return; }
                 let html = '';
                 d.data.forEach(x => { 
                     let badge = x.status === 'Kosong' ? 'badge-kosong' : 'badge-aktif';
-                    html += `<tr><td>${x.id}</td><td>${x.tipe}</td><td>${x.nama}</td><td>${x.pass || '-'}</td><td><span class="${badge}">${x.status}</span></td></tr>`; 
+                    let targetUrl = WEB_URL + "?id=" + x.id;
+                    html += `<tr><td>${x.id}</td><td>${x.tipe}</td><td>${x.nama}</td><td>${x.pass || '-'}</td><td><span class="${badge}">${x.status}</span></td>
+                             <td><button style="width:auto; padding:5px; font-size:11px;" onclick="window.open('${targetUrl}')">Buka Web</button></td></tr>`; 
                 });
-                document.getElementById('tabel').innerHTML = html || '<tr><td colspan="5" style="text-align:center;">Belum ada data.</td></tr>';
+                document.getElementById('tabel').innerHTML = html || '<tr><td colspan="6" style="text-align:center;">Belum ada data.</td></tr>';
             });
         }
-        
-        // Auto Load pas buka
-        window.onload = loadData;
     </script>
 </body>
 </html>

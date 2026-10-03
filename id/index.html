@@ -3,110 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akses Galeri Dokumentasi</title>
+    <title>Sistem Galeri Digital</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { text-align: center; background: white; padding: 40px 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 90%; max-width: 400px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; color: #0F172A; margin: 0; padding: 20px; }
         .hidden { display: none !important; }
+        .container { max-width: 500px; margin: 50px auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         
-        /* Animasi Loading */
-        .loader { border: 4px solid #E2E8F0; border-top: 4px solid #2563EB; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        /* Loading */
+        .loader { border: 4px solid #E2E8F0; border-top: 4px solid #2563EB; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        h3 { color: #0F172A; margin: 0 0 10px 0; font-weight: 800; font-size: 22px; }
-        p { color: #64748B; font-size: 14px; margin-bottom: 25px; line-height: 1.5; }
+        h2 { text-align: center; font-weight: 800; color: #1E293B; margin-top: 0; }
+        p { text-align: center; color: #64748B; font-size: 14px; }
         
-        /* Input & Button */
-        input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1.5px solid #E2E8F0; border-radius: 12px; box-sizing: border-box; font-size: 15px; font-weight: 700; text-align: center; outline: none; transition: 0.3s; }
-        input:focus { border-color: #2563EB; box-shadow: 0 0 0 4px #EFF6FF; }
-        button { background: #0F172A; color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: 700; font-size: 15px; transition: 0.3s; }
-        button:hover { background: #1E293B; transform: translateY(-2px); }
-        .error-msg { color: #EF4444; font-size: 13px; margin-top: 15px; font-weight: 700; display: none; background: #FEF2F2; padding: 10px; border-radius: 8px; border: 1px solid #FCA5A5; }
+        /* Form Element */
+        label { font-size: 13px; font-weight: 700; color: #475569; display: block; margin: 15px 0 5px; }
+        input, select { width: 100%; padding: 14px; border: 1.5px solid #E2E8F0; border-radius: 12px; box-sizing: border-box; font-family: inherit; outline: none; transition: 0.3s; }
+        input:focus, select:focus { border-color: #2563EB; }
+        button { width: 100%; background: #2563EB; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        button:hover { background: #1D4ED8; }
+        button:disabled { background: #94A3B8; }
+
+        /* Gallery Grid */
+        .gallery-container { max-width: 900px; margin: 0 auto; }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
+        .photo-item { width: 100%; aspect-ratio: 1; border-radius: 15px; object-fit: cover; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
 
-    <!-- Box 1: Loading Animasi -->
-    <div class="container" id="loadingBox">
+    <!-- 1. LOADING SCREEN -->
+    <div class="container" id="loadingScreen">
         <div class="loader"></div>
-        <h3>Membuka Akses...</h3>
-        <p>Sistem sedang menyiapkan galeri untuk Anda.</p>
+        <h2 id="loadingText">Memeriksa Barcode...</h2>
     </div>
 
-    <!-- Box 2: Minta Password (Event Sovenir) -->
-    <div class="container hidden" id="passwordBox">
-        <h3 id="greetName">Halo!</h3>
-        <p>Masukkan kode akses (kunci) untuk membuka galeri dokumentasi.</p>
-        <input type="password" id="inputPass" placeholder="Masukkan Kunci Akses">
-        <button onclick="checkPassword()">Buka Galeri</button>
-        <div id="errorMsg" class="error-msg">❌ Kunci akses salah, coba lagi!</div>
+    <!-- 2. FORM KLAIM (Klien Input Data) -->
+    <div class="container hidden" id="claimForm">
+        <h2>✨ Setup Galeri Anda</h2>
+        <p>Barcode ini masih kosong. Silakan isi data di bawah untuk mengaktifkan galeri Anda.</p>
+        
+        <label>Nama Acara / Toko</label>
+        <input type="text" id="cName" placeholder="Contoh: Katalog Baju Lebaran">
+        
+        <label>No. WhatsApp</label>
+        <input type="number" id="cWa" placeholder="628123...">
+
+        <label>Tipe Galeri</label>
+        <select id="cTipe">
+            <option value="Info">Katalog Publik (Tanpa Password)</option>
+            <option value="Event">Event Privat (Pakai Password)</option>
+        </select>
+        
+        <label>Password / PIN (Untuk Edit / Kunci)</label>
+        <input type="text" id="cPass" placeholder="Buat PIN Rahasia">
+
+        <label>Link Folder Google Drive</label>
+        <input type="text" id="cDrive" placeholder="Pastikan akses: 'Siapa Saja / Anyone'">
+        
+        <button id="btnClaim" onclick="claimBarcode()">Aktifkan Barcode Sekarang</button>
     </div>
 
-    <!-- Box 3: Error Barcode -->
-    <div class="container hidden" id="errorBox">
-        <h3 style="color: #EF4444;">Oops! 💔</h3>
-        <p id="errorText">Barcode tidak valid atau data galeri belum tersedia.</p>
+    <!-- 3. TAMPILAN GALERI (End-User) -->
+    <div class="gallery-container hidden" id="galleryView">
+        <h2 id="gTitle" style="font-size: 28px; margin-bottom: 5px;">Nama Galeri</h2>
+        <p>Dokumentasi & Katalog Resmi</p>
+        
+        <div id="gLoader" class="loader"></div>
+        <div class="photo-grid" id="photoGrid"></div>
     </div>
 
     <script>
         // ==========================================
-        // PASTE URL WEB APP GOOGLE SCRIPT DI BAWAH INI
+        // PASTE  WEB APP GOOGLE SCRIPT LU DI SINI
         // ==========================================
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
         
         const urlParams = new URLSearchParams(window.location.search);
         const orderId = urlParams.get('id');
 
-        let targetDriveUrl = "";
-        let correctPass = "";
-
+        // Saat web dibuka, langsung cek status barcode
         if(orderId) {
-            fetch(GAS_URL + "?id=" + orderId)
+            checkStatus();
+        } else {
+            document.getElementById('loadingText').innerText = "❌ URL Tidak Valid";
+            document.querySelector('.loader').style.display = 'none';
+        }
+
+        function checkStatus() {
+            fetch(GAS_URL + "?action=check&id=" + orderId)
             .then(res => res.json())
             .then(data => {
-                document.getElementById('loadingBox').classList.add('hidden');
+                document.getElementById('loadingScreen').classList.add('hidden');
                 
-                if(data.status === 'success') {
-                    targetDriveUrl = data.folder_url;
-                    
-                    if(data.tipe === 'Event') {
-                        correctPass = data.password;
-                        document.getElementById('greetName').innerText = "Halo, " + data.name + " ✨";
-                        document.getElementById('passwordBox').classList.remove('hidden');
-                    } else {
-                        // Kalau tipenya 'Info', gas langsung buka Google Drive
-                        window.location.href = targetDriveUrl;
+                if (data.status === 'success') {
+                    if (data.state === 'Kosong') {
+                        // Jika Kosong, tampilkan Form Setup
+                        document.getElementById('claimForm').classList.remove('hidden');
+                    } else if (data.state === 'Aktif') {
+                        // Jika Aktif, tampilkan UI Galeri, lalu load gambar dari Drive
+                        document.getElementById('galleryView').classList.remove('hidden');
+                        document.getElementById('gTitle').innerText = data.name;
+                        loadGalleryImages(data.folder_url);
                     }
                 } else {
-                    document.getElementById('errorText').innerText = data.message;
-                    document.getElementById('errorBox').classList.remove('hidden');
+                    alert(data.message);
                 }
-            }).catch(err => {
-                document.getElementById('loadingBox').classList.add('hidden');
-                document.getElementById('errorText').innerText = "Terjadi gangguan jaringan, silakan muat ulang.";
-                document.getElementById('errorBox').classList.remove('hidden');
+            }).catch(err => alert("Jaringan Error!"));
+        }
+
+        function claimBarcode() {
+            const btn = document.getElementById('btnClaim');
+            const payload = {
+                action: 'claim', order_id: orderId,
+                name: document.getElementById('cName').value,
+                wa: document.getElementById('cWa').value,
+                tipe: document.getElementById('cTipe').value,
+                password: document.getElementById('cPass').value,
+                folder_url: document.getElementById('cDrive').value
+            };
+
+            if(!payload.name || !payload.folder_url) return alert("Nama dan Link Drive wajib diisi!");
+            
+            btn.disabled = true; btn.innerText = "Menyimpan & Mengaktifkan...";
+
+            fetch(GAS_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    alert("Sukses! QR Code sudah aktif.");
+                    window.location.reload(); // Reload halaman, otomatis masuk ke tampilan Galeri
+                } else {
+                    alert(data.message);
+                    btn.disabled = false; btn.innerText = "Coba Lagi";
+                }
             });
-        } else {
-            document.getElementById('loadingBox').classList.add('hidden');
-            document.getElementById('errorText').innerText = "Silakan scan Barcode atau akses melalui link yang sah.";
-            document.getElementById('errorBox').classList.remove('hidden');
         }
 
-        function checkPassword() {
-            const userInput = document.getElementById('inputPass').value;
-            if(userInput === correctPass) {
-                document.querySelector('button').innerText = "Mengalihkan...";
-                window.location.href = targetDriveUrl;
-            } else {
-                document.getElementById('errorMsg').style.display = "block";
-                document.getElementById('inputPass').value = ""; 
-            }
+        // Fungsi nyedot foto dari Google Drive via API Backend
+        function loadGalleryImages(drive) {
+            const grid = document.getElementById('photoGrid');
+            const loader = document.getElementById('gLoader');
+            
+            fetch(GAS_ + "?action=get_images&=" + encodeURIComponent(drive))
+            .then(res => res.json())
+            .then(data => {
+                loader.style.display = 'none';
+                if(data.status === 'success') {
+                    if(data.images.length === 0) {
+                        grid.innerHTML = "<p>Folder Drive masih kosong atau file bukan foto/video.</p>";
+                        return;
+                    }
+                    data.images.forEach(img => {
+                        // Menampilkan foto
+                        if(img.type.includes('image')) {
+                            grid.innerHTML += `<img src="${img.}" class="photo-item" loading="lazy" alt="Foto">`;
+                        } else if(img.type.includes('video')) {
+                            // Menampilkan video
+                            grid.innerHTML += `<video src="${img.}" class="photo-item" controls></video>`;
+                        }
+                    });
+                } else {
+                    grid.innerHTML = "<p style='color:red;'>Gagal memuat foto. Pastikan link drive benar dan aksesnya SIAPA SAJA (Public).</p>";
+                }
+            });
         }
-
-        document.getElementById('inputPass').addEventListener("keypress", function(e) {
-            if(e.key === "Enter") checkPassword();
-        });
     </script>
 </body>
 </html>

@@ -3,52 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akses Galeri</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <title>Akses Galeri Dokumentasi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; color: #0F172A; margin: 0; padding: 20px;}
+        /* CSS Clean & Modern */
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F7F6; color: #1E293B; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .hidden { display: none !important; }
-        .container { max-width: 450px; margin: 10vh auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
-        .loader { border: 4px solid #E2E8F0; border-top: 4px solid #2563EB; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 0 auto 15px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        h2 { font-weight: 800; margin: 0 0 10px; color: #1E293B; }
-        p { color: #64748B; font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
-        label { text-align: left; display: block; font-size: 13px; font-weight: 700; color: #475569; margin: 15px 0 5px; }
-        input { width: 100%; padding: 14px; border: 1.5px solid #E2E8F0; border-radius: 12px; box-sizing: border-box; outline: none; transition: 0.3s; font-family: inherit; }
-        input:focus { border-color: #2563EB; box-shadow: 0 0 0 4px #EFF6FF; }
-        button { background: #0F172A; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 15px; }
-        button:hover { background: #1E293B; transform: translateY(-2px); }
         
-        /* Galeri */
-        .gallery-wrap { max-width: 800px; margin: 0 auto; text-align: center; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 20px; }
-        .grid img, .grid video { width: 100%; border-radius: 12px; aspect-ratio: 1; object-fit: cover; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        /* Box Styling */
+        .card { background: #FFFFFF; width: 100%; max-width: 450px; padding: 35px 25px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.04); text-align: center; box-sizing: border-box; margin-top: 5vh; }
+        
+        /* Loading Animation Premium */
+        .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60vh; }
+        .spinner { width: 50px; height: 50px; border: 4px solid #F1F5F9; border-top: 4px solid #3B82F6; border-radius: 50%; animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .loading-text { font-size: 16px; font-weight: 800; color: #0F172A; transition: opacity 0.3s ease; }
+        .progress-bar { width: 200px; height: 6px; background: #E2E8F0; border-radius: 10px; margin-top: 15px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: #3B82F6; transition: width 0.5s ease; border-radius: 10px; }
+
+        /* Typography & Form */
+        h2 { font-weight: 800; margin: 0 0 8px; font-size: 24px; letter-spacing: -0.5px; }
+        p { color: #64748B; font-size: 14px; margin-bottom: 25px; line-height: 1.6; }
+        label { text-align: left; display: block; font-size: 13px; font-weight: 800; color: #334155; margin: 15px 0 8px; }
+        input { width: 100%; padding: 16px; border: 2px solid #E2E8F0; border-radius: 14px; box-sizing: border-box; outline: none; transition: 0.3s; font-family: inherit; font-size: 14px; }
+        input:focus { border-color: #3B82F6; background: #F8FAFC; }
+        button { background: #0F172A; color: white; border: none; padding: 16px; border-radius: 14px; font-weight: 800; font-size: 15px; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 20px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15); }
+        button:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2); }
+        button:disabled { background: #94A3B8; cursor: not-allowed; box-shadow: none; transform: none; }
+
+        /* Modern Masonry/Grid Gallery */
+        .gallery-wrap { max-width: 1000px; width: 100%; margin: 0 auto; text-align: center; }
+        .gallery-header { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #E2E8F0; }
+        .gallery-header h2 { font-size: 32px; color: #0F172A; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-top: 10px; }
+        .grid img, .grid video { width: 100%; border-radius: 16px; aspect-ratio: 4/5; object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.06); transition: 0.3s; cursor: pointer; }
+        .grid img:hover { transform: scale(1.03); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
 
-    <!-- 1. LOADING -->
-    <div class="container" id="loadingBox">
-        <div class="loader"></div>
-        <h2 id="loadingTxt">Memeriksa Akses...</h2>
+    <!-- 1. LOADING SCREEN -->
+    <div class="loading-container" id="loadingBox">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Memindai Barcode...</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
     </div>
 
-    <!-- 2. FORM SETUP KLIEN (KHUSUS TIPE SINGLE YG MASIH KOSONG) -->
-    <div class="container hidden" id="setupBox">
-        <h2>✨ Setup Galeri Anda</h2>
-        <p>Silakan masukkan nama bisnis dan link foto Anda. Barcode akan otomatis terkunci untuk pengunjung.</p>
+    <!-- 2. FORM SETUP KLIEN -->
+    <div class="card hidden" id="setupBox">
+        <h2>Setup Galeri ✨</h2>
+        <p>Aktivasi barcode Anda dengan mengisi data di bawah. Setelah disimpan, pengunjung bisa langsung melihat galeri Anda.</p>
         <label>Nama Bisnis / Acara</label>
-        <input type="text" id="setupNama" placeholder="cth: Katalog Kaos Vol. 1">
+        <input type="text" id="setupNama" placeholder="Ketik nama di sini...">
         <label>Link Folder Google Drive</label>
-        <input type="text" id="setupDrive" placeholder="Akses Wajib: Siapa Saja (Anyone)">
-        <button onclick="submitSetup()" id="btnSetup">Simpan & Kunci Barcode</button>
+        <input type="text" id="setupDrive" placeholder="Pastikan hak akses 'Siapa Saja (Public)'">
+        <button onclick="submitSetup()" id="btnSetup">Aktifkan & Kunci Barcode</button>
     </div>
 
-    <!-- 3. HASIL GALERI FOTO (LANGSUNG BUKA KALO UDAH AKTIF) -->
+    <!-- 3. TAMPILAN GALERI -->
     <div class="gallery-wrap hidden" id="galleryBox">
-        <h2 id="gTitle" style="font-size: 28px;"></h2>
-        <p style="color: #64748B; font-weight: 500;">Dokumentasi & Katalog Resmi</p>
-        <div id="gLoader" class="loader"></div>
+        <div class="gallery-header">
+            <h2 id="gTitle">Nama Galeri</h2>
+            <p style="margin-bottom:0;">Dokumentasi & Katalog Resmi</p>
+        </div>
         <div id="gridFoto" class="grid"></div>
     </div>
 
@@ -56,89 +74,127 @@
         // ==============================================
         // WAJIB GANTI LINK INI SESUAI PUNYA LU BRO!
         // ==============================================
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
-
+        const GAS_URL = "PASTE_LINK_WEB_APP_LU_DISINI"; 
+        
         const urlParams = new URLSearchParams(window.location.search);
         const orderId = urlParams.get('id');
         let dbDrive = "";
 
+        // Fungsi Teks Animasi Loading
+        const loadingMessages = [
+            "Menghubungkan ke server...", 
+            "Memeriksa database...", 
+            "Memindai folder foto...", 
+            "Mempersiapkan galeri...", 
+            "Sedikit lagi selesai..."
+        ];
+        let msgIndex = 0;
+        let progress = 5;
+
+        // Jalankan teks berganti tiap 1.5 detik
+        const loadingInterval = setInterval(() => {
+            msgIndex = (msgIndex + 1) % loadingMessages.length;
+            const textEl = document.getElementById('loadingText');
+            textEl.style.opacity = 0;
+            setTimeout(() => {
+                textEl.innerText = loadingMessages[msgIndex];
+                textEl.style.opacity = 1;
+            }, 300);
+        }, 1500);
+
+        // Jalankan progress bar
+        const progressInterval = setInterval(() => {
+            if(progress < 90) progress += Math.random() * 10;
+            document.getElementById('progressFill').style.width = progress + "%";
+        }, 500);
+
+        // Eksekusi Pengecekan Barcode
         if(orderId) {
             fetch(GAS_URL + "?action=scan&id=" + orderId)
             .then(res => res.json())
             .then(data => {
-                document.getElementById('loadingBox').classList.add('hidden');
-                
                 if (data.status === 'success') {
                     dbDrive = data.drive;
                     document.getElementById('gTitle').innerText = data.nama || "Galeri Foto";
 
                     if (data.state === 'Kosong') {
-                        // Scan Ke-1: Nampilin form isi data
+                        hentikanLoading();
                         document.getElementById('setupBox').classList.remove('hidden');
                     } else if (data.state === 'Aktif') {
-                        // Scan Ke-2 dst: Langsung buka Galeri!
                         bukaGaleri(); 
                     }
                 } else {
-                    document.getElementById('loadingBox').classList.remove('hidden');
-                    document.querySelector('.loader').style.display = 'none';
-                    document.getElementById('loadingTxt').innerText = "❌ " + data.message;
+                    tampilkanError(data.message);
                 }
-            }).catch(err => alert("Jaringan Error!"));
+            }).catch(err => tampilkanError("Gagal terhubung ke server. Periksa koneksi internet Anda."));
         } else {
-            document.querySelector('.loader').style.display = 'none';
-            document.getElementById('loadingTxt').innerText = "Silakan Scan Barcode yang Valid.";
+            tampilkanError("Silakan Scan Barcode yang Valid.");
         }
 
-        // FUNGSI SIMPAN SETUP KLIEN
+        function hentikanLoading() {
+            clearInterval(loadingInterval);
+            clearInterval(progressInterval);
+            document.getElementById('progressFill').style.width = "100%";
+            setTimeout(() => {
+                document.getElementById('loadingBox').classList.add('hidden');
+            }, 500);
+        }
+
+        function tampilkanError(pesan) {
+            clearInterval(loadingInterval);
+            clearInterval(progressInterval);
+            document.querySelector('.spinner').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('loadingText').innerHTML = `<span style="color:#EF4444; font-size:20px;">⚠️<br><br>${pesan}</span>`;
+        }
+
         function submitSetup() {
             const nama = document.getElementById('setupNama').value;
             const drive = document.getElementById('setupDrive').value;
             const btn = document.getElementById('btnSetup');
 
-            if(!nama || !drive) return alert("Nama Bisnis dan Link Drive harus diisi!");
-            btn.disabled = true; btn.innerText = "Mengunci Barcode...";
+            if(!nama || !drive) return alert("Semua kolom wajib diisi!");
+            btn.disabled = true; btn.innerText = "Menyimpan Data...";
 
             fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'first_setup', id: orderId, nama: nama, drive: drive }) })
             .then(r=>r.json()).then(d => {
                 if(d.status === 'success') { 
-                    alert("Berhasil! Barcode sekarang aktif."); 
                     window.location.reload(); 
-                } 
-                else { alert(d.message); btn.disabled = false; btn.innerText = "Simpan & Kunci Barcode"; }
+                } else { 
+                    alert(d.message); btn.disabled = false; btn.innerText = "Aktifkan & Kunci Barcode"; 
+                }
             });
         }
 
-        // FUNGSI LOAD GAMBAR GOOGLE DRIVE
-        // FUNGSI LOAD GAMBAR GOOGLE DRIVE (VERSI ANTI-TEBAK-TEBAKAN)
         function bukaGaleri() {
-            document.getElementById('galleryBox').classList.remove('hidden');
+            // Ubah teks loading khusus buat narik foto
+            document.getElementById('loadingText').innerText = "Mengunduh gambar dari Drive...";
             
             fetch(GAS_URL + "?action=get_images&url=" + encodeURIComponent(dbDrive))
             .then(r => r.json())
             .then(d => {
-                document.getElementById('gLoader').style.display = 'none';
-                let html = '';
+                hentikanLoading();
+                document.getElementById('galleryBox').classList.remove('hidden');
                 
+                let html = '';
                 if (d.status === 'success') {
-                    if (d.images && d.images.length > 0) {
+                    if(d.images && d.images.length > 0) {
                         d.images.forEach(img => {
-                            if(img.type.includes('image')) html += `<img src="${img.url}">`;
+                            // Pake atribut loading="lazy" biar web enteng
+                            if(img.type.includes('image')) html += `<img src="${img.url}" loading="lazy" alt="Gallery Image">`;
                             else if(img.type.includes('video')) html += `<video src="${img.url}" controls></video>`;
                         });
                     } else {
-                        html = "<p style='grid-column:1/-1; color:#F59E0B;'>⚠️ Folder berhasil diakses, tapi tidak ada file Foto/Video di dalamnya (pastikan tidak ada di dalam sub-folder).</p>";
+                        html = "<p style='grid-column:1/-1;'>Folder berhasil diakses, tapi kosong / tidak ada file gambar.</p>";
                     }
                 } else {
-                    // INI BIKIN WEB NAMPILIN ERROR ASLI DARI GOOGLE
-                    html = "<p style='grid-column:1/-1; color:red;'>❌ ERROR GOOGLE: " + d.message + "</p>";
+                    html = `<p style='grid-column:1/-1; color:#EF4444;'>Gagal memuat galeri.<br><br><b>Pesan Server:</b> ${d.message}<br><br>Pastikan setting Link Drive sudah <b>"Siapa Saja yang memiliki link"</b>.</p>`;
                 }
-                
                 document.getElementById('gridFoto').innerHTML = html;
-            })
-            .catch(err => {
-                document.getElementById('gLoader').style.display = 'none';
-                document.getElementById('gridFoto').innerHTML = "<p style='grid-column:1/-1; color:red;'>Gagal koneksi ke server API.</p>";
+            }).catch(err => {
+                hentikanLoading();
+                document.getElementById('galleryBox').classList.remove('hidden');
+                document.getElementById('gridFoto').innerHTML = "<p style='grid-column:1/-1; color:#EF4444;'>Jaringan bermasalah, gagal mengambil gambar.</p>";
             });
         }
     </script>

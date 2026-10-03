@@ -8,22 +8,16 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; color: #0F172A; margin: 0; padding: 20px;}
         .hidden { display: none !important; }
-        .container { max-width: 450px; margin: 5vh auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
-        
-        /* Animasi Muter */
+        .container { max-width: 450px; margin: 10vh auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
         .loader { border: 4px solid #E2E8F0; border-top: 4px solid #2563EB; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 0 auto 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
         h2 { font-weight: 800; margin: 0 0 10px; color: #1E293B; }
         p { color: #64748B; font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
-        
         label { text-align: left; display: block; font-size: 13px; font-weight: 700; color: #475569; margin: 15px 0 5px; }
-        input { width: 100%; padding: 14px; border: 1.5px solid #E2E8F0; border-radius: 12px; box-sizing: border-box; outline: none; transition: 0.3s; font-family: inherit; }
+        input { width: 100%; padding: 14px; border: 1.5px solid #E2E8F0; border-radius: 12px; box-sizing: border-box; outline: none; transition: 0.3s; }
         input:focus { border-color: #2563EB; box-shadow: 0 0 0 4px #EFF6FF; }
         button { background: #0F172A; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 15px; }
         button:hover { background: #1E293B; transform: translateY(-2px); }
-        
-        /* Galeri */
         .gallery-wrap { max-width: 800px; margin: 0 auto; text-align: center; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 20px; }
         .grid img, .grid video { width: 100%; border-radius: 12px; aspect-ratio: 1; object-fit: cover; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
@@ -31,32 +25,32 @@
 </head>
 <body>
 
-    <!-- 1. LOADING CEK BARCODE -->
+    <!-- 1. LOADING -->
     <div class="container" id="loadingBox">
         <div class="loader"></div>
         <h2 id="loadingTxt">Memeriksa Akses...</h2>
     </div>
 
-    <!-- 2. FORM KLAIM (Kalo Admin Bikin Tipe: Single) -->
+    <!-- 2. FORM SETUP KLIEN (KHUSUS TIPE SINGLE YG KOSONG) -->
     <div class="container hidden" id="setupBox">
-        <h2>✨ Setup Link Drive</h2>
-        <p>Halo <span id="sNama" style="font-weight:bold;"></span>, silakan masukkan link foto Anda. Barcode akan permanen terkunci setelah disimpan.</p>
-        <label>Deskripsi Singkat / Judul</label>
-        <input type="text" id="setupDesc" placeholder="cth: Katalog Kaos Vol. 1">
+        <h2>✨ Setup Galeri Anda</h2>
+        <p>Halo <span id="sNama" style="font-weight:bold;"></span>! Masukkan data untuk mengaktifkan galeri ini. Barcode akan otomatis terkunci.</p>
+        <label>Deskripsi Acara / Toko</label>
+        <input type="text" id="setupDesc" placeholder="cth: Katalog Produk Vol 1">
         <label>Link Folder Google Drive</label>
-        <input type="text" id="setupDrive" placeholder="Pastikan Share = Siapa Saja (Anyone)">
-        <button onclick="submitSetup()" id="btnSetup">Simpan & Aktifkan Barcode</button>
+        <input type="text" id="setupDrive" placeholder="Akses Wajib: Siapa Saja (Anyone)">
+        <button onclick="submitSetup()" id="btnSetup">Simpan & Kunci Barcode</button>
     </div>
 
-    <!-- 3. FORM PASSWORD (Kalo Galeri Diproteksi) -->
+    <!-- 3. MINTA PASSWORD -->
     <div class="container hidden" id="passBox">
         <h2>🔒 Galeri Terkunci</h2>
-        <p>Silakan masukkan password untuk melihat isi galeri ini.</p>
+        <p>Silakan masukkan password untuk melihat galeri.</p>
         <input type="password" id="userPass" placeholder="Ketik Password...">
         <button onclick="cekPassword()">Buka Galeri</button>
     </div>
 
-    <!-- 4. HASIL GALERI FOTO -->
+    <!-- 4. GALERI ESTETIK -->
     <div class="gallery-wrap hidden" id="galleryBox">
         <h2 id="gTitle" style="font-size: 28px;"></h2>
         <p id="gDesc" style="color: #64748B; font-weight: 500;"></p>
@@ -65,12 +59,7 @@
     </div>
 
     <script>
-        // =======================================================
-        // WAJIB GANTI LINK DI BAWAH INI SESUAI PUNYA LU BRO!
-        // =======================================================
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
-        // =======================================================
-
         const urlParams = new URLSearchParams(window.location.search);
         const orderId = urlParams.get('id');
 
@@ -87,19 +76,17 @@
                     document.getElementById('gTitle').innerText = data.nama;
                     document.getElementById('gDesc').innerText = data.desc;
 
-                    // KALO KOSONG -> Buka Form Setup (Khusus Tipe Single)
+                    // KALO MASIH KOSONG (KLIEN BELUM SETUP)
                     if (data.state === 'Kosong') {
                         document.getElementById('sNama').innerText = data.nama;
                         document.getElementById('setupBox').classList.remove('hidden');
                     } 
-                    // KALO AKTIF -> Cek Password Dulu
+                    // KALO SUDAH AKTIF / DILOCK
                     else if (data.state === 'Aktif') {
-                        if (dbPass) {
-                            // Ada passwordnya, minta user input
-                            document.getElementById('passBox').classList.remove('hidden');
+                        if (dbPass && dbPass.trim() !== '') {
+                            document.getElementById('passBox').classList.remove('hidden'); // Tanya Password
                         } else {
-                            // Gak ada password, langsung buka galeri
-                            bukaGaleri();
+                            bukaGaleri(); // Gak ada password, langsung buka
                         }
                     }
                 } else {
@@ -113,38 +100,29 @@
             document.getElementById('loadingTxt').innerText = "Silakan Scan Barcode yang Valid.";
         }
 
-        // FUNGSI SIMPAN SETUP KLIEN
         function submitSetup() {
             const desc = document.getElementById('setupDesc').value;
             const drive = document.getElementById('setupDrive').value;
             const btn = document.getElementById('btnSetup');
 
-            if(!desc || !drive) return alert("Deskripsi dan Link Drive harus diisi!");
+            if(!desc || !drive) return alert("Semua form wajib diisi!");
             btn.disabled = true; btn.innerText = "Mengunci Barcode...";
 
-            fetch(GAS_URL, {
-                method: 'POST', body: JSON.stringify({ action: 'first_setup', id: orderId, desc: desc, drive: drive })
-            }).then(r=>r.json()).then(d => {
-                if(d.status === 'success') {
-                    alert("Berhasil! Barcode sekarang aktif.");
-                    window.location.reload(); // Otomatis refresh buat nampilin galeri
-                } else {
-                    alert(d.message); btn.disabled = false; btn.innerText = "Simpan & Aktifkan Barcode";
-                }
+            fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'first_setup', id: orderId, desc: desc, drive: drive }) })
+            .then(r=>r.json()).then(d => {
+                if(d.status === 'success') { alert("Berhasil Terkunci!"); window.location.reload(); } 
+                else { alert(d.message); btn.disabled = false; btn.innerText = "Simpan & Kunci Barcode"; }
             });
         }
 
-        // FUNGSI CEK PASSWORD PENGUNJUNG
         function cekPassword() {
             if(document.getElementById('userPass').value !== dbPass) return alert("Password Salah!");
             document.getElementById('passBox').classList.add('hidden');
             bukaGaleri();
         }
 
-        // FUNGSI LOAD GAMBAR GOOGLE DRIVE
         function bukaGaleri() {
             document.getElementById('galleryBox').classList.remove('hidden');
-            
             fetch(GAS_URL + "?action=get_images&url=" + encodeURIComponent(dbDrive))
             .then(r=>r.json()).then(d => {
                 document.getElementById('gLoader').style.display = 'none';
@@ -155,7 +133,7 @@
                         else if(img.type.includes('video')) html += `<video src="${img.url}" controls></video>`;
                     });
                 } else {
-                    html = "<p style='grid-column:1/-1; color:red;'>Gagal memuat. Pastikan Akses Link Drive = Siapa Saja.</p>";
+                    html = "<p style='grid-column:1/-1; color:red;'>Gagal memuat. Pastikan Link Drive di-setting Siapa Saja (Public).</p>";
                 }
                 document.getElementById('gridFoto').innerHTML = html;
             });

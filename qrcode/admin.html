@@ -3,411 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin - Dktv.</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <title>Akses Galeri Dokumentasi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --bg: #f8fafc; --surface: #ffffff; --border: #e2e8f0; 
-            --text-main: #0f172a; --text-muted: #64748b; 
-            --primary: #000000; --biru: #2563eb; --biru-hover: #1d4ed8;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { text-align: center; background: white; padding: 40px 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 90%; max-width: 400px; }
+        .hidden { display: none !important; }
         
-        /* PROTEKSI ANTI COPY PASTE */
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; }
-        body { 
-            background: var(--bg); color: var(--text-main); padding: 40px 20px; -webkit-font-smoothing: antialiased; 
-            user-select: none; -webkit-user-select: none; -moz-user-select: none; /* Anti blok teks */
-        }
-        /* Biarkan input tetep bisa diketik/diblok */
-        input { user-select: text; -webkit-user-select: text; }
-
-        /* LAYAR LOGIN (OVERLAY) */
-        #loginOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
-            display: flex; justify-content: center; align-items: center; z-index: 9999;
-        }
-        .login-box {
-            background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 400px;
-            text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-        }
-        .login-box h2 { font-weight: 800; margin-bottom: 8px; }
-        .login-box p { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
-        .login-box input {
-            width: 100%; padding: 14px; border: 2px solid var(--border); border-radius: 12px;
-            font-size: 16px; margin-bottom: 16px; outline: none; transition: 0.2s; text-align: center; letter-spacing: 2px;
-        }
-        .login-box input:focus { border-color: var(--primary); }
-        .login-box button {
-            width: 100%; background: var(--primary); color: white; padding: 14px; border: none;
-            border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s;
-        }
-        .login-box button:hover { opacity: 0.8; transform: translateY(-2px); }
-
-        /* KONTEN ADMIN (Awalnya Disembunyikan) */
-        #appContent { display: none; }
-
-        .container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
-        .header { display: flex; justify-content: space-between; align-items: center; }
-        .logo-title { font-size: 24px; font-weight: 800; letter-spacing: -1px; }
-        .logo-subtitle { font-size: 13px; color: var(--text-muted); font-weight: 600; }
-
-        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 24px; }
-        @media (min-width: 768px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 28px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
-        .card-header { margin-bottom: 24px; }
-        .card-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-        .card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        /* Animasi Loading */
+        .loader { border: 4px solid #E2E8F0; border-top: 4px solid #2563EB; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-group input { width: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; outline: none; font-size: 14px; transition: 0.2s; background: #f8fafc; }
-        .form-group input:focus { border-color: var(--biru); background: var(--surface); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+        h3 { color: #0F172A; margin: 0 0 10px 0; font-weight: 800; font-size: 22px; }
+        p { color: #64748B; font-size: 14px; margin-bottom: 25px; line-height: 1.5; }
         
-        .btn { width: 100%; color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; display: flex; justify-content: center; align-items: center; gap: 8px; }
-        .btn-primary { background: var(--primary); }
-        .btn-primary:hover { background: #1e293b; }
-        .btn-blue { background: var(--biru); }
-        .btn-blue:hover { background: var(--biru-hover); }
-        .btn:disabled { opacity: 0.6; cursor: wait; }
-
-        .db-header { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
-        @media (min-width: 768px) { .db-header { flex-direction: row; justify-content: space-between; align-items: center; } }
-        
-        .tabs { display: flex; gap: 8px; background: #f1f5f9; padding: 4px; border-radius: 12px; }
-        .tab { padding: 8px 16px; font-size: 13px; font-weight: 600; color: var(--text-muted); border-radius: 8px; cursor: pointer; transition: 0.2s; }
-        .tab.active { background: var(--surface); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-
-        .search-box { position: relative; width: 100%; max-width: 300px; }
-        .search-box input { width: 100%; padding: 10px 16px 10px 40px; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; outline: none; transition: 0.2s; }
-        .search-box input:focus { border-color: var(--biru); }
-        .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); opacity: 0.4; }
-
-        .table-wrapper { overflow-x: auto; border: 1px solid var(--border); border-radius: 16px; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; background: var(--surface); }
-        th { background: #f8fafc; padding: 14px 20px; font-weight: 600; color: var(--text-muted); font-size: 12px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
-        td { padding: 16px 20px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-        tr:hover td { background: #f8fafc; }
-        tr:last-child td { border-bottom: none; }
-        .group-header td { background: #f1f5f9; font-weight: 700; color: var(--text-main); font-size: 14px; padding: 12px 20px; border-top: 2px solid var(--border); }
-
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-flex; }
-        .bg-blue { background: #dbeafe; color: #1e40af; }
-        .bg-orange { background: #ffedd5; color: #c2410c; }
-        .status-kosong { color: #d97706; font-style: italic; font-weight: 500;}
-        .status-isi { color: #059669; font-weight: 600;}
-
-        .btn-sm { background: #f1f5f9; color: var(--text-main); padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; border: 1px solid transparent; font-weight: 600; transition: 0.2s; display: inline-flex; align-items: center; gap: 4px; }
-        .btn-sm:hover { background: #e2e8f0; }
-        .btn-copy { background: #ecfdf5; color: #059669; border-color: #a7f3d0; }
-        .btn-copy:hover { background: #d1fae5; }
+        /* Input & Button */
+        input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1.5px solid #E2E8F0; border-radius: 12px; box-sizing: border-box; font-size: 15px; font-weight: 700; text-align: center; outline: none; transition: 0.3s; }
+        input:focus { border-color: #2563EB; box-shadow: 0 0 0 4px #EFF6FF; }
+        button { background: #0F172A; color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: 700; font-size: 15px; transition: 0.3s; }
+        button:hover { background: #1E293B; transform: translateY(-2px); }
+        .error-msg { color: #EF4444; font-size: 13px; margin-top: 15px; font-weight: 700; display: none; background: #FEF2F2; padding: 10px; border-radius: 8px; border: 1px solid #FCA5A5; }
     </style>
 </head>
 <body>
 
-<!-- LAYAR LOGIN PROTEKSI -->
-<div id="loginOverlay">
-    <div class="login-box">
-        <h2 style="font-size: 28px; letter-spacing: -1px;">Dktv.</h2>
-        <p>Dashboard Super Admin</p>
-        <form onsubmit="cekLogin(event)">
-            <input type="password" id="passInput" placeholder="Masukkan Password" required>
-            <button type="submit">Login ke Sistem</button>
-        </form>
-    </div>
-</div>
-
-<!-- KONTEN UTAMA ADMIN -->
-<div class="container" id="appContent">
-    <div class="header">
-        <div>
-            <div class="logo-title">Dktv.</div>
-            <div class="logo-subtitle">Dashboard Super Admin</div>
-        </div>
-        <button onclick="logout()" class="btn-sm" style="background:#fee2e2; color:#b91c1c;">Keluar (Lock)</button>
+    <!-- Box 1: Loading Animasi -->
+    <div class="container" id="loadingBox">
+        <div class="loader"></div>
+        <h3>Membuka Akses...</h3>
+        <p>Sistem sedang menyiapkan galeri untuk Anda.</p>
     </div>
 
-    <!-- FORM GENERATE -->
-    <div class="grid-2">
-        <div class="card" style="border-top: 4px solid var(--biru);">
-            <div class="card-header">
-                <div class="card-title">Order Satuan (Editable)</div>
-                <div class="card-desc">Klien dapat link untuk edit QR berkali-kali.</div>
-            </div>
-            <form onsubmit="generateSatuan(event)">
-                <div class="form-group"><label>Nama Klien / Instansi</label><input type="text" id="namaKlien" placeholder="Masukkan nama..." required></div>
-                <button type="submit" class="btn btn-blue" id="btnSatuan">Buat 1 QR & Link Akses</button>
-            </form>
-        </div>
-
-        <div class="card" style="border-top: 4px solid var(--primary);">
-            <div class="card-header">
-                <div class="card-title">Order Masal (Sekali Kunci)</div>
-                <div class="card-desc">Grosir suvenir. Link diisi user, langsung terkunci.</div>
-            </div>
-            <form onsubmit="generateBatch(event)">
-                <div class="form-group"><label>Nama Batch Order</label><input type="text" id="batchName" placeholder="Contoh: Suvenir Rian" required></div>
-                <div class="form-group"><label>Jumlah (Pcs)</label><input type="number" id="jumlah" min="1" max="100" value="10" required></div>
-                <button type="submit" class="btn btn-primary" id="btnBatch">Buat & Download ZIP</button>
-            </form>
-        </div>
+    <!-- Box 2: Minta Password (Event Sovenir) -->
+    <div class="container hidden" id="passwordBox">
+        <h3 id="greetName">Halo!</h3>
+        <p>Masukkan kode akses (kunci) untuk membuka galeri dokumentasi.</p>
+        <input type="password" id="inputPass" placeholder="Masukkan Kunci Akses">
+        <button onclick="checkPassword()">Buka Galeri</button>
+        <div id="errorMsg" class="error-msg">❌ Kunci akses salah, coba lagi!</div>
     </div>
 
-    <!-- DATABASE -->
-    <div class="card">
-        <div class="db-header">
-            <div class="tabs" id="filterTabs">
-                <div class="tab active" data-filter="All" onclick="setFilter('All')">Semua Data</div>
-                <div class="tab" data-filter="Editable" onclick="setFilter('Editable')">Satuan (Editable)</div>
-                <div class="tab" data-filter="Sekali_Klaim" onclick="setFilter('Sekali_Klaim')">Masal (Grosir)</div>
-            </div>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Cari Nama, ID, atau Link..." onkeyup="handleSearch()">
-            </div>
-        </div>
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr><th>ID QR</th><th>Tipe</th><th>Tujuan / Status</th><th>Klik</th><th>Aksi</th></tr>
-                </thead>
-                <tbody id="tableBody">
-                    <tr><td colspan="5" align="center" style="color:var(--text-muted);">Memuat database...</td></tr>
-                </tbody>
-            </table>
-        </div>
+    <!-- Box 3: Error Barcode -->
+    <div class="container hidden" id="errorBox">
+        <h3 style="color: #EF4444;">Oops! 💔</h3>
+        <p id="errorText">Barcode tidak valid atau data galeri belum tersedia.</p>
     </div>
-</div>
 
-<script>
-    /* =======================================
-       1. PROTEKSI KEAMANAN ADMIN
-    ======================================= */
-    // Nonaktifkan Klik Kanan
-    document.addEventListener('contextmenu', event => event.preventDefault());
-    
-    // Nonaktifkan Shortcut Keyboard (Ctrl+C, Ctrl+U, Ctrl+S, F12)
-    document.addEventListener('keydown', event => {
-        if (event.ctrlKey && (event.key === 'c' || event.key === 'u' || event.key === 's' || event.key === 'p')) {
-            event.preventDefault();
-        }
-        if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && event.key === 'I')) {
-            event.preventDefault();
-        }
-    });
+    <script>
+        // ==========================================
+        // PASTE URL WEB APP GOOGLE SCRIPT DI BAWAH INI
+        // ==========================================
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('id');
 
-    // SISTEM LOGIN
-    const passwordAsli = "Tetydadan21@";
+        let targetDriveUrl = "";
+        let correctPass = "";
 
-    function cekSesiLogin() {
-        if (sessionStorage.getItem("adminAuth") === "sukses") {
-            document.getElementById("loginOverlay").style.display = "none";
-            document.getElementById("appContent").style.display = "flex";
-            loadData(); // Load data hanya kalau udah login
-        }
-    }
-
-    function cekLogin(e) {
-        e.preventDefault();
-        const input = document.getElementById("passInput").value;
-        if (input === passwordAsli) {
-            sessionStorage.setItem("adminAuth", "sukses");
-            document.getElementById("loginOverlay").style.display = "none";
-            document.getElementById("appContent").style.display = "flex";
-            loadData();
-        } else {
-            alert("❌ Password Salah!");
-            document.getElementById("passInput").value = "";
-        }
-    }
-
-    function logout() {
-        sessionStorage.removeItem("adminAuth");
-        window.location.reload();
-    }
-
-    /* =======================================
-       2. DATABASE & LOGIK APLIKASI
-    ======================================= */
-    const supabaseUrl = 'https://bkxclrjycsdpchodgzzb.supabase.co';
-    const supabaseKey = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3';
-    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-    
-    const DOMAIN_JEMBATAN = "https://dkrtv.vercel.app/qrcode/scan.html?id="; 
-    const DOMAIN_EDIT = "https://dkrtv.vercel.app/qrcode/edit.html?token="; 
-
-    let allData = [];
-    let currentFilter = 'All';
-
-    async function loadData() {
-        const { data, error } = await supabaseClient.from('dynamic_links').select('*').order('created_at', { ascending: false });
-        if(!error && data) {
-            allData = data; renderTable();
-        } else {
-            document.getElementById('tableBody').innerHTML = `<tr><td colspan="5" align="center">Gagal memuat data.</td></tr>`;
-        }
-    }
-
-    function renderTable() {
-        const tbody = document.getElementById('tableBody');
-        const query = document.getElementById('searchInput').value.toLowerCase();
-
-        let filteredData = allData.filter(item => {
-            const matchTab = (currentFilter === 'All') || (item.tipe_qr === currentFilter);
-            const nama = (item.nama_klien || '').toLowerCase();
-            const qrid = (item.qr_id || '').toLowerCase();
-            const link = (item.target_url || '').toLowerCase();
-            return matchTab && (nama.includes(query) || qrid.includes(query) || link.includes(query));
-        });
-
-        if(filteredData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" align="center" style="color:gray; padding: 30px;">Data tidak ditemukan.</td></tr>`; return;
-        }
-
-        const grouped = filteredData.reduce((acc, item) => {
-            if(!acc[item.nama_klien]) acc[item.nama_klien] = [];
-            acc[item.nama_klien].push(item);
-            return acc;
-        }, {});
-
-        let html = '';
-        for(const [klien, items] of Object.entries(grouped)) {
-            html += `
-                <tr class="group-header">
-                    <td colspan="5">Order: ${klien} <span style="color:gray; font-size:12px;">(${items.length} item)</span></td>
-                </tr>
-            `;
-            items.forEach(item => {
-                const tipeBadge = item.tipe_qr === 'Editable' ? `<span class="badge bg-blue">Editable</span>` : `<span class="badge bg-orange">Grosir</span>`;
-                const linkTujuan = item.target_url ? `<a href="${item.target_url}" target="_blank" style="color:var(--biru); font-weight:600;">${item.target_url}</a><br><span class="status-isi">🔒 ${item.status}</span>` : `<span class="status-kosong">Belum disetting</span>`;
-                const btnAkses = item.tipe_qr === 'Editable' ? `<button class="btn-sm btn-copy" onclick="copyAkses('${item.token_rahasia}')">Copy Link</button>` : ``;
-
-                html += `
-                <tr>
-                    <td style="font-family:monospace; font-weight:700;">${item.qr_id}</td>
-                    <td>${tipeBadge}</td>
-                    <td>${linkTujuan}</td>
-                    <td><b style="font-size:15px;">${item.clicks}</b></td>
-                    <td style="display:flex; gap:6px;">
-                        <button class="btn-sm" onclick="downloadQRLabel('${item.qr_id}')">DL QR</button>
-                        ${btnAkses}
-                    </td>
-                </tr>`;
+        if(orderId) {
+            fetch(GAS_URL + "?id=" + orderId)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('loadingBox').classList.add('hidden');
+                
+                if(data.status === 'success') {
+                    targetDriveUrl = data.folder_url;
+                    
+                    if(data.tipe === 'Event') {
+                        correctPass = data.password;
+                        document.getElementById('greetName').innerText = "Halo, " + data.name + " ✨";
+                        document.getElementById('passwordBox').classList.remove('hidden');
+                    } else {
+                        // Kalau tipenya 'Info', gas langsung buka Google Drive
+                        window.location.href = targetDriveUrl;
+                    }
+                } else {
+                    document.getElementById('errorText').innerText = data.message;
+                    document.getElementById('errorBox').classList.remove('hidden');
+                }
+            }).catch(err => {
+                document.getElementById('loadingBox').classList.add('hidden');
+                document.getElementById('errorText').innerText = "Terjadi gangguan jaringan, silakan muat ulang.";
+                document.getElementById('errorBox').classList.remove('hidden');
             });
-        }
-        tbody.innerHTML = html;
-    }
-
-    function handleSearch() { renderTable(); }
-    function setFilter(tipe) {
-        currentFilter = tipe;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelector(`.tab[data-filter="${tipe}"]`).classList.add('active');
-        renderTable();
-    }
-
-    /* =======================================
-       3. FUNGSI GAMBAR QR BERLABEL ID
-    ======================================= */
-    // Fungsi rahasia biar pas di-download, bawahnya ada tulisan ID-nya
-    function generateCanvasDenganLabel(idQR) {
-        const size = 600;
-        const textHeight = 90; // Ruang buat teks di bawah
-        
-        const canvas = document.createElement('canvas');
-        canvas.width = size;
-        canvas.height = size + textHeight;
-        const ctx = canvas.getContext('2d');
-
-        // Kasih background putih
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Bikin QR-nya
-        const qr = new QRious({ value: DOMAIN_JEMBATAN + idQR, size: size, level: 'H' });
-        
-        // Tempel QR ke kanvas
-        ctx.drawImage(qr.canvas, 0, 0);
-
-        // Gambar Teks ID di bawah QR
-        ctx.fillStyle = "#000000";
-        ctx.font = "bold 40px 'Plus Jakarta Sans', sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText(idQR, size / 2, size + 55);
-
-        // Potong awalan "data:image/png;base64," kalau butuh base64 murninya buat ZIP
-        return {
-            fullDataUrl: canvas.toDataURL('image/png'),
-            base64Data: canvas.toDataURL('image/png').split(',')[1]
-        };
-    }
-
-    async function generateSatuan(e) {
-        e.preventDefault();
-        const btn = document.getElementById('btnSatuan');
-        btn.disabled = true; btn.innerHTML = "Memproses...";
-        
-        const nama = document.getElementById('namaKlien').value;
-        const idUnik = "QR-" + Math.floor(100000 + Math.random() * 900000);
-        const token = "TKN-" + Math.random().toString(36).substr(2, 9);
-
-        await supabaseClient.from('dynamic_links').insert([{ qr_id: idUnik, token_rahasia: token, nama_klien: nama, tipe_qr: 'Editable' }]);
-        
-        document.getElementById('namaKlien').value = '';
-        btn.disabled = false; btn.innerHTML = "Buat 1 QR & Link Akses";
-        loadData();
-    }
-
-    async function generateBatch(e) {
-        e.preventDefault();
-        const btn = document.getElementById('btnBatch');
-        btn.disabled = true; btn.innerHTML = "Memproses ZIP...";
-
-        const batchName = document.getElementById('batchName').value;
-        const jumlah = parseInt(document.getElementById('jumlah').value);
-        const newQRs = [];
-        const prefix = "BCH" + Math.floor(100 + Math.random() * 900); 
-        
-        for (let i = 1; i <= jumlah; i++) {
-            const idUnik = `${prefix}-${i.toString().padStart(3, '0')}`;
-            newQRs.push({ qr_id: idUnik, nama_klien: batchName, tipe_qr: 'Sekali_Klaim' });
+        } else {
+            document.getElementById('loadingBox').classList.add('hidden');
+            document.getElementById('errorText').innerText = "Silakan scan Barcode atau akses melalui link yang sah.";
+            document.getElementById('errorBox').classList.remove('hidden');
         }
 
-        await supabaseClient.from('dynamic_links').insert(newQRs);
-
-        btn.innerHTML = "Download ZIP...";
-        const zip = new JSZip();
-        
-        // Gunakan fungsi kanvas berlabel buat generate masal
-        for (let qrData of newQRs) {
-            const imageData = generateCanvasDenganLabel(qrData.qr_id);
-            zip.file(`${qrData.qr_id}.png`, imageData.base64Data, {base64: true});
+        function checkPassword() {
+            const userInput = document.getElementById('inputPass').value;
+            if(userInput === correctPass) {
+                document.querySelector('button').innerText = "Mengalihkan...";
+                window.location.href = targetDriveUrl;
+            } else {
+                document.getElementById('errorMsg').style.display = "block";
+                document.getElementById('inputPass').value = ""; 
+            }
         }
 
-        const content = await zip.generateAsync({type:"blob"});
-        saveAs(content, `Batch_${batchName.replace(/[^a-zA-Z0-9]/g, '_')}_${jumlah}pcs.zip`);
-
-        document.getElementById('batchName').value = '';
-        btn.disabled = false; btn.innerHTML = "Buat & Download ZIP";
-        loadData();
-    }
-
-    function copyAkses(token) { navigator.clipboard.writeText(DOMAIN_EDIT + token); alert("Link Edit Klien di-copy!"); }
-    
-    function downloadQRLabel(idQR) {
-        const imageData = generateCanvasDenganLabel(idQR);
-        const a = document.createElement('a'); 
-        a.href = imageData.fullDataUrl; 
-        a.download = `${idQR}.png`; 
-        a.click();
-    }
-
-    // Jalankan cek login pas awal buka
-    cekSesiLogin();
-</script>
+        document.getElementById('inputPass').addEventListener("keypress", function(e) {
+            if(e.key === "Enter") checkPassword();
+        });
+    </script>
 </body>
 </html>

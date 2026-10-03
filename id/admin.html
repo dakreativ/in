@@ -1,160 +1,50 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Superadmin | Manajemen Galeri</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <title>Admin Bikin Barcode</title>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0F172A; color: white; margin: 0; padding: 20px; }
-        .hidden { display: none !important; }
-        .container { max-width: 950px; margin: 0 auto; }
-        .card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px; margin-bottom: 20px; }
-        h2 { margin-top: 0; font-weight: 800; color: #38BDF8; }
-        .input-group { display: flex; flex-direction: column; margin-bottom: 15px; }
-        label { font-size: 13px; font-weight: 700; margin-bottom: 5px; color: #94A3B8; text-transform: uppercase; }
-        input, select { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 12px 15px; border-radius: 10px; outline: none; font-size: 14px; transition: 0.3s; }
-        input:focus, select:focus { border-color: #38BDF8; }
-        .flex-row { display: flex; gap: 15px; flex-wrap: wrap; }
-        .flex-row > div { flex: 1; min-width: 200px; }
-        button { background: #38BDF8; color: #0F172A; font-weight: 800; border: none; padding: 14px; border-radius: 10px; cursor: pointer; transition: 0.3s; width: 100%; font-size: 15px; }
-        button:hover { background: #0EA5E9; transform: translateY(-2px); }
-        button:disabled { background: #475569; cursor: not-allowed; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        th, td { padding: 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        th { color: #94A3B8; font-size: 12px; text-transform: uppercase; }
-        .badge-event { background: rgba(239, 68, 68, 0.2); color: #FCA5A5; padding: 4px 8px; border-radius: 6px; font-size: 11px; }
-        .badge-info { background: rgba(34, 197, 94, 0.2); color: #86EFAC; padding: 4px 8px; border-radius: 6px; font-size: 11px; }
-        .btn-sm { background: transparent; padding: 6px 12px; border-radius: 6px; font-size: 12px; width: auto; font-weight: 700; }
+        body { font-family: sans-serif; padding: 20px; background: #1e293b; color: white;}
+        .card { background: #334155; padding: 20px; border-radius: 10px; max-width: 500px; margin: 0 auto 20px;}
+        input { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box;}
+        button { background: #38bdf8; padding: 10px; width: 100%; border: none; font-weight: bold; cursor: pointer;}
+        table { width: 100%; margin-top: 20px; border-collapse: collapse;}
+        td, th { padding: 10px; border: 1px solid #475569;}
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- LOGIN -->
-        <div id="loginSection" class="card" style="max-width: 400px; margin: 100px auto; text-align: center;">
-            <h2>Admin Login</h2>
-            <input type="password" id="adminPass" placeholder="Password Rahasia" style="width: 80%; text-align: center; margin: 20px 0;">
-            <button onclick="doLogin()">Masuk Workspace</button>
-        </div>
+    <div class="card">
+        <h2>1. Bikin Barcode Kosong</h2>
+        <input type="password" id="pass" value="Tetydadan21@" placeholder="Password Admin">
+        <input type="text" id="orderId" placeholder="Masukkan ID (cth: B001)">
+        <button onclick="buatSlot()">Buat Slot Barcode</button>
+    </div>
 
-        <!-- DASHBOARD -->
-        <div id="dashboardSection" class="hidden">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h1 style="margin: 0; font-size: 24px;">Workspace <span style="color:#38BDF8;">Admin</span></h1>
-                <button onclick="logout()" style="width: auto; background: transparent; border: 1px solid #EF4444; color: #EF4444; padding: 8px 15px;">Keluar</button>
-            </div>
-
-            <!-- FORM TAMBAH -->
-            <div class="card">
-                <h2>+ Buat Galeri / Barcode Baru</h2>
-                <div class="flex-row">
-                    <div class="input-group"><label>Kode Unik (ID Barcode)</label><input type="text" id="orderId" placeholder="cth: dadan01" oninput="this.value = this.value.replace(/\\s+/g, '').toLowerCase()"></div>
-                    <div class="input-group"><label>Nama Klien</label><input type="text" id="clientName" placeholder="cth: Dadan & Nisa"></div>
-                </div>
-                <div class="flex-row">
-                    <div class="input-group">
-                        <label>Tipe Link</label>
-                        <select id="linkType" onchange="togglePassword()">
-                            <option value="Event">Event (Pakai Password)</option>
-                            <option value="Info">Info / Affiliate (Tanpa Password)</option>
-                        </select>
-                    </div>
-                    <div class="input-group" id="passContainer"><label>Password / Kunci</label><input type="text" id="clientPass" placeholder="cth: 123456"></div>
-                    <div class="input-group"><label>No WA Klien</label><input type="number" id="clientWa" placeholder="628123..."></div>
-                </div>
-                <div class="input-group"><label>Link Folder Google Drive (Siapa Saja)</label><input type="text" id="driveLink" placeholder="https://drive.google.com/drive/folders/..."></div>
-                <button id="btnSave" onclick="saveData()">Simpan & Buat Link</button>
-            </div>
-
-            <!-- TABEL DATA -->
-            <div class="card">
-                <h2>Daftar Klien / Galeri Aktif</h2>
-                <button onclick="loadData()" class="btn-sm" style="border: 1px solid #94A3B8; color: #94A3B8; margin-bottom: 15px;">🔄 Refresh Data</button>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead><tr><th>ID Barcode</th><th>Nama Klien</th><th>Tipe</th><th>Password</th><th>Aksi</th></tr></thead>
-                        <tbody id="tableBody"><tr><td colspan="5" style="text-align: center;">Memuat data...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+    <div class="card">
+        <h2>2. Data Barcode</h2>
+        <button onclick="loadData()">Refresh Data</button>
+        <table>
+            <thead><tr><th>ID</th><th>Status</th><th>Klien</th></tr></thead>
+            <tbody id="tabel"></tbody>
+        </table>
     </div>
 
     <script>
-        // ==========================================
-        // PASTE URL WEB APP GOOGLE SCRIPT DI BAWAH INI
-        // ==========================================
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
-        const WEB_URL = window.location.origin + window.location.pathname.replace('admin.html', ''); 
 
-        let currentPass = sessionStorage.getItem('adminPass');
-        if (currentPass) showDashboard();
-
-        function doLogin() {
-            const p = document.getElementById('adminPass').value;
-            if(!p) return alert("Isi password!");
-            currentPass = p; sessionStorage.setItem('adminPass', p); showDashboard();
+        function buatSlot() {
+            fetch(GAS_URL, {
+                method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'add_slot', pass: document.getElementById('pass').value, order_id: document.getElementById('orderId').value })
+            }).then(r=>r.json()).then(d => { alert(d.message); loadData(); });
         }
-        function logout() { sessionStorage.removeItem('adminPass'); location.reload(); }
-        function showDashboard() { document.getElementById('loginSection').classList.add('hidden'); document.getElementById('dashboardSection').classList.remove('hidden'); loadData(); }
-        function togglePassword() { document.getElementById('passContainer').style.display = (document.getElementById('linkType').value === 'Info') ? 'none' : 'flex'; }
 
         function loadData() {
-            const tb = document.getElementById('tableBody');
-            tb.innerHTML = '<tr><td colspan="5" style="text-align:center;">Loading...</td></tr>';
-            fetch(`${GAS_URL}?action=get_all&pass=${encodeURIComponent(currentPass)}`)
-            .then(res => res.json())
-            .then(data => {
-                if(data.status === 'error') { alert(data.message); logout(); return; }
-                tb.innerHTML = '';
-                if(data.data.length === 0) return tb.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada data.</td></tr>';
-                data.data.forEach(row => {
-                    const badge = row.tipe === 'Event' ? 'badge-event' : 'badge-info';
-                    const targetUrl = `${WEB_URL}?id=${row.order_id}`;
-                    tb.innerHTML += `
-                        <tr>
-                            <td style="color:#38BDF8; font-weight:bold;">${row.order_id}</td>
-                            <td>${row.name}</td>
-                            <td><span class="${badge}">${row.tipe}</span></td>
-                            <td>${row.tipe === 'Event' ? row.password : '-'}</td>
-                            <td style="display:flex; gap:8px;">
-                                <button class="btn-sm" style="border: 1px solid #38BDF8; color: #38BDF8;" onclick="copyLink('${targetUrl}')">📋 Copy</button>
-                                <button class="btn-sm" style="border: 1px solid #10B981; color: #10B981;" onclick="window.open('${targetUrl}', '_blank')">🌐 Buka</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }).catch(() => tb.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Gagal koneksi ke Google.</td></tr>');
-        }
-
-        function saveData() {
-            const btn = document.getElementById('btnSave');
-            const payload = {
-                action: 'add', pass: currentPass,
-                order_id: document.getElementById('orderId').value,
-                name: document.getElementById('clientName').value,
-                wa: document.getElementById('clientWa').value,
-                tipe: document.getElementById('linkType').value,
-                password: document.getElementById('clientPass').value,
-                folder_url: document.getElementById('driveLink').value
-            };
-            if(!payload.order_id || !payload.name || !payload.folder_url) return alert("Lengkapi Form!");
-            
-            btn.disabled = true; btn.innerText = "Menyimpan...";
-            fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
-            .then(res => res.json())
-            .then(data => {
-                btn.disabled = false; btn.innerText = "Simpan & Buat Link";
-                if(data.status === 'success') {
-                    document.getElementById('orderId').value = ''; document.getElementById('clientName').value = ''; document.getElementById('driveLink').value = '';
-                    loadData();
-                } else alert(data.message);
-            }).catch(() => { btn.disabled = false; btn.innerText = "Simpan & Buat Link"; alert("Error Jaringan."); });
-        }
-
-        function copyLink(url) {
-            if(navigator.clipboard) { navigator.clipboard.writeText(url).then(() => alert("URL Barcode Disalin: " + url)); } 
-            else { prompt("Copy link ini manual:", url); }
+            fetch(`${GAS_URL}?action=get_all&pass=${document.getElementById('pass').value}`)
+            .then(r=>r.json()).then(d => {
+                let html = '';
+                d.data.forEach(x => { html += `<tr><td>${x.order_id}</td><td>${x.status}</td><td>${x.name || '-'}</td></tr>`; });
+                document.getElementById('tabel').innerHTML = html;
+            });
         }
     </script>
 </body>

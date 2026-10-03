@@ -110,21 +110,35 @@
         }
 
         // FUNGSI LOAD GAMBAR GOOGLE DRIVE
+        // FUNGSI LOAD GAMBAR GOOGLE DRIVE (VERSI ANTI-TEBAK-TEBAKAN)
         function bukaGaleri() {
             document.getElementById('galleryBox').classList.remove('hidden');
+            
             fetch(GAS_URL + "?action=get_images&url=" + encodeURIComponent(dbDrive))
-            .then(r=>r.json()).then(d => {
+            .then(r => r.json())
+            .then(d => {
                 document.getElementById('gLoader').style.display = 'none';
                 let html = '';
-                if(d.images && d.images.length > 0) {
-                    d.images.forEach(img => {
-                        if(img.type.includes('image')) html += `<img src="${img.url}">`;
-                        else if(img.type.includes('video')) html += `<video src="${img.url}" controls></video>`;
-                    });
+                
+                if (d.status === 'success') {
+                    if (d.images && d.images.length > 0) {
+                        d.images.forEach(img => {
+                            if(img.type.includes('image')) html += `<img src="${img.url}">`;
+                            else if(img.type.includes('video')) html += `<video src="${img.url}" controls></video>`;
+                        });
+                    } else {
+                        html = "<p style='grid-column:1/-1; color:#F59E0B;'>⚠️ Folder berhasil diakses, tapi tidak ada file Foto/Video di dalamnya (pastikan tidak ada di dalam sub-folder).</p>";
+                    }
                 } else {
-                    html = "<p style='grid-column:1/-1; color:red;'>Gagal memuat. Pastikan Link Drive di-setting Siapa Saja (Public).</p>";
+                    // INI BIKIN WEB NAMPILIN ERROR ASLI DARI GOOGLE
+                    html = "<p style='grid-column:1/-1; color:red;'>❌ ERROR GOOGLE: " + d.message + "</p>";
                 }
+                
                 document.getElementById('gridFoto').innerHTML = html;
+            })
+            .catch(err => {
+                document.getElementById('gLoader').style.display = 'none';
+                document.getElementById('gridFoto').innerHTML = "<p style='grid-column:1/-1; color:red;'>Gagal koneksi ke server API.</p>";
             });
         }
     </script>

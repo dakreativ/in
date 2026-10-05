@@ -49,7 +49,7 @@
             <div class="card">
                 <h2>+ Generate Barcode Baru</h2>
                 <div class="flex-row">
-                    <div><label>Prefix ID Barcode</label><input type="text" id="orderId" placeholder="cth: KAFE-01" oninput="this.value=this.value.replace(/\\s+/g, '').toUpperCase()"></div>
+                    <div><label>Prefix ID Barcode</label><input type="text" id="orderId" placeholder="cth: KAFE-01" oninput="this.value=this.value.replace(/\s+/g, '').toUpperCase()"></div>
                     <div>
                         <label>Tipe Order</label>
                         <select id="orderType" onchange="toggleBulk()">
@@ -86,9 +86,9 @@
 
     <script>
         // ==============================================
-        // WAJIB GANTI LINK INI SESUAI PUNYA LU BRO!
+        // GANTI LINK INI DENGAN LINK WEB APP DARI GOOGLE SCRIPT (GAS)
         // ==============================================
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
+        const GAS_URL = "https://script.google.com/macros/s/GANTI_DENGAN_ID_DEPLOY_ANDA/exec"; 
         const WEB_URL = window.location.origin + window.location.pathname.replace('admin.html', ''); 
         
         let currentPass = sessionStorage.getItem('adminPass');
@@ -103,23 +103,40 @@
             const btn = document.getElementById('btnGen');
             const tipe = document.getElementById('orderType').value;
             const payload = {
-                action: 'create_order', pass: currentPass, prefix_id: document.getElementById('orderId').value, 
-                tipe: tipe, nama: document.getElementById('bulkName').value,
-                qty: document.getElementById('bulkQty').value, drive: document.getElementById('bulkDrive').value
+                action: 'create_order', 
+                pass: currentPass, 
+                prefix_id: document.getElementById('orderId').value, 
+                tipe: tipe, 
+                nama: document.getElementById('bulkName').value,
+                qty: document.getElementById('bulkQty').value, 
+                drive: document.getElementById('bulkDrive').value
             };
 
             if(!payload.prefix_id) return alert("ID Barcode Wajib Diisi!");
             btn.disabled = true; btn.innerText = "Processing...";
             
-            fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r=>r.json()).then(d => {
+            fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) })
+            .then(r => r.json())
+            .then(d => {
                 btn.disabled = false; btn.innerText = "Generate Barcode";
                 if(d.status === 'success') {
                     loadData();
                     document.getElementById('qr-container').innerHTML = '';
                     if(tipe === 'Single') bikinQR(payload.prefix_id);
                     else for(let i=1; i<=payload.qty; i++) bikinQR(payload.prefix_id + '-' + i);
+                    
+                    // Bersihkan form
+                    document.getElementById('orderId').value = '';
+                    document.getElementById('bulkName').value = '';
+                    document.getElementById('bulkQty').value = '';
+                    document.getElementById('bulkDrive').value = '';
                 } else alert(d.message);
-            }).catch(()=> { btn.disabled = false; btn.innerText = "Generate Barcode"; alert("Error Jaringan"); });
+            }).catch(err => { 
+                btn.disabled = false; 
+                btn.innerText = "Generate Barcode"; 
+                alert("Error Jaringan/Server. Cek Console."); 
+                console.error(err);
+            });
         }
 
         function bikinQR(id) {
@@ -130,7 +147,6 @@
             
             const teksId = document.createElement('div'); teksId.innerText = "ID: " + id;
             
-            // Tombol Download
             const btnDl = document.createElement('button'); btnDl.className = 'btn-dl'; btnDl.innerText = '⬇️ Download QR';
             btnDl.onclick = function() {
                 const canvas = qrBox.querySelector('canvas');
@@ -147,17 +163,35 @@
         }
 
         function loadData() {
+            document.getElementById('tabel').innerHTML = '<tr><td colspan="5" style="text-align: center;">Memuat data...</td></tr>';
+            
             fetch(`${GAS_URL}?action=get_all&pass=${encodeURIComponent(currentPass)}`)
-            .then(r=>r.json()).then(d => {
-                if(d.status==='error') { alert(d.message); logout(); return; }
-                let html = '';
-                d.data.forEach(x => { 
-                    let badge = x.status === 'Kosong' ? 'badge-kosong' : 'badge-aktif';
-                    let targetUrl = WEB_URL + "?id=" + x.id;
-                    html += `<tr><td>${x.id}</td><td>${x.tipe}</td><td>${x.nama || '-'}</td><td><span class="${badge}">${x.status}</span></td>
-                             <td><button style="background:transparent; border:1px solid #10B981; color:#10B981; padding:5px 10px; font-size:11px;" onclick="window.open('${targetUrl}')">Buka Web</button></td></tr>`; 
-                });
-                document.getElementById('tabel').innerHTML = html || '<tr><td colspan="5" style="text-align:center;">Belum ada data.</td></tr>';
+            .then(r => r.text())
+            .then(text => {
+                try {
+                    const d = JSON.parse(text);
+                    if(d.status === 'error') { 
+                        alert(d.message); 
+                        if(d.message === 'Password salah!') logout(); 
+                        return; 
+                    }
+                    
+                    let html = '';
+                    d.data.forEach(x => { 
+                        let badge = x.status === 'Kosong' ? 'badge-kosong' : 'badge-aktif';
+                        let targetUrl = WEB_URL + "?id=" + x.id;
+                        html += `<tr><td>${x.id}</td><td>${x.tipe}</td><td>${x.nama || '-'}</td><td><span class="${badge}">${x.status}</span></td>
+                                 <td><button style="background:transparent; border:1px solid #10B981; color:#10B981; padding:5px 10px; font-size:11px;" onclick="window.open('${targetUrl}')">Buka Web</button></td></tr>`; 
+                    });
+                    document.getElementById('tabel').innerHTML = html || '<tr><td colspan="5" style="text-align:center;">Belum ada data.</td></tr>';
+                } catch (e) {
+                    console.error("Respon bukan JSON:", text);
+                    document.getElementById('tabel').innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Gagal mem-parsing data dari Server. Pastikan deployment GAS Who Has Access = Anyone.</td></tr>';
+                }
+            })
+            .catch(err => {
+                console.error("Gagal terhubung:", err);
+                document.getElementById('tabel').innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Koneksi terputus / Diblokir CORS.</td></tr>';
             });
         }
     </script>

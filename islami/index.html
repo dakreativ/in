@@ -39,7 +39,7 @@
 </head>
 <body>
 
-    <div class="card-container">
+    <div class="-container">
         
         <!-- 1. LOADING SCREEN -->
         <div id="loadingBox">
@@ -63,7 +63,7 @@
                 <small style="color:#94A3B8; font-size:11px; display:block; margin-top:5px;">*Wajib pakai kode negara (cth: 62)</small>
             </div>
             
-            <button class="primary-bg" id="btnSetup" onclick="lockCard()">Kunci & Aktifkan Kartu</button>
+            <button class="primary-bg" id="btnSetup" onclick="lock()">Kunci & Aktifkan Kartu</button>
         </div>
 
         <!-- 3. PROFILE SCREEN (Kalo udah dikunci, ini yg diliat orang lain) -->
@@ -72,7 +72,7 @@
             <h1 id="displayName" style="margin-bottom: 5px;">Nama Orang</h1>
             <p style="margin-bottom: 30px;">Let's connect & collaborate!</p>
             
-            <!-- Tombol Utama: Save ke HP (Generate vCard) -->
+            <!-- Tombol Utama: Save ke HP (Generate v) -->
             <button class="primary-bg" onclick="saveContact()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                 Simpan Kontak ke HP
@@ -97,8 +97,8 @@
         // ==========================================
         // WAJIB ISI DENGAN DATA SUPABASE ANDA!
         // ==========================================
-        const SUPABASE_URL = 'https://XXXXXX.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUz...'; 
+        const SUPABASE_URL = 'https://bkxclrjycsdpchodgzzb.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3'; 
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

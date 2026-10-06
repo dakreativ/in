@@ -148,7 +148,7 @@
             });
         }
 
-        function bukaGaleri() {
+       function bukaGaleri() {
             document.getElementById('loadingText').innerText = "Mengunduh gambar dari Drive...";
             fetch(`${GAS_URL}?action=get_images&url=${encodeURIComponent(dbDrive)}`)
             .then(r => r.json())
@@ -160,8 +160,17 @@
                 if (d.status === 'success') {
                     if(d.images && d.images.length > 0) {
                         d.images.forEach(img => {
-                            if(img.type.includes('image')) html += `<img src="${img.url}" loading="lazy" alt="Gallery">`;
-                            else if(img.type.includes('video')) html += `<video src="${img.url}" controls></video>`;
+                            // Ambil mime type dan ubah jadi huruf kecil untuk keamanan
+                            let fileType = (img.type || "").toLowerCase();
+                            
+                            // PERBAIKAN: Jika mengandung 'video' atau 'mp4', render video
+                            if (fileType.includes('video') || fileType.includes('mp4')) {
+                                html += `<video src="${img.url}" controls></video>`;
+                            } 
+                            // Jika bukan video, anggap sebagai gambar (image)
+                            else {
+                                html += `<img src="${img.url}" loading="lazy" alt="Gallery Image">`;
+                            }
                         });
                     } else { html = "<p style='grid-column:1/-1;'>Folder kosong / tidak ada file gambar.</p>"; }
                 } else { html = `<p style='grid-column:1/-1; color:#EF4444;'>Gagal memuat galeri.<br>${d.message}</p>`; }
@@ -169,6 +178,7 @@
             }).catch(err => {
                 hentikanLoading(); document.getElementById('galleryBox').classList.remove('hidden');
                 document.getElementById('gridFoto').innerHTML = "<p style='grid-column:1/-1; color:#EF4444;'>Jaringan bermasalah.</p>";
+                console.error("Error ambil gambar:", err);
             });
         }
     </script>

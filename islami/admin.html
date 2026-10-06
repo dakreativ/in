@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - WA DKTV</title>
-    <!-- Import Supabase JS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Import QRCode JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -60,15 +58,15 @@
 
     <script>
         // ==========================================
-        // WAJIB ISI DENGAN DATA SUPABASE ANDA!
+        // GANTI BAGIAN INI SAJA!
         // ==========================================
-       const SUPABASE_URL = 'https://bkxclrjycsdpchodgzzb.supabase.co';
+        const SUPABASE_URL = 'https://bkxclrjycsdpchodgzzb.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3'; 
-        
-        // Sesuaikan dengan domain website public Anda nanti
+        // ==========================================
+
         const WEB_URL = window.location.origin + window.location.pathname.replace('admin.html', 'index.html'); 
         
-        // DEKLARASI INI HANYA BOLEH ADA SATU KALI DI SELURUH FILE
+        // Deklarasi Supabase (PASTIKAN HANYA ADA SATU DI SELURUH FILE INI)
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function generateCards() {
@@ -79,14 +77,12 @@
             if(!prefix) return alert("Prefix ID wajib diisi!");
             btn.disabled = true; btn.innerText = "Memproses Database...";
 
-            // Siapkan data untuk dimasukkan ke Supabase
             const dataToInsert = [];
             for(let i = 1; i <= qty; i++) {
                 let finalId = qty === 1 ? prefix : `${prefix}-${i}`;
                 dataToInsert.push({ id: finalId, status: 'Kosong' });
             }
 
-            // Insert ke tabel 'cards'
             const { data, error } = await supabase.from('cards').insert(dataToInsert).select();
 
             btn.disabled = false; btn.innerText = "Generate Barcode Kosong";
@@ -96,7 +92,6 @@
                 return alert("Gagal menyimpan ke database: " + error.message);
             }
 
-            // Jika sukses masuk DB, buat Visual QR Code-nya
             document.getElementById('qr-container').innerHTML = '';
             dataToInsert.forEach(item => bikinQR(item.id));
             loadData();
@@ -124,11 +119,10 @@
             const tbody = document.getElementById('tabel');
             tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Memuat data...</td></tr>';
             
-            // Ambil data terbaru dari tabel 'cards'
             const { data, error } = await supabase.from('cards').select('*').order('created_at', { ascending: false });
             
             if (error) {
-                tbody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Error: ${error.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Error DB: Pastikan tabel Supabase bernama 'cards' sudah terbuat. Detail: ${error.message}</td></tr>`;
                 return;
             }
 
@@ -145,7 +139,6 @@
             tbody.innerHTML = html || '<tr><td colspan="4" style="text-align:center;">Belum ada data kartu.</td></tr>';
         }
 
-        // Auto load saat pertama buka
         loadData();
     </script>
 </body>

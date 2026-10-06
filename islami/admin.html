@@ -57,14 +57,13 @@
     </div>
 
     <script>
-        // ==========================================
-        const SUPABASE_URL = 'https://bkxclrjycsdpchodgzzb.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3';  
-        // ==========================================
+        // DATA SUPABASE SUDAH DIMASUKKAN
+        const SUPA_URL = 'https://bkxclrjycsdpchodgzzb.supabase.co';
+        const SUPA_KEY = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3'; 
 
         const WEB_URL = window.location.origin + window.location.pathname.replace('admin.html', 'index.html'); 
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        var dbSupabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
         async function generateCards() {
             const prefix = document.getElementById('prefixId').value;
@@ -80,8 +79,7 @@
                 dataToInsert.push({ id: finalId, status: 'Kosong' });
             }
 
-            // PERUBAHAN DI SINI: MENGGUNAKAN TABEL wa1
-            const { data, error } = await supabase.from('wa1').insert(dataToInsert).select();
+            const { data, error } = await dbSupabase.from('wa1').insert(dataToInsert).select();
 
             btn.disabled = false; btn.innerText = "Generate Barcode Kosong";
 
@@ -117,11 +115,10 @@
             const tbody = document.getElementById('tabel');
             tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Memuat data...</td></tr>';
             
-            // PERUBAHAN DI SINI: MENGGUNAKAN TABEL wa1
-            const { data, error } = await supabase.from('wa1').select('*').order('created_at', { ascending: false });
+            const { data, error } = await dbSupabase.from('wa1').select('*').order('created_at', { ascending: false });
             
             if (error) {
-                tbody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Error DB: Pastikan tabel Supabase bernama 'wa1' sudah terbuat. Detail: ${error.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Error DB: ${error.message}</td></tr>`;
                 return;
             }
 

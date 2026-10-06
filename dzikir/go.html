@@ -31,15 +31,14 @@
         body { background-color: #FAFAFA; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
         ::-webkit-scrollbar { display: none; }
         
-        .screen-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; }
         .screen-hidden {
             transform: translateX(100%); opacity: 0; pointer-events: none;
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            height: 100vh; overflow: hidden;
+            height: 100vh; overflow: hidden; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
         }
         .screen-active {
             transform: translateX(0); opacity: 1; position: relative;
-            height: 100vh; overflow-y: auto;
+            height: 100vh; overflow-y: auto; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
         }
         
         @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
@@ -48,9 +47,12 @@
             background-size: 1000px 100%; animation: shimmer 2s infinite linear;
         }
         
-        /* Audio visualizer effect */
+        /* Audio visualizer effect untuk tombol play */
         .playing-audio { color: #D4AF37; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* Highlight teks Mushaf saat diputar */
+        .mushaf-playing { color: #D4AF37; transition: color 0.3s; }
     </style>
 </head>
 <body class="text-gray-800">
@@ -64,7 +66,6 @@
                 <span>dkrtv<span class="text-gold-500">.</span> Quran</span>
             </h1>
             
-            <!-- Search Bar -->
             <div class="relative w-full">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
                 <input type="text" id="search-input" placeholder="Cari surat... (misal: Yasin)" class="w-full bg-white border border-gray-200 text-sm rounded-full py-2.5 pl-10 pr-4 outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500 transition shadow-sm placeholder-gray-300">
@@ -95,28 +96,20 @@
                 <button onclick="switchTab('bookmark')" id="tab-bookmark" class="flex-1 pb-3 font-medium text-gray-400 border-b-2 border-transparent text-sm transition hover:text-gold-400">Bookmark</button>
             </div>
 
-            <!-- Kontainer Tab: SURAT -->
             <div id="content-surat" class="space-y-3 pb-6 block">
                 <div id="surah-list" class="space-y-3">
-                    <!-- Skeleton Loader -->
                     <div class="flex items-center p-4 bg-white rounded-2xl border border-gray-50"><div class="w-10 h-10 rounded-full skeleton"></div><div class="ml-4 space-y-2 flex-1"><div class="h-4 w-24 rounded skeleton"></div><div class="h-3 w-16 rounded skeleton"></div></div></div>
                 </div>
             </div>
 
-            <!-- Kontainer Tab: JUZ -->
             <div id="content-juz" class="pb-6 hidden text-center pt-10">
                 <i class="fa-solid fa-layer-group text-4xl text-gray-200 mb-3"></i>
                 <h3 class="text-gray-800 font-medium text-sm">Mode Juz</h3>
                 <p class="text-xs text-gray-400 mt-1">Akan tersedia pada update berikutnya.</p>
             </div>
 
-            <!-- Kontainer Tab: BOOKMARK -->
             <div id="content-bookmark" class="pb-6 hidden space-y-3">
-                <div id="bookmark-list" class="text-center pt-10">
-                    <i class="fa-regular fa-bookmark text-4xl text-gray-200 mb-3"></i>
-                    <h3 class="text-gray-800 font-medium text-sm">Belum Ada Bookmark</h3>
-                    <p class="text-xs text-gray-400 mt-1">Tandai ayat favoritmu saat membaca.</p>
-                </div>
+                <div id="bookmark-list" class="text-center pt-10"></div>
             </div>
             
             <!-- Company Footer -->
@@ -129,73 +122,79 @@
 
     <!-- ================= LAYAR 2: BACA AYAT ================= -->
     <div id="surah-screen" class="screen-hidden flex flex-col bg-brokenwhite">
-        <!-- Header -->
-        <header class="pt-8 pb-4 px-4 sticky top-0 bg-brokenwhite/95 backdrop-blur-md z-20 flex items-center shadow-[0_2px_15px_-5px_rgba(0,0,0,0.05)]">
-            <button onclick="closeSurah()" class="text-gray-500 p-2 hover:bg-gray-200 rounded-full transition w-10 h-10 flex items-center justify-center bg-white shadow-sm border border-gray-100">
-                <i class="fa-solid fa-arrow-left"></i>
-            </button>
-            <div class="ml-4 flex-1">
-                <h2 id="detail-surah-name" class="font-bold text-lg text-gray-800">Memuat...</h2>
-                <p id="detail-surah-info" class="text-[11px] font-medium text-gray-500 uppercase tracking-widest">...</p>
+        <!-- Sticky Header Detail Surat -->
+        <header class="pt-8 pb-4 px-4 sticky top-0 bg-brokenwhite/95 backdrop-blur-md z-20 flex items-center justify-between shadow-[0_2px_15px_-5px_rgba(0,0,0,0.05)]">
+            <div class="flex items-center">
+                <button onclick="closeSurah()" class="text-gray-500 hover:bg-gray-200 rounded-full transition w-10 h-10 flex items-center justify-center bg-white shadow-sm border border-gray-100">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <div class="ml-4">
+                    <h2 id="detail-surah-name" class="font-bold text-lg text-gray-800 leading-tight">Memuat...</h2>
+                    <p id="detail-surah-info" class="text-[10px] font-medium text-gray-500 uppercase tracking-widest">...</p>
+                </div>
             </div>
+            
+            <!-- TOMBOL TOGGLE MODE BACA -->
+            <button onclick="toggleViewMode()" class="bg-gold-50 text-gold-600 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase flex items-center shadow-sm border border-gold-100 active:scale-95 transition">
+                <i id="mode-icon" class="fa-solid fa-list mr-1.5"></i> 
+                <span id="mode-text">Terjemah</span>
+            </button>
         </header>
 
-        <!-- Ayat List -->
+        <!-- Container Ayat -->
         <main class="px-4 pb-24 relative">
             <div id="bismillah-container" class="my-10 text-center hidden">
-                <h1 class="font-arabic text-3xl text-gray-800">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</h1>
+                <h1 class="font-arabic text-4xl text-gray-800">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</h1>
             </div>
-            <div id="ayah-list" class="space-y-6"></div>
+            
+            <!-- Tempat Ayat di-Render -->
+            <div id="ayah-list"></div>
         </main>
     </div>
 
-    <!-- GLOBAL AUDIO PLAYER BIKINAN (Hidden) -->
+    <!-- GLOBAL AUDIO PLAYER -->
     <audio id="global-audio-player"></audio>
 
     <!-- LOGIKA JAVASCRIPT -->
     <script>
         const API_URL = 'https://equran.id/api/v2/surat';
         let allSurahs = []; 
+        let currentSurahData = null; // Menyimpan data surat yang sedang dibuka
         let bookmarks = JSON.parse(localStorage.getItem('dkrtv_bookmarks')) || [];
         
-        // Element Audio
+        // Mode Tampilan: 'terjemah' atau 'mushaf'
+        let viewMode = localStorage.getItem('dkrtv_viewmode') || 'terjemah'; 
+        
         const audioPlayer = document.getElementById('global-audio-player');
-        let currentPlayingBtn = null; // Menyimpan tombol mana yang sedang diputar
+        let currentPlayingBtn = null; 
 
-        // --- 1. INISIALISASI ---
         document.addEventListener("DOMContentLoaded", () => {
             loadSurahs();
             checkLastRead();
             renderBookmarks();
+            updateModeButtonUI(); // Update UI tombol di awal
         });
 
-        // --- 2. SEARCH & TABS ---
+        // --- SEARCH & TABS LOGIC ---
         document.getElementById('search-input').addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
-            const filtered = allSurahs.filter(s => 
-                s.namaLatin.toLowerCase().includes(keyword) || 
-                s.arti.toLowerCase().includes(keyword)
-            );
+            const filtered = allSurahs.filter(s => s.namaLatin.toLowerCase().includes(keyword) || s.arti.toLowerCase().includes(keyword));
             renderSurahList(filtered);
         });
 
         function switchTab(tabName) {
-            // Reset semua style tab
             ['surat', 'juz', 'bookmark'].forEach(t => {
                 document.getElementById(`tab-${t}`).className = "flex-1 pb-3 font-medium text-gray-400 border-b-2 border-transparent text-sm transition hover:text-gold-400";
                 document.getElementById(`content-${t}`).classList.add('hidden');
                 document.getElementById(`content-${t}`).classList.remove('block');
             });
-            // Aktifkan tab terpilih
-            const activeBtn = document.getElementById(`tab-${tabName}`);
-            activeBtn.className = "flex-1 pb-3 font-semibold text-gold-500 border-b-2 border-gold-500 text-sm transition";
+            document.getElementById(`tab-${tabName}`).className = "flex-1 pb-3 font-semibold text-gold-500 border-b-2 border-gold-500 text-sm transition";
             document.getElementById(`content-${tabName}`).classList.remove('hidden');
             document.getElementById(`content-${tabName}`).classList.add('block');
-            
             if(tabName === 'bookmark') renderBookmarks();
         }
 
-        // --- 3. LOAD DATA API ---
+        // --- LOAD LIST SURAT ---
         async function loadSurahs() {
             try {
                 const response = await fetch(API_URL);
@@ -210,17 +209,12 @@
         function renderSurahList(surahs) {
             const container = document.getElementById('surah-list');
             container.innerHTML = '';
-            
-            if(surahs.length === 0) {
-                container.innerHTML = `<p class="text-center text-gray-400 text-sm py-10">Surat tidak ditemukan.</p>`;
-                return;
-            }
+            if(surahs.length === 0) { container.innerHTML = `<p class="text-center text-gray-400 text-sm py-10">Surat tidak ditemukan.</p>`; return; }
 
             surahs.forEach(surah => {
                 const item = document.createElement('div');
                 item.className = 'flex items-center justify-between p-4 bg-white rounded-2xl shadow-sm border border-gray-50 hover:border-gold-300 cursor-pointer active:scale-[0.98] transition-all';
                 item.onclick = () => openSurah(surah.nomor);
-                
                 item.innerHTML = `
                     <div class="flex items-center space-x-4">
                         <div class="relative flex items-center justify-center w-10 h-10">
@@ -238,11 +232,15 @@
             });
         }
 
-        // --- 4. BUKA DETAIL & AUDIO BACAAN ---
+        // --- KONVERSI ANGKA KE HURUF ARAB ---
+        function toArabicNum(num) {
+            const arabDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+            return num.toString().split('').map(n => arabDigits[n]).join('');
+        }
+
+        // --- BUKA SURAT & FETCH DATA ---
         async function openSurah(nomorSurat) {
-            // Stop audio kalau ada yang main
             audioPlayer.pause();
-            
             document.getElementById('home-screen').classList.replace('screen-active', 'screen-hidden');
             document.getElementById('surah-screen').classList.replace('screen-hidden', 'screen-active');
             window.scrollTo(0, 0);
@@ -254,20 +252,58 @@
             try {
                 const response = await fetch(`${API_URL}/${nomorSurat}`);
                 const result = await response.json();
-                const surahData = result.data;
+                currentSurahData = result.data; // Simpan ke variabel global
 
-                document.getElementById('detail-surah-name').innerText = surahData.namaLatin;
-                document.getElementById('detail-surah-info').innerText = `${surahData.arti} • ${surahData.jumlahAyat} Ayat`;
+                document.getElementById('detail-surah-name').innerText = currentSurahData.namaLatin;
+                document.getElementById('detail-surah-info').innerText = `${currentSurahData.arti} • ${currentSurahData.jumlahAyat} Ayat`;
 
                 if (nomorSurat !== 1 && nomorSurat !== 9) document.getElementById('bismillah-container').classList.remove('hidden');
                 else document.getElementById('bismillah-container').classList.add('hidden');
 
-                container.innerHTML = '';
-                surahData.ayat.forEach(ayat => {
+                // Render ayat sesuai mode saat ini
+                renderAyahs();
+
+            } catch (error) {
+                container.innerHTML = `<p class="text-center text-red-400 py-10">Gagal memuat ayat.</p>`;
+            }
+        }
+
+        // --- LOGIKA TOGGLE MODE ---
+        function toggleViewMode() {
+            viewMode = viewMode === 'terjemah' ? 'mushaf' : 'terjemah';
+            localStorage.setItem('dkrtv_viewmode', viewMode);
+            updateModeButtonUI();
+            
+            // Matikan audio jika sedang main karena elemennya akan digambar ulang
+            audioPlayer.pause(); 
+            
+            if (currentSurahData) renderAyahs(); // Render ulang ayat
+        }
+
+        function updateModeButtonUI() {
+            const modeIcon = document.getElementById('mode-icon');
+            const modeText = document.getElementById('mode-text');
+            
+            if (viewMode === 'mushaf') {
+                modeIcon.className = 'fa-solid fa-book-quran mr-1.5';
+                modeText.innerText = 'Mushaf';
+            } else {
+                modeIcon.className = 'fa-solid fa-list mr-1.5';
+                modeText.innerText = 'Terjemah';
+            }
+        }
+
+        // --- RENDER AYAT (FLEKSIBEL 2 MODE) ---
+        function renderAyahs() {
+            const container = document.getElementById('ayah-list');
+            container.innerHTML = '';
+            
+            if (viewMode === 'terjemah') {
+                // MODE 1: KARTU TERJEMAHAN (Normal)
+                container.className = "space-y-6";
+                currentSurahData.ayat.forEach(ayat => {
                     const ayatEl = document.createElement('div');
-                    ayatEl.className = 'bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-4';
-                    
-                    // Ambil audio terbaik (Misyari Rasyid Al-Afasi - 05)
+                    ayatEl.className = 'bg-white p-5 rounded-2xl shadow-sm border border-gray-100';
                     const audioUrl = ayat.audio['05'];
 
                     ayatEl.innerHTML = `
@@ -276,18 +312,16 @@
                                 ${ayat.nomorAyat}
                             </div>
                             <div class="flex space-x-1 text-gray-400">
-                                <!-- Tombol Audio Murottal -->
                                 <button onclick="toggleAudio(this, '${audioUrl}')" class="w-10 h-10 rounded-full hover:bg-gold-50 hover:text-gold-500 transition-colors flex items-center justify-center">
                                     <i class="fa-solid fa-play"></i>
                                 </button>
-                                <!-- Tombol Bookmark -->
-                                <button onclick="saveBookmark(${surahData.nomor}, ${ayat.nomorAyat}, '${surahData.namaLatin}')" class="w-10 h-10 rounded-full hover:bg-gold-50 hover:text-gold-500 transition-colors flex items-center justify-center">
+                                <button onclick="saveBookmark(${currentSurahData.nomor}, ${ayat.nomorAyat}, '${currentSurahData.namaLatin}')" class="w-10 h-10 rounded-full hover:bg-gold-50 hover:text-gold-500 transition-colors flex items-center justify-center">
                                     <i class="fa-regular fa-bookmark"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="text-right mb-6">
-                            <p class="font-arabic text-3xl leading-[2.5] text-gray-900">${ayat.teksArab}</p>
+                            <p class="font-arabic text-[2rem] leading-[2.5] text-gray-900">${ayat.teksArab}</p>
                         </div>
                         <div class="text-left space-y-2 border-t border-gray-50 pt-4">
                             <p class="text-xs font-semibold text-gold-600 uppercase tracking-wide leading-relaxed">${ayat.teksLatin}</p>
@@ -297,66 +331,101 @@
                     container.appendChild(ayatEl);
                 });
 
-            } catch (error) {
-                container.innerHTML = `<p class="text-center text-red-400 py-10">Gagal memuat ayat.</p>`;
+            } else {
+                // MODE 2: MUSHAF (Teks Menyambung / Tanpa Terjemah)
+                container.className = "bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-right space-y-2";
+                container.setAttribute('dir', 'rtl'); // Flow kanan ke kiri
+                
+                let mushafHTML = '';
+                currentSurahData.ayat.forEach(ayat => {
+                    const audioUrl = ayat.audio['05'];
+                    const arabicNumber = toArabicNum(ayat.nomorAyat);
+                    
+                    // Span untuk setiap ayat agar bisa di-klik & diputar suaranya
+                    mushafHTML += `
+                        <span onclick="toggleAudioMushaf(this, '${audioUrl}')" class="inline font-arabic text-[2.2rem] leading-[2.8] text-gray-900 cursor-pointer hover:text-gold-500 transition-colors">
+                            ${ayat.teksArab} <span class="text-gold-500 text-2xl mx-1 font-sans">﴿${arabicNumber}﴾</span>
+                        </span>
+                    `;
+                });
+                container.innerHTML = mushafHTML;
             }
         }
 
-        // --- 5. AUDIO LOGIC ---
+        // --- AUDIO PLAYER UNTUK MODE TERJEMAH ---
         function toggleAudio(btn, url) {
-            // Jika tombol yang sama ditekan saat sedang play (Pause)
             if (audioPlayer.src === url && !audioPlayer.paused) {
                 audioPlayer.pause();
                 btn.innerHTML = '<i class="fa-solid fa-play"></i>';
                 btn.classList.remove('playing-audio');
                 return;
             }
-
-            // Jika ada audio lain yang sedang play, matikan ikonnya
-            if (currentPlayingBtn) {
+            if (currentPlayingBtn && currentPlayingBtn.tagName === 'BUTTON') {
                 currentPlayingBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
                 currentPlayingBtn.classList.remove('playing-audio');
+            } else if (currentPlayingBtn && currentPlayingBtn.tagName === 'SPAN') {
+                currentPlayingBtn.classList.remove('mushaf-playing');
             }
-
-            // Putar audio baru
             audioPlayer.src = url;
             audioPlayer.play();
-            
-            // Ubah ikon tombol yang ditekan jadi pause
             btn.innerHTML = '<i class="fa-solid fa-pause"></i>';
             btn.classList.add('playing-audio');
             currentPlayingBtn = btn;
         }
 
-        // Event saat audio selesai diputar
-        audioPlayer.onended = () => {
-            if (currentPlayingBtn) {
+        // --- AUDIO PLAYER UNTUK MODE MUSHAF (KLIK TEKS) ---
+        function toggleAudioMushaf(spanEl, url) {
+            if (audioPlayer.src === url && !audioPlayer.paused) {
+                audioPlayer.pause();
+                spanEl.classList.remove('mushaf-playing');
+                return;
+            }
+            
+            // Hapus highlight dari tombol/teks sebelumnya
+            if (currentPlayingBtn && currentPlayingBtn.tagName === 'SPAN') {
+                currentPlayingBtn.classList.remove('mushaf-playing');
+            } else if (currentPlayingBtn && currentPlayingBtn.tagName === 'BUTTON') {
                 currentPlayingBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
                 currentPlayingBtn.classList.remove('playing-audio');
+            }
+
+            audioPlayer.src = url;
+            audioPlayer.play();
+            
+            // Berikan highlight warna emas ke teks ayat yang diklik
+            spanEl.classList.add('mushaf-playing');
+            currentPlayingBtn = spanEl;
+        }
+
+        // Reset UI saat audio selesai
+        audioPlayer.onended = () => {
+            if (currentPlayingBtn) {
+                if(currentPlayingBtn.tagName === 'BUTTON') {
+                    currentPlayingBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                    currentPlayingBtn.classList.remove('playing-audio');
+                } else {
+                    currentPlayingBtn.classList.remove('mushaf-playing');
+                }
             }
         };
 
         function closeSurah() {
-            audioPlayer.pause(); // matikan audio saat kembali
+            audioPlayer.pause(); 
             document.getElementById('surah-screen').classList.replace('screen-active', 'screen-hidden');
             document.getElementById('home-screen').classList.replace('screen-hidden', 'screen-active');
             checkLastRead();
         }
 
-        // --- 6. BOOKMARK & LAST READ ---
+        // --- BOOKMARK LOGIC ---
         function saveBookmark(surahId, ayahId, surahName) {
             const data = { surahId, ayahId, surahName, date: new Date().toLocaleDateString() };
-            
-            // Simpan sebagai Last Read
             localStorage.setItem('dkrtv_lastread', JSON.stringify(data));
             
-            // Simpan ke List Bookmark (Hindari duplikat)
             const exists = bookmarks.find(b => b.surahId === surahId && b.ayahId === ayahId);
             if(!exists) {
                 bookmarks.push(data);
                 localStorage.setItem('dkrtv_bookmarks', JSON.stringify(bookmarks));
             }
-            
             alert(`Ayat ${ayahId} surat ${surahName} berhasil ditandai!`);
             renderBookmarks();
         }
@@ -375,21 +444,19 @@
 
         function renderBookmarks() {
             const container = document.getElementById('bookmark-list');
-            if (bookmarks.length === 0) return;
+            if (bookmarks.length === 0) {
+                container.innerHTML = `<i class="fa-regular fa-bookmark text-4xl text-gray-200 mb-3"></i><h3 class="text-gray-800 font-medium text-sm">Belum Ada Bookmark</h3><p class="text-xs text-gray-400 mt-1">Tandai ayat favoritmu saat membaca.</p>`;
+                return;
+            }
             
             container.innerHTML = '';
             container.className = 'space-y-3';
             bookmarks.forEach((b, index) => {
                 container.innerHTML += `
-                    <div onclick="openSurah(${b.surahId})" class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-gray-50 cursor-pointer hover:border-gold-300">
+                    <div onclick="openSurah(${b.surahId})" class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-gray-50 cursor-pointer hover:border-gold-300 text-left">
                         <div class="flex items-center">
-                            <div class="w-10 h-10 bg-gold-50 rounded-full flex items-center justify-center text-gold-500 mr-4">
-                                <i class="fa-solid fa-bookmark"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-800">${b.surahName}</h4>
-                                <p class="text-xs text-gray-400">Ayat ${b.ayahId} • Disimpan: ${b.date}</p>
-                            </div>
+                            <div class="w-10 h-10 bg-gold-50 rounded-full flex items-center justify-center text-gold-500 mr-4"><i class="fa-solid fa-bookmark"></i></div>
+                            <div><h4 class="font-bold text-gray-800">${b.surahName}</h4><p class="text-xs text-gray-400">Ayat ${b.ayahId} • Disimpan: ${b.date}</p></div>
                         </div>
                         <button onclick="event.stopPropagation(); removeBookmark(${index})" class="text-red-400 p-2 hover:bg-red-50 rounded-full"><i class="fa-solid fa-trash-can text-sm"></i></button>
                     </div>
@@ -400,14 +467,7 @@
         function removeBookmark(index) {
             bookmarks.splice(index, 1);
             localStorage.setItem('dkrtv_bookmarks', JSON.stringify(bookmarks));
-            
-            if(bookmarks.length === 0) {
-                document.getElementById('bookmark-list').innerHTML = `
-                    <div class="text-center pt-10"><i class="fa-regular fa-bookmark text-4xl text-gray-200 mb-3"></i><h3 class="text-gray-800 font-medium text-sm">Belum Ada Bookmark</h3><p class="text-xs text-gray-400 mt-1">Tandai ayat favoritmu saat membaca.</p></div>
-                `;
-            } else {
-                renderBookmarks();
-            }
+            renderBookmarks();
         }
     </script>
 </body>

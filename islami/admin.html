@@ -62,12 +62,13 @@
         // ==========================================
         // WAJIB ISI DENGAN DATA SUPABASE ANDA!
         // ==========================================
-        const SUPABASE_URL = 'https://bkxclrjycsdpchodgzzb.supabase.co';
+       const SUPABASE_URL = 'https://bkxclrjycsdpchodgzzb.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3'; 
         
         // Sesuaikan dengan domain website public Anda nanti
         const WEB_URL = window.location.origin + window.location.pathname.replace('admin.html', 'index.html'); 
         
+        // DEKLARASI INI HANYA BOLEH ADA SATU KALI DI SELURUH FILE
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function generateCards() {
@@ -81,7 +82,6 @@
             // Siapkan data untuk dimasukkan ke Supabase
             const dataToInsert = [];
             for(let i = 1; i <= qty; i++) {
-                // Jika qty 1, pakai nama prefixnya langsung. Jika > 1 tambah nomor
                 let finalId = qty === 1 ? prefix : `${prefix}-${i}`;
                 dataToInsert.push({ id: finalId, status: 'Kosong' });
             }

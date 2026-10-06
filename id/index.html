@@ -148,8 +148,8 @@
             });
         }
 
-        function bukaGaleri() {
-            document.getElementById('loadingText').innerText = "Mengunduh gambar dari Drive...";
+    function bukaGaleri() {
+            document.getElementById('loadingText').innerText = "Mengunduh galeri dari Drive...";
             
             fetch(`${GAS_URL}?action=get_images&url=${encodeURIComponent(dbDrive)}`)
             .then(r => r.json())
@@ -163,14 +163,27 @@
                         d.images.forEach(img => {
                             let fileType = (img.type || "").toLowerCase();
                             
-                            // Deteksi Video vs Gambar dengan Fallback Image & Referrer Policy
+                            // JIKA FILE ADALAH VIDEO (Tampilkan Thumbnail + Tombol Play)
                             if (fileType.includes('video') || fileType.includes('mp4') || fileType.includes('mov')) {
-                                html += `<video src="${img.url}" controls></video>`;
-                            } else {
+                                // URL Thumbnail dari Drive
+                                let thumbUrl = `https://drive.google.com/thumbnail?id=${img.id}&sz=w800`;
+                                // URL Player Asli Google Drive
+                                let playUrl = `https://drive.google.com/file/d/${img.id}/view`;
+                                
+                                html += `
+                                <div style="position: relative; cursor: pointer; width: 100%; border-radius: 16px; aspect-ratio: 4/5; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.06); transition: 0.3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'" onclick="window.open('${playUrl}', '_blank')">
+                                    <img src="${thumbUrl}" loading="lazy" alt="Video" referrerpolicy="no-referrer" style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); display: block;">
+                                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.2); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); border: 2px solid white;">
+                                        <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 16px solid white; margin-left: 5px;"></div>
+                                    </div>
+                                </div>`;
+                            } 
+                            // JIKA FILE ADALAH GAMBAR (Render Normal)
+                            else {
                                 html += `<img src="${img.url}" loading="lazy" alt="Gallery Image" referrerpolicy="no-referrer">`;
                             }
                         });
-                    } else { html = "<p style='grid-column:1/-1;'>Folder kosong / tidak ada file gambar.</p>"; }
+                    } else { html = "<p style='grid-column:1/-1;'>Folder kosong / tidak ada file dokumentasi.</p>"; }
                 } else { html = `<p style='grid-column:1/-1; color:#EF4444;'>Gagal memuat galeri.<br>${d.message}</p>`; }
                 document.getElementById('gridFoto').innerHTML = html;
             }).catch(err => {

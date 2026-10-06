@@ -62,7 +62,7 @@
 
     <script>
         // ==============================================
-        // ISI DENGAN URL DEPLOYMENT GAS TERBARU ANDA
+        // GANTI INI DENGAN URL DEPLOYMENT GAS ANDA
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
         // ==============================================
         
@@ -126,7 +126,7 @@
             if(!nama || !drive) return alert("Semua kolom wajib diisi!");
             btn.disabled = true; btn.innerText = "Menyimpan Data...";
 
-            // KUNCI ANTI-CORS BROWSER (Kirim POST sebagai Form, Bukan JSON)
+            // KIRIM PAKAI URLSearchParams (ANTI-CORS)
             const formData = new URLSearchParams();
             formData.append('action', 'first_setup');
             formData.append('id', orderId);
@@ -148,8 +148,9 @@
             });
         }
 
-       function bukaGaleri() {
+        function bukaGaleri() {
             document.getElementById('loadingText').innerText = "Mengunduh gambar dari Drive...";
+            
             fetch(`${GAS_URL}?action=get_images&url=${encodeURIComponent(dbDrive)}`)
             .then(r => r.json())
             .then(d => {
@@ -160,16 +161,13 @@
                 if (d.status === 'success') {
                     if(d.images && d.images.length > 0) {
                         d.images.forEach(img => {
-                            // Ambil mime type dan ubah jadi huruf kecil untuk keamanan
                             let fileType = (img.type || "").toLowerCase();
                             
-                            // PERBAIKAN: Jika mengandung 'video' atau 'mp4', render video
-                            if (fileType.includes('video') || fileType.includes('mp4')) {
+                            // Deteksi Video vs Gambar dengan Fallback Image & Referrer Policy
+                            if (fileType.includes('video') || fileType.includes('mp4') || fileType.includes('mov')) {
                                 html += `<video src="${img.url}" controls></video>`;
-                            } 
-                            // Jika bukan video, anggap sebagai gambar (image)
-                            else {
-                                html += `<img src="${img.url}" loading="lazy" alt="Gallery Image">`;
+                            } else {
+                                html += `<img src="${img.url}" loading="lazy" alt="Gallery Image" referrerpolicy="no-referrer">`;
                             }
                         });
                     } else { html = "<p style='grid-column:1/-1;'>Folder kosong / tidak ada file gambar.</p>"; }
@@ -178,7 +176,6 @@
             }).catch(err => {
                 hentikanLoading(); document.getElementById('galleryBox').classList.remove('hidden');
                 document.getElementById('gridFoto').innerHTML = "<p style='grid-column:1/-1; color:#EF4444;'>Jaringan bermasalah.</p>";
-                console.error("Error ambil gambar:", err);
             });
         }
     </script>

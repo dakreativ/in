@@ -72,7 +72,7 @@
 
     <script>
         // ==============================================
-        // WAJIB GANTI LINK INI SESUAI PUNYA LU BRO!
+        // WAJIB GANTI LINK INI DENGAN URL DEPLOYMENT BARU (ANYONE)
         // ==============================================
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
         
@@ -110,7 +110,11 @@
 
         // Eksekusi Pengecekan Barcode
         if(orderId) {
-            fetch(GAS_URL + "?action=scan&id=" + orderId)
+            // PERBAIKAN 1: Tambahkan method GET dan redirect: 'follow'
+            fetch(GAS_URL + "?action=scan&id=" + orderId, {
+                method: 'GET',
+                redirect: 'follow'
+            })
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
@@ -154,23 +158,43 @@
             const btn = document.getElementById('btnSetup');
 
             if(!nama || !drive) return alert("Semua kolom wajib diisi!");
-            btn.disabled = true; btn.innerText = "Menyimpan Data...";
+            btn.disabled = true; 
+            btn.innerText = "Menyimpan Data...";
 
-            fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'first_setup', id: orderId, nama: nama, drive: drive }) })
-            .then(r=>r.json()).then(d => {
+            // PERBAIKAN 2: Request POST wajib pakai redirect: 'follow' dan header text/plain
+            fetch(GAS_URL, { 
+                method: 'POST', 
+                redirect: 'follow',
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8"
+                },
+                body: JSON.stringify({ action: 'first_setup', id: orderId, nama: nama, drive: drive }) 
+            })
+            .then(r => r.json())
+            .then(d => {
                 if(d.status === 'success') { 
                     window.location.reload(); 
                 } else { 
-                    alert(d.message); btn.disabled = false; btn.innerText = "Aktifkan & Kunci Barcode"; 
+                    alert(d.message); 
+                    btn.disabled = false; 
+                    btn.innerText = "Aktifkan & Kunci Barcode"; 
                 }
+            })
+            .catch(err => {
+                alert("Terjadi kesalahan jaringan.");
+                btn.disabled = false; 
+                btn.innerText = "Aktifkan & Kunci Barcode"; 
             });
         }
 
         function bukaGaleri() {
-            // Ubah teks loading khusus buat narik foto
             document.getElementById('loadingText').innerText = "Mengunduh gambar dari Drive...";
             
-            fetch(GAS_URL + "?action=get_images&url=" + encodeURIComponent(dbDrive))
+            // PERBAIKAN 3: Tambahkan method GET dan redirect: 'follow'
+            fetch(GAS_URL + "?action=get_images&url=" + encodeURIComponent(dbDrive), {
+                method: 'GET',
+                redirect: 'follow'
+            })
             .then(r => r.json())
             .then(d => {
                 hentikanLoading();
@@ -180,7 +204,6 @@
                 if (d.status === 'success') {
                     if(d.images && d.images.length > 0) {
                         d.images.forEach(img => {
-                            // Pake atribut loading="lazy" biar web enteng
                             if(img.type.includes('image')) html += `<img src="${img.url}" loading="lazy" alt="Gallery Image">`;
                             else if(img.type.includes('video')) html += `<video src="${img.url}" controls></video>`;
                         });

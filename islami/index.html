@@ -12,7 +12,6 @@
         
         .card-container { background: white; width: 100%; max-width: 400px; padding: 40px 30px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); text-align: center; }
         
-        /* Tema Warna Aplikasi */
         .primary-color { color: #10B981; }
         .primary-bg { background: #10B981; color: white; }
         .secondary-bg { background: #F8FAFC; border: 2px solid #E2E8F0; color: #334155; }
@@ -20,7 +19,6 @@
         h1 { margin: 0 0 10px; font-weight: 800; font-size: 26px; }
         p { color: #64748B; font-size: 14px; margin-bottom: 25px; line-height: 1.5;}
         
-        /* Form Setup */
         .input-group { text-align: left; margin-bottom: 15px; }
         label { display: block; font-size: 13px; font-weight: 800; margin-bottom: 8px; color: #475569;}
         input { width: 100%; padding: 15px; border: 2px solid #E2E8F0; border-radius: 12px; box-sizing: border-box; outline: none; font-size: 15px; font-family: inherit; transition: 0.3s;}
@@ -30,7 +28,6 @@
         button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2); }
         button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* Profile Area (Setelah Terkunci) */
         .profile-avatar { width: 90px; height: 90px; background: #1E293B; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; margin: 0 auto 15px; }
         
         .loader { border: 4px solid #E2E8F0; border-top: 4px solid #10B981; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px; }
@@ -39,7 +36,7 @@
 </head>
 <body>
 
-    <div class="-container">
+    <div class="card-container">
         
         <!-- 1. LOADING SCREEN -->
         <div id="loadingBox">
@@ -48,7 +45,7 @@
             <p>Mohon tunggu sebentar.</p>
         </div>
 
-        <!-- 2. SETUP SCREEN (Kalo kartu masih kosong) -->
+        <!-- 2. SETUP SCREEN -->
         <div id="setupBox" class="hidden">
             <h1 class="primary-color">Halo! 👋</h1>
             <p>Kartu WA DKTV ini masih kosong. Silakan masukkan data Anda untuk mengunci kartu ini.</p>
@@ -63,22 +60,20 @@
                 <small style="color:#94A3B8; font-size:11px; display:block; margin-top:5px;">*Wajib pakai kode negara (cth: 62)</small>
             </div>
             
-            <button class="primary-bg" id="btnSetup" onclick="lock()">Kunci & Aktifkan Kartu</button>
+            <button class="primary-bg" id="btnSetup" onclick="lockCard()">Kunci & Aktifkan Kartu</button>
         </div>
 
-        <!-- 3. PROFILE SCREEN (Kalo udah dikunci, ini yg diliat orang lain) -->
+        <!-- 3. PROFILE SCREEN -->
         <div id="profileBox" class="hidden">
             <div class="profile-avatar" id="avatarName">D</div>
             <h1 id="displayName" style="margin-bottom: 5px;">Nama Orang</h1>
             <p style="margin-bottom: 30px;">Let's connect & collaborate!</p>
             
-            <!-- Tombol Utama: Save ke HP (Generate v) -->
             <button class="primary-bg" onclick="saveContact()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                 Simpan Kontak ke HP
             </button>
             
-            <!-- Tombol Opsional: Langsung Chat -->
             <button class="secondary-bg" id="btnChat" onclick="openWa()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                 Chat via WhatsApp
@@ -95,42 +90,33 @@
 
     <script>
         // ==========================================
-        // WAJIB ISI DENGAN DATA SUPABASE ANDA!
-        // ==========================================
         const SUPABASE_URL = 'https://bkxclrjycsdpchodgzzb.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3'; 
+        // ==========================================
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         const urlParams = new URLSearchParams(window.location.search);
         const cardId = urlParams.get('id');
-        
-        // Simpan data global untuk dipakai fitur download vcard
         let currentData = null;
 
-        // Fungsi awal mengecek database
         async function checkCard() {
             if(!cardId) return showError("Harap Scan Barcode fisik yang valid.");
 
-            const { data, error } = await supabase.from('cards').select('*').eq('id', cardId).single();
+            // PERUBAHAN DI SINI: MENGGUNAKAN TABEL wa1
+            const { data, error } = await supabase.from('wa1').select('*').eq('id', cardId).single();
 
             document.getElementById('loadingBox').classList.add('hidden');
 
-            if (error) {
-                return showError("Kartu belum terdaftar di sistem kami.");
-            }
+            if (error) return showError("Kartu belum terdaftar di sistem kami.");
 
             if (data.status === 'Kosong') {
-                // Tampilkan Form Setup
                 document.getElementById('setupBox').classList.remove('hidden');
             } else if (data.status === 'Aktif') {
-                // Tampilkan Profile Kontak
                 currentData = data;
                 tampilkanProfile(data);
             }
         }
 
-        // Fungsi saat pemilik mengunci kartu pertama kali
         async function lockCard() {
             const nama = document.getElementById('inputNama').value;
             const wa = document.getElementById('inputWa').value;
@@ -139,8 +125,9 @@
             if(!nama || !wa) return alert("Nama dan Nomor WA wajib diisi!");
             btn.disabled = true; btn.innerText = "Mengunci Kartu...";
 
+            // PERUBAHAN DI SINI: MENGGUNAKAN TABEL wa1
             const { error } = await supabase
-                .from('cards')
+                .from('wa1')
                 .update({ status: 'Aktif', nama: nama, wa: wa })
                 .eq('id', cardId);
 
@@ -149,50 +136,32 @@
                 btn.disabled = false; btn.innerText = "Kunci & Aktifkan Kartu";
                 return;
             }
-
-            // Sukses, langsung reload halaman agar masuk ke layar profil
             window.location.reload();
         }
 
-        // Fungsi untuk merender layar profil yang sudah jadi
         function tampilkanProfile(data) {
             document.getElementById('profileBox').classList.remove('hidden');
             document.getElementById('displayName').innerText = data.nama;
-            
-            // Bikin inisial Avatar dari huruf depan nama
             let inisial = data.nama.charAt(0).toUpperCase();
             document.getElementById('avatarName').innerText = inisial;
         }
 
-        // ==========================================
-        // FITUR INTI: GENERATE VCARD (Langsung Save Kontak HP)
-        // ==========================================
         function saveContact() {
             if(!currentData) return;
-            
-            // Format vCard standar
             let vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${currentData.nama}\nTEL;TYPE=CELL,VOICE:${currentData.wa}\nEND:VCARD`;
-            
-            // Bikin file virtual .vcf di browser
             let blob = new Blob([vcard], { type: 'text/vcard' });
             let url = URL.createObjectURL(blob);
             
-            // Trigger download paksa
             let a = document.createElement('a');
             a.href = url;
             a.download = `${currentData.nama.replace(/\s+/g, '_')}_WADKTV.vcf`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            
-            // Note: Di HP Android/iOS, setelah file .vcf terdownload dan dibuka, 
-            // sistem HP akan langsung memunculkan menu "Add to Contacts".
         }
 
-        // Fungsi Opsional: Langsung Lempar ke Chat
         function openWa() {
             if(!currentData) return;
-            // Pastikan tidak ada karakter aneh di nomor
             let cleanWa = currentData.wa.replace(/[^0-9]/g, ''); 
             window.open(`https://wa.me/${cleanWa}?text=Halo,%20saya%20dapat%20nomor%20ini%20dari%20Kartu%20Digital%20WA%20DKTV.`, '_blank');
         }
@@ -203,7 +172,6 @@
             document.getElementById('errorMsg').innerText = msg;
         }
 
-        // Jalankan pengecekan saat web dibuka
         checkCard();
     </script>
 </body>

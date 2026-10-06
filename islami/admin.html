@@ -58,15 +58,12 @@
 
     <script>
         // ==========================================
-        // GANTI BAGIAN INI SAJA!
-        // ==========================================
         const SUPABASE_URL = 'https://bkxclrjycsdpchodgzzb.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3'; 
+        const SUPABASE_ANON_KEY = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3';  
         // ==========================================
 
         const WEB_URL = window.location.origin + window.location.pathname.replace('admin.html', 'index.html'); 
         
-        // Deklarasi Supabase (PASTIKAN HANYA ADA SATU DI SELURUH FILE INI)
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function generateCards() {
@@ -83,7 +80,8 @@
                 dataToInsert.push({ id: finalId, status: 'Kosong' });
             }
 
-            const { data, error } = await supabase.from('cards').insert(dataToInsert).select();
+            // PERUBAHAN DI SINI: MENGGUNAKAN TABEL wa1
+            const { data, error } = await supabase.from('wa1').insert(dataToInsert).select();
 
             btn.disabled = false; btn.innerText = "Generate Barcode Kosong";
 
@@ -119,10 +117,11 @@
             const tbody = document.getElementById('tabel');
             tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Memuat data...</td></tr>';
             
-            const { data, error } = await supabase.from('cards').select('*').order('created_at', { ascending: false });
+            // PERUBAHAN DI SINI: MENGGUNAKAN TABEL wa1
+            const { data, error } = await supabase.from('wa1').select('*').order('created_at', { ascending: false });
             
             if (error) {
-                tbody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Error DB: Pastikan tabel Supabase bernama 'cards' sudah terbuat. Detail: ${error.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Error DB: Pastikan tabel Supabase bernama 'wa1' sudah terbuat. Detail: ${error.message}</td></tr>`;
                 return;
             }
 

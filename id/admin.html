@@ -21,8 +21,6 @@
         .badge-aktif { background: #86EFAC; color: #14532D; padding: 4px 8px; border-radius: 5px; font-size: 11px; }
         .flex-row { display: flex; gap: 15px; }
         .flex-row > div { flex: 1; }
-        
-        /* Box Barcode */
         #qr-container { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px; justify-content: center; }
         .qr-wrapper { background: white; padding: 15px; border-radius: 10px; text-align: center; color: black; font-weight: bold; font-size: 13px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .qr-box { margin: 0 auto 10px; display: flex; justify-content: center; }
@@ -86,11 +84,10 @@
 
     <script>
         // ==============================================
-        // SAYA MASUKKAN URL GAS TERBARU ANDA DI SINI
-        // ==============================================
+        // ISI DENGAN URL DEPLOYMENT GAS TERBARU ANDA
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
+        // ==============================================
         
-        // Memastikan WEB_URL mengarah ke index.html (halaman galeri) bukan halaman admin
         const WEB_URL = window.location.origin + window.location.pathname.replace('admin.html', 'index.html'); 
         
         let currentPass = sessionStorage.getItem('adminPass');
@@ -104,29 +101,25 @@
         function generateOrder() {
             const btn = document.getElementById('btnGen');
             const tipe = document.getElementById('orderType').value;
-            const payload = {
-                action: 'create_order', 
-                pass: currentPass, 
-                prefix_id: document.getElementById('orderId').value, 
-                tipe: tipe, 
-                nama: document.getElementById('bulkName').value,
-                qty: document.getElementById('bulkQty').value, 
-                drive: document.getElementById('bulkDrive').value
-            };
-
-            if(!payload.prefix_id) return alert("ID Barcode Wajib Diisi!");
-            btn.disabled = true; btn.innerText = "Processing...";
+            const orderId = document.getElementById('orderId').value;
             
-            // ==========================================
-            // PERBAIKAN 1: Tambah redirect: 'follow' & headers text/plain
-            // ==========================================
+            if(!orderId) return alert("ID Barcode Wajib Diisi!");
+            btn.disabled = true; btn.innerText = "Processing...";
+
+            // KUNCI ANTI-CORS BROWSER (Kirim POST sebagai Form, Bukan JSON)
+            const formData = new URLSearchParams();
+            formData.append('action', 'create_order');
+            formData.append('pass', currentPass);
+            formData.append('prefix_id', orderId);
+            formData.append('tipe', tipe);
+            formData.append('nama', document.getElementById('bulkName').value);
+            formData.append('qty', document.getElementById('bulkQty').value);
+            formData.append('drive', document.getElementById('bulkDrive').value);
+            
             fetch(GAS_URL, { 
                 method: 'POST', 
-                redirect: 'follow',
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8"
-                },
-                body: JSON.stringify(payload) 
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: formData 
             })
             .then(r => r.json())
             .then(d => {
@@ -134,83 +127,54 @@
                 if(d.status === 'success') {
                     loadData();
                     document.getElementById('qr-container').innerHTML = '';
-                    if(tipe === 'Single') bikinQR(payload.prefix_id);
-                    else for(let i=1; i<=payload.qty; i++) bikinQR(payload.prefix_id + '-' + i);
+                    let qty = document.getElementById('bulkQty').value || 1;
+                    if(tipe === 'Single') bikinQR(orderId);
+                    else for(let i=1; i<=qty; i++) bikinQR(orderId + '-' + i);
                     
-                    // Bersihkan form
                     document.getElementById('orderId').value = '';
                     document.getElementById('bulkName').value = '';
                     document.getElementById('bulkQty').value = '';
                     document.getElementById('bulkDrive').value = '';
                 } else alert(d.message);
             }).catch(err => { 
-                btn.disabled = false; 
-                btn.innerText = "Generate Barcode"; 
-                alert("Error Jaringan/Server. Cek Console."); 
-                console.error(err);
+                btn.disabled = false; btn.innerText = "Generate Barcode"; 
+                alert("Error Server/Koneksi."); console.error(err);
             });
         }
 
         function bikinQR(id) {
             const wrapper = document.createElement('div'); wrapper.className = 'qr-wrapper';
-            
             const qrBox = document.createElement('div'); qrBox.className = 'qr-box'; qrBox.id = 'qr-' + id;
             new QRCode(qrBox, { text: WEB_URL + "?id=" + id, width: 130, height: 130 });
             
             const teksId = document.createElement('div'); teksId.innerText = "ID: " + id;
-            
             const btnDl = document.createElement('button'); btnDl.className = 'btn-dl'; btnDl.innerText = '⬇️ Download QR';
             btnDl.onclick = function() {
                 const canvas = qrBox.querySelector('canvas');
                 if(canvas) {
-                    const link = document.createElement('a');
-                    link.href = canvas.toDataURL("image/png");
-                    link.download = 'Barcode_' + id + '.png';
-                    link.click();
+                    const link = document.createElement('a'); link.href = canvas.toDataURL("image/png");
+                    link.download = 'Barcode_' + id + '.png'; link.click();
                 }
             };
-
             wrapper.appendChild(qrBox); wrapper.appendChild(teksId); wrapper.appendChild(btnDl);
             document.getElementById('qr-container').appendChild(wrapper);
         }
 
         function loadData() {
             document.getElementById('tabel').innerHTML = '<tr><td colspan="5" style="text-align: center;">Memuat data...</td></tr>';
-            
-            // ==========================================
-            // PERBAIKAN 2: Tambah redirect: 'follow' pada GET request
-            // ==========================================
-            fetch(`${GAS_URL}?action=get_all&pass=${encodeURIComponent(currentPass)}`, {
-                method: 'GET',
-                redirect: 'follow'
-            })
-            .then(r => r.text())
-            .then(text => {
-                try {
-                    const d = JSON.parse(text);
-                    if(d.status === 'error') { 
-                        alert(d.message); 
-                        if(d.message === 'Password salah!') logout(); 
-                        return; 
-                    }
-                    
-                    let html = '';
-                    d.data.forEach(x => { 
-                        let badge = x.status === 'Kosong' ? 'badge-kosong' : 'badge-aktif';
-                        let targetUrl = WEB_URL + "?id=" + x.id;
-                        html += `<tr><td>${x.id}</td><td>${x.tipe}</td><td>${x.nama || '-'}</td><td><span class="${badge}">${x.status}</span></td>
-                                 <td><button style="background:transparent; border:1px solid #10B981; color:#10B981; padding:5px 10px; font-size:11px;" onclick="window.open('${targetUrl}')">Buka Web</button></td></tr>`; 
-                    });
-                    document.getElementById('tabel').innerHTML = html || '<tr><td colspan="5" style="text-align:center;">Belum ada data.</td></tr>';
-                } catch (e) {
-                    console.error("Respon bukan JSON:", text);
-                    document.getElementById('tabel').innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Gagal mem-parsing data dari Server. Pastikan deployment GAS Who Has Access = Anyone.</td></tr>';
-                }
-            })
-            .catch(err => {
-                console.error("Gagal terhubung:", err);
-                document.getElementById('tabel').innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Koneksi terputus / Diblokir CORS.</td></tr>';
-            });
+            fetch(`${GAS_URL}?action=get_all&pass=${encodeURIComponent(currentPass)}`)
+            .then(r => r.json())
+            .then(d => {
+                if(d.status === 'error') { alert(d.message); if(d.message === 'Password salah!') logout(); return; }
+                let html = '';
+                d.data.forEach(x => { 
+                    let badge = x.status === 'Kosong' ? 'badge-kosong' : 'badge-aktif';
+                    let targetUrl = WEB_URL + "?id=" + x.id;
+                    html += `<tr><td>${x.id}</td><td>${x.tipe}</td><td>${x.nama || '-'}</td><td><span class="${badge}">${x.status}</span></td>
+                             <td><button style="background:transparent; border:1px solid #10B981; color:#10B981; padding:5px 10px; font-size:11px;" onclick="window.open('${targetUrl}')">Buka Web</button></td></tr>`; 
+                });
+                document.getElementById('tabel').innerHTML = html || '<tr><td colspan="5" style="text-align:center;">Belum ada data.</td></tr>';
+            }).catch(err => { document.getElementById('tabel').innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Koneksi Error / Gagal parsing JSON.</td></tr>'; });
         }
     </script>
 </body>

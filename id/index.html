@@ -6,23 +6,15 @@
     <title>Akses Galeri Dokumentasi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* CSS Clean & Modern */
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F7F6; color: #1E293B; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .hidden { display: none !important; }
-        
-        /* Box Styling */
         .card { background: #FFFFFF; width: 100%; max-width: 450px; padding: 35px 25px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.04); text-align: center; box-sizing: border-box; margin-top: 5vh; }
-        
-        /* Loading Animation Premium */
         .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60vh; }
         .spinner { width: 50px; height: 50px; border: 4px solid #F1F5F9; border-top: 4px solid #3B82F6; border-radius: 50%; animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
         .loading-text { font-size: 16px; font-weight: 800; color: #0F172A; transition: opacity 0.3s ease; }
         .progress-bar { width: 200px; height: 6px; background: #E2E8F0; border-radius: 10px; margin-top: 15px; overflow: hidden; }
         .progress-fill { height: 100%; width: 0%; background: #3B82F6; transition: width 0.5s ease; border-radius: 10px; }
-
-        /* Typography & Form */
         h2 { font-weight: 800; margin: 0 0 8px; font-size: 24px; letter-spacing: -0.5px; }
         p { color: #64748B; font-size: 14px; margin-bottom: 25px; line-height: 1.6; }
         label { text-align: left; display: block; font-size: 13px; font-weight: 800; color: #334155; margin: 15px 0 8px; }
@@ -31,8 +23,6 @@
         button { background: #0F172A; color: white; border: none; padding: 16px; border-radius: 14px; font-weight: 800; font-size: 15px; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 20px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15); }
         button:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2); }
         button:disabled { background: #94A3B8; cursor: not-allowed; box-shadow: none; transform: none; }
-
-        /* Modern Masonry/Grid Gallery */
         .gallery-wrap { max-width: 1000px; width: 100%; margin: 0 auto; text-align: center; }
         .gallery-header { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #E2E8F0; }
         .gallery-header h2 { font-size: 32px; color: #0F172A; }
@@ -72,49 +62,31 @@
 
     <script>
         // ==============================================
-        // WAJIB GANTI LINK INI DENGAN URL DEPLOYMENT BARU (ANYONE)
-        // ==============================================
+        // ISI DENGAN URL DEPLOYMENT GAS TERBARU ANDA
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
+        // ==============================================
         
         const urlParams = new URLSearchParams(window.location.search);
         const orderId = urlParams.get('id');
         let dbDrive = "";
 
-        // Fungsi Teks Animasi Loading
-        const loadingMessages = [
-            "Menghubungkan ke server...", 
-            "Memeriksa database...", 
-            "Memindai folder foto...", 
-            "Mempersiapkan galeri...", 
-            "Sedikit lagi selesai..."
-        ];
-        let msgIndex = 0;
-        let progress = 5;
+        const loadingMessages = ["Menghubungkan ke server...", "Memeriksa database...", "Memindai folder foto...", "Mempersiapkan galeri...", "Sedikit lagi selesai..."];
+        let msgIndex = 0, progress = 5;
 
-        // Jalankan teks berganti tiap 1.5 detik
         const loadingInterval = setInterval(() => {
             msgIndex = (msgIndex + 1) % loadingMessages.length;
             const textEl = document.getElementById('loadingText');
             textEl.style.opacity = 0;
-            setTimeout(() => {
-                textEl.innerText = loadingMessages[msgIndex];
-                textEl.style.opacity = 1;
-            }, 300);
+            setTimeout(() => { textEl.innerText = loadingMessages[msgIndex]; textEl.style.opacity = 1; }, 300);
         }, 1500);
 
-        // Jalankan progress bar
         const progressInterval = setInterval(() => {
             if(progress < 90) progress += Math.random() * 10;
             document.getElementById('progressFill').style.width = progress + "%";
         }, 500);
 
-        // Eksekusi Pengecekan Barcode
         if(orderId) {
-            // PERBAIKAN 1: Tambahkan method GET dan redirect: 'follow'
-            fetch(GAS_URL + "?action=scan&id=" + orderId, {
-                method: 'GET',
-                redirect: 'follow'
-            })
+            fetch(`${GAS_URL}?action=scan&id=${orderId}`)
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
@@ -127,26 +99,20 @@
                     } else if (data.state === 'Aktif') {
                         bukaGaleri(); 
                     }
-                } else {
-                    tampilkanError(data.message);
-                }
-            }).catch(err => tampilkanError("Gagal terhubung ke server. Periksa koneksi internet Anda."));
+                } else { tampilkanError(data.message); }
+            }).catch(err => tampilkanError("Gagal terhubung ke server."));
         } else {
             tampilkanError("Silakan Scan Barcode yang Valid.");
         }
 
         function hentikanLoading() {
-            clearInterval(loadingInterval);
-            clearInterval(progressInterval);
+            clearInterval(loadingInterval); clearInterval(progressInterval);
             document.getElementById('progressFill').style.width = "100%";
-            setTimeout(() => {
-                document.getElementById('loadingBox').classList.add('hidden');
-            }, 500);
+            setTimeout(() => { document.getElementById('loadingBox').classList.add('hidden'); }, 500);
         }
 
         function tampilkanError(pesan) {
-            clearInterval(loadingInterval);
-            clearInterval(progressInterval);
+            clearInterval(loadingInterval); clearInterval(progressInterval);
             document.querySelector('.spinner').style.display = 'none';
             document.querySelector('.progress-bar').style.display = 'none';
             document.getElementById('loadingText').innerHTML = `<span style="color:#EF4444; font-size:20px;">⚠️<br><br>${pesan}</span>`;
@@ -158,43 +124,33 @@
             const btn = document.getElementById('btnSetup');
 
             if(!nama || !drive) return alert("Semua kolom wajib diisi!");
-            btn.disabled = true; 
-            btn.innerText = "Menyimpan Data...";
+            btn.disabled = true; btn.innerText = "Menyimpan Data...";
 
-            // PERBAIKAN 2: Request POST wajib pakai redirect: 'follow' dan header text/plain
+            // KUNCI ANTI-CORS BROWSER (Kirim POST sebagai Form, Bukan JSON)
+            const formData = new URLSearchParams();
+            formData.append('action', 'first_setup');
+            formData.append('id', orderId);
+            formData.append('nama', nama);
+            formData.append('drive', drive);
+
             fetch(GAS_URL, { 
                 method: 'POST', 
-                redirect: 'follow',
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8"
-                },
-                body: JSON.stringify({ action: 'first_setup', id: orderId, nama: nama, drive: drive }) 
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: formData 
             })
             .then(r => r.json())
             .then(d => {
-                if(d.status === 'success') { 
-                    window.location.reload(); 
-                } else { 
-                    alert(d.message); 
-                    btn.disabled = false; 
-                    btn.innerText = "Aktifkan & Kunci Barcode"; 
-                }
-            })
-            .catch(err => {
+                if(d.status === 'success') { window.location.reload(); } 
+                else { alert(d.message); btn.disabled = false; btn.innerText = "Aktifkan & Kunci Barcode"; }
+            }).catch(err => {
                 alert("Terjadi kesalahan jaringan.");
-                btn.disabled = false; 
-                btn.innerText = "Aktifkan & Kunci Barcode"; 
+                btn.disabled = false; btn.innerText = "Aktifkan & Kunci Barcode"; 
             });
         }
 
         function bukaGaleri() {
             document.getElementById('loadingText').innerText = "Mengunduh gambar dari Drive...";
-            
-            // PERBAIKAN 3: Tambahkan method GET dan redirect: 'follow'
-            fetch(GAS_URL + "?action=get_images&url=" + encodeURIComponent(dbDrive), {
-                method: 'GET',
-                redirect: 'follow'
-            })
+            fetch(`${GAS_URL}?action=get_images&url=${encodeURIComponent(dbDrive)}`)
             .then(r => r.json())
             .then(d => {
                 hentikanLoading();
@@ -204,20 +160,15 @@
                 if (d.status === 'success') {
                     if(d.images && d.images.length > 0) {
                         d.images.forEach(img => {
-                            if(img.type.includes('image')) html += `<img src="${img.url}" loading="lazy" alt="Gallery Image">`;
+                            if(img.type.includes('image')) html += `<img src="${img.url}" loading="lazy" alt="Gallery">`;
                             else if(img.type.includes('video')) html += `<video src="${img.url}" controls></video>`;
                         });
-                    } else {
-                        html = "<p style='grid-column:1/-1;'>Folder berhasil diakses, tapi kosong / tidak ada file gambar.</p>";
-                    }
-                } else {
-                    html = `<p style='grid-column:1/-1; color:#EF4444;'>Gagal memuat galeri.<br><br><b>Pesan Server:</b> ${d.message}<br><br>Pastikan setting Link Drive sudah <b>"Siapa Saja yang memiliki link"</b>.</p>`;
-                }
+                    } else { html = "<p style='grid-column:1/-1;'>Folder kosong / tidak ada file gambar.</p>"; }
+                } else { html = `<p style='grid-column:1/-1; color:#EF4444;'>Gagal memuat galeri.<br>${d.message}</p>`; }
                 document.getElementById('gridFoto').innerHTML = html;
             }).catch(err => {
-                hentikanLoading();
-                document.getElementById('galleryBox').classList.remove('hidden');
-                document.getElementById('gridFoto').innerHTML = "<p style='grid-column:1/-1; color:#EF4444;'>Jaringan bermasalah, gagal mengambil gambar.</p>";
+                hentikanLoading(); document.getElementById('galleryBox').classList.remove('hidden');
+                document.getElementById('gridFoto').innerHTML = "<p style='grid-column:1/-1; color:#EF4444;'>Jaringan bermasalah.</p>";
             });
         }
     </script>

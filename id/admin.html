@@ -86,10 +86,12 @@
 
     <script>
         // ==============================================
-        // GANTI LINK INI DENGAN LINK WEB APP DARI GOOGLE SCRIPT (GAS)
+        // SAYA MASUKKAN URL GAS TERBARU ANDA DI SINI
         // ==============================================
-        const GAS_URL = "https://script.google.com/macros/s/GANTI_DENGAN_ID_DEPLOY_ANDA/exec"; 
-        const WEB_URL = window.location.origin + window.location.pathname.replace('admin.html', ''); 
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
+        
+        // Memastikan WEB_URL mengarah ke index.html (halaman galeri) bukan halaman admin
+        const WEB_URL = window.location.origin + window.location.pathname.replace('admin.html', 'index.html'); 
         
         let currentPass = sessionStorage.getItem('adminPass');
         if (currentPass) showDashboard();
@@ -115,7 +117,17 @@
             if(!payload.prefix_id) return alert("ID Barcode Wajib Diisi!");
             btn.disabled = true; btn.innerText = "Processing...";
             
-            fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) })
+            // ==========================================
+            // PERBAIKAN 1: Tambah redirect: 'follow' & headers text/plain
+            // ==========================================
+            fetch(GAS_URL, { 
+                method: 'POST', 
+                redirect: 'follow',
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8"
+                },
+                body: JSON.stringify(payload) 
+            })
             .then(r => r.json())
             .then(d => {
                 btn.disabled = false; btn.innerText = "Generate Barcode";
@@ -165,7 +177,13 @@
         function loadData() {
             document.getElementById('tabel').innerHTML = '<tr><td colspan="5" style="text-align: center;">Memuat data...</td></tr>';
             
-            fetch(`${GAS_URL}?action=get_all&pass=${encodeURIComponent(currentPass)}`)
+            // ==========================================
+            // PERBAIKAN 2: Tambah redirect: 'follow' pada GET request
+            // ==========================================
+            fetch(`${GAS_URL}?action=get_all&pass=${encodeURIComponent(currentPass)}`, {
+                method: 'GET',
+                redirect: 'follow'
+            })
             .then(r => r.text())
             .then(text => {
                 try {

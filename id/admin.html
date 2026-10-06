@@ -84,10 +84,11 @@
 
     <script>
         // ==============================================
-        // ISI DENGAN URL DEPLOYMENT GAS TERBARU ANDA
+        // GANTI INI DENGAN URL DEPLOYMENT GAS ANDA
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
         // ==============================================
         
+        // Memastikan link barcode diarahkan ke index.html, bukan admin.html
         const WEB_URL = window.location.origin + window.location.pathname.replace('admin.html', 'index.html'); 
         
         let currentPass = sessionStorage.getItem('adminPass');
@@ -106,7 +107,7 @@
             if(!orderId) return alert("ID Barcode Wajib Diisi!");
             btn.disabled = true; btn.innerText = "Processing...";
 
-            // KUNCI ANTI-CORS BROWSER (Kirim POST sebagai Form, Bukan JSON)
+            // KIRIM PAKAI URLSearchParams (ANTI-CORS)
             const formData = new URLSearchParams();
             formData.append('action', 'create_order');
             formData.append('pass', currentPass);

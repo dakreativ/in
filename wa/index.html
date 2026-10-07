@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Business Card - DKTV</title>
+    <!-- Import Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Font Premium -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === UI/UX PREMIUM MINIMALIST (Apple/Notion Vibe) === */
+        :root {
+            --bg-body: #FAFAFA;       /* Off-white super bersih */
+            --bg-card: #FFFFFF;
+            --text-main: #111827;      /* Hampir hitam, elegan */
+            --text-sub: #6B7280;       /* Abu-abu untuk deskripsi */
+            --text-muted: #9CA3AF;
+            --border-light: #F3F4F6;
+            --border-dark: #E5E7EB;
+            --brand-color: #000000;    /* Hitam solid untuk brand */
+            --brand-hover: #374151;
+            --radius-box: 24px;
+            --radius-btn: 14px;
+            --radius-input: 12px;
+            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.06);
+            --shadow-btn: 0 4px 12px rgba(0,0,0,0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: var(--bg-body); 
+            color: var(--text-main); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            padding: 20px; 
+        }
+        
+        .hidden { display: none !important; }
+        
+        /* Main Container Container */
+        .card-wrapper { 
+            background: var(--bg-card); 
+            width: 100%; 
+            max-width: 380px; /* Sedikit lebih ramping, pas di HP */
+            padding: 40px 32px; 
+            border-radius: var(--radius-box); 
+            box-shadow: var(--shadow-soft); 
+            border: 1px solid var(--border-light);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Typography */
+        h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; color: var(--text-main); }
+        p { font-size: 14px; color: var(--text-sub); line-height: 1.6; margin-bottom: 30px; font-weight: 400; }
+        
+        /* Brand Element (Kecil di atas) */
+        .brand-badge {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            display: inline-block;
+        }
+
+        /* Forms */
+        .form-area { text-align: left; margin-bottom: 30px; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
+        
+        input { 
+            width: 100%; 
+            padding: 16px; 
+            background: var(--bg-body); 
+            border: 1px solid var(--border-dark); 
+            border-radius: var(--radius-input); 
+            font-size: 15px; 
+            color: var(--text-main); 
+            transition: var(--transition); 
+            outline: none; 
+        }
+        input:focus { 
+            background: var(--bg-card); 
+            border-color: var(--text-main); 
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.05); 
+        }
+        input::placeholder { color: var(--text-muted); }
+
+        /* Buttons Premium */
+        .btn { 
+            width: 100%; 
+            padding: 16px; 
+            border-radius: var(--radius-btn); 
+            font-size: 15px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: var(--transition); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            border: none;
+            margin-bottom: 12px;
+        }
+        
+        .btn-black { 
+            background: var(--brand-color); 
+            color: #FFF; 
+            box-shadow: var(--shadow-btn); 
+        }
+        .btn-black:hover { 
+            background: var(--brand-hover); 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1); 
+        }
+        .btn-black:active { transform: translateY(0); }
+        .btn-black:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-outline { 
+            background: transparent; 
+            border: 1px solid var(--border-dark); 
+            color: var(--text-main); 
+        }
+        .btn-outline:hover { 
+            background: var(--bg-body); 
+            border-color: var(--text-muted); 
+        }
+
+        /* Profile Area */
+        .avatar-circle { 
+            width: 80px; 
+            height: 80px; 
+            background: var(--bg-body); 
+            border: 1px solid var(--border-dark);
+            color: var(--text-main); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 28px; 
+            font-weight: 800; 
+            margin: 0 auto 20px; 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        
+        .profile-name { font-size: 22px; margin-bottom: 4px; }
+        .profile-title { font-size: 13px; color: var(--text-sub); margin-bottom: 32px; font-weight: 500; }
+
+        /* Loader Minimalist */
+        .loader-ring { 
+            width: 30px; 
+            height: 30px; 
+            border: 3px solid var(--border-light); 
+            border-top: 3px solid var(--brand-color); 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+            margin: 0 auto 20px; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* SVG Icons */
+        svg { width: 18px; height: 18px; stroke-width: 2; }
+    </style>
+</head>
+<body>
+
+    <div class="card-wrapper">
+        <span class="brand-badge">DKTV Connect</span>
+        
+        <!-- 1. LOADING SCREEN -->
+        <div id="loadingBox">
+            <div class="loader-ring"></div>
+            <h1 style="font-size: 16px;">Memverifikasi Kartu</h1>
+            <p style="margin-bottom: 0;">Mohon tunggu sesaat.</p>
+        </div>
+
+        <!-- 2. SETUP SCREEN (Kartu Baru) -->
+        <div id="setupBox" class="hidden">
+            <h1>Aktivasi Kartu</h1>
+            <p>Masukkan identitas digital Anda untuk mengunci kartu fisik ini.</p>
+            
+            <div class="form-area">
+                <div class="input-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="inputNama" placeholder="Cth: Dadan Furman">
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label>WhatsApp (Kode Negara)</label>
+                    <input type="number" id="inputWa" placeholder="Cth: 628123456789">
+                </div>
+            </div>
+            
+            <button class="btn btn-black" id="btnSetup" onclick="lockCard()">
+                Aktifkan Sekarang
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+
+        <!-- 3. PROFILE SCREEN (Kartu Aktif) -->
+        <div id="profileBox" class="hidden">
+            <div class="avatar-circle" id="avatarName">D</div>
+            <h1 class="profile-name" id="displayName">Nama Profil</h1>
+            <div class="profile-title">Digital Contact Profile</div>
+            
+            <button class="btn btn-black" onclick="saveContact()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Simpan Kontak
+            </button>
+            
+            <button class="btn btn-outline" id="btnChat" onclick="openWa()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                Mulai Percakapan
+            </button>
+        </div>
+
+        <!-- 4. ERROR SCREEN -->
+        <div id="errorBox" class="hidden">
+            <svg style="width: 32px; height: 32px; stroke: #EF4444; margin: 0 auto 15px; display: block;" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <h1 style="font-size: 18px;">Akses Ditolak</h1>
+            <p id="errorMsg">Barcode tidak valid atau tidak dikenali oleh sistem.</p>
+        </div>
+
+    </div>
+
+    <script>
+        // ==========================================
+        const SUPA_URL = 'https://bkxclrjycsdpchodgzzb.supabase.co';
+        const SUPA_KEY = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3'; 
+        // ==========================================
+        
+        let dbSupabase;
+        let currentData = null;
+        let cardId = null;
+
+        function showError(msg) {
+            document.getElementById('loadingBox').classList.add('hidden');
+            document.getElementById('setupBox').classList.add('hidden');
+            document.getElementById('profileBox').classList.add('hidden');
+            document.getElementById('errorBox').classList.remove('hidden');
+            document.getElementById('errorMsg').innerText = msg;
+        }
+
+        async function runLayanan() {
+            try {
+                if (!window.supabase) throw new Error("Gagal memuat sistem. Cek koneksi Anda.");
+                
+                dbSupabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+                const urlParams = new URLSearchParams(window.location.search);
+                cardId = urlParams.get('id');
+
+                if(!cardId) return showError("Pindai kartu secara langsung untuk mengakses profil.");
+
+                const { data, error } = await dbSupabase.from('wa1').select('*').eq('id', cardId).single();
+
+                document.getElementById('loadingBox').classList.add('hidden');
+
+                if (error) return showError("Kartu ini tidak terdaftar di jaringan kami.");
+
+                if (data.status === 'Kosong') {
+                    document.getElementById('setupBox').classList.remove('hidden');
+                } else if (data.status === 'Aktif') {
+                    currentData = data;
+                    tampilkanProfile(data);
+                }
+
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        async function lockCard() {
+            const nama = document.getElementById('inputNama').value;
+            const wa = document.getElementById('inputWa').value;
+            const btn = document.getElementById('btnSetup');
+
+            if(!nama || !wa) return alert("Silakan lengkapi semua kolom identitas.");
+            
+            let originalText = btn.innerHTML;
+            btn.disabled = true; 
+            btn.innerHTML = '<div class="loader-ring" style="width:16px; height:16px; margin:0; border-width:2px; border-top-color:#FFF;"></div> Memproses...';
+
+            try {
+                const { error } = await dbSupabase
+                    .from('wa1')
+                    .update({ status: 'Aktif', nama: nama, wa: wa })
+                    .eq('id', cardId);
+
+                if (error) throw error;
+                window.location.reload();
+            } catch (err) {
+                alert("Sistem sibuk: " + err.message);
+                btn.disabled = false; 
+                btn.innerHTML = originalText;
+            }
+        }
+
+        function tampilkanProfile(data) {
+            document.getElementById('profileBox').classList.remove('hidden');
+            document.getElementById('displayName').innerText = data.nama;
+            let inisial = (data.nama || "User").charAt(0).toUpperCase();
+            document.getElementById('avatarName').innerText = inisial;
+        }
+
+        function saveContact() {
+            if(!currentData) return;
+            let vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${currentData.nama}\nTEL;TYPE=CELL,VOICE:${currentData.wa}\nEND:VCARD`;
+            let blob = new Blob([vcard], { type: 'text/vcard' });
+            let url = URL.createObjectURL(blob);
+            
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = `${(currentData.nama || 'Contact').replace(/\s+/g, '_')}_DKTV.vcf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function openWa() {
+            if(!currentData) return;
+            let cleanWa = currentData.wa.replace(/[^0-9]/g, ''); 
+            window.open(`https://wa.me/${cleanWa}?text=Halo,%20saya%20terhubung%20dari%20Kartu%20DKTV%20Anda.`, '_blank');
+        }
+
+        window.onload = runLayanan;
+    </script>
+</body>
+</html>

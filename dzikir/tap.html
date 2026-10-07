@@ -19,7 +19,7 @@
                 extend: {
                     fontFamily: { sans: ['Poppins', 'sans-serif'] },
                     colors: {
-                        gold: { 400: '#E5C158', 500: '#D4AF37', 600: '#AA8C2C' },
+                        gold: { 50: '#FCF9F0', 400: '#E5C158', 500: '#D4AF37', 600: '#AA8C2C' },
                         theme: {
                             main: 'var(--bg-main)', card: 'var(--bg-card)', text: 'var(--text-main)', 
                             muted: 'var(--text-muted)', border: 'var(--border-color)', accent: 'var(--bg-accent)'
@@ -66,11 +66,12 @@
         .btn-dzikir { transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
         .btn-dzikir:active { transform: scale(0.92); box-shadow: 0 5px 20px -5px rgba(212, 175, 55, 0.5); }
         
-        /* Efek Ripple saat target tercapai */
+        /* Efek Ripple */
         @keyframes pulse-ring { 0% { transform: scale(0.9); opacity: 0.6; } 100% { transform: scale(1.4); opacity: 0; } }
         .target-reached::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 4px solid #D4AF37; animation: pulse-ring 0.6s ease-out; }
 
-        .compass-ring { transition: transform 0.1s linear; }
+        /* Kompas Animasi yang lebih smooth */
+        .compass-ring { transition: transform 0.15s linear; will-change: transform; }
     </style>
 </head>
 <body class="theme-light antialiased transition-colors duration-300">
@@ -104,21 +105,16 @@
         <!-- MAIN CONTENT AREA -->
         <main class="relative w-full h-full pb-24">
             
-            <!-- 1. TAB TASBIH (Default) -->
+            <!-- 1. TAB TASBIH -->
             <section id="tab-tasbih" class="tab-content tab-active flex flex-col items-center justify-center px-6 pt-10">
-                
-                <!-- Pilihan Target -->
                 <div class="mb-8 flex space-x-2 bg-theme-card p-1.5 rounded-full shadow-sm border border-theme-border">
                     <button onclick="setTarget(33)" id="btn-t33" class="px-5 py-1.5 rounded-full text-sm font-bold bg-theme-accent text-gold-500 transition-all">33</button>
                     <button onclick="setTarget(99)" id="btn-t99" class="px-5 py-1.5 rounded-full text-sm font-medium text-theme-muted hover:text-theme-text transition-all">99</button>
                     <button onclick="setTarget(0)" id="btn-t0" class="px-5 py-1.5 rounded-full text-sm font-medium text-theme-muted hover:text-theme-text transition-all"><i class="fa-solid fa-infinity text-xs"></i></button>
                 </div>
 
-                <!-- Tombol Tasbih Utama -->
                 <div class="relative flex items-center justify-center mb-10">
-                    <!-- Layer bayangan luar -->
                     <div class="absolute w-64 h-64 bg-gold-500/20 rounded-full blur-2xl"></div>
-                    
                     <button id="tap-btn" class="btn-dzikir relative w-64 h-64 rounded-full bg-theme-card text-theme-text flex flex-col items-center justify-center border-[6px] border-theme-accent z-10 outline-none shadow-lg">
                         <span id="dzikir-text" class="text-[11px] font-semibold text-gold-500 tracking-widest uppercase mb-1">Subhanallah</span>
                         <span id="counter-display" class="text-7xl font-bold tracking-tighter mb-2">0</span>
@@ -126,7 +122,6 @@
                     </button>
                 </div>
 
-                <!-- Tombol Reset -->
                 <button id="reset-btn" class="text-theme-muted hover:text-red-400 transition-colors flex items-center space-x-2 px-5 py-2.5 bg-theme-card rounded-full shadow-sm border border-theme-border active:scale-95">
                     <i class="fa-solid fa-rotate-left"></i>
                     <span class="text-xs font-semibold uppercase tracking-wider">Reset</span>
@@ -135,7 +130,6 @@
 
             <!-- 2. TAB JADWAL SHOLAT -->
             <section id="tab-jadwal" class="tab-content tab-hidden flex-col items-center px-6 pt-6">
-                
                 <div class="w-full bg-theme-card rounded-3xl shadow-sm border border-theme-border p-6 mb-6 text-center relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-4 opacity-10"><i class="fa-solid fa-mosque text-6xl"></i></div>
                     <h2 class="text-xs text-theme-muted font-semibold uppercase tracking-widest mb-1 relative z-10">Lokasi Anda</h2>
@@ -147,7 +141,6 @@
                 </div>
 
                 <div id="prayer-container" class="w-full space-y-3 opacity-50 pointer-events-none transition-opacity duration-500">
-                    <!-- Jadwal list -->
                     <div class="flex justify-between items-center bg-theme-card p-4.5 px-5 rounded-2xl shadow-sm border border-theme-border">
                         <span class="font-semibold text-theme-muted text-sm">Subuh</span><span class="font-bold text-theme-text text-lg" id="time-Fajr">--:--</span>
                     </div>
@@ -166,39 +159,63 @@
                 </div>
             </section>
 
-            <!-- 3. TAB KIBLAT -->
-            <section id="tab-kiblat" class="tab-content tab-hidden flex-col items-center justify-center px-6 pt-12">
-                <div class="text-center mb-10">
-                    <h2 class="text-2xl font-bold text-theme-text">Arah Kiblat</h2>
-                    <p class="text-xs text-theme-muted mt-2">Letakkan HP di permukaan yang datar (lantai/meja).</p>
+            <!-- 3. TAB KIBLAT (REWORKED PRESISI) -->
+            <section id="tab-kiblat" class="tab-content tab-hidden flex-col items-center justify-center px-6 pt-8">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-theme-text">Radar Kiblat</h2>
+                    <p class="text-[11px] text-theme-muted mt-2 px-4 leading-relaxed">Letakkan HP datar. Sejajarkan garis Ka'bah dengan panah atas HP Anda.</p>
                 </div>
                 
-                <div class="relative w-72 h-72 flex items-center justify-center mb-10">
-                    <!-- Compass Outer Design -->
-                    <div class="absolute inset-0 rounded-full border-[8px] border-theme-accent shadow-sm"></div>
-                    
-                    <!-- Compass Rose (Rotates) -->
-                    <div id="compass-rose" class="compass-ring absolute inset-2 rounded-full border border-theme-border flex items-center justify-center bg-theme-card shadow-inner">
-                        <div class="absolute top-3 text-red-500 font-bold text-sm">U</div>
-                        <div class="absolute bottom-3 text-theme-muted font-bold text-sm">S</div>
-                        <div class="absolute right-3 text-theme-muted font-bold text-sm">T</div>
-                        <div class="absolute left-3 text-theme-muted font-bold text-sm">B</div>
+                <!-- Radar Kompas Area -->
+                <div class="relative flex flex-col items-center justify-center mb-8">
+                    <!-- Indikator Atas HP (Statik) -->
+                    <div id="top-indicator" class="absolute -top-6 z-20 text-gold-500 text-3xl drop-shadow-md transition-all duration-300">
+                        <i class="fa-solid fa-caret-down"></i>
+                    </div>
+
+                    <!-- Outer Ring Radar -->
+                    <div class="relative w-72 h-72 rounded-full border-[6px] border-theme-accent bg-theme-card shadow-lg flex items-center justify-center">
                         
-                        <!-- Kaaba Pointer -->
-                        <div id="qibla-pointer" class="absolute w-full h-full flex items-start justify-center transition-transform duration-200" style="transform: rotate(0deg);">
-                            <div class="bg-theme-main p-2 rounded-full shadow-md mt-8 border border-theme-border">
-                                <i class="fa-solid fa-kaaba text-3xl text-gold-500"></i>
+                        <!-- Piringan Kompas (Berputar) -->
+                        <div id="compass-dial" class="compass-ring absolute w-full h-full rounded-full flex items-center justify-center" style="transform: rotate(0deg);">
+                            
+                            <!-- Huruf Arah Mata Angin -->
+                            <div class="absolute top-2 w-full text-center font-bold text-red-500 text-sm">U</div>
+                            <div class="absolute bottom-2 w-full text-center font-bold text-theme-muted text-sm">S</div>
+                            <div class="absolute right-3 h-full flex items-center font-bold text-theme-muted text-sm">T</div>
+                            <div class="absolute left-3 h-full flex items-center font-bold text-theme-muted text-sm">B</div>
+                            
+                            <!-- Garis Arah Kiblat & Ka'bah (Berputar bareng dial) -->
+                            <div id="qibla-pointer" class="absolute w-full h-full flex flex-col items-center justify-start transition-transform duration-300" style="transform: rotate(0deg);">
+                                <!-- Garis Lurus Penunjuk -->
+                                <div class="w-1 h-1/2 bg-gradient-to-t from-transparent to-gold-500 opacity-80 mt-6 rounded-t-full"></div>
+                                <!-- Ikon Ka'bah -->
+                                <div class="absolute top-9 bg-theme-main p-2.5 rounded-full shadow-md border border-theme-border z-10">
+                                    <i class="fa-solid fa-kaaba text-2xl text-gold-500"></i>
+                                </div>
                             </div>
-                            <!-- Garis penunjuk -->
-                            <div class="absolute top-0 w-1 h-8 bg-gold-500 rounded-full"></div>
+
                         </div>
+                        <!-- Titik Pusat -->
+                        <div class="absolute w-4 h-4 bg-gold-500 rounded-full shadow-md z-20 border-2 border-white"></div>
+                    </div>
+                </div>
+
+                <!-- Info Derajat Akurat (Digital Readout) -->
+                <div class="flex space-x-3 mb-6 w-full max-w-[280px]">
+                    <div class="flex-1 bg-theme-card border border-theme-border px-3 py-2.5 rounded-2xl text-center shadow-sm">
+                        <p class="text-[9px] text-theme-muted font-bold uppercase tracking-widest mb-0.5">Sudut Kiblat</p>
+                        <p class="text-lg font-bold text-theme-text" id="kiblat-angle">--°</p>
+                    </div>
+                    <div id="heading-box" class="flex-1 bg-theme-card border border-theme-border px-3 py-2.5 rounded-2xl text-center shadow-sm transition-colors duration-300">
+                        <p class="text-[9px] text-theme-muted font-bold uppercase tracking-widest mb-0.5">Arah HP Anda</p>
+                        <p class="text-lg font-bold text-theme-text" id="phone-heading">--°</p>
                     </div>
                 </div>
 
                 <button onclick="requestCompassPermission()" class="bg-theme-card border border-theme-border text-theme-text px-6 py-3 rounded-full text-sm font-semibold shadow-sm active:scale-95 transition-transform">
-                    <i class="fa-regular fa-compass mr-2 text-gold-500"></i> Kalibrasi Kompas
+                    <i class="fa-solid fa-satellite-dish mr-2 text-gold-500"></i> Kalibrasi Kompas
                 </button>
-                <p id="kiblat-status" class="text-[10px] text-theme-muted mt-4 text-center bg-theme-accent px-4 py-2 rounded-full uppercase tracking-wider">Menunggu Sensor...</p>
             </section>
 
         </main>
@@ -225,17 +242,16 @@
         // ================= ANTI HACKER / ANTI COPY SYSTEM =================
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.onkeydown = function(e) {
-            if (e.keyCode == 123) return false; // F12
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; // Ctrl+Shift+C
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J
-            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
-            if (e.ctrlKey && e.keyCode == 'C'.charCodeAt(0)) return false; // Ctrl+C
-            if (e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) return false; // Ctrl+S
+            if (e.keyCode == 123) return false; 
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; 
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; 
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; 
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; 
+            if (e.ctrlKey && e.keyCode == 'C'.charCodeAt(0)) return false; 
+            if (e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) return false; 
         };
         // ==================================================================
 
-        // --- INIT & THEME ---
         document.addEventListener("DOMContentLoaded", () => {
             initTheme();
             checkCustomGreeting();
@@ -250,7 +266,6 @@
             changeTheme(savedTheme);
         }
 
-        // --- CUSTOM GREETING UNIVERSAL ---
         function checkCustomGreeting() {
             const urlParams = new URLSearchParams(window.location.search);
             const customName = urlParams.get('by') || urlParams.get('dari'); 
@@ -263,7 +278,6 @@
             }
         }
 
-        // --- AUDIO ENGINE ---
         let audioCtx;
         function playClickSound() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -273,7 +287,7 @@
             const gainNode = audioCtx.createGain();
             
             oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(600, audioCtx.currentTime); // Nada lebih modern, tidak kasar
+            oscillator.frequency.setValueAtTime(600, audioCtx.currentTime); 
             oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.05);
             
             gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
@@ -286,7 +300,6 @@
             oscillator.stop(audioCtx.currentTime + 0.05);
         }
 
-        // --- 1. TAB NAVIGATION ---
         function switchTab(tabName) {
             ['tasbih', 'jadwal', 'kiblat'].forEach(t => {
                 const el = document.getElementById(`tab-${t}`);
@@ -304,7 +317,6 @@
             activeNav.querySelector('span').classList.remove('font-medium'); activeNav.querySelector('span').classList.add('font-bold');
         }
 
-        // --- 2. TASBIH DIGITAL ---
         const tapBtn = document.getElementById('tap-btn');
         const counterDisplay = document.getElementById('counter-display');
         const dzikirText = document.getElementById('dzikir-text');
@@ -362,8 +374,11 @@
             } else { dzikirText.innerText = "Dzikir"; }
         }
 
-        // --- 3. JADWAL SHOLAT & LOKASI ---
+        // --- LOKASI & KIBLAT ---
         let userLat, userLon;
+        let qiblaBearing = 0;
+        let hasVibratedQibla = false;
+
         function getLocationAndPrayerTimes() {
             const locText = document.getElementById('lokasi-teks');
             locText.innerText = "Mendeteksi...";
@@ -391,8 +406,6 @@
             } else { locText.innerText = "GPS tidak didukung"; }
         }
 
-        // --- 4. ARAH KIBLAT (KOMPAS) ---
-        let qiblaBearing = 0;
         function calculateQibla(lat, lon) {
             const latK = 21.422487 * Math.PI / 180.0, lonK = 39.826206 * Math.PI / 180.0;
             const phi = lat * Math.PI / 180.0, lambda = lon * Math.PI / 180.0;
@@ -400,7 +413,12 @@
             const x = Math.cos(phi) * Math.tan(latK) - Math.sin(phi) * Math.cos(lonK - lambda);
             let bearing = Math.atan2(y, x) * 180.0 / Math.PI;
             qiblaBearing = (bearing + 360) % 360;
-            document.getElementById('kiblat-status').innerText = `Kiblat: ${qiblaBearing.toFixed(1)}° (Dari Utara)`;
+            
+            // Tampilkan angka derajat Kiblat fix
+            document.getElementById('kiblat-angle').innerText = `${Math.round(qiblaBearing)}°`;
+            
+            // Putar penunjuk (garis + ka'bah) ke arah kiblat pada piringan
+            document.getElementById('qibla-pointer').style.transform = `rotate(${qiblaBearing}deg)`;
         }
 
         function requestCompassPermission() {
@@ -420,9 +438,40 @@
         function handleOrientation(event) {
             let alpha = event.alpha, webkitHeading = event.webkitCompassHeading;
             let heading = webkitHeading || (360 - alpha); 
+            
             if (typeof heading === 'number') {
-                document.getElementById('compass-rose').style.transform = `rotate(${-heading}deg)`;
-                document.getElementById('qibla-pointer').style.transform = `rotate(${qiblaBearing}deg)`;
+                // Update UI Angka derajat
+                let roundedHeading = Math.round(heading);
+                document.getElementById('phone-heading').innerText = `${roundedHeading}°`;
+                
+                // Putar piringan kompas
+                document.getElementById('compass-dial').style.transform = `rotate(${-heading}deg)`;
+                
+                // Cek tingkat presisi kiblat
+                if (qiblaBearing > 0) {
+                    let diff = Math.abs(roundedHeading - Math.round(qiblaBearing));
+                    if (diff > 180) diff = 360 - diff; // Handle wraparound 360 derajat
+                    
+                    const headingBox = document.getElementById('heading-box');
+                    const topIndicator = document.getElementById('top-indicator');
+                    
+                    // Jika beda hanya <= 3 derajat (berarti lurus dengan ka'bah)
+                    if (diff <= 3) {
+                        headingBox.classList.add('border-green-500', 'bg-green-50', 'text-green-700');
+                        topIndicator.classList.remove('text-gold-500');
+                        topIndicator.classList.add('text-green-500', 'scale-125');
+                        
+                        if (navigator.vibrate && !hasVibratedQibla) {
+                            navigator.vibrate([100, 50, 100]); // Getar khusus saat pas
+                            hasVibratedQibla = true;
+                        }
+                    } else {
+                        headingBox.classList.remove('border-green-500', 'bg-green-50', 'text-green-700');
+                        topIndicator.classList.add('text-gold-500');
+                        topIndicator.classList.remove('text-green-500', 'scale-125');
+                        hasVibratedQibla = false;
+                    }
+                }
             }
         }
     </script>

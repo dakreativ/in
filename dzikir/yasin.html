@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DKTV - Digital Wedding</title>
+    <title>DKTV - Digital Wedding & Ziarah</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -22,9 +22,14 @@
         /* Glassmorphism */
         .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         
-        ::-webkit-scrollbar { width: 4px; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #E8D8C8; border-radius: 10px; }
+
+        /* Hide scrollbar for tabs navigation */
+        .scroll-nav { overflow-x: auto; white-space: nowrap; -ms-overflow-style: none; scrollbar-width: none; }
+        .scroll-nav::-webkit-scrollbar { display: none; }
 
         .compass-dial { transition: transform 0.2s ease-out; }
     </style>
@@ -56,12 +61,13 @@
             </div>
         </div>
 
-        <!-- TABS -->
-        <nav class="flex bg-white border-b border-gray-200 text-[11px] font-semibold sticky top-[72px] z-20">
-            <button onclick="switchTab('yasin')" id="btn-yasin" class="flex-1 py-3 border-b-2 border-cream-dark text-gray-800 tab-btn active-btn">Yasin</button>
-            <button onclick="switchTab('doa')" id="btn-doa" class="flex-1 py-3 border-b-2 border-transparent text-gray-400 tab-btn active-btn">Doa</button>
-            <button onclick="switchTab('sholat')" id="btn-sholat" class="flex-1 py-3 border-b-2 border-transparent text-gray-400 tab-btn active-btn">Waktu Sholat</button>
-            <button onclick="switchTab('kiblat')" id="btn-kiblat" class="flex-1 py-3 border-b-2 border-transparent text-gray-400 tab-btn active-btn">Kiblat</button>
+        <!-- TABS (Scrollable secara horizontal) -->
+        <nav class="flex bg-white border-b border-gray-200 text-[11px] font-semibold sticky top-[72px] z-20 scroll-nav">
+            <button onclick="switchTab('yasin')" id="btn-yasin" class="px-5 py-3 border-b-2 border-cream-dark text-gray-800 tab-btn active-btn shrink-0">Yasin</button>
+            <button onclick="switchTab('tawasul')" id="btn-tawasul" class="px-5 py-3 border-b-2 border-transparent text-gray-400 tab-btn active-btn shrink-0">Tawasul & Hadiah</button>
+            <button onclick="switchTab('doa')" id="btn-doa" class="px-5 py-3 border-b-2 border-transparent text-gray-400 tab-btn active-btn shrink-0">Doa</button>
+            <button onclick="switchTab('sholat')" id="btn-sholat" class="px-5 py-3 border-b-2 border-transparent text-gray-400 tab-btn active-btn shrink-0">Waktu Sholat</button>
+            <button onclick="switchTab('kiblat')" id="btn-kiblat" class="px-5 py-3 border-b-2 border-transparent text-gray-400 tab-btn active-btn shrink-0">Kiblat</button>
         </nav>
 
         <!-- KONTEN -->
@@ -87,7 +93,46 @@
                 </div>
             </section>
 
-            <!-- TAB 2: DOA -->
+            <!-- TAB 2: TAWASUL & HADIAH (Baru untuk Ziarah) -->
+            <section id="tab-tawasul" class="tab-content space-y-4">
+                
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-5">
+                    <h3 class="text-[12px] font-bold text-gray-800 border-b pb-2 text-center uppercase tracking-wider">1. Tawasul Pembuka</h3>
+                    <p class="arabic text-xl text-right leading-loose text-gray-900">
+                        إِلَى حَضْرَةِ النَّبِيِّ الْمُصْطَفَى مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ وَآلِهِ وَأَصْحَابِهِ وَأَزْوَاجِهِ وَذُرِّيَّاتِهِ وَأَهْلِ بَيْتِهِ الْكِرَامِ، شَيْءٌ لِلَّهِ لَهُمُ الْفَاتِحَةُ...
+                    </p>
+                    <p class="text-[11px] text-gray-600 leading-relaxed italic">
+                        "Kepada hadirat Nabi Musthofa Muhammad SAW, beserta keluarga, sahabat, istri-istri, keturunan, dan ahli baitnya yang mulia, bacaan Al-Fatihah ini kami tujukan kepada mereka..." <br><br>
+                        <span class="font-bold text-[#8C7561]">(Bacalah Surat Al-Fatihah 1x)</span>
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-5">
+                    <h3 class="text-[12px] font-bold text-gray-800 border-b pb-2 text-center uppercase tracking-wider">2. Hadiah Kepada Ahli Kubur</h3>
+                    <p class="arabic text-xl text-right leading-loose text-gray-900">
+                        ثُمَّ إِلَى أَرْوَاحِ جَمِيعِ أَهْلِ الْقُبُورِ مِنَ الْمُسْلِمِينَ وَالْمُسْلِمَاتِ وَالْمُؤْمِنِينَ وَالْمُؤْمِنَاتِ مِنْ مَشَارِقِ الأَرْضِ إِلَى مَغَارِبِهَا بَرِّهَا وَبَحْرِهَا، خُصُوصًا آبَاءَنَا وَأُمَّهَاتِنَا وَأَجْدَادَنَا وَجَدَّاتِنَا وَخُصُوصًا إِلَى رُوحِ <br>
+                        <span class="text-sm text-red-700 bg-red-50 px-2 py-1 rounded inline-block mt-2">[ Sebutkan Nama Almarhum / Almarhumah ]</span><br>
+                        شَيْءٌ لِلَّهِ لَهُمُ الْفَاتِحَةُ...
+                    </p>
+                    <p class="text-[11px] text-gray-600 leading-relaxed italic">
+                        "Kemudian kepada seluruh ruh ahli kubur dari kaum muslimin dan muslimat, mukminin dan mukminat, dari timur hingga barat, di darat maupun di laut, terkhusus kepada bapak-bapak kami, ibu-ibu kami, kakek-kakek kami, nenek-nenek kami, dan terkhusus kepada ruh <strong>[Sebutkan Nama]</strong>. Bacaan Al-Fatihah ini kami tujukan kepada mereka..." <br><br>
+                        <span class="font-bold text-[#8C7561]">(Bacalah Surat Al-Fatihah 1x)</span>
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-5 text-center">
+                    <h3 class="text-[12px] font-bold text-gray-800 border-b pb-2 uppercase tracking-wider">3. Tahlil Singkat</h3>
+                    <p class="arabic text-2xl leading-loose text-gray-900 mt-4">
+                        لَا إِلَهَ إِلَّا اللهُ
+                    </p>
+                    <p class="text-xs text-gray-500 font-medium tracking-wide">
+                        "Laa ilaaha illallah" <br> <span class="text-[#8C7561] font-bold">(Dibaca 33x atau semampunya)</span>
+                    </p>
+                </div>
+
+            </section>
+
+            <!-- TAB 3: DOA -->
             <section id="tab-doa" class="tab-content space-y-4">
                 <!-- Doa Setelah Yasin Lengkap -->
                 <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-5">
@@ -99,42 +144,36 @@
                         <div>
                             <p class="text-xs font-bold text-gray-700 mb-1">Transliterasi:</p>
                             <p class="text-[11px] text-gray-500 leading-relaxed italic">
-                                "Bismillaahirrahmaanirrahiim. Allaahumma innaa nastahfidhuka wa nastaudi'uka adyaananaa wa anfusanaa wa ahlanaa wa aulaadanaa wa amwaalanaa wa kulla syai'in a'thaitanaa. Allaahummaj'alnaa fii kanaafika wa amaanika wa jiwaarika wa 'iyaadzika min kulli syaithaanin mariid, wa jabbaarin 'aniid, wa dzii 'ainin wa dzii baghyin wa min syarri kulli dzii syarrin, innaka 'alaa kulli syai'in qadiir. Allaahumma jammilnaa bil'aafiyati wassalaamati, wa haqqiqnaa bittaqwaa wal-istiqaamati, wa a'idznaa min muujibaatin-nadaamati, innaka samii'ud-du'aa'. Allaahummaghfirlanaa wa liwaalidiinaa wa liaulaadinaa wa masyaayikhinaa wa li-ikhwaaninaa fiddiini wa li-ashhaabinaa wa ahbaabinaa wa liman ahabbanaa fiika wa liman ahsana ilainaa wa lilmu'miniina wal mu'minaati wal muslimiina wal muslimaati yaa rabbal 'aalamiin. Wa shalli allaahumma 'alaa 'abdika wa rasuulika sayyidinaa wa maulaanaa muhammadin wa 'alaa aalihi wa shahbihi wa sallim. Warzuqnaa kamaalal-mutaaba'ati lahuu dhaahiran wa baathinan fii 'aafiyatin wa salaamatin birahmatika yaa arhamar-raahimiin."
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-gray-700 mb-1">Artinya:</p>
-                            <p class="text-[11px] text-gray-600 leading-relaxed">
-                                "Dengan menyebut nama Allah Yang Maha Pengasih lagi Maha Penyayang. Ya Allah, sesungguhnya kami memohon pemeliharaan-Mu dan kami menitipkan kepada-Mu agama kami, diri kami, keluarga kami, anak-anak kami, harta benda kami, dan segala sesuatu yang telah Engkau berikan kepada kami. Ya Allah, jadikanlah kami berada dalam lindungan-Mu, keamanan-Mu, dan penjagaan-Mu dari kejahatan setiap setan yang durhaka, orang yang sombong, dan dari kejahatan segala yang memiliki mata jahat, dan dari kejahatan segala yang memiliki kejahatan. Sesungguhnya Engkau Maha Kuasa atas segala sesuatu. Ya Allah, perindahkanlah kami dengan keselamatan dan kesejahteraan. Karuniakanlah kepada kami ketakwaan dan istiqamah. Lindungilah kami dari perkara-perkara yang menyebabkan kami mendapat penyesalan. Sesungguhnya Engkau Maha Mendengar doa. Ya Allah ampunilah kami, kedua orang tua kami, anak-anak kami, guru-guru kami, saudara-saudara kami seagama, sahabat-sahabat kami, kekasih-kekasih kami, orang yang mencintai kami karena Engkau, orang yang berbuat baik kepada kami, dan kaum mukminin dan mukminat, muslimin dan muslimat, wahai Tuhan semesta alam. Ya Allah, limpahkanlah rahmat dan keselamatan kepada hamba dan utusan-Mu, junjungan kami Nabi Muhammad SAW, beserta keluarga dan sahabatnya. Dan karuniakanlah kepada kami kesempurnaan mengikutinya secara lahir dan batin, dalam kesejahteraan dan keselamatan dengan rahmat-Mu wahai sebaik-baik penyayang dari para penyayang."
+                                "Bismillaahirrahmaanirrahiim. Allaahumma innaa nastahfidhuka wa nastaudi'uka adyaananaa wa anfusanaa wa ahlanaa wa aulaadanaa wa amwaalanaa wa kulla syai'in a'thaitanaa. Allaahummaj'alnaa fii kanaafika wa amaanika wa jiwaarika wa 'iyaadzika min kulli syaithaanin mariid, wa jabbaarin 'aniid, wa dzii 'ainin wa dzii baghyin wa min syarri kulli dzii syarrin, innaka 'alaa kulli syai'in qadiir. Allaahumma jammilnaa bil'aafiyati wassalaamati, wa haqqiqnaa bittaqwaa wal-istiqaamati, wa a'idznaa min muujibaatin-nadaamati, innaka samii'ud-du'aa'... Warzuqnaa kamaalal-mutaaba'ati lahuu dhaahiran wa baathinan fii 'aafiyatin wa salaamatin birahmatika yaa arhamar-raahimiin."
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Doa Selamat Lengkap -->
+                <!-- Doa Selamat Panjang Lengkap (Diperpanjang + Sapu Jagat) -->
                 <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-5">
-                    <h3 class="text-[12px] font-bold text-gray-800 border-b pb-2 text-center uppercase tracking-wider">Doa Selamat</h3>
+                    <h3 class="text-[12px] font-bold text-gray-800 border-b pb-2 text-center uppercase tracking-wider">Doa Selamat & Tolak Bala</h3>
                     <p class="arabic text-xl text-right leading-loose text-gray-900">
-                        اَللّٰهُمَّ اِنَّا نَسْأَلُكَ سَلَامَةً فِى الدِّيْنِ، وَعَافِيَةً فِى الْجَسَدِ، وَزِيَادَةً فِى الْعِلْمِ، وَبَرَكَةً فِى الرِّزْقِ، وَتَوْبَةً قَبْلَ الْمَوْتِ، وَرَحْمَةً عِنْدَ الْمَوْتِ، وَمَغْفِرَةً بَعْدَ الْمَوْتِ، اَللّٰهُمَّ هَوِّنْ عَلَيْنَا فِيْ سَكَرَاتِ الْمَوْتِ، وَالنَّجَاةَ مِنَ النَّارِ، وَالْعَفْوَ عِنْدَ الْحِسَابِ.
+                        اَللّٰهُمَّ اِنَّا نَسْأَلُكَ سَلَامَةً فِى الدِّيْنِ، وَعَافِيَةً فِى الْجَسَدِ، وَزِيَادَةً فِى الْعِلْمِ، وَبَرَكَةً فِى الرِّزْقِ، وَتَوْبَةً قَبْلَ الْمَوْتِ، وَرَحْمَةً عِنْدَ الْمَوْتِ، وَمَغْفِرَةً بَعْدَ الْمَوْتِ. اَللّٰهُمَّ هَوِّنْ عَلَيْنَا فِيْ سَكَرَاتِ الْمَوْتِ، وَالنَّجَاةَ مِنَ النَّارِ، وَالْعَفْوَ عِنْدَ الْحِسَابِ. رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً ۚ إِنَّكَ أَنتَ الْوَهَّابُ. رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ.
                     </p>
                     <div class="space-y-4">
                         <div>
                             <p class="text-xs font-bold text-gray-700 mb-1">Transliterasi:</p>
                             <p class="text-[11px] text-gray-500 leading-relaxed italic">
-                                "Allâhumma innâ nas’aluka salâmatan fid-dîn, wa ‘âfiyatan fil-jasad, wa ziyâdatan fil-‘ilm, wa barakatan fir-rizq, wa taubatan qablal-maut, wa raḥmatan ‘indal-maut, wa maghfiratan ba‘dal-maut. Allâhumma hawwin ‘alainâ fî sakarâtil-maut, wan-najâta minan-nâr, wal-‘afwa ‘indal-ḥisâb."
+                                "Allâhumma innâ nas’aluka salâmatan fid-dîn, wa ‘âfiyatan fil-jasad, wa ziyâdatan fil-‘ilm, wa barakatan fir-rizq, wa taubatan qablal-maut, wa raḥmatan ‘indal-maut, wa maghfiratan ba‘dal-maut. Allâhumma hawwin ‘alainâ fî sakarâtil-maut, wan-najâta minan-nâr, wal-‘afwa ‘indal-ḥisâb. Rabbanâ lâ tuzigh qulûbanâ ba‘da idz hadaitanâ wa hab lanâ min ladunka raḥmah, innaka antal-wahhâb. Rabbanâ âtinâ fid-dunyâ ḥasanah, wa fil-âkhirati ḥasanah, wa qinâ ‘adzâban-nâr."
                             </p>
                         </div>
                         <div>
                             <p class="text-xs font-bold text-gray-700 mb-1">Artinya:</p>
                             <p class="text-[11px] text-gray-600 leading-relaxed">
-                                "Ya Allah, sesungguhnya kami memohon kepada-Mu keselamatan dalam agama, kesehatan pada badan, tambahan ilmu, keberkahan rezeki, taubat sebelum mati, rahmat ketika mati, dan ampunan setelah mati. Ya Allah, permudahkanlah kami saat sakaratul maut, selamatkanlah kami dari api neraka, dan berikanlah ampunan saat hisab (perhitungan)."
+                                "Ya Allah, sesungguhnya kami memohon kepada-Mu keselamatan dalam agama, kesehatan pada badan, tambahan ilmu, keberkahan rezeki, taubat sebelum mati, rahmat ketika mati, dan ampunan setelah mati. Ya Allah, permudahkanlah kami saat sakaratul maut, selamatkanlah kami dari api neraka, dan berikanlah ampunan saat hisab. Ya Tuhan kami, janganlah Engkau jadikan hati kami condong kepada kesesatan sesudah Engkau beri petunjuk kepada kami, dan karuniakanlah kepada kami rahmat dari sisi Engkau; karena sesungguhnya Engkaulah Maha Pemberi (karunia). Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat dan peliharalah kami dari siksa neraka."
                             </p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- TAB 3: SHOLAT -->
+            <!-- TAB 4: SHOLAT -->
             <section id="tab-sholat" class="tab-content space-y-4">
                 <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm text-center">
                     <p class="text-xs text-gray-400 mb-1">Jadwal Sholat Hari Ini</p>
@@ -145,7 +184,7 @@
                 </div>
             </section>
 
-            <!-- TAB 4: KIBLAT -->
+            <!-- TAB 5: KIBLAT -->
             <section id="tab-kiblat" class="tab-content space-y-4 text-center">
                 <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center">
                     <p class="text-xs text-gray-500 mb-6">Putar perangkat hingga panah mengarah ke ikon Ka'bah.</p>
@@ -224,9 +263,14 @@
                 el.classList.add('border-transparent', 'text-gray-400');
             });
             document.getElementById('tab-' + tabId).classList.add('active');
-            document.getElementById('btn-' + tabId).classList.remove('border-transparent', 'text-gray-400');
-            document.getElementById('btn-' + tabId).classList.add('border-cream-dark', 'text-gray-800');
             
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('border-transparent', 'text-gray-400');
+            activeBtn.classList.add('border-cream-dark', 'text-gray-800');
+            
+            // Auto scroll nav ke tab yang di klik (untuk HP)
+            activeBtn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+
             if(tabId === 'sholat' && !sholatLoaded) loadSholat();
             if(tabId === 'kiblat') initKiblat();
         }

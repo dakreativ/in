@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - WA DKTV</title>
+    <!-- Import Supabase JS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Import QRCode JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -13,17 +15,25 @@
         .card { background: #1E293B; border-radius: 16px; padding: 25px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         h1, h2 { color: #10B981; margin-top: 0; }
         input, select { width: 100%; background: #0F172A; border: 1px solid #334155; color: white; padding: 12px; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; }
-        button { background: #10B981; color: #0F172A; font-weight: bold; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; }
+        button { background: #10B981; color: #0F172A; font-weight: bold; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; transition: 0.2s;}
         button:hover { background: #059669; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
         th, td { padding: 12px; border-bottom: 1px solid #334155; text-align: left; }
         .badge-kosong { background: #FCA5A5; color: #7F1D1D; padding: 4px 8px; border-radius: 4px; font-size: 11px; }
         .badge-aktif { background: #6EE7B7; color: #064E3B; padding: 4px 8px; border-radius: 4px; font-size: 11px; }
         .flex-row { display: flex; gap: 15px; } .flex-row > div { flex: 1; }
+        
+        /* Area Barcode Generator */
         #qr-container { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px; justify-content: center; }
         .qr-wrapper { background: white; padding: 15px; border-radius: 10px; text-align: center; color: black; font-weight: bold; font-size: 13px; }
         .qr-box { margin: 0 auto 10px; display: flex; justify-content: center; }
         .btn-dl { background: #3B82F6; color: white; padding: 8px; font-size: 12px; margin-top: 10px; }
+        
+        /* Tombol Aksi di Tabel */
+        .btn-aksi-web { background: transparent; border: 1px solid #3B82F6; color: #3B82F6; padding: 6px 10px; font-size: 11px; width: auto; border-radius: 6px; }
+        .btn-aksi-web:hover { background: #3B82F6; color: white; }
+        .btn-aksi-qr { background: transparent; border: 1px solid #10B981; color: #10B981; padding: 6px 10px; font-size: 11px; width: auto; border-radius: 6px; }
+        .btn-aksi-qr:hover { background: #10B981; color: #0F172A; }
     </style>
 </head>
 <body>
@@ -42,22 +52,37 @@
                 </div>
             </div>
             <button id="btnGen" onclick="generateCards()">Generate Barcode Kosong</button>
+            
+            <!-- Tempat Preview Barcode yang BARU saja digenerate -->
             <div id="qr-container"></div>
         </div>
 
         <div class="card">
-            <h2 style="display:flex; justify-content:space-between;">Database Kartu <button onclick="loadData()" style="width:auto; padding:8px 15px; font-size:12px;">🔄 Refresh</button></h2>
+            <h2 style="display:flex; justify-content:space-between; align-items:center;">
+                Database Kartu 
+                <button onclick="loadData()" style="width:auto; padding:8px 15px; font-size:12px;">🔄 Refresh Tabel</button>
+            </h2>
             <div style="overflow-x: auto;">
                 <table>
-                    <thead><tr><th>ID Kartu</th><th>Nama Klien</th><th>No. WA</th><th>Status</th></tr></thead>
-                    <tbody id="tabel"><tr><td colspan="4" style="text-align: center;">Memuat data...</td></tr></tbody>
+                    <thead>
+                        <tr>
+                            <th>ID Kartu</th>
+                            <th>Nama Klien</th>
+                            <th>No. WA</th>
+                            <th>Status</th>
+                            <th>Aksi</th> <!-- Kolom Aksi Ditambahkan -->
+                        </tr>
+                    </thead>
+                    <tbody id="tabel">
+                        <tr><td colspan="5" style="text-align: center;">Memuat data...</td></tr>
+                    </tbody>
                 </table>
             </div>
         </div>
     </div>
 
     <script>
-        // DATA SUPABASE SUDAH DIMASUKKAN
+        // DATA SUPABASE
         const SUPA_URL = 'https://bkxclrjycsdpchodgzzb.supabase.co';
         const SUPA_KEY = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3'; 
 
@@ -88,11 +113,15 @@
                 return alert("Gagal menyimpan ke database: " + error.message);
             }
 
-            document.getElementById('qr-container').innerHTML = '';
+            // Tampilkan barcode yang baru saja di-generate di atas
+            document.getElementById('qr-container').innerHTML = '<p style="width:100%; text-align:center; color:#94A3B8; font-size:12px;">Berhasil dibuat! Barcode lama dapat di-download melalui Tabel Database di bawah.</p>';
             dataToInsert.forEach(item => bikinQR(item.id));
+            
+            // Perbarui tabel di bawah
             loadData();
         }
 
+        // Fungsi membuat preview QR di box atas
         function bikinQR(id) {
             const wrapper = document.createElement('div'); wrapper.className = 'qr-wrapper';
             const qrBox = document.createElement('div'); qrBox.className = 'qr-box'; qrBox.id = 'qr-' + id;
@@ -100,39 +129,64 @@
             
             const teksId = document.createElement('div'); teksId.innerText = "ID: " + id;
             const btnDl = document.createElement('button'); btnDl.className = 'btn-dl'; btnDl.innerText = '⬇️ Download QR';
-            btnDl.onclick = function() {
-                const canvas = qrBox.querySelector('canvas');
-                if(canvas) {
-                    const link = document.createElement('a'); link.href = canvas.toDataURL("image/png");
-                    link.download = 'WADKTV_' + id + '.png'; link.click();
-                }
-            };
+            btnDl.onclick = function() { downloadSatuQR(id); };
+            
             wrapper.appendChild(qrBox); wrapper.appendChild(teksId); wrapper.appendChild(btnDl);
             document.getElementById('qr-container').appendChild(wrapper);
         }
 
+        // ==============================================
+        // FITUR BARU: DOWNLOAD QR DARI DATABASE (SILENT MODE)
+        // ==============================================
+        function downloadSatuQR(id) {
+            // Kita buat elemen div tersembunyi di memori untuk menggenerate QR HD (High Definition)
+            const tempDiv = document.createElement('div');
+            // Ukuran QR kita bikin besar (400x400) biar kalau di print tidak pecah
+            new QRCode(tempDiv, { text: WEB_URL + "?id=" + id, width: 400, height: 400 });
+            
+            // Beri jeda 100ms agar QR selesai digambar (dirender) oleh sistem
+            setTimeout(() => {
+                const canvas = tempDiv.querySelector('canvas');
+                if(canvas) {
+                    const link = document.createElement('a'); 
+                    link.href = canvas.toDataURL("image/png");
+                    link.download = `QR_WADKTV_${id}.png`; 
+                    link.click();
+                } else {
+                    alert("Sistem sedang sibuk, gagal membuat QR. Coba lagi.");
+                }
+            }, 100);
+        }
+
+        // Memuat Tabel Database
         async function loadData() {
             const tbody = document.getElementById('tabel');
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Memuat data...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Memuat data...</td></tr>';
             
             const { data, error } = await dbSupabase.from('wa1').select('*').order('created_at', { ascending: false });
             
             if (error) {
-                tbody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Error DB: ${error.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">Error DB: ${error.message}</td></tr>`;
                 return;
             }
 
             let html = '';
             data.forEach(row => {
                 let badge = row.status === 'Kosong' ? 'badge-kosong' : 'badge-aktif';
+                let targetUrl = WEB_URL + "?id=" + row.id;
+                
                 html += `<tr>
                             <td><strong>${row.id}</strong></td>
                             <td>${row.nama || '-'}</td>
                             <td>${row.wa || '-'}</td>
                             <td><span class="${badge}">${row.status}</span></td>
+                            <td style="display:flex; gap:8px;">
+                                <button class="btn-aksi-web" onclick="window.open('${targetUrl}', '_blank')" title="Buka Link Kartu di Tab Baru">Buka Web</button>
+                                <button class="btn-aksi-qr" onclick="downloadSatuQR('${row.id}')" title="Download Gambar Barcode">⬇️ QR</button>
+                            </td>
                          </tr>`;
             });
-            tbody.innerHTML = html || '<tr><td colspan="4" style="text-align:center;">Belum ada data kartu.</td></tr>';
+            tbody.innerHTML = html || '<tr><td colspan="5" style="text-align:center;">Belum ada data kartu.</td></tr>';
         }
 
         loadData();

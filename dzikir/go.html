@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>dkrtv. Quran - Membaca Al-Quran</title>
+    <title>dkrtv. Quran - Premium Digital</title>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -20,12 +20,8 @@
                     colors: {
                         gold: { 400: '#E5C158', 500: '#D4AF37', 600: '#AA8C2C' },
                         theme: {
-                            main: 'var(--bg-main)',
-                            card: 'var(--bg-card)',
-                            text: 'var(--text-main)',
-                            muted: 'var(--text-muted)',
-                            border: 'var(--border-color)',
-                            accent: 'var(--bg-accent)'
+                            main: 'var(--bg-main)', card: 'var(--bg-card)', text: 'var(--text-main)', 
+                            muted: 'var(--text-muted)', border: 'var(--border-color)', accent: 'var(--bg-accent)'
                         }
                     }
                 }
@@ -35,23 +31,25 @@
     
     <style>
         /* CSS Variables untuk Tema */
-        :root { /* Light */
-            --bg-main: #F9FAFB; --bg-card: #FFFFFF; --text-main: #1F2937; --text-muted: #9CA3AF; --border-color: #F3F4F6; --bg-accent: #F3F4F6;
-        }
-        body.theme-dark {
-            --bg-main: #121212; --bg-card: #1E1E1E; --text-main: #F3F4F6; --text-muted: #6B7280; --border-color: #2D3748; --bg-accent: #2D3748;
-        }
-        body.theme-cream {
-            --bg-main: #FAF7F2; --bg-card: #FFFFFF; --text-main: #4A4036; --text-muted: #A8A29E; --border-color: #E7E5DF; --bg-accent: #F5F0E6;
-        }
-        body.theme-navy {
-            --bg-main: #0F172A; --bg-card: #1E293B; --text-main: #F8FAFC; --text-muted: #94A3B8; --border-color: #334155; --bg-accent: #334155;
-        }
-        body.theme-green {
-            --bg-main: #064E3B; --bg-card: #065F46; --text-main: #ECFDF5; --text-muted: #6EE7B7; --border-color: #047857; --bg-accent: #047857;
-        }
+        :root { --bg-main: #F9FAFB; --bg-card: #FFFFFF; --text-main: #1F2937; --text-muted: #9CA3AF; --border-color: #F3F4F6; --bg-accent: #F3F4F6; }
+        body.theme-dark { --bg-main: #121212; --bg-card: #1E1E1E; --text-main: #F3F4F6; --text-muted: #6B7280; --border-color: #2D3748; --bg-accent: #2D3748; }
+        body.theme-cream { --bg-main: #FAF7F2; --bg-card: #FFFFFF; --text-main: #4A4036; --text-muted: #A8A29E; --border-color: #E7E5DF; --bg-accent: #F5F0E6; }
+        body.theme-navy { --bg-main: #0F172A; --bg-card: #1E293B; --text-main: #F8FAFC; --text-muted: #94A3B8; --border-color: #334155; --bg-accent: #334155; }
+        body.theme-green { --bg-main: #064E3B; --bg-card: #065F46; --text-main: #ECFDF5; --text-muted: #6EE7B7; --border-color: #047857; --bg-accent: #047857; }
 
-        body { background-color: #111; display: flex; justify-content: center; -webkit-tap-highlight-color: transparent; }
+        body { 
+            background-color: #111; 
+            display: flex; 
+            justify-content: center; 
+            -webkit-tap-highlight-color: transparent; 
+            
+            /* ANTI COPY / ANTI HIGHLIGHT TEXT */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
         ::-webkit-scrollbar { display: none; }
         
         /* Container App untuk UI HP & Web */
@@ -79,12 +77,11 @@
         <!-- ================= LAYAR 1: BERANDA ================= -->
         <div id="home-screen" class="screen-active flex flex-col bg-theme-main">
             
-            <!-- Header & Search -->
             <header class="pt-6 pb-4 px-5 sticky top-0 bg-theme-main/95 backdrop-blur-md z-10 border-b border-theme-border">
                 
-                <!-- Pesan Custom Nama (Muncul kalau ada URL parameter ?by= atau ?for=) -->
-                <div id="custom-greeting" class="hidden mb-3 text-[11px] bg-theme-card border border-theme-border rounded-full px-3 py-1.5 inline-flex items-center text-theme-text shadow-sm">
-                    <!-- Text injected by JS -->
+                <!-- Pesan Custom Nama / Universal Greeting -->
+                <div id="custom-greeting" class="hidden mb-3 text-[11px] bg-theme-card border border-theme-border rounded-full px-3 py-1.5 inline-flex items-center text-theme-text shadow-sm max-w-full overflow-hidden whitespace-nowrap text-ellipsis">
+                    <!-- Text diisi oleh JS -->
                 </div>
 
                 <div class="flex justify-between items-center mb-4">
@@ -108,7 +105,6 @@
                 </div>
             </header>
 
-            <!-- Main Content -->
             <main class="px-5 flex-1">
                 <!-- Card Terakhir Dibaca -->
                 <div id="last-read-card" class="bg-gradient-to-tr from-gold-500 to-gold-400 rounded-2xl p-5 text-white mt-5 mb-5 hidden relative overflow-hidden cursor-pointer active:scale-95 transition-transform shadow-lg shadow-gold-500/20">
@@ -125,7 +121,7 @@
 
                 <!-- Custom Tabs -->
                 <div class="flex mb-4 mt-3 bg-theme-card p-1 rounded-full border border-theme-border shadow-sm">
-                    <button onclick="switchTab('surat')" id="tab-surat" class="flex-1 py-2 font-semibold bg-theme-accent text-theme-text rounded-full text-xs transition">Daftar Surat</button>
+                    <button onclick="switchTab('surat')" id="tab-surat" class="flex-1 py-2 font-semibold bg-theme-accent text-theme-text rounded-full text-xs transition shadow-sm">Daftar Surat</button>
                     <button onclick="switchTab('bookmark')" id="tab-bookmark" class="flex-1 py-2 font-medium text-theme-muted hover:text-theme-text rounded-full text-xs transition">Tersimpan</button>
                 </div>
 
@@ -155,7 +151,6 @@
                     </div>
                 </div>
                 
-                <!-- Toggle Mode -->
                 <button onclick="toggleViewMode()" class="bg-theme-accent text-theme-text px-3 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase flex items-center shadow-sm border border-theme-border active:scale-95 transition">
                     <i id="mode-icon" class="fa-solid fa-list mr-1.5"></i> 
                     <span id="mode-text">Terjemah</span>
@@ -174,8 +169,24 @@
         <audio id="global-audio-player"></audio>
     </div>
 
-    <!-- LOGIKA JAVASCRIPT -->
+    <!-- LOGIKA JAVASCRIPT & ANTI HACKER -->
     <script>
+        // ================= ANTI HACKER / ANTI COPY SYSTEM =================
+        // 1. Matikan Klik Kanan
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        
+        // 2. Matikan Shortcut Keyboard untuk Inspect & Copy
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123) return false; // F12
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; // Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U (View Source)
+            if (e.ctrlKey && e.keyCode == 'C'.charCodeAt(0)) return false; // Ctrl+C (Copy)
+            if (e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) return false; // Ctrl+S (Save)
+        };
+        // =================================================================
+
         const API_URL = 'https://equran.id/api/v2/surat';
         let allSurahs = []; 
         let currentSurahData = null;
@@ -192,7 +203,7 @@
             updateModeButtonUI();
         });
 
-        // --- THEME & GREETING LOGIC ---
+        // --- THEME LOGIC ---
         function changeTheme(theme) {
             document.body.className = `theme-${theme} antialiased transition-colors duration-300`;
             localStorage.setItem('dkrtv_theme', theme);
@@ -202,13 +213,16 @@
             changeTheme(savedTheme);
         }
 
+        // --- CUSTOM GREETING UNIVERSAL ---
         function checkCustomGreeting() {
             const urlParams = new URLSearchParams(window.location.search);
-            // Mendukung parameter ?by=Nama atau ?for=Nama atau ?untuk=Nama
-            const customName = urlParams.get('by') || urlParams.get('for') || urlParams.get('untuk');
+            const customName = urlParams.get('by') || urlParams.get('dari'); // ambil nama
+            const customMsg = urlParams.get('msg') || 'Salam hangat dari'; // ambil pesan (default: Salam hangat dari)
+
             if (customName) {
                 const greetingEl = document.getElementById('custom-greeting');
-                greetingEl.innerHTML = `<i class="fa-solid fa-book-open-reader text-gold-500 mr-2"></i> Dipersembahkan untuk: <span class="font-bold ml-1">${customName}</span>`;
+                // Menggunakan ikon amplop/bintang agar universal (tidak kaku seperti kado/buku)
+                greetingEl.innerHTML = `<i class="fa-regular fa-envelope text-gold-500 mr-2"></i> ${customMsg}: <span class="font-bold ml-1">${customName}</span>`;
                 greetingEl.classList.remove('hidden');
             }
         }

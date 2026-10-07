@@ -42,7 +42,7 @@
             position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.15);
         }
 
-        /* Hide Scrollbar but keep functionality */
+        /* Hide Scrollbar */
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
@@ -58,7 +58,7 @@
 
         /* Audio Slider Custom */
         input[type=range] { -webkit-appearance: none; background: transparent; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; rounded: 50%; background: #8C7561; cursor: pointer; margin-top: -4px; border-radius: 50%; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; background: #8C7561; cursor: pointer; margin-top: -4px; border-radius: 50%; }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #E5E7EB; border-radius: 4px; }
         
         /* Compass */
@@ -91,12 +91,11 @@
         </header>
 
         <!-- MAIN SCROLLABLE CONTENT -->
-        <main class="flex-1 overflow-y-auto pb-24 relative">
+        <main class="flex-1 overflow-y-auto pb-24 relative hide-scroll">
             
             <!-- TAB 1: YASIN -->
             <section id="tab-yasin" class="tab-content active px-4 pt-4">
                 
-                <!-- Floating Audio Player -->
                 <div class="bg-white rounded-2xl p-3 mb-4 shadow-[0_4px_20px_rgba(140,117,97,0.08)] border border-gold-100 flex items-center justify-between sticky top-2 z-30">
                     <button id="playBtn" class="w-10 h-10 rounded-full bg-gold-100 text-gold-600 flex items-center justify-center active-btn">
                         <i class="fa-solid fa-play"></i>
@@ -111,7 +110,6 @@
                     </div>
                 </div>
 
-                <!-- Tools: Font Size & Mode -->
                 <div class="flex justify-between items-center bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm mb-4">
                     <button onclick="toggleArabMode()" id="modeBtn" class="text-[10px] font-bold text-gold-600 bg-gold-50 px-3 py-1.5 rounded-lg active-btn border border-gold-100">
                         <i class="fa-solid fa-language mr-1"></i> Mode Arab Saja
@@ -123,7 +121,6 @@
                     </div>
                 </div>
 
-                <!-- Container Yasin -->
                 <div id="yasinList" class="space-y-3 pb-8">
                     <div class="text-center py-10 text-gold-500 text-sm font-medium animate-pulse">
                         <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>Memuat Surah Yasin...
@@ -195,45 +192,98 @@
                 </div>
             </section>
 
-            <!-- TAB 3: DOA -->
+            <!-- TAB 3: DOA HARIAN & ZIARAH LENGKAP -->
             <section id="tab-doa" class="tab-content px-4 pt-4 space-y-3 pb-8">
                 <div class="text-center mb-4">
-                    <h2 class="text-sm font-bold text-dark uppercase tracking-widest">Kumpulan Doa</h2>
+                    <h2 class="text-sm font-bold text-dark uppercase tracking-widest">Kumpulan Doa Lengkap</h2>
                     <div class="w-10 h-1 bg-gold-500 mx-auto mt-2 rounded-full"></div>
                 </div>
 
-                <!-- Doa Wahab -->
+                <!-- 1. Doa Selamat Lengkap -->
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                    <button onclick="toggleAccordion('doa-1')" class="w-full px-5 py-4 flex justify-between items-center active-btn">
-                        <span class="text-xs font-bold text-dark">Doa Wahab (Untuk Arwah)</span>
-                        <i id="icon-doa-1" class="fa-solid fa-chevron-down text-gold-500 text-[10px] accordion-icon"></i>
+                    <button onclick="toggleAccordion('doa-selamat')" class="w-full px-5 py-4 flex justify-between items-center active-btn">
+                        <span class="text-xs font-bold text-dark">Doa Selamat (Lengkap)</span>
+                        <i id="icon-doa-selamat" class="fa-solid fa-chevron-down text-gold-500 text-[10px] accordion-icon"></i>
                     </button>
-                    <div id="doa-1" class="hidden px-5 pb-5 border-t border-gray-50">
-                        <p class="font-arabic text-2xl text-right text-dark mt-4 leading-[2.2]">اَللّٰهُمَّ أَوْصِلْ ثَوَابَ مَا قَرَأْنَاهُ... إِلَى رُوحِ <br><span class="text-sm font-bold text-white bg-dark px-3 py-1 rounded inline-block my-2">[ Sebut Nama ]</span><br> اَللّٰهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ وَعَافِهِ وَاعْفُ عَنْهُ.</p>
-                        <p class="text-[10px] text-gray-500 italic mt-3 leading-relaxed">"Allahumma awshil tsawaaba maa qoro'naahu... ilaa ruuhi [Sebut Nama]. Allahummaghfirlahu warhamhu wa 'aafihi wa'fu 'anhu."</p>
-                        <p class="text-[10px] text-gray-600 mt-2 font-medium">Artinya: "Ya Allah sampaikanlah pahala bacaan kami kepada ruh [Sebut Nama]. Ya Allah ampunilah dia, rahmatilah dia, dan maafkanlah dia."</p>
+                    <div id="doa-selamat" class="hidden px-5 pb-5 border-t border-gray-50">
+                        <p class="font-arabic text-2xl text-right text-dark mt-4 leading-[2.2]">
+                            اَللّٰهُمَّ اِنَّا نَسْأَلُكَ سَلَامَةً فِى الدِّيْنِ، وَعَافِيَةً فِى الْجَسَدِ، وَزِيَادَةً فِى الْعِلْمِ، وَبَرَكَةً فِى الرِّزْقِ، وَتَوْبَةً قَبْلَ الْمَوْتِ، وَرَحْمَةً عِنْدَ الْمَوْتِ، وَمَغْفِرَةً بَعْدَ الْمَوْتِ. اَللّٰهُمَّ هَوِّنْ عَلَيْنَا فِيْ سَكَرَاتِ الْمَوْتِ، وَالنَّجَاةَ مِنَ النَّارِ، وَالْعَفْوَ عِنْدَ الْحِسَابِ.
+                        </p>
+                        <div class="bg-bglight p-3 rounded-lg border border-gray-100 mt-4 space-y-2">
+                            <p class="text-[10px] text-gray-500 italic leading-relaxed">
+                                "Allahumma inna nas-aluka salamatan fiddin, wa 'aafiyatan fil jasad, wa ziyadatan fil 'ilmi, wa barokatan firrizqi, wa taubatan qoblal maut, wa rohmatan 'indal maut, wa maghfirotan ba'dal maut. Allahumma hawwin 'alainaa fii sakarootil maut, wan najaata minan naar, wal 'afwa 'indal hisaab."
+                            </p>
+                            <p class="text-[10px] text-gray-600 font-medium leading-relaxed border-t border-gray-200 pt-2">
+                                Artinya: "Ya Allah, kami memohon keselamatan agama, kesehatan jasmani, tambahan ilmu, keberkahan rezeki, taubat sebelum mati, rahmat ketika mati, dan ampunan setelah mati. Ya Allah, mudahkanlah kami saat sakaratul maut, selamatkan dari api neraka, dan berilah kemaafan saat hisab."
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Doa Selamat -->
+                <!-- 2. Doa Naik Kendaraan -->
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                    <button onclick="toggleAccordion('doa-2')" class="w-full px-5 py-4 flex justify-between items-center active-btn">
-                        <span class="text-xs font-bold text-dark">Doa Selamat (Sapujagat)</span>
-                        <i id="icon-doa-2" class="fa-solid fa-chevron-down text-gold-500 text-[10px] accordion-icon"></i>
+                    <button onclick="toggleAccordion('doa-kendaraan')" class="w-full px-5 py-4 flex justify-between items-center active-btn">
+                        <span class="text-xs font-bold text-dark">Doa Naik Kendaraan</span>
+                        <i id="icon-doa-kendaraan" class="fa-solid fa-chevron-down text-gold-500 text-[10px] accordion-icon"></i>
                     </button>
-                    <div id="doa-2" class="hidden px-5 pb-5 border-t border-gray-50">
-                        <p class="font-arabic text-2xl text-right text-dark mt-4 leading-[2.2]">رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ</p>
-                        <p class="text-[10px] text-gray-500 italic mt-3">"Robbanaa aatinaa fid-dunyaa hasanah, wa fil-aakhiroti hasanah, wa qinaa 'adzaaban-naar."</p>
+                    <div id="doa-kendaraan" class="hidden px-5 pb-5 border-t border-gray-50">
+                        <p class="font-arabic text-2xl text-right text-dark mt-4 leading-[2.2]">
+                            سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ. وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ
+                        </p>
+                        <p class="text-[10px] text-gray-500 italic mt-3 leading-relaxed">"Subhaanal ladzii sakh-khoro lanaa haadzaa wa maa kunnaa lahu muqriniin. Wa innaa ilaa robbinaa lamunqolibuun."</p>
+                        <p class="text-[10px] text-gray-600 mt-2 font-medium">Artinya: "Maha Suci Allah yang telah menundukkan kendaraan ini bagi kami, padahal sebelumnya kami tidak mampu menguasainya. Dan sesungguhnya kepada Tuhan kami lah kami akan kembali."</p>
                     </div>
                 </div>
 
-                <!-- Doa Tidur -->
+                <!-- 3. Doa Rumah -->
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                    <button onclick="toggleAccordion('doa-3')" class="w-full px-5 py-4 flex justify-between items-center active-btn">
+                    <button onclick="toggleAccordion('doa-rumah')" class="w-full px-5 py-4 flex justify-between items-center active-btn">
+                        <span class="text-xs font-bold text-dark">Doa Keluar & Masuk Rumah</span>
+                        <i id="icon-doa-rumah" class="fa-solid fa-chevron-down text-gold-500 text-[10px] accordion-icon"></i>
+                    </button>
+                    <div id="doa-rumah" class="hidden px-5 pb-5 border-t border-gray-50 space-y-4 pt-4">
+                        <div>
+                            <p class="text-[9px] font-bold text-gold-600 uppercase mb-1">Keluar Rumah</p>
+                            <p class="font-arabic text-xl text-right text-dark">بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ</p>
+                            <p class="text-[10px] text-gray-500 italic mt-1">"Bismillaahi, tawakkaltu 'alallaahi, laa haula wa laa quwwata illaa billaah."</p>
+                        </div>
+                        <hr class="border-gray-100">
+                        <div>
+                            <p class="text-[9px] font-bold text-gold-600 uppercase mb-1">Masuk Rumah</p>
+                            <p class="font-arabic text-xl text-right text-dark">بِسْمِ اللَّهِ وَلَجْنَا، وَبِسْمِ اللَّهِ خَرَجْنَا، وَعَلَى رَبِّنَا تَوَكَّلْنَا</p>
+                            <p class="text-[10px] text-gray-500 italic mt-1">"Bismillaahi walajnaa, wa bismillaahi khorojnaa, wa 'alaa robbinaa tawakkalnaa."</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Doa Makan -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <button onclick="toggleAccordion('doa-makan')" class="w-full px-5 py-4 flex justify-between items-center active-btn">
+                        <span class="text-xs font-bold text-dark">Doa Sebelum & Sesudah Makan</span>
+                        <i id="icon-doa-makan" class="fa-solid fa-chevron-down text-gold-500 text-[10px] accordion-icon"></i>
+                    </button>
+                    <div id="doa-makan" class="hidden px-5 pb-5 border-t border-gray-50 space-y-4 pt-4">
+                        <div>
+                            <p class="text-[9px] font-bold text-gold-600 uppercase mb-1">Sebelum Makan</p>
+                            <p class="font-arabic text-xl text-right text-dark">بِسْمِ اللَّهِ، اَللَّهُمَّ بَارِكْ لَنَا فِيمَا رَزَقْتَنَا وَقِنَا عَذَابَ النَّارِ</p>
+                            <p class="text-[10px] text-gray-500 italic mt-1">"Bismillaah, Allahumma baarik lanaa fiimaa rozaqtanaa wa qinaa 'adzaaban naar."</p>
+                        </div>
+                        <hr class="border-gray-100">
+                        <div>
+                            <p class="text-[9px] font-bold text-gold-600 uppercase mb-1">Sesudah Makan</p>
+                            <p class="font-arabic text-xl text-right text-dark">الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ</p>
+                            <p class="text-[10px] text-gray-500 italic mt-1">"Alhamdulillahil ladzii ath'amanaa wa saqoonaa wa ja'alanaa muslimiin."</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Doa Tidur -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <button onclick="toggleAccordion('doa-tidur')" class="w-full px-5 py-4 flex justify-between items-center active-btn">
                         <span class="text-xs font-bold text-dark">Doa Sebelum & Bangun Tidur</span>
-                        <i id="icon-doa-3" class="fa-solid fa-chevron-down text-gold-500 text-[10px] accordion-icon"></i>
+                        <i id="icon-doa-tidur" class="fa-solid fa-chevron-down text-gold-500 text-[10px] accordion-icon"></i>
                     </button>
-                    <div id="doa-3" class="hidden px-5 pb-5 border-t border-gray-50 space-y-4 pt-4">
+                    <div id="doa-tidur" class="hidden px-5 pb-5 border-t border-gray-50 space-y-4 pt-4">
                         <div>
                             <p class="text-[9px] font-bold text-gold-600 uppercase mb-1">Sebelum Tidur</p>
                             <p class="font-arabic text-xl text-right text-dark">بِاسْمِكَ اللَّهُمَّ أَحْيَا وَبِاسْمِكَ أَمُوتُ</p>
@@ -245,6 +295,18 @@
                             <p class="font-arabic text-xl text-right text-dark">الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ</p>
                             <p class="text-[10px] text-gray-500 italic mt-1">"Alhamdulillahil ladzii ahyaanaa ba'damaa amaatanaa wa ilaihin nusyuur."</p>
                         </div>
+                    </div>
+                </div>
+
+                <!-- 6. Doa Wahab (Ziarah) -->
+                <div class="bg-white rounded-2xl border border-gold-200 shadow-sm overflow-hidden mt-6">
+                    <button onclick="toggleAccordion('doa-wahab')" class="w-full px-5 py-4 flex justify-between items-center bg-gold-50 active-btn">
+                        <span class="text-xs font-bold text-gold-600">Doa Wahab (Khusus Arwah Ziarah)</span>
+                        <i id="icon-doa-wahab" class="fa-solid fa-chevron-down text-gold-600 text-[10px] accordion-icon"></i>
+                    </button>
+                    <div id="doa-wahab" class="hidden px-5 pb-5 border-t border-gold-100">
+                        <p class="font-arabic text-2xl text-right text-dark mt-4 leading-[2.2]">اَللّٰهُمَّ أَوْصِلْ ثَوَابَ مَا قَرَأْنَاهُ... إِلَى رُوحِ <br><span class="text-sm font-bold text-white bg-dark px-3 py-1 rounded inline-block my-2">[ Sebut Nama ]</span><br> اَللّٰهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ وَعَافِهِ وَاعْفُ عَنْهُ.</p>
+                        <p class="text-[10px] text-gray-500 italic mt-3 leading-relaxed">"Allahumma awshil tsawaaba maa qoro'naahu... ilaa ruuhi [Sebut Nama]. Allahummaghfirlahu warhamhu wa 'aafihi wa'fu 'anhu."</p>
                     </div>
                 </div>
             </section>
@@ -318,10 +380,7 @@
     <!-- LOGIKA JAVASCRIPT & ANTI HACKER -->
     <script>
         // ================= 1. ANTI HACKER & ANTI COPAS =================
-        // Disable Right Click
         document.addEventListener('contextmenu', e => e.preventDefault());
-        
-        // Disable Shortcuts (F12, Ctrl+U, Ctrl+Shift+I, Ctrl+C, Ctrl+S)
         document.onkeydown = function(e) {
             if(e.keyCode == 123) return false; 
             if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0))) return false;
@@ -346,29 +405,21 @@
 
         // ================= 3. TAB NAVIGATION ==========================
         function switchTab(tabId) {
-            // Hide all contents
-            document.querySelectorAll('.tab-content').forEach(el => {
-                el.classList.remove('active');
-            });
-            
-            // Reset all buttons
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => {
                 el.classList.remove('bg-gold-600', 'text-white', 'shadow-md', 'font-bold');
                 el.classList.add('bg-white', 'text-gray-500', 'border-gray-200', 'font-medium');
             });
             
-            // Activate selected
             document.getElementById('tab-' + tabId).classList.add('active');
             const btn = document.getElementById('btn-' + tabId);
             btn.classList.remove('bg-white', 'text-gray-500', 'border-gray-200', 'font-medium');
             btn.classList.add('bg-gold-600', 'text-white', 'shadow-md', 'font-bold');
             
-            // Smooth scroll tab menu to center
             btn.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
 
             if(tabId === 'sholat' && !sholatLoaded) loadSholat();
             if(tabId === 'kiblat') requestOrientationPermission();
-            
             triggerHaptic();
         }
 
@@ -376,7 +427,6 @@
         function toggleAccordion(id) {
             const content = document.getElementById(id);
             const icon = document.getElementById('icon-' + id);
-            
             if(content.classList.contains('hidden')){
                 content.classList.remove('hidden');
                 icon.style.transform = 'rotate(180deg)';
@@ -407,7 +457,6 @@
             const container = document.getElementById('yasinList');
             container.innerHTML = '';
             
-            // Bismillah Header
             container.innerHTML += `
                 <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm text-center mb-3">
                     <p class="font-arabic text-3xl text-dark leading-loose">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
@@ -418,7 +467,6 @@
             yasinData.forEach(item => {
                 const card = document.createElement('div');
                 card.className = "bg-white p-4.5 px-5 rounded-2xl border border-gray-100 shadow-sm";
-                
                 if (isArabOnly) {
                     card.innerHTML = `<p class="font-arabic text-right text-dark leading-[2.2]" style="font-size:${fontSize}px">${item.teksArab} <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gold-50 text-[10px] font-bold text-gold-600 mx-1 border border-gold-100">${item.nomorAyat}</span></p>`;
                 } else {
@@ -434,16 +482,13 @@
 
         function toggleArabMode() {
             isArabOnly = !isArabOnly;
-            const btn = document.getElementById('modeBtn');
-            btn.innerHTML = isArabOnly ? `<i class="fa-solid fa-list mr-1"></i> Mode Lengkap` : `<i class="fa-solid fa-language mr-1"></i> Mode Arab Saja`;
-            renderYasin();
-            triggerHaptic();
+            document.getElementById('modeBtn').innerHTML = isArabOnly ? `<i class="fa-solid fa-list mr-1"></i> Mode Lengkap` : `<i class="fa-solid fa-language mr-1"></i> Mode Arab Saja`;
+            renderYasin(); triggerHaptic();
         }
 
         function changeFontSize(val) {
             fontSize = Math.max(18, Math.min(40, fontSize + val));
-            renderYasin();
-            triggerHaptic();
+            renderYasin(); triggerHaptic();
         }
 
         // ================= 6. AUDIO PLAYER ============================
@@ -454,11 +499,9 @@
 
         playBtn.addEventListener('click', () => {
             if (audio.paused) { 
-                audio.play(); 
-                playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>'; 
+                audio.play(); playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>'; 
             } else { 
-                audio.pause(); 
-                playBtn.innerHTML = '<i class="fa-solid fa-play"></i>'; 
+                audio.pause(); playBtn.innerHTML = '<i class="fa-solid fa-play"></i>'; 
             }
             triggerHaptic();
         });
@@ -471,29 +514,20 @@
                 audioTimer.innerText = `${cM}:${cS} / ${dM}:${dS}`;
             }
         });
-        
-        audioSeek.addEventListener('input', () => { 
-            if(audio.duration) audio.currentTime = (audioSeek.value / 100) * audio.duration; 
-        });
+        audioSeek.addEventListener('input', () => { if(audio.duration) audio.currentTime = (audioSeek.value / 100) * audio.duration; });
 
         // ================= 7. JADWAL SHOLAT ===========================
         let sholatLoaded = false;
         async function loadSholat() {
             const container = document.getElementById('sholat-times');
             try {
-                // Fetching untuk Bandung
                 const res = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Bandung&country=Indonesia&method=20');
                 const data = await res.json();
                 const timings = data.data.timings;
-                
                 const reqs = [
-                    { key: 'Fajr', label: 'Subuh' },
-                    { key: 'Dhuhr', label: 'Dzuhur' },
-                    { key: 'Asr', label: 'Ashar' },
-                    { key: 'Maghrib', label: 'Maghrib' },
-                    { key: 'Isha', label: 'Isya' }
+                    { key: 'Fajr', label: 'Subuh' }, { key: 'Dhuhr', label: 'Dzuhur' },
+                    { key: 'Asr', label: 'Ashar' }, { key: 'Maghrib', label: 'Maghrib' }, { key: 'Isha', label: 'Isya' }
                 ];
-                
                 container.innerHTML = '';
                 reqs.forEach(req => {
                     container.innerHTML += `
@@ -503,13 +537,11 @@
                         </div>`;
                 });
                 sholatLoaded = true;
-            } catch(e) {
-                container.innerHTML = '<p class="text-[10px] text-red-500">Gagal memuat jadwal.</p>';
-            }
+            } catch(e) { container.innerHTML = '<p class="text-[10px] text-red-500">Gagal memuat jadwal.</p>'; }
         }
 
         // ================= 8. RADAR KIBLAT PRESISI ====================
-        let qiblaBearing = 295; // Fix for Bandung/Indonesia generally
+        let qiblaBearing = 295;
         let hasVibrated = false;
 
         function requestOrientationPermission() {
@@ -518,9 +550,7 @@
                     if (state === 'granted') {
                         document.getElementById('btn-kiblat-izin').classList.add('hidden');
                         startCompass();
-                    } else {
-                        document.getElementById('kiblat-status').innerText = "Izin kompas ditolak perangkat.";
-                    }
+                    } else { document.getElementById('kiblat-status').innerText = "Izin kompas ditolak perangkat."; }
                 }).catch(console.error);
             } else {
                 document.getElementById('btn-kiblat-izin').classList.add('hidden');
@@ -534,18 +564,12 @@
 
             window.addEventListener('deviceorientation', (e) => {
                 let heading = e.webkitCompassHeading || (360 - e.alpha);
-                
                 if (typeof heading === 'number') {
                     let roundedHeading = Math.round(heading);
                     document.getElementById('phone-heading').innerText = `${roundedHeading}°`;
-                    
-                    // Putar piringan berlawanan arah HP
                     document.getElementById('compass-dial').style.transform = `rotate(${-heading}deg)`;
-                    
-                    // Putar Penunjuk Ka'bah tetap di derajat Qibla di atas piringan
                     document.getElementById('qibla-pointer').style.transform = `rotate(${qiblaBearing}deg)`;
                     
-                    // Logic Presisi Hijau & Getar
                     let diff = Math.abs(roundedHeading - qiblaBearing);
                     if (diff > 180) diff = 360 - diff;
                     
@@ -557,11 +581,7 @@
                         headingBox.querySelector('p:last-child').classList.replace('text-dark', 'text-green-600');
                         topIndicator.classList.replace('text-gold-500', 'text-green-500');
                         topIndicator.classList.add('scale-125');
-                        
-                        if (navigator.vibrate && !hasVibrated) {
-                            navigator.vibrate([100, 50, 100]);
-                            hasVibrated = true;
-                        }
+                        if (navigator.vibrate && !hasVibrated) { navigator.vibrate([100, 50, 100]); hasVibrated = true; }
                     } else {
                         headingBox.classList.remove('bg-green-50', 'border-green-500');
                         headingBox.querySelector('p:last-child').classList.replace('text-green-600', 'text-dark');
@@ -574,9 +594,7 @@
         }
 
         // ================= 9. HAPTIC FEEDBACK (GETAR) =================
-        function triggerHaptic() {
-            if (navigator.vibrate) navigator.vibrate(15);
-        }
+        function triggerHaptic() { if (navigator.vibrate) navigator.vibrate(15); }
     </script>
 </body>
 </html>

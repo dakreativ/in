@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kartu Nama Digital - WA DKTV</title>
+    <!-- Import Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -84,36 +85,64 @@
         <div id="errorBox" class="hidden">
             <h1 style="color: #EF4444;">Opps! ⚠️</h1>
             <p id="errorMsg">Barcode tidak valid atau tidak terdaftar.</p>
+            <button onclick="window.location.reload()" style="background:#EF4444; color:white; margin-top:20px; padding:12px; font-size:13px; width:auto; margin-left:auto; margin-right:auto;">Coba Lagi</button>
         </div>
 
     </div>
 
     <script>
-        // ==========================================
-        const SUPABASE_URL = 'https://bkxclrjycsdpchodgzzb.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3'; 
-        // ==========================================
+        // DATA SUPABASE
+        const SUPA_URL = 'https://bkxclrjycsdpchodgzzb.supabase.co';
+        const SUPA_KEY = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3'; 
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const urlParams = new URLSearchParams(window.location.search);
-        const cardId = urlParams.get('id');
+        let dbSupabase;
         let currentData = null;
+        let cardId = null;
 
-        async function checkCard() {
-            if(!cardId) return showError("Harap Scan Barcode fisik yang valid.");
-
-            // PERUBAHAN DI SINI: MENGGUNAKAN TABEL wa1
-            const { data, error } = await supabase.from('wa1').select('*').eq('id', cardId).single();
-
+        // Fungsi Universal untuk menampilkan Error
+        function showError(msg) {
             document.getElementById('loadingBox').classList.add('hidden');
+            document.getElementById('setupBox').classList.add('hidden');
+            document.getElementById('profileBox').classList.add('hidden');
+            document.getElementById('errorBox').classList.remove('hidden');
+            document.getElementById('errorMsg').innerText = msg;
+        }
 
-            if (error) return showError("Kartu belum terdaftar di sistem kami.");
+        // Jalankan Script Utama
+        async function runLayanan() {
+            try {
+                // Pastikan Supabase Berhasil Terload
+                if (!window.supabase) throw new Error("Gagal memuat library Supabase. Periksa internet Anda.");
+                
+                dbSupabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                cardId = urlParams.get('id');
 
-            if (data.status === 'Kosong') {
-                document.getElementById('setupBox').classList.remove('hidden');
-            } else if (data.status === 'Aktif') {
-                currentData = data;
-                tampilkanProfile(data);
+                if(!cardId) {
+                    return showError("Link tidak valid! Anda harus men-scan Barcode secara langsung agar terdeteksi.");
+                }
+
+                // Cek data di tabel wa1
+                const { data, error } = await dbSupabase.from('wa1').select('*').eq('id', cardId).single();
+
+                document.getElementById('loadingBox').classList.add('hidden');
+
+                if (error) {
+                    console.error("DB Error:", error);
+                    return showError("Kartu belum terdaftar di sistem (ID Salah).");
+                }
+
+                if (data.status === 'Kosong') {
+                    document.getElementById('setupBox').classList.remove('hidden');
+                } else if (data.status === 'Aktif') {
+                    currentData = data;
+                    tampilkanProfile(data);
+                }
+
+            } catch (err) {
+                showError("Sistem Error: " + err.message);
+                console.error(err);
             }
         }
 
@@ -125,24 +154,27 @@
             if(!nama || !wa) return alert("Nama dan Nomor WA wajib diisi!");
             btn.disabled = true; btn.innerText = "Mengunci Kartu...";
 
-            // PERUBAHAN DI SINI: MENGGUNAKAN TABEL wa1
-            const { error } = await supabase
-                .from('wa1')
-                .update({ status: 'Aktif', nama: nama, wa: wa })
-                .eq('id', cardId);
+            try {
+                const { error } = await dbSupabase
+                    .from('wa1')
+                    .update({ status: 'Aktif', nama: nama, wa: wa })
+                    .eq('id', cardId);
 
-            if (error) {
-                alert("Gagal menyimpan data: " + error.message);
+                if (error) throw error;
+                
+                window.location.reload();
+            } catch (err) {
+                alert("Gagal menyimpan data: " + err.message);
                 btn.disabled = false; btn.innerText = "Kunci & Aktifkan Kartu";
-                return;
             }
-            window.location.reload();
         }
 
         function tampilkanProfile(data) {
             document.getElementById('profileBox').classList.remove('hidden');
             document.getElementById('displayName').innerText = data.nama;
-            let inisial = data.nama.charAt(0).toUpperCase();
+            
+            // Inisial untuk Avatar
+            let inisial = (data.nama || "User").charAt(0).toUpperCase();
             document.getElementById('avatarName').innerText = inisial;
         }
 
@@ -154,7 +186,7 @@
             
             let a = document.createElement('a');
             a.href = url;
-            a.download = `${currentData.nama.replace(/\s+/g, '_')}_WADKTV.vcf`;
+            a.download = `${(currentData.nama || 'Kontak').replace(/\s+/g, '_')}_WADKTV.vcf`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -166,13 +198,10 @@
             window.open(`https://wa.me/${cleanWa}?text=Halo,%20saya%20dapat%20nomor%20ini%20dari%20Kartu%20Digital%20WA%20DKTV.`, '_blank');
         }
 
-        function showError(msg) {
-            document.getElementById('loadingBox').classList.add('hidden');
-            document.getElementById('errorBox').classList.remove('hidden');
-            document.getElementById('errorMsg').innerText = msg;
-        }
-
-        checkCard();
+        // Mulai Pengecekan
+        window.onload = () => {
+            runLayanan();
+        };
     </script>
 </body>
 </html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DKTV - Digital Wedding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #EFEBE5; touch-action: manipulation; }
+        .arabic { font-family: 'Amiri', serif; line-height: 2.3; }
+        
+        .bg-cream-light { background-color: #FDFBF7; }
+        .text-cream-dark { color: #8C7561; }
+        .bg-cream-accent { background-color: #F5EAE0; }
+        .border-cream-accent { border-color: #E8D8C8; }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Glassmorphism */
+        .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #E8D8C8; border-radius: 10px; }
+
+        .compass-dial { transition: transform 0.2s ease-out; }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen text-gray-800" onclick="initAudio()">
+
+    <div class="bg-cream-light w-full max-w-md min-h-screen flex flex-col relative shadow-2xl border-x border-gray-200">
+        
+        <!-- HEADER -->
+        <header class="bg-white px-6 py-4 text-center border-b border-gray-100 z-10 relative">
+            <div id="customName" class="text-[10px] font-semibold text-gray-400 uppercase tracking-[0.2em] mb-1"></div>
+            <h1 class="text-xl font-bold tracking-widest text-gray-800">DKTV</h1>
+        </header>
+
+        <!-- STICKY AUDIO PLAYER (Glassmorphism) -->
+        <div class="glass px-4 py-3 border-b border-gray-100 sticky top-0 z-30">
+            <div class="flex items-center justify-between bg-white/60 rounded-2xl p-2.5 border border-white shadow-sm">
+                <div class="flex items-center space-x-3">
+                    <button id="playBtn" class="bg-white shadow-sm text-cream-dark h-9 w-9 rounded-full flex items-center justify-center hover:bg-cream-accent transition text-sm active-btn">
+                        ▶
+                    </button>
+                    <div>
+                        <p class="text-[11px] font-bold text-gray-700">Surat Yasin</p>
+                        <p id="audioTimer" class="text-[9px] text-gray-500">00:00 / 00:00</p>
+                    </div>
+                </div>
+                <input id="audioSeek" type="range" min="0" max="100" value="0" class="w-16 h-1 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-[#8C7561]">
+                <audio id="audioPlayer" src="https://server8.mp3quran.net/afs/036.mp3" preload="metadata"></audio>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <nav class="flex bg-white border-b border-gray-200 text-[11px] font-semibold sticky top-[72px] z-20">
+            <button onclick="switchTab('yasin')" id="btn-yasin" class="flex-1 py-3 border-b-2 border-cream-dark text-gray-800 tab-btn active-btn">Yasin</button>
+            <button onclick="switchTab('doa')" id="btn-doa" class="flex-1 py-3 border-b-2 border-transparent text-gray-400 tab-btn active-btn">Doa</button>
+            <button onclick="switchTab('sholat')" id="btn-sholat" class="flex-1 py-3 border-b-2 border-transparent text-gray-400 tab-btn active-btn">Waktu Sholat</button>
+            <button onclick="switchTab('kiblat')" id="btn-kiblat" class="flex-1 py-3 border-b-2 border-transparent text-gray-400 tab-btn active-btn">Kiblat</button>
+        </nav>
+
+        <!-- KONTEN -->
+        <main class="flex-1 overflow-y-auto p-4 pb-12">
+            
+            <!-- TAB 1: YASIN -->
+            <section id="tab-yasin" class="tab-content active space-y-4">
+                <div class="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between text-[11px]">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-500 font-medium">Mode:</span>
+                        <button onclick="toggleDisplayMode()" class="bg-cream-accent text-cream-dark px-2.5 py-1.5 rounded-lg font-bold active-btn" id="toggleArabBtn">
+                            Arab Sahaja
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <button onclick="changeFontSize(-2)" class="w-7 h-7 bg-gray-50 rounded flex items-center justify-center text-gray-600 active-btn">-</button>
+                        <span class="text-gray-400 font-semibold px-1">Teks</span>
+                        <button onclick="changeFontSize(2)" class="w-7 h-7 bg-gray-50 rounded flex items-center justify-center text-gray-600 active-btn">+</button>
+                    </div>
+                </div>
+                <div id="yasinList" class="space-y-3">
+                    <div class="text-center py-8 text-gray-400 text-xs">Memuat Surah Yasin...</div>
+                </div>
+            </section>
+
+            <!-- TAB 2: DOA -->
+            <section id="tab-doa" class="tab-content space-y-4">
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3">
+                    <h3 class="text-xs font-bold text-gray-800 border-b pb-2 mb-2">Doa Setelah Yasin</h3>
+                    <p class="arabic text-xl text-right leading-loose text-gray-900">بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ. اَللَّهُمَّ إِنَّا نَسْتَحْفِظُكَ وَنَسْتَوْدِعُكَ أَدْيَانَنَا وَأَنْفُسَنَا وَأَهْلَنَا...</p>
+                    <p class="text-[11px] text-gray-500 leading-relaxed italic">"Ya Allah, sesungguhnya kami memohon pemeliharaan-Mu dan menitipkan kepada-Mu agama kami, diri kami..."</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3">
+                    <h3 class="text-xs font-bold text-gray-800 border-b pb-2 mb-2">Doa Selamat</h3>
+                    <p class="arabic text-xl text-right leading-loose text-gray-900">اَللّٰهُمَّ اِنَّا نَسْأَلُكَ سَلَامَةً فِى الدِّيْنِ، وَعَافِيَةً فِى الْجَسَدِ، وَزِيَادَةً فِى الْعِلْمِ...</p>
+                    <p class="text-[11px] text-gray-500 leading-relaxed italic">"Ya Allah, sesungguhnya kami memohon kepada-Mu keselamatan dalam agama, kesehatan pada badan..."</p>
+                </div>
+            </section>
+
+            <!-- TAB 3: SHOLAT -->
+            <section id="tab-sholat" class="tab-content space-y-4">
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm text-center">
+                    <p class="text-xs text-gray-400 mb-1">Jadwal Sholat Hari Ini</p>
+                    <p class="text-sm font-bold text-gray-700 mb-4" id="sholat-location">Memuat lokasi...</p>
+                    <div id="sholat-times" class="space-y-2">
+                        <div class="text-xs text-gray-400 animate-pulse">Mengambil data...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: KIBLAT -->
+            <section id="tab-kiblat" class="tab-content space-y-4 text-center">
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center">
+                    <p class="text-xs text-gray-500 mb-6">Putar perangkat hingga panah mengarah ke ikon Ka'bah.</p>
+                    
+                    <div class="relative w-48 h-48 rounded-full border-4 border-cream-accent flex items-center justify-center shadow-inner mb-6">
+                        <!-- Ka'bah Marker (Fixed at top/0deg for UI, or adjusted logically) -->
+                        <div class="absolute top-2 text-xl z-10">🕋</div>
+                        <!-- Kompas Panah -->
+                        <div id="compass-arrow" class="compass-dial text-4xl text-cream-dark transition-transform">
+                            ⬆
+                        </div>
+                    </div>
+
+                    <button id="btn-kiblat-izin" onclick="requestOrientationPermission()" class="bg-[#8C7561] text-white px-5 py-2 rounded-full text-xs font-semibold shadow-md active-btn hidden">
+                        Aktifkan Kompas
+                    </button>
+                    <p id="kiblat-status" class="text-[10px] text-gray-400 mt-3"></p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="bg-white py-4 text-center text-[10px] text-gray-400 z-10 shadow-[0_-2px_10px_rgba(0,0,0,0.02)] border-t border-gray-100">
+            &copy; 2026 <span class="font-bold text-gray-600">DKTV</span>
+        </footer>
+    </div>
+
+    <script>
+        /* 1. SISTEM AUDIO & HAPTIC (Custom Sound & Getar) */
+        let audioCtx;
+        let isAudioInit = false;
+
+        function initAudio() {
+            if(!isAudioInit) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                isAudioInit = true;
+            }
+        }
+
+        function triggerFeedback() {
+            // Haptic Vibrate
+            if (navigator.vibrate) navigator.vibrate(20);
+            
+            // Synthesized Click Beep
+            if (audioCtx && audioCtx.state === 'running') {
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(900, audioCtx.currentTime); // Pitch
+                osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.05);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // Volume kecil
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            }
+        }
+
+        // Attach event ke semua tombol interaktif
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('button') || e.target.closest('.active-btn')) {
+                triggerFeedback();
+            }
+        });
+
+        /* 2. CUSTOM ID / NAMA DARI URL */
+        const urlParams = new URLSearchParams(window.location.search);
+        let customId = urlParams.get('id');
+        const customNameEl = document.getElementById('customName');
+        if (customId) {
+            customId = customId.replace(/-/g, ' ').replace(/_/g, ' ');
+            customNameEl.innerText = customId;
+            customNameEl.classList.remove('hidden');
+        }
+
+        /* 3. LOGIKA NAVIGASI TAB */
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('border-cream-dark', 'text-gray-800');
+                el.classList.add('border-transparent', 'text-gray-400');
+            });
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.getElementById('btn-' + tabId).classList.remove('border-transparent', 'text-gray-400');
+            document.getElementById('btn-' + tabId).classList.add('border-cream-dark', 'text-gray-800');
+            
+            if(tabId === 'sholat' && !sholatLoaded) loadSholat();
+            if(tabId === 'kiblat') initKiblat();
+        }
+
+        /* 4. YASIN API */
+        let isArabOnly = false;
+        let fontSize = 24;
+        let yasinData = [];
+
+        async function loadYasin() {
+            try {
+                const res = await fetch('https://equran.id/api/v2/surat/36');
+                const result = await res.json();
+                if (result.data && result.data.ayat) {
+                    yasinData = result.data.ayat;
+                    renderYasin();
+                }
+            } catch (e) {
+                document.getElementById('yasinList').innerHTML = '<p class="text-xs text-center text-red-400">Gagal memuat ayat. Coba muat ulang.</p>';
+            }
+        }
+
+        function renderYasin() {
+            const container = document.getElementById('yasinList');
+            container.innerHTML = '';
+            yasinData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-xl border border-gray-100 shadow-sm";
+                if (isArabOnly) {
+                    card.innerHTML = `<p class="arabic text-right text-gray-900 leading-loose" style="font-size: ${fontSize}px;">${item.teksArab} <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-cream-accent text-[10px] mx-1">${item.nomorAyat}</span></p>`;
+                } else {
+                    card.innerHTML = `
+                        <div class="mb-2"><span class="bg-cream-accent text-[9px] font-bold px-2 py-1 rounded text-cream-dark">Ayat ${item.nomorAyat}</span></div>
+                        <p class="arabic text-right text-gray-900 mb-2 leading-loose" style="font-size: ${fontSize}px;">${item.teksArab}</p>
+                        <p class="text-[11px] font-semibold text-gray-700 mb-1">${item.teksLatin}</p>
+                        <p class="text-[11px] text-gray-500">${item.teksIndonesia}</p>`;
+                }
+                container.appendChild(card);
+            });
+        }
+
+        function toggleDisplayMode() {
+            isArabOnly = !isArabOnly;
+            document.getElementById('toggleArabBtn').innerText = isArabOnly ? "Mode Lengkap" : "Arab Sahaja";
+            renderYasin();
+        }
+        
+        function changeFontSize(d) {
+            fontSize = Math.max(16, Math.min(40, fontSize + d));
+            renderYasin();
+        }
+
+        /* 5. AUDIO PLAYER */
+        const playBtn = document.getElementById('playBtn');
+        const audio = document.getElementById('audioPlayer');
+        const audioSeek = document.getElementById('audioSeek');
+        const audioTimer = document.getElementById('audioTimer');
+
+        playBtn.addEventListener('click', () => {
+            if (audio.paused) { audio.play(); playBtn.innerHTML = '⏸'; } 
+            else { audio.pause(); playBtn.innerHTML = '▶'; }
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration) {
+                audioSeek.value = (audio.currentTime / audio.duration) * 100;
+                let cM = Math.floor(audio.currentTime / 60), cS = Math.floor(audio.currentTime % 60).toString().padStart(2, '0');
+                let dM = Math.floor(audio.duration / 60), dS = Math.floor(audio.duration % 60).toString().padStart(2, '0');
+                audioTimer.innerText = `${cM}:${cS} / ${dM}:${dS}`;
+            }
+        });
+        audioSeek.addEventListener('input', () => { if(audio.duration) audio.currentTime = (audioSeek.value / 100) * audio.duration; });
+
+        /* 6. JADWAL SHOLAT API */
+        let sholatLoaded = false;
+        async function loadSholat() {
+            const container = document.getElementById('sholat-times');
+            document.getElementById('sholat-location').innerText = "Indonesia";
+            try {
+                // Mengambil jadwal hari ini untuk area umum Indonesia (default Jakarta/Bandung timezone)
+                const res = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Jakarta&country=Indonesia&method=11');
+                const data = await res.json();
+                const timings = data.data.timings;
+                const reqTimes = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+                const timeLabels = ['Subuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya'];
+                
+                container.innerHTML = '';
+                reqTimes.forEach((key, idx) => {
+                    container.innerHTML += `
+                        <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100">
+                            <span class="text-xs font-semibold text-gray-700">${timeLabels[idx]}</span>
+                            <span class="text-xs font-bold text-cream-dark bg-cream-accent px-3 py-1 rounded-full">${timings[key]}</span>
+                        </div>`;
+                });
+                sholatLoaded = true;
+            } catch(e) {
+                container.innerHTML = '<p class="text-xs text-red-400">Gagal memuat jadwal sholat.</p>';
+            }
+        }
+
+        /* 7. KIBLAT (Compass) */
+        let isKiblatActive = false;
+        const arrow = document.getElementById('compass-arrow');
+        const kiblatStatus = document.getElementById('kiblat-status');
+        const qiblaAngle = 295; // Perkiraan sudut Kiblat dari Indonesia (~295 derajat)
+
+        function initKiblat() {
+            if(isKiblatActive) return;
+            // Deteksi jika butuh izin (iOS 13+)
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                document.getElementById('btn-kiblat-izin').classList.remove('hidden');
+                kiblatStatus.innerText = "Klik tombol di atas untuk mengaktifkan kompas.";
+            } else {
+                startCompass();
+            }
+        }
+
+        function requestOrientationPermission() {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            document.getElementById('btn-kiblat-izin').classList.add('hidden');
+                            startCompass();
+                        } else {
+                            kiblatStatus.innerText = "Izin sensor kompas ditolak.";
+                        }
+                    })
+                    .catch(console.error);
+            }
+        }
+
+        function startCompass() {
+            isKiblatActive = true;
+            kiblatStatus.innerText = "Mengkalibrasi kompas...";
+            window.addEventListener('deviceorientation', (e) => {
+                let compassHeading = null;
+                if (e.webkitCompassHeading) {
+                    compassHeading = e.webkitCompassHeading; // iOS
+                } else if (e.alpha !== null) {
+                    compassHeading = Math.abs(e.alpha - 360); // Android
+                }
+
+                if (compassHeading !== null) {
+                    kiblatStatus.innerText = "Sensor aktif.";
+                    // Menghitung rotasi panah (Panah selalu menunjuk Kiblat)
+                    // Jika device menghadap compassHeading, arah kiblat relatif thd device = QiblaAngle - compassHeading
+                    let arrowRotation = qiblaAngle - compassHeading;
+                    arrow.style.transform = `rotate(${arrowRotation}deg)`;
+                } else {
+                    kiblatStatus.innerText = "Perangkat tidak mendukung kompas digital.";
+                }
+            }, true);
+        }
+
+        // Jalankan saat load
+        loadYasin();
+
+    </script>
+</body>
+</html>

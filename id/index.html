@@ -3,205 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kartu Nama Digital - WA DKTV</title>
-    <!-- Import Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Galeri Dokumentasi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #F1F5F9; color: #1E293B; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box;}
+        /* === SISTEM TEMA DINAMIS === */
+        :root {
+            /* Default Theme (Abu-abu terang) */
+            --bg-color: #F4F7F6;
+            --text-color: #1E293B;
+            --text-sub: #64748B;
+            --card-bg: #FFFFFF;
+            --accent: #3B82F6;
+            --border: #E2E8F0;
+        }
+
+        /* Maroon Red */
+        [data-theme="maroon"] {
+            --bg-color: #FFFBFB;
+            --text-color: #4A0404;
+            --text-sub: #9CA3AF;
+            --card-bg: #FFFFFF;
+            --accent: #991B1B;
+            --border: #FEE2E2;
+        }
+
+        /* Navy Blue */
+        [data-theme="navy"] {
+            --bg-color: #F0F4F8;
+            --text-color: #0F172A;
+            --text-sub: #64748B;
+            --card-bg: #FFFFFF;
+            --accent: #1E3A8A;
+            --border: #E2E8F0;
+        }
+
+        /* Hijau Tua (Elegan) */
+        [data-theme="hijautua"] {
+            --bg-color: #0F172A;
+            --text-color: #FFFFFF;
+            --text-sub: #94A3B8;
+            --card-bg: #1E293B;
+            --accent: #10B981;
+            --border: #334155;
+        }
+
+        /* Cream Premium */
+        [data-theme="cream"] {
+            --bg-color: #FAF9F6;
+            --text-color: #43302B;
+            --text-sub: #A89F91;
+            --card-bg: #FFFFFF;
+            --accent: #C2A878;
+            --border: #EAE6DF;
+        }
+
+        /* === STYLING DASAR === */
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: background 0.3s, color 0.3s; }
         .hidden { display: none !important; }
         
-        .card-container { background: white; width: 100%; max-width: 400px; padding: 40px 30px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); text-align: center; }
+        .card { background: var(--card-bg); width: 100%; max-width: 450px; padding: 35px 25px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.06); text-align: center; box-sizing: border-box; margin-top: 5vh; border: 1px solid var(--border); transition: background 0.3s; }
         
-        .primary-color { color: #10B981; }
-        .primary-bg { background: #10B981; color: white; }
-        .secondary-bg { background: #F8FAFC; border: 2px solid #E2E8F0; color: #334155; }
-        
-        h1 { margin: 0 0 10px; font-weight: 800; font-size: 26px; }
-        p { color: #64748B; font-size: 14px; margin-bottom: 25px; line-height: 1.5;}
-        
-        .input-group { text-align: left; margin-bottom: 15px; }
-        label { display: block; font-size: 13px; font-weight: 800; margin-bottom: 8px; color: #475569;}
-        input { width: 100%; padding: 15px; border: 2px solid #E2E8F0; border-radius: 12px; box-sizing: border-box; outline: none; font-size: 15px; font-family: inherit; transition: 0.3s;}
-        input:focus { border-color: #10B981; }
-        
-        button { width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-
-        .profile-avatar { width: 90px; height: 90px; background: #1E293B; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; margin: 0 auto 15px; }
-        
-        .loader { border: 4px solid #E2E8F0; border-top: 4px solid #10B981; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+        .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60vh; }
+        .spinner { width: 50px; height: 50px; border: 4px solid var(--border); border-top: 4px solid var(--accent); border-radius: 50%; animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .loading-text { font-size: 16px; font-weight: 800; color: var(--text-color); transition: opacity 0.3s ease; }
+        .progress-bar { width: 200px; height: 6px; background: var(--border); border-radius: 10px; margin-top: 15px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.5s ease; border-radius: 10px; }
+        
+        h2 { font-weight: 800; margin: 0 0 8px; font-size: 24px; letter-spacing: -0.5px; color: var(--text-color); }
+        p { color: var(--text-sub); font-size: 14px; margin-bottom: 25px; line-height: 1.6; }
+        label { text-align: left; display: block; font-size: 13px; font-weight: 800; color: var(--text-color); margin: 15px 0 8px; }
+        
+        input, select { width: 100%; padding: 16px; background: var(--bg-color); border: 2px solid var(--border); color: var(--text-color); border-radius: 14px; box-sizing: border-box; outline: none; transition: 0.3s; font-family: inherit; font-size: 14px; font-weight: 600; }
+        input:focus, select:focus { border-color: var(--accent); }
+        
+        button { background: var(--accent); color: #fff; border: none; padding: 16px; border-radius: 14px; font-weight: 800; font-size: 15px; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        button:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+        button:disabled { background: var(--text-sub); cursor: not-allowed; box-shadow: none; transform: none; }
+
+        .gallery-wrap { max-width: 1000px; width: 100%; margin: 0 auto; text-align: center; }
+        .gallery-header { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+        .gallery-header h2 { font-size: 32px; color: var(--text-color); }
+        .gallery-header p { color: var(--text-sub); }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-top: 10px; }
+        .grid img { width: 100%; border-radius: 16px; aspect-ratio: 4/5; object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: 0.3s; cursor: pointer; border: 1px solid var(--border); }
+        .grid img:hover { transform: scale(1.03); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        
+        /* Tema Gelap Khusus untuk select option text biar terbaca */
+        [data-theme="hijautua"] select { color: #fff; }
+        [data-theme="hijautua"] select option { background: #1E293B; color: #fff; }
     </style>
 </head>
-<body>
+<body id="appBody" data-theme="default">
 
-    <div class="card-container">
+    <!-- 1. LOADING SCREEN -->
+    <div class="loading-container" id="loadingBox">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Memindai Barcode...</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <!-- 2. FORM SETUP KLIEN -->
+    <div class="card hidden" id="setupBox">
+        <h2>Setup Galeri ✨</h2>
+        <p>Aktivasi barcode Anda dengan mengisi data di bawah.</p>
         
-        <!-- 1. LOADING SCREEN -->
-        <div id="loadingBox">
-            <div class="loader"></div>
-            <h2 style="font-size: 18px;">Memeriksa Kartu...</h2>
-            <p>Mohon tunggu sebentar.</p>
-        </div>
+        <label>Nama Bisnis / Acara</label>
+        <input type="text" id="setupNama" placeholder="Ketik nama di sini...">
+        
+        <label>Link Folder Google Drive</label>
+        <input type="text" id="setupDrive" placeholder="Hak akses 'Siapa Saja (Public)'">
+        
+        <label>Tema Background</label>
+        <select id="setupTema" onchange="previewTheme(this.value)">
+            <option value="default">Putih Terang (Default)</option>
+            <option value="maroon">Merah Maroon (Elegan)</option>
+            <option value="navy">Biru Navy (Formal)</option>
+            <option value="hijautua">Hijau Tua (Dark Mode)</option>
+            <option value="cream">Cream (Aesthetic)</option>
+        </select>
 
-        <!-- 2. SETUP SCREEN -->
-        <div id="setupBox" class="hidden">
-            <h1 class="primary-color">Halo! 👋</h1>
-            <p>Kartu WA DKTV ini masih kosong. Silakan masukkan data Anda untuk mengunci kartu ini.</p>
-            
-            <div class="input-group">
-                <label>Nama Lengkap / Panggilan</label>
-                <input type="text" id="inputNama" placeholder="Cth: Dadan Furman">
-            </div>
-            <div class="input-group">
-                <label>Nomor WhatsApp</label>
-                <input type="number" id="inputWa" placeholder="Cth: 628123456789">
-                <small style="color:#94A3B8; font-size:11px; display:block; margin-top:5px;">*Wajib pakai kode negara (cth: 62)</small>
-            </div>
-            
-            <button class="primary-bg" id="btnSetup" onclick="lockCard()">Kunci & Aktifkan Kartu</button>
-        </div>
+        <button onclick="submitSetup()" id="btnSetup">Aktifkan & Kunci Barcode</button>
+    </div>
 
-        <!-- 3. PROFILE SCREEN -->
-        <div id="profileBox" class="hidden">
-            <div class="profile-avatar" id="avatarName">D</div>
-            <h1 id="displayName" style="margin-bottom: 5px;">Nama Orang</h1>
-            <p style="margin-bottom: 30px;">Let's connect & collaborate!</p>
-            
-            <button class="primary-bg" onclick="saveContact()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-                Simpan Kontak ke HP
-            </button>
-            
-            <button class="secondary-bg" id="btnChat" onclick="openWa()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                Chat via WhatsApp
-            </button>
+    <!-- 3. TAMPILAN GALERI -->
+    <div class="gallery-wrap hidden" id="galleryBox">
+        <div class="gallery-header">
+            <h2 id="gTitle">Nama Galeri</h2>
+            <p style="margin-bottom:0;">Terima Kasih</p>
         </div>
-
-        <!-- 4. ERROR SCREEN -->
-        <div id="errorBox" class="hidden">
-            <h1 style="color: #EF4444;">Opps! ⚠️</h1>
-            <p id="errorMsg">Barcode tidak valid atau tidak terdaftar.</p>
-            <button onclick="window.location.reload()" style="background:#EF4444; color:white; margin-top:20px; padding:12px; font-size:13px; width:auto; margin-left:auto; margin-right:auto;">Coba Lagi</button>
-        </div>
-
+        <div id="gridFoto" class="grid"></div>
     </div>
 
     <script>
-        // DATA SUPABASE
-        const SUPA_URL = 'https://bkxclrjycsdpchodgzzb.supabase.co';
-        const SUPA_KEY = 'sb_publishable_F9D19Umk_ofD3bwZDP5sng_O4kSsG_3'; 
+        // ==============================================
+        // GANTI INI DENGAN URL DEPLOYMENT GAS ANDA
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxS2Xad3FCI7YL2xvjJ8v6cXq_oa0l1Drj4RnzqEtbtwiHVuC90xFS-HcoDsnDL438BSQ/exec"; 
+        // ==============================================
         
-        let dbSupabase;
-        let currentData = null;
-        let cardId = null;
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('id');
+        let dbDrive = "";
 
-        // Fungsi Universal untuk menampilkan Error
-        function showError(msg) {
-            document.getElementById('loadingBox').classList.add('hidden');
-            document.getElementById('setupBox').classList.add('hidden');
-            document.getElementById('profileBox').classList.add('hidden');
-            document.getElementById('errorBox').classList.remove('hidden');
-            document.getElementById('errorMsg').innerText = msg;
+        // Fungsi Preview Tema Saat Setup
+        function previewTheme(themeName) {
+            document.getElementById('appBody').setAttribute('data-theme', themeName);
         }
 
-        // Jalankan Script Utama
-        async function runLayanan() {
-            try {
-                // Pastikan Supabase Berhasil Terload
-                if (!window.supabase) throw new Error("Gagal memuat library Supabase. Periksa internet Anda.");
-                
-                dbSupabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-                
-                const urlParams = new URLSearchParams(window.location.search);
-                cardId = urlParams.get('id');
+        const loadingMessages = ["Menghubungkan ke server...", "Memeriksa database...", "Memindai folder foto...", "Mempersiapkan galeri..."];
+        let msgIndex = 0, progress = 5;
 
-                if(!cardId) {
-                    return showError("Link tidak valid! Anda harus men-scan Barcode secara langsung agar terdeteksi.");
-                }
+        const loadingInterval = setInterval(() => {
+            msgIndex = (msgIndex + 1) % loadingMessages.length;
+            const textEl = document.getElementById('loadingText');
+            textEl.style.opacity = 0;
+            setTimeout(() => { textEl.innerText = loadingMessages[msgIndex]; textEl.style.opacity = 1; }, 300);
+        }, 1500);
 
-                // Cek data di tabel wa1
-                const { data, error } = await dbSupabase.from('wa1').select('*').eq('id', cardId).single();
+        const progressInterval = setInterval(() => {
+            if(progress < 90) progress += Math.random() * 10;
+            document.getElementById('progressFill').style.width = progress + "%";
+        }, 500);
 
-                document.getElementById('loadingBox').classList.add('hidden');
+        if(orderId) {
+            fetch(`${GAS_URL}?action=scan&id=${orderId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    dbDrive = data.drive;
+                    document.getElementById('gTitle').innerText = data.nama || "Galeri Foto";
+                    
+                    // Terapkan Tema yang didapat dari Database
+                    if(data.tema) previewTheme(data.tema);
 
-                if (error) {
-                    console.error("DB Error:", error);
-                    return showError("Kartu belum terdaftar di sistem (ID Salah).");
-                }
-
-                if (data.status === 'Kosong') {
-                    document.getElementById('setupBox').classList.remove('hidden');
-                } else if (data.status === 'Aktif') {
-                    currentData = data;
-                    tampilkanProfile(data);
-                }
-
-            } catch (err) {
-                showError("Sistem Error: " + err.message);
-                console.error(err);
-            }
+                    if (data.state === 'Kosong') {
+                        hentikanLoading();
+                        document.getElementById('setupBox').classList.remove('hidden');
+                    } else if (data.state === 'Aktif') {
+                        bukaGaleri(); 
+                    }
+                } else { tampilkanError(data.message); }
+            }).catch(err => tampilkanError("Gagal terhubung ke server."));
+        } else {
+            tampilkanError("Silakan Scan Barcode yang Valid.");
         }
 
-        async function lockCard() {
-            const nama = document.getElementById('inputNama').value;
-            const wa = document.getElementById('inputWa').value;
+        function hentikanLoading() {
+            clearInterval(loadingInterval); clearInterval(progressInterval);
+            document.getElementById('progressFill').style.width = "100%";
+            setTimeout(() => { document.getElementById('loadingBox').classList.add('hidden'); }, 500);
+        }
+
+        function tampilkanError(pesan) {
+            clearInterval(loadingInterval); clearInterval(progressInterval);
+            document.querySelector('.spinner').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('loadingText').innerHTML = `<span style="color:#EF4444; font-size:20px;">⚠️<br><br>${pesan}</span>`;
+        }
+
+        function submitSetup() {
+            const nama = document.getElementById('setupNama').value;
+            const drive = document.getElementById('setupDrive').value;
+            const tema = document.getElementById('setupTema').value;
             const btn = document.getElementById('btnSetup');
 
-            if(!nama || !wa) return alert("Nama dan Nomor WA wajib diisi!");
-            btn.disabled = true; btn.innerText = "Mengunci Kartu...";
+            if(!nama || !drive) return alert("Semua kolom wajib diisi!");
+            btn.disabled = true; btn.innerText = "Menyimpan Data...";
 
-            try {
-                const { error } = await dbSupabase
-                    .from('wa1')
-                    .update({ status: 'Aktif', nama: nama, wa: wa })
-                    .eq('id', cardId);
+            const formData = new URLSearchParams();
+            formData.append('action', 'first_setup');
+            formData.append('id', orderId);
+            formData.append('nama', nama);
+            formData.append('drive', drive);
+            formData.append('tema', tema); // Kirim data tema ke backend
 
-                if (error) throw error;
+            fetch(GAS_URL, { 
+                method: 'POST', 
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: formData 
+            })
+            .then(r => r.json())
+            .then(d => {
+                if(d.status === 'success') { window.location.reload(); } 
+                else { alert(d.message); btn.disabled = false; btn.innerText = "Aktifkan & Kunci Barcode"; }
+            }).catch(err => {
+                alert("Terjadi kesalahan jaringan.");
+                btn.disabled = false; btn.innerText = "Aktifkan & Kunci Barcode"; 
+            });
+        }
+
+        function bukaGaleri() {
+            document.getElementById('loadingText').innerText = "Mengunduh galeri dari Drive...";
+            
+            fetch(`${GAS_URL}?action=get_images&url=${encodeURIComponent(dbDrive)}`)
+            .then(r => r.json())
+            .then(d => {
+                hentikanLoading();
+                document.getElementById('galleryBox').classList.remove('hidden');
                 
-                window.location.reload();
-            } catch (err) {
-                alert("Gagal menyimpan data: " + err.message);
-                btn.disabled = false; btn.innerText = "Kunci & Aktifkan Kartu";
-            }
+                let html = '';
+                if (d.status === 'success') {
+                    if(d.images && d.images.length > 0) {
+                        d.images.forEach(img => {
+                            let fileType = (img.type || "").toLowerCase();
+                            
+                            if (fileType.includes('video') || fileType.includes('mp4') || fileType.includes('mov')) {
+                                let thumbUrl = `https://drive.google.com/thumbnail?id=${img.id}&sz=w800`;
+                                let playUrl = `https://drive.google.com/file/d/${img.id}/view`;
+                                
+                                html += `
+                                <div style="position: relative; cursor: pointer; width: 100%; border-radius: 16px; aspect-ratio: 4/5; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: 0.3s; border: 1px solid var(--border);" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'" onclick="window.open('${playUrl}', '_blank')">
+                                    <img src="${thumbUrl}" loading="lazy" alt="Video" referrerpolicy="no-referrer" style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); display: block; border-radius: 0; border: none; box-shadow: none;">
+                                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.2); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); border: 2px solid white;">
+                                        <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 16px solid white; margin-left: 5px;"></div>
+                                    </div>
+                                </div>`;
+                            } else {
+                                html += `<img src="${img.url}" loading="lazy" alt="Gallery Image" referrerpolicy="no-referrer">`;
+                            }
+                        });
+                    } else { html = "<p style='grid-column:1/-1; color: var(--text-color);'>Folder kosong / tidak ada file dokumentasi.</p>"; }
+                } else { html = `<p style='grid-column:1/-1; color:#EF4444;'>Gagal memuat galeri.<br>${d.message}</p>`; }
+                document.getElementById('gridFoto').innerHTML = html;
+            }).catch(err => {
+                hentikanLoading(); document.getElementById('galleryBox').classList.remove('hidden');
+                document.getElementById('gridFoto').innerHTML = "<p style='grid-column:1/-1; color:#EF4444;'>Jaringan bermasalah.</p>";
+            });
         }
-
-        function tampilkanProfile(data) {
-            document.getElementById('profileBox').classList.remove('hidden');
-            document.getElementById('displayName').innerText = data.nama;
-            
-            // Inisial untuk Avatar
-            let inisial = (data.nama || "User").charAt(0).toUpperCase();
-            document.getElementById('avatarName').innerText = inisial;
-        }
-
-        function saveContact() {
-            if(!currentData) return;
-            let vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${currentData.nama}\nTEL;TYPE=CELL,VOICE:${currentData.wa}\nEND:VCARD`;
-            let blob = new Blob([vcard], { type: 'text/vcard' });
-            let url = URL.createObjectURL(blob);
-            
-            let a = document.createElement('a');
-            a.href = url;
-            a.download = `${(currentData.nama || 'Kontak').replace(/\s+/g, '_')}_WADKTV.vcf`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-
-        function openWa() {
-            if(!currentData) return;
-            let cleanWa = currentData.wa.replace(/[^0-9]/g, ''); 
-            window.open(`https://wa.me/${cleanWa}?text=Halo,%20saya%20dapat%20nomor%20ini%20dari%20Kartu%20Digital%20WA%20DKTV.`, '_blank');
-        }
-
-        // Mulai Pengecekan
-        window.onload = () => {
-            runLayanan();
-        };
     </script>
 </body>
 </html>

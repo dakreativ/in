@@ -3,27 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator QR Code Google Review</title>
+    <title>Mesin Jasa QR Google Review</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #f0f2f5; margin: 0; padding: 20px; }
-        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0px 4px 12px rgba(0,0,0,0.1); max-width: 400px; margin: 40px auto; }
-        h2 { margin-top: 0; color: #333; }
-        input { width: 90%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
-        button { background: #4285F4; color: white; border: none; padding: 12px 20px; cursor: pointer; border-radius: 6px; font-size: 16px; width: 90%; font-weight: bold; }
-        button:hover { background: #357ae8; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0px 8px 16px rgba(0,0,0,0.1); max-width: 450px; margin: 40px auto; }
+        h2 { margin-top: 0; color: #2c3e50; }
+        .instruction { font-size: 13px; color: #555; background: #eef2f3; padding: 12px; border-radius: 8px; text-align: left; margin-bottom: 15px;}
+        input { width: 90%; padding: 14px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; transition: 0.3s;}
+        input:focus { border-color: #4285F4; outline: none; }
+        button { background: #4285F4; color: white; border: none; padding: 14px 20px; cursor: pointer; border-radius: 8px; font-size: 16px; width: 90%; font-weight: bold; transition: 0.3s; }
+        button:hover { background: #357ae8; transform: translateY(-2px); }
         #qrcode { margin: 25px auto; display: flex; justify-content: center; min-height: 200px; }
-        .note { font-size: 12px; color: #666; margin-top: 15px; }
-        #linkOutput { font-size: 13px; color: #4285F4; word-break: break-all; margin-top: 10px;}
+        #linkOutput { font-size: 13px; color: #27ae60; word-break: break-all; margin-top: 15px; padding: 10px; border-radius: 8px; background: #e9f7ef; display: none;}
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Pembuat QR Google Review</h2>
-    <p style="font-size: 14px; color: #555;">Masukkan Google Place ID <b>ATAU</b> Link Google Maps / Review.</p>
+    <h2>🚀 Generator QR Review Pro</h2>
     
-    <input type="text" id="userInput" placeholder="Contoh: ChIJP3... atau https://g.page/r/...">
-    <button onclick="generateQR()">Buat QR Code</button>
+    <div class="instruction">
+        <b>Cara Pakai (Untuk Jualan):</b><br>
+        1. Buka link pendek dari klien di browser.<br>
+        2. Tunggu sampai peta Google Maps terbuka.<br>
+        3. Copy URL yang <b>panjang</b> di atas browser.<br>
+        4. Paste di kolom bawah ini.
+    </div>
+    
+    <input type="text" id="userInput" placeholder="Paste Link Maps Panjang di sini...">
+    <button onclick="generateQR()">Generate Auto 5-Star QR</button>
 
     <div id="qrcode"></div>
     <div id="linkOutput"></div>
@@ -32,29 +40,56 @@
 <script>
     function generateQR() {
         var inputVal = document.getElementById("userInput").value.trim();
-        
+        var finalLink = "";
+
         if (!inputVal) {
-            alert("Bro, kolomnya jangan dikosongin!");
+            alert("Bro, kolom link jangan dikosongin!");
             return;
         }
 
-        var finalLink = "";
-
-        // Logika Pintar: Cek apakah input itu URL atau Place ID
-        if (inputVal.startsWith("http://") || inputVal.startsWith("https://") || inputVal.includes("google.com") || inputVal.includes("goo.gl")) {
-            // Jika user memasukkan link utuh, langsung gunakan link tersebut
-            finalLink = inputVal;
-        } else {
-            // Jika user memasukkan Place ID, gabungkan dengan format rahasia Google
+        // 1. Peringatan kalau yang dimasukin link pendek
+        if (inputVal.includes("maps.app.goo.gl") || inputVal.includes("goo.gl")) {
+            alert("Link pendek nggak bisa dibaca sistem bro!\n\nSOP: Buka dulu link pendek ini di browser sampai petanya kebuka, lalu COPY link PANJANGNYA dan paste ke sini.");
+            return;
+        }
+        
+        // 2. Jika bro iseng masukin Place ID langsung (ChIJ...)
+        if (inputVal.startsWith("ChIJ")) {
             finalLink = "https://search.google.com/local/writereview?placeid=" + inputVal;
+        } 
+        // 3. LOGIKA UTAMA: Ekstrak dari Link Panjang Google Maps
+        else if (inputVal.includes("google.com/maps/place/") || inputVal.includes("google.com/maps")) {
+            // Script hacky mencari kode hex (CID) dari link Google Maps
+            var match = inputVal.match(/1s0x[0-9a-fA-F]+:0x([0-9a-fA-F]+)/);
+            if (match && match[1]) {
+                try {
+                    // Konversi kode Hexadecimal ke Decimal agar diterima Google Review
+                    var hexCid = "0x" + match[1];
+                    var decimalCid = BigInt(hexCid).toString(); 
+                    // Buat link LudoCID rahasia
+                    finalLink = "https://search.google.com/local/writereview?ludocid=" + decimalCid;
+                } catch (e) {
+                    alert("Gagal membaca ID! Pastikan ngopi linknya sampai habis ya.");
+                    return;
+                }
+            } else {
+                alert("Kode unik toko tidak ketemu! Coba ulangi buka link klien di Google Maps lalu copy ulang url-nya.");
+                return;
+            }
+        } 
+        else {
+            alert("Format link tidak dikenali! Pastikan copy link panjang dari Google Maps.");
+            return;
         }
 
-        // Gunakan API QR Server agar langsung jadi gambar
-        var apiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(finalLink);
-
-        // Tampilkan gambar dan link
-        document.getElementById("qrcode").innerHTML = "<img src='" + apiUrl + "' alt='QR Code' style='border: 1px solid #ddd; border-radius: 8px; padding: 10px;'>";
-        document.getElementById("linkOutput").innerHTML = "<b>Link yang dipakai:</b><br><a href='" + finalLink + "' target='_blank'>" + finalLink + "</a>";
+        // Tampilkan QR Code via API
+        var apiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(finalLink);
+        
+        document.getElementById("qrcode").innerHTML = "<img src='" + apiUrl + "' alt='QR Code' style='border: 2px solid #4285F4; border-radius: 8px; padding: 10px; background: white;'>";
+        
+        var outputDiv = document.getElementById("linkOutput");
+        outputDiv.style.display = "block";
+        outputDiv.innerHTML = "<b>Sukses Diekstrak! Link Review:</b><br><br><a href='" + finalLink + "' target='_blank'>" + finalLink + "</a><br><br><i>Klik link di atas untuk ngetes apakah popup bintang 5 nya muncul.</i>";
     }
 </script>
 

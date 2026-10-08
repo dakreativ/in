@@ -20,9 +20,9 @@
 
 <div class="container">
     <h2>Pembuat QR Google Review</h2>
-    <p style="font-size: 14px; color: #555;">Masukkan Google Place ID untuk membuat QR.</p>
+    <p style="font-size: 14px; color: #555;">Masukkan Google Place ID <b>ATAU</b> Link Google Maps / Review.</p>
     
-    <input type="text" id="placeId" placeholder="Contoh: ChIJP3Sa8ziCZwgR...">
+    <input type="text" id="userInput" placeholder="Contoh: ChIJP3... atau https://g.page/r/...">
     <button onclick="generateQR()">Buat QR Code</button>
 
     <div id="qrcode"></div>
@@ -31,22 +31,30 @@
 
 <script>
     function generateQR() {
-        var placeId = document.getElementById("placeId").value.trim();
+        var inputVal = document.getElementById("userInput").value.trim();
         
-        if (!placeId) {
-            alert("Bro, Google Place ID jangan dikosongin!");
+        if (!inputVal) {
+            alert("Bro, kolomnya jangan dikosongin!");
             return;
         }
 
-        // 1. Buat link review dari Place ID
-        var reviewLink = "https://search.google.com/local/writereview?placeid=" + placeId;
+        var finalLink = "";
 
-        // 2. Gunakan API QR Server agar langsung jadi gambar (lebih stabil)
-        var apiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(reviewLink);
+        // Logika Pintar: Cek apakah input itu URL atau Place ID
+        if (inputVal.startsWith("http://") || inputVal.startsWith("https://") || inputVal.includes("google.com") || inputVal.includes("goo.gl")) {
+            // Jika user memasukkan link utuh, langsung gunakan link tersebut
+            finalLink = inputVal;
+        } else {
+            // Jika user memasukkan Place ID, gabungkan dengan format rahasia Google
+            finalLink = "https://search.google.com/local/writereview?placeid=" + inputVal;
+        }
 
-        // 3. Tampilkan gambar dan link
-        document.getElementById("qrcode").innerHTML = "<img src='" + apiUrl + "' alt='QR Code Review' style='border: 1px solid #ddd; border-radius: 8px; padding: 10px;'>";
-        document.getElementById("linkOutput").innerHTML = "<b>Link Anda:</b><br><a href='" + reviewLink + "' target='_blank'>" + reviewLink + "</a>";
+        // Gunakan API QR Server agar langsung jadi gambar
+        var apiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(finalLink);
+
+        // Tampilkan gambar dan link
+        document.getElementById("qrcode").innerHTML = "<img src='" + apiUrl + "' alt='QR Code' style='border: 1px solid #ddd; border-radius: 8px; padding: 10px;'>";
+        document.getElementById("linkOutput").innerHTML = "<b>Link yang dipakai:</b><br><a href='" + finalLink + "' target='_blank'>" + finalLink + "</a>";
     }
 </script>
 

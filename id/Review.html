@@ -9,13 +9,10 @@
         .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0px 8px 16px rgba(0,0,0,0.1); max-width: 450px; margin: 40px auto; }
         h2 { margin-top: 0; color: #2c3e50; }
         .instruction { font-size: 13px; color: #555; background: #eef2f3; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 20px; line-height: 1.5;}
-        .highlight { font-weight: bold; color: #d35400; }
         input { width: 90%; padding: 14px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; transition: 0.3s;}
         input:focus { border-color: #4285F4; outline: none; }
         button { background: #4285F4; color: white; border: none; padding: 14px 20px; cursor: pointer; border-radius: 8px; font-size: 16px; width: 90%; font-weight: bold; transition: 0.3s; margin-top: 5px;}
         button:hover { background: #357ae8; transform: translateY(-2px); }
-        .btn-alt { background: #27ae60; margin-top: 15px; font-size: 14px;}
-        .btn-alt:hover { background: #219653; }
         #qrcode { margin: 25px auto; display: flex; justify-content: center; min-height: 200px; }
         #linkOutput { font-size: 13px; color: #27ae60; word-break: break-all; margin-top: 15px; padding: 10px; border-radius: 8px; background: #e9f7ef; display: none;}
     </style>
@@ -26,22 +23,14 @@
     <h2>🚀 Generator QR Review Pro</h2>
     
     <div class="instruction">
-        <b>SOP Paling Gampang:</b><br>
-        1. Cari nama toko klien di <b>Google Pencarian biasa</b>.<br>
-        2. Klik tombol <span class="highlight">"Tulis Ulasan"</span> pada info tokonya.<br>
-        3. Copy URL di address bar (yang ada tulisan <i>lrd=...</i>).<br>
-        4. Paste ke kolom di bawah.
+        <b>SOP Jualan Cepat:</b><br>
+        1. Buka peta lokasi klien di Google Maps.<br>
+        2. Copy <b>semua link yang panjang</b> di atas browser.<br>
+        3. Paste di sini, otomatis tembus popup bintang 5!
     </div>
     
-    <input type="text" id="userInput" placeholder="Paste Link di sini...">
+    <input type="text" id="userInput" placeholder="Paste Link Maps Panjang di sini...">
     <button onclick="generateQR()">Generate Auto 5-Star QR</button>
-
-    <div style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">
-        <p style="font-size: 12px; color: #7f8c8d; margin-bottom: 10px;">Atau cari Place ID manual:</p>
-        <a href="https://placeid.io/" target="_blank" style="text-decoration: none;">
-            <button class="btn-alt">🔍 Buka Web Pencari Place ID</button>
-        </a>
-    </div>
 
     <div id="qrcode"></div>
     <div id="linkOutput"></div>
@@ -57,53 +46,49 @@
             return;
         }
 
-        // Peringatan jika yang dimasukkan link pendek
+        // 1. Peringatan link pendek
         if (inputVal.includes("maps.app.goo.gl") || inputVal.includes("goo.gl")) {
-            alert("Itu link pendek bro! Ikuti SOP di atas: Buka Google biasa, cari tokonya, klik 'Tulis Ulasan', lalu copy linknya.");
+            alert("Itu link pendek bro! Buka dulu linknya di browser sampai petanya muncul, lalu copy link panjangnya.");
             return;
         }
         
-        // 1. Jika bro dapat Place ID murni (ChIJ...)
-        if (inputVal.startsWith("ChIJ")) {
+        // 2. Eksekusi Bypass Google Maps (Membaca Link Panjang yang bro kasih di Screenshot)
+        if (inputVal.includes("1s0x") && inputVal.includes(":0x")) {
+            // Trik baru: Kita ambil KEDUA kode hex dari URL Maps
+            var match = inputVal.match(/1s(0x[0-9a-fA-F]+):(0x[0-9a-fA-F]+)/);
+            
+            if (match && match[1] && match[2]) {
+                try {
+                    var hex1 = match[1]; // Kode Area
+                    var hex2 = match[2]; // Kode Unik Toko (CID)
+                    var decimalCid = BigInt(hex2).toString(); 
+                    
+                    // BYPASS: Kita pakai link Google Search dengan lrd=...,3 (Angka 3 di belakang artinya MEMAKSA BUKA KOTAK REVIEW)
+                    finalLink = "https://www.google.com/search?q=Review&ludocid=" + decimalCid + "#lrd=" + hex1 + ":" + hex2 + ",3";
+                } catch (e) { 
+                    alert("Gagal memproses angka rahasia dari link ini!"); return; 
+                }
+            } else {
+                alert("Kode unik toko tidak lengkap! Copy ulang linknya dari ujung ke ujung bro."); return;
+            }
+        } 
+        // 3. Jika dapat Place ID manual (ChIJ...)
+        else if (inputVal.startsWith("ChIJ")) {
             finalLink = "https://search.google.com/local/writereview?placeid=" + inputVal;
-        } 
-        // 2. DETEKSI BARU: Link dari tombol "Tulis Ulasan" di Google (Ada kode #lrd=)
-        else if (inputVal.includes("lrd=")) {
-            var match = inputVal.match(/lrd=[^:]+:0x([0-9a-fA-F]+)/);
-            if (match && match[1]) {
-                try {
-                    var decimalCid = BigInt("0x" + match[1]).toString(); 
-                    finalLink = "https://search.google.com/local/writereview?ludocid=" + decimalCid;
-                } catch (e) { alert("Gagal proses ID dari link Ulasan!"); return; }
-            } else {
-                alert("Kode unik toko tidak ketemu di link lrd! Copy ulang linknya ya."); return;
-            }
         }
-        // 3. Link Google Maps panjang (1s0x...:0x...)
-        else if (inputVal.includes("1s0x") && inputVal.includes(":0x")) {
-            var match = inputVal.match(/1s0x[0-9a-fA-F]+:0x([0-9a-fA-F]+)/);
-            if (match && match[1]) {
-                try {
-                    var decimalCid = BigInt("0x" + match[1]).toString(); 
-                    finalLink = "https://search.google.com/local/writereview?ludocid=" + decimalCid;
-                } catch (e) { alert("Gagal proses ID dari link Maps!"); return; }
-            } else {
-                alert("Kode unik toko tidak ketemu! Ikuti SOP di atas aja biar gampang bro."); return;
-            }
-        } 
         else {
-            alert("Format link tidak valid! Link yang bro masukin kayaknya link pencarian, bukan link ulasan toko. Ikuti SOP di kotak abu-abu ya.");
+            alert("Format link tidak dikenali! Pastikan bro meng-copy link panjang saat membuka Google Maps.");
             return;
         }
 
-        // Tampilkan QR Code via API
+        // Tampilkan QR Code
         var apiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(finalLink);
         
         document.getElementById("qrcode").innerHTML = "<img src='" + apiUrl + "' alt='QR Code' style='border: 2px solid #4285F4; border-radius: 8px; padding: 10px; background: white;'>";
         
         var outputDiv = document.getElementById("linkOutput");
         outputDiv.style.display = "block";
-        outputDiv.innerHTML = "<b>Sukses Diekstrak! Link Auto 5-Star:</b><br><br><a href='" + finalLink + "' target='_blank'>" + finalLink + "</a>";
+        outputDiv.innerHTML = "<b>Sukses Bypass! Link Pop-up Review:</b><br><br><a href='" + finalLink + "' target='_blank'>" + finalLink + "</a><br><br><i>Coba klik link di atas bro, pasti langsung muncul kotak bintang 5 nya!</i>";
     }
 </script>
 

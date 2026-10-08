@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mesin Jasa QR Google Review</title>
+    <title>Mesin Cetak QR Code Review</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background-color: #f4f7f6; margin: 0; padding: 20px; }
         .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0px 8px 16px rgba(0,0,0,0.1); max-width: 450px; margin: 40px auto; }
@@ -11,92 +11,101 @@
         .step-box { background: #eef2f3; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 20px; border-left: 4px solid #4285F4; }
         .step-title { font-weight: bold; color: #333; margin-bottom: 8px; font-size: 14px; }
         
-        input { width: 90%; padding: 14px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; transition: 0.3s; box-sizing: border-box; }
+        input { width: 100%; padding: 14px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; transition: 0.3s; box-sizing: border-box; }
         input:focus { border-color: #4285F4; outline: none; }
         
         button { border: none; padding: 14px 20px; cursor: pointer; border-radius: 8px; font-size: 15px; width: 100%; font-weight: bold; transition: 0.3s; box-sizing: border-box; }
-        .btn-api { background: #fff; color: #4285F4; border: 2px solid #4285F4; margin-bottom: 10px; }
-        .btn-api:hover { background: #f0f5ff; transform: translateY(-2px); }
+        .btn-api { background: #fff; color: #8e44ad; border: 2px solid #8e44ad; margin-bottom: 10px; }
+        .btn-api:hover { background: #f5eef8; transform: translateY(-2px); }
         .btn-generate { background: #4285F4; color: white; margin-top: 5px; }
         .btn-generate:hover { background: #357ae8; transform: translateY(-2px); }
         
-        #qrcode { margin: 25px auto; display: flex; justify-content: center; min-height: 200px; }
-        #linkOutput { font-size: 13px; color: #27ae60; word-break: break-all; margin-top: 15px; padding: 15px; border-radius: 8px; background: #e9f7ef; display: none; text-align: left;}
+        /* Desain Kartu QR Code */
+        #qrCard { 
+            margin: 25px auto 0; 
+            display: none; 
+            flex-direction: column; 
+            align-items: center;
+            background: white;
+            padding: 20px;
+            border: 2px dashed #bdc3c7;
+            border-radius: 12px;
+            width: fit-content;
+        }
+        #qrCard img { border-radius: 8px; }
+        .qr-label { 
+            margin-top: 15px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            color: #2c3e50; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .instruction-save { font-size: 12px; color: #7f8c8d; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>🚀 Generator QR Review Pro</h2>
+    <h2>🚀 Mesin Cetak QR Pro</h2>
     
     <!-- LANGKAH 1 -->
-    <div class="step-box">
-        <div class="step-title">LANGKAH 1: Ambil Data API Google</div>
-        <p style="font-size: 12px; color: #555; margin-top: 0;">Klik tombol di bawah ini. <b>PENTING:</b> Ketik nama tempat beserta kotanya (Contoh: <i>Kopi Kenangan, Bandung</i>) agar peta mengarah ke lokasi yang benar. Lalu copy <b>Place ID</b> yang muncul.</p>
-        <button class="btn-api" onclick="window.open('https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder', '_blank')">
-            🔍 Buka Pencari Place ID Google (Resmi)
+    <div class="step-box" style="border-left-color: #8e44ad;">
+        <div class="step-title">LANGKAH 1: Dapatkan Link Review</div>
+        <p style="font-size: 12px; color: #555; margin-top: 0;">Gunakan web ProductMate untuk mencari toko dan menyalin link reviewnya.</p>
+        <button class="btn-api" onclick="window.open('https://productmate.com/id/developers/google-review-link', '_blank')">
+            🔗 Buka Generator Link ProductMate
         </button>
     </div>
 
     <!-- LANGKAH 2 -->
-    <div class="step-box" style="border-left-color: #27ae60;">
-        <div class="step-title">LANGKAH 2: Buat Barcode Bintang 5</div>
-        <p style="font-size: 12px; color: #555; margin-top: 0;">Paste Place ID (ChIJ...) atau link panjang Google Maps klien ke kolom ini.</p>
-        <input type="text" id="userInput" placeholder="Paste Place ID / Link Panjang di sini...">
-        <button class="btn-generate" onclick="generateQR()">Generate Auto 5-Star QR</button>
+    <div class="step-box" style="border-left-color: #4285F4;">
+        <div class="step-title">LANGKAH 2: Cetak Barcode</div>
+        
+        <!-- Kolom Link -->
+        <input type="text" id="linkInput" placeholder="1. Paste Link dari ProductMate di sini...">
+        
+        <!-- Kolom Kode/Nama Klien -->
+        <input type="text" id="kodeInput" placeholder="2. Masukkan Nama Klien / Kode (Opsional)">
+        
+        <button class="btn-generate" onclick="generateQR()">Cetak QR Code</button>
     </div>
 
-    <div id="qrcode"></div>
-    <div id="linkOutput"></div>
+    <!-- Hasil QR Code -->
+    <div id="qrCard">
+        <div id="qrcodeImg"></div>
+        <div id="qrLabel" class="qr-label"></div>
+    </div>
+    
+    <div id="saveHint" class="instruction-save" style="display: none;">
+        <i>Trik: Screenshot area kotak putus-putus di atas agar nama klien dan barcode tidak terpisah.</i>
+    </div>
 </div>
 
 <script>
     function generateQR() {
-        var inputVal = document.getElementById("userInput").value.trim();
-        var finalLink = "";
+        var linkVal = document.getElementById("linkInput").value.trim();
+        var kodeVal = document.getElementById("kodeInput").value.trim();
 
-        if (!inputVal) {
-            alert("Kolom tidak boleh kosong!");
+        if (!linkVal) {
+            alert("Bro, paste dulu linknya di kolom pertama!");
             return;
         }
 
-        if (inputVal.includes("maps.app.goo.gl") || inputVal.includes("goo.gl")) {
-            alert("Error: Jangan gunakan link pendek. Buka linknya dulu lalu copy link yang panjang, atau gunakan Place ID dari Langkah 1.");
-            return;
-        }
-        
-        // Cek Place ID murni
-        if (inputVal.startsWith("ChIJ")) {
-            finalLink = "https://search.google.com/local/writereview?placeid=" + inputVal;
-        }
-        // Bypass Link Panjang
-        else if (inputVal.includes("1s0x") && inputVal.includes(":0x")) {
-            var match = inputVal.match(/1s(0x[0-9a-fA-F]+):(0x[0-9a-fA-F]+)/);
-            if (match && match[1] && match[2]) {
-                try {
-                    var hex1 = match[1];
-                    var hex2 = match[2];
-                    var decimalCid = BigInt(hex2).toString(); 
-                    finalLink = "https://www.google.com/search?q=Review&ludocid=" + decimalCid + "#lrd=" + hex1 + ":" + hex2 + ",3";
-                } catch (e) { 
-                    alert("Gagal memproses link."); return; 
-                }
-            } else {
-                alert("Kode unik toko tidak lengkap pada link."); return;
-            }
-        } 
-        else {
-            alert("Format tidak valid! Pastikan Anda mem-paste Place ID (ChIJ...) atau link panjang Google Maps.");
-            return;
+        // Jika kolom kode/nama klien dikosongkan, buat kode random otomatis (misal: ORD-8472)
+        if (!kodeVal) {
+            kodeVal = "ORD-" + Math.floor(1000 + Math.random() * 9000);
         }
 
-        var apiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(finalLink);
+        // Panggil API untuk membuat gambar QR
+        var apiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(linkVal);
         
-        document.getElementById("qrcode").innerHTML = "<img src='" + apiUrl + "' alt='QR Code' style='border: 2px solid #27ae60; border-radius: 8px; padding: 10px; background: white;'>";
+        // Tampilkan hasil
+        document.getElementById("qrcodeImg").innerHTML = "<img src='" + apiUrl + "' alt='QR Code'>";
+        document.getElementById("qrLabel").innerText = kodeVal;
         
-        var outputDiv = document.getElementById("linkOutput");
-        outputDiv.style.display = "block";
-        outputDiv.innerHTML = "<b>✅ Sukses! Link Pop-up Review:</b><br><br><a href='" + finalLink + "' target='_blank' style='color:#2c3e50;'>" + finalLink + "</a><br><br><i style='color:#7f8c8d;'>Klik link di atas untuk memastikan popup bintang 5 muncul sebelum QR dicetak.</i>";
+        document.getElementById("qrCard").style.display = "flex";
+        document.getElementById("saveHint").style.display = "block";
     }
 </script>
 

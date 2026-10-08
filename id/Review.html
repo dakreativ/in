@@ -7,14 +7,21 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background-color: #f4f7f6; margin: 0; padding: 20px; }
         .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0px 8px 16px rgba(0,0,0,0.1); max-width: 450px; margin: 40px auto; }
-        h2 { margin-top: 0; color: #2c3e50; }
-        .instruction { font-size: 13px; color: #555; background: #eef2f3; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 20px; line-height: 1.5;}
-        input { width: 90%; padding: 14px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; transition: 0.3s;}
+        h2 { margin-top: 0; color: #2c3e50; font-size: 22px; }
+        .step-box { background: #eef2f3; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 20px; border-left: 4px solid #4285F4; }
+        .step-title { font-weight: bold; color: #333; margin-bottom: 8px; font-size: 14px; }
+        
+        input { width: 90%; padding: 14px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; transition: 0.3s; box-sizing: border-box; }
         input:focus { border-color: #4285F4; outline: none; }
-        button { background: #4285F4; color: white; border: none; padding: 14px 20px; cursor: pointer; border-radius: 8px; font-size: 16px; width: 90%; font-weight: bold; transition: 0.3s; margin-top: 5px;}
-        button:hover { background: #357ae8; transform: translateY(-2px); }
+        
+        button { border: none; padding: 14px 20px; cursor: pointer; border-radius: 8px; font-size: 15px; width: 100%; font-weight: bold; transition: 0.3s; box-sizing: border-box; }
+        .btn-api { background: #fff; color: #4285F4; border: 2px solid #4285F4; margin-bottom: 10px; }
+        .btn-api:hover { background: #f0f5ff; transform: translateY(-2px); }
+        .btn-generate { background: #4285F4; color: white; margin-top: 5px; }
+        .btn-generate:hover { background: #357ae8; transform: translateY(-2px); }
+        
         #qrcode { margin: 25px auto; display: flex; justify-content: center; min-height: 200px; }
-        #linkOutput { font-size: 13px; color: #27ae60; word-break: break-all; margin-top: 15px; padding: 10px; border-radius: 8px; background: #e9f7ef; display: none;}
+        #linkOutput { font-size: 13px; color: #27ae60; word-break: break-all; margin-top: 15px; padding: 15px; border-radius: 8px; background: #e9f7ef; display: none; text-align: left;}
     </style>
 </head>
 <body>
@@ -22,15 +29,22 @@
 <div class="container">
     <h2>🚀 Generator QR Review Pro</h2>
     
-    <div class="instruction">
-        <b>SOP Jualan Cepat:</b><br>
-        1. Buka peta lokasi klien di Google Maps.<br>
-        2. Copy <b>semua link yang panjang</b> di atas browser.<br>
-        3. Paste di sini, otomatis tembus popup bintang 5!
+    <!-- LANGKAH 1 -->
+    <div class="step-box">
+        <div class="step-title">LANGKAH 1: Ambil Data API Google</div>
+        <p style="font-size: 12px; color: #555; margin-top: 0;">Klik tombol di bawah ini, cari nama bisnis klien di peta, lalu copy <b>Place ID</b>-nya (Contoh: ChIJ...).</p>
+        <button class="btn-api" onclick="window.open('https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder', '_blank')">
+            🔍 Buka Pencari Place ID Google
+        </button>
     </div>
-    
-    <input type="text" id="userInput" placeholder="Paste Link Maps Panjang di sini...">
-    <button onclick="generateQR()">Generate Auto 5-Star QR</button>
+
+    <!-- LANGKAH 2 -->
+    <div class="step-box" style="border-left-color: #27ae60;">
+        <div class="step-title">LANGKAH 2: Buat Barcode Bintang 5</div>
+        <p style="font-size: 12px; color: #555; margin-top: 0;">Paste Place ID atau link panjang Google Maps yang sudah didapat ke kolom ini.</p>
+        <input type="text" id="userInput" placeholder="Paste Place ID (ChIJ...) di sini...">
+        <button class="btn-generate" onclick="generateQR()">Generate Auto 5-Star QR</button>
+    </div>
 
     <div id="qrcode"></div>
     <div id="linkOutput"></div>
@@ -42,53 +56,49 @@
         var finalLink = "";
 
         if (!inputVal) {
-            alert("Bro, kolom link jangan dikosongin!");
+            alert("Kolom tidak boleh kosong!");
             return;
         }
 
-        // 1. Peringatan link pendek
+        // Peringatan jika memasukkan link pendek
         if (inputVal.includes("maps.app.goo.gl") || inputVal.includes("goo.gl")) {
-            alert("Itu link pendek bro! Buka dulu linknya di browser sampai petanya muncul, lalu copy link panjangnya.");
+            alert("Error: Jangan gunakan link pendek. Gunakan Place ID dari Langkah 1.");
             return;
         }
         
-        // 2. Eksekusi Bypass Google Maps (Membaca Link Panjang yang bro kasih di Screenshot)
-        if (inputVal.includes("1s0x") && inputVal.includes(":0x")) {
-            // Trik baru: Kita ambil KEDUA kode hex dari URL Maps
-            var match = inputVal.match(/1s(0x[0-9a-fA-F]+):(0x[0-9a-fA-F]+)/);
-            
-            if (match && match[1] && match[2]) {
-                try {
-                    var hex1 = match[1]; // Kode Area
-                    var hex2 = match[2]; // Kode Unik Toko (CID)
-                    var decimalCid = BigInt(hex2).toString(); 
-                    
-                    // BYPASS: Kita pakai link Google Search dengan lrd=...,3 (Angka 3 di belakang artinya MEMAKSA BUKA KOTAK REVIEW)
-                    finalLink = "https://www.google.com/search?q=Review&ludocid=" + decimalCid + "#lrd=" + hex1 + ":" + hex2 + ",3";
-                } catch (e) { 
-                    alert("Gagal memproses angka rahasia dari link ini!"); return; 
-                }
-            } else {
-                alert("Kode unik toko tidak lengkap! Copy ulang linknya dari ujung ke ujung bro."); return;
-            }
-        } 
-        // 3. Jika dapat Place ID manual (ChIJ...)
-        else if (inputVal.startsWith("ChIJ")) {
+        // Logika 1: Jika input adalah Place ID resmi dari API Google (ChIJ...)
+        if (inputVal.startsWith("ChIJ")) {
             finalLink = "https://search.google.com/local/writereview?placeid=" + inputVal;
         }
+        // Logika 2: Backup Bypass jika tetap menggunakan Link Panjang Google Maps
+        else if (inputVal.includes("1s0x") && inputVal.includes(":0x")) {
+            var match = inputVal.match(/1s(0x[0-9a-fA-F]+):(0x[0-9a-fA-F]+)/);
+            if (match && match[1] && match[2]) {
+                try {
+                    var hex1 = match[1];
+                    var hex2 = match[2];
+                    var decimalCid = BigInt(hex2).toString(); 
+                    finalLink = "https://www.google.com/search?q=Review&ludocid=" + decimalCid + "#lrd=" + hex1 + ":" + hex2 + ",3";
+                } catch (e) { 
+                    alert("Gagal memproses link."); return; 
+                }
+            } else {
+                alert("Kode unik toko tidak lengkap pada link."); return;
+            }
+        } 
         else {
-            alert("Format link tidak dikenali! Pastikan bro meng-copy link panjang saat membuka Google Maps.");
+            alert("Format tidak valid! Pastikan Anda mem-paste Place ID yang diawali huruf 'ChIJ'.");
             return;
         }
 
-        // Tampilkan QR Code
+        // Generate QR Code ke API
         var apiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(finalLink);
         
-        document.getElementById("qrcode").innerHTML = "<img src='" + apiUrl + "' alt='QR Code' style='border: 2px solid #4285F4; border-radius: 8px; padding: 10px; background: white;'>";
+        document.getElementById("qrcode").innerHTML = "<img src='" + apiUrl + "' alt='QR Code' style='border: 2px solid #27ae60; border-radius: 8px; padding: 10px; background: white;'>";
         
         var outputDiv = document.getElementById("linkOutput");
         outputDiv.style.display = "block";
-        outputDiv.innerHTML = "<b>Sukses Bypass! Link Pop-up Review:</b><br><br><a href='" + finalLink + "' target='_blank'>" + finalLink + "</a><br><br><i>Coba klik link di atas bro, pasti langsung muncul kotak bintang 5 nya!</i>";
+        outputDiv.innerHTML = "<b>✅ Sukses! Link Pop-up Review:</b><br><br><a href='" + finalLink + "' target='_blank' style='color:#2c3e50;'>" + finalLink + "</a><br><br><i style='color:#7f8c8d;'>Klik link di atas untuk memastikan popup bintang 5 muncul sebelum QR dikirim ke klien.</i>";
     }
 </script>
 

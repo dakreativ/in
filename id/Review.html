@@ -1,3 +1,10 @@
+Itu penyakit bawaan dari web developer Google-nya, bro. Peta di halaman web resmi Google tersebut sering kali default-nya fokus ke negara Amerika. Jadi kalau bro cuma ngetik "Toko Bangunan Maju Jaya", sistemnya nyari di Amerika dan nggak nemu.
+Cara mengatasinya kalau tetap mau pakai web resmi Google:
+Pas ngetik di kolom pencariannya, bro harus tambahkan nama kota dan negaranya secara spesifik.
+Contoh: Ketik "Kopi Kenangan, Bandung, Indonesia" atau "TB Nanjung Mulia Putra, Bandung". Nanti otomatis petanya akan terbang ke Indonesia dan memunculkan tempatnya.
+Solusi Permanen: Ganti "Mesin Pencari API" nya
+Biar bro nggak pusing dan lebih cepat saat melayani klien, mending kita ganti link di tombol Langkah 1 ke website penyedia Place ID lain (seperti placeid.io) yang lebih sensitif mendeteksi alamat di Indonesia tanpa harus repot zoom peta.
+Ini kode yang sudah saya revisi. Tombol Langkah 1 sekarang akan membuka web pencari Place ID yang jauh lebih ringan dan gampang mendeteksi alamat lokal kita:
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -31,18 +38,19 @@
     
     <!-- LANGKAH 1 -->
     <div class="step-box">
-        <div class="step-title">LANGKAH 1: Ambil Data API Google</div>
-        <p style="font-size: 12px; color: #555; margin-top: 0;">Klik tombol di bawah ini, cari nama bisnis klien di peta, lalu copy <b>Place ID</b>-nya (Contoh: ChIJ...).</p>
-        <button class="btn-api" onclick="window.open('https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder', '_blank')">
-            🔍 Buka Pencari Place ID Google
+        <div class="step-title">LANGKAH 1: Cari Place ID</div>
+        <p style="font-size: 12px; color: #555; margin-top: 0;">Klik tombol ini, ketik nama usaha klien (contoh: Toko Maju Bandung), lalu copy kode <b>Place ID</b> yang muncul.</p>
+        <!-- Link diubah ke placeid.io yang lebih bersahabat untuk alamat Indonesia -->
+        <button class="btn-api" onclick="window.open('https://placeid.io/', '_blank')">
+            🔍 Buka Pencari Place ID (Server 2)
         </button>
     </div>
 
     <!-- LANGKAH 2 -->
     <div class="step-box" style="border-left-color: #27ae60;">
         <div class="step-title">LANGKAH 2: Buat Barcode Bintang 5</div>
-        <p style="font-size: 12px; color: #555; margin-top: 0;">Paste Place ID atau link panjang Google Maps yang sudah didapat ke kolom ini.</p>
-        <input type="text" id="userInput" placeholder="Paste Place ID (ChIJ...) di sini...">
+        <p style="font-size: 12px; color: #555; margin-top: 0;">Paste Place ID (ChIJ...) atau link panjang Google Maps klien ke kolom ini.</p>
+        <input type="text" id="userInput" placeholder="Paste Place ID / Link Panjang di sini...">
         <button class="btn-generate" onclick="generateQR()">Generate Auto 5-Star QR</button>
     </div>
 
@@ -60,17 +68,16 @@
             return;
         }
 
-        // Peringatan jika memasukkan link pendek
         if (inputVal.includes("maps.app.goo.gl") || inputVal.includes("goo.gl")) {
-            alert("Error: Jangan gunakan link pendek. Gunakan Place ID dari Langkah 1.");
+            alert("Error: Jangan gunakan link pendek. Buka linknya dulu lalu copy link yang panjang, atau gunakan Place ID dari Langkah 1.");
             return;
         }
         
-        // Logika 1: Jika input adalah Place ID resmi dari API Google (ChIJ...)
+        // Cek Place ID murni
         if (inputVal.startsWith("ChIJ")) {
             finalLink = "https://search.google.com/local/writereview?placeid=" + inputVal;
         }
-        // Logika 2: Backup Bypass jika tetap menggunakan Link Panjang Google Maps
+        // Bypass Link Panjang
         else if (inputVal.includes("1s0x") && inputVal.includes(":0x")) {
             var match = inputVal.match(/1s(0x[0-9a-fA-F]+):(0x[0-9a-fA-F]+)/);
             if (match && match[1] && match[2]) {
@@ -87,20 +94,20 @@
             }
         } 
         else {
-            alert("Format tidak valid! Pastikan Anda mem-paste Place ID yang diawali huruf 'ChIJ'.");
+            alert("Format tidak valid! Pastikan Anda mem-paste Place ID (ChIJ...) atau link panjang Google Maps.");
             return;
         }
 
-        // Generate QR Code ke API
         var apiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(finalLink);
         
         document.getElementById("qrcode").innerHTML = "<img src='" + apiUrl + "' alt='QR Code' style='border: 2px solid #27ae60; border-radius: 8px; padding: 10px; background: white;'>";
         
         var outputDiv = document.getElementById("linkOutput");
         outputDiv.style.display = "block";
-        outputDiv.innerHTML = "<b>✅ Sukses! Link Pop-up Review:</b><br><br><a href='" + finalLink + "' target='_blank' style='color:#2c3e50;'>" + finalLink + "</a><br><br><i style='color:#7f8c8d;'>Klik link di atas untuk memastikan popup bintang 5 muncul sebelum QR dikirim ke klien.</i>";
+        outputDiv.innerHTML = "<b>✅ Sukses! Link Pop-up Review:</b><br><br><a href='" + finalLink + "' target='_blank' style='color:#2c3e50;'>" + finalLink + "</a><br><br><i style='color:#7f8c8d;'>Klik link di atas untuk memastikan popup bintang 5 muncul sebelum QR dicetak.</i>";
     }
 </script>
 
 </body>
 </html>
+

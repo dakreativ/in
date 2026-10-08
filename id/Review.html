@@ -4,51 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generator QR Code Google Review</title>
-    <!-- Memanggil library qrcode.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            background-color: #f0f2f5; 
-            margin: 0; 
-            padding: 20px; 
-        }
-        .container { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 12px; 
-            box-shadow: 0px 4px 12px rgba(0,0,0,0.1); 
-            max-width: 400px; 
-            margin: 40px auto; 
-        }
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f0f2f5; margin: 0; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0px 4px 12px rgba(0,0,0,0.1); max-width: 400px; margin: 40px auto; }
         h2 { margin-top: 0; color: #333; }
-        input { 
-            width: 90%; 
-            padding: 12px; 
-            margin: 15px 0; 
-            border: 1px solid #ccc; 
-            border-radius: 6px; 
-            font-size: 14px;
-        }
-        button { 
-            background: #4285F4; 
-            color: white; 
-            border: none; 
-            padding: 12px 20px; 
-            cursor: pointer; 
-            border-radius: 6px; 
-            font-size: 16px; 
-            width: 90%;
-            font-weight: bold;
-        }
+        input { width: 90%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+        button { background: #4285F4; color: white; border: none; padding: 12px 20px; cursor: pointer; border-radius: 6px; font-size: 16px; width: 90%; font-weight: bold; }
         button:hover { background: #357ae8; }
-        #qrcode { 
-            margin: 25px auto; 
-            display: flex; 
-            justify-content: center; 
-            min-height: 200px;
-        }
+        #qrcode { margin: 25px auto; display: flex; justify-content: center; min-height: 200px; }
         .note { font-size: 12px; color: #666; margin-top: 15px; }
         #linkOutput { font-size: 13px; color: #4285F4; word-break: break-all; margin-top: 10px;}
     </style>
@@ -57,14 +20,13 @@
 
 <div class="container">
     <h2>Pembuat QR Google Review</h2>
-    <p style="font-size: 14px; color: #555;">Buat QR Code yang langsung membuka form ulasan Google.</p>
+    <p style="font-size: 14px; color: #555;">Masukkan Google Place ID untuk membuat QR.</p>
     
-    <input type="text" id="placeId" placeholder="Masukkan Google Place ID (Misal: ChIJ...)">
+    <input type="text" id="placeId" placeholder="Contoh: ChIJP3Sa8ziCZwgR...">
     <button onclick="generateQR()">Buat QR Code</button>
 
     <div id="qrcode"></div>
     <div id="linkOutput"></div>
-    <p class="note"><i>Setelah QR Code muncul, klik kanan (atau tahan di HP) pada gambar untuk menyimpannya.</i></p>
 </div>
 
 <script>
@@ -72,27 +34,18 @@
         var placeId = document.getElementById("placeId").value.trim();
         
         if (!placeId) {
-            alert("Harap masukkan Google Place ID!");
+            alert("Bro, Google Place ID jangan dikosongin!");
             return;
         }
 
-        // Format link direct review Google
+        // 1. Buat link review dari Place ID
         var reviewLink = "https://search.google.com/local/writereview?placeid=" + placeId;
 
-        // Kosongkan area QR jika sebelumnya sudah ada isinya
-        document.getElementById("qrcode").innerHTML = "";
+        // 2. Gunakan API QR Server agar langsung jadi gambar (lebih stabil)
+        var apiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(reviewLink);
 
-        // Generate QR Code baru
-        new QRCode(document.getElementById("qrcode"), {
-            text: reviewLink,
-            width: 220,
-            height: 220,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H // Level koreksi tinggi agar tetap terbaca meski dicetak
-        });
-
-        // Tampilkan link aslinya di bawah QR
+        // 3. Tampilkan gambar dan link
+        document.getElementById("qrcode").innerHTML = "<img src='" + apiUrl + "' alt='QR Code Review' style='border: 1px solid #ddd; border-radius: 8px; padding: 10px;'>";
         document.getElementById("linkOutput").innerHTML = "<b>Link Anda:</b><br><a href='" + reviewLink + "' target='_blank'>" + reviewLink + "</a>";
     }
 </script>
